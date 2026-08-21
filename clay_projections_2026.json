@@ -42242,18 +42242,6 @@
         },
         {
           "position": "QB",
-          "depth": 1,
-          "name": "Jaxson Dart",
-          "rating": 5
-        },
-        {
-          "position": "DI",
-          "depth": 1,
-          "name": "D.J. Reader",
-          "rating": 6
-        },
-        {
-          "position": "QB",
           "depth": 2,
           "name": "Sam Howell",
           "rating": 2
@@ -42263,18 +42251,6 @@
           "depth": 2,
           "name": "Kenny Clark",
           "rating": 7
-        },
-        {
-          "position": "QB",
-          "depth": 2,
-          "name": "Jameis Winston",
-          "rating": 3
-        },
-        {
-          "position": "DI",
-          "depth": 2,
-          "name": "Shelby Harris",
-          "rating": 5
         },
         {
           "position": "RB",
@@ -42287,6 +42263,132 @@
           "depth": 3,
           "name": "Jonathan Bullard",
           "rating": 4
+        },
+        {
+          "position": "RB",
+          "depth": 2,
+          "name": "Jaydon Blue",
+          "rating": 2
+        },
+        {
+          "position": "ED",
+          "depth": 1,
+          "name": "Donovan Ezeiruaku",
+          "rating": 6
+        },
+        {
+          "position": "WR",
+          "depth": 1,
+          "name": "CeeDee Lamb",
+          "rating": 9
+        },
+        {
+          "position": "ED",
+          "depth": 2,
+          "name": "Rashan Gary",
+          "rating": 6
+        },
+        {
+          "position": "WR",
+          "depth": 2,
+          "name": "George Pickens",
+          "rating": 8
+        },
+        {
+          "position": "ED",
+          "depth": 3,
+          "name": "Malachi Lawrence",
+          "rating": 5
+        },
+        {
+          "position": "WR",
+          "depth": 3,
+          "name": "Ryan Flournoy",
+          "rating": 4
+        },
+        {
+          "position": "LB",
+          "depth": 1,
+          "name": "DeMarvion Overshown",
+          "rating": 5
+        },
+        {
+          "position": "WR",
+          "depth": 4,
+          "name": "Kavontae Turpin",
+          "rating": 3
+        },
+        {
+          "position": "LB",
+          "depth": 2,
+          "name": "Dee Winters",
+          "rating": 5
+        },
+        {
+          "position": "TE",
+          "depth": 1,
+          "name": "Jake Ferguson",
+          "rating": 6
+        },
+        {
+          "position": "LB",
+          "depth": 3,
+          "name": "Shemar James",
+          "rating": 3
+        },
+        {
+          "position": "TE",
+          "depth": 2,
+          "name": "Luke Schoonmaker",
+          "rating": 3
+        },
+        {
+          "position": "CB",
+          "depth": 1,
+          "name": "DaRon Bland",
+          "rating": 7
+        },
+        {
+          "position": "TE",
+          "depth": 3,
+          "name": "Brevyn Spann-Ford",
+          "rating": 2
+        },
+        {
+          "position": "CB",
+          "depth": 2,
+          "name": "Decobie Durant",
+          "rating": 5
+        },
+        {
+          "position": "CB",
+          "depth": 3,
+          "name": "Shavon Revel Jr.",
+          "rating": 4
+        },
+        {
+          "position": "CB",
+          "depth": 4,
+          "name": "Derion Kendrick",
+          "rating": 3
+        },
+        {
+          "position": "S",
+          "depth": 1,
+          "name": "Jalen Thompson",
+          "rating": 6
+        },
+        {
+          "position": "S",
+          "depth": 2,
+          "name": "Caleb Downs",
+          "rating": 5
+        },
+        {
+          "position": "S",
+          "depth": 3,
+          "name": "Malik Hooker",
+          "rating": 5
         }
       ],
       "New York Giants": [
@@ -42305,18 +42407,6 @@
         {
           "position": "QB",
           "depth": 2,
-          "name": "Sam Howell",
-          "rating": 2
-        },
-        {
-          "position": "DI",
-          "depth": 2,
-          "name": "Kenny Clark",
-          "rating": 7
-        },
-        {
-          "position": "QB",
-          "depth": 2,
           "name": "Jameis Winston",
           "rating": 3
         },
@@ -42329,18 +42419,6 @@
         {
           "position": "RB",
           "depth": 1,
-          "name": "Javonte Williams",
-          "rating": 7
-        },
-        {
-          "position": "DI",
-          "depth": 3,
-          "name": "Jonathan Bullard",
-          "rating": 4
-        },
-        {
-          "position": "RB",
-          "depth": 1,
           "name": "Cam Skattebo",
           "rating": 6
         },
@@ -42348,6 +42426,132 @@
           "position": "DI",
           "depth": 3,
           "name": "Darius Alexander",
+          "rating": 4
+        },
+        {
+          "position": "RB",
+          "depth": 2,
+          "name": "Tyrone Tracy Jr.",
+          "rating": 4
+        },
+        {
+          "position": "ED",
+          "depth": 1,
+          "name": "Brian Burns",
+          "rating": 8
+        },
+        {
+          "position": "WR",
+          "depth": 1,
+          "name": "Malik Nabers",
+          "rating": 8
+        },
+        {
+          "position": "ED",
+          "depth": 2,
+          "name": "Abdul Carter",
+          "rating": 7
+        },
+        {
+          "position": "WR",
+          "depth": 2,
+          "name": "Darius Slayton",
+          "rating": 4
+        },
+        {
+          "position": "ED",
+          "depth": 3,
+          "name": "Kayvon Thibodeaux",
+          "rating": 6
+        },
+        {
+          "position": "WR",
+          "depth": 3,
+          "name": "Darnell Mooney",
+          "rating": 5
+        },
+        {
+          "position": "LB",
+          "depth": 1,
+          "name": "Arvell Reese",
+          "rating": 5
+        },
+        {
+          "position": "WR",
+          "depth": 4,
+          "name": "Malachi Fields",
+          "rating": 3
+        },
+        {
+          "position": "LB",
+          "depth": 2,
+          "name": "Tremaine Edmunds",
+          "rating": 5
+        },
+        {
+          "position": "TE",
+          "depth": 1,
+          "name": "Isaiah Likely",
+          "rating": 5
+        },
+        {
+          "position": "LB",
+          "depth": 3,
+          "name": "Micah McFadden",
+          "rating": 4
+        },
+        {
+          "position": "TE",
+          "depth": 2,
+          "name": "Theo Johnson",
+          "rating": 4
+        },
+        {
+          "position": "CB",
+          "depth": 1,
+          "name": "Paulson Adebo",
+          "rating": 5
+        },
+        {
+          "position": "TE",
+          "depth": 3,
+          "name": "Chris Manhertz",
+          "rating": 3
+        },
+        {
+          "position": "CB",
+          "depth": 2,
+          "name": "Greg Newsome II",
+          "rating": 4
+        },
+        {
+          "position": "CB",
+          "depth": 3,
+          "name": "Andru Phillips",
+          "rating": 5
+        },
+        {
+          "position": "CB",
+          "depth": 4,
+          "name": "Colton Hood",
+          "rating": 4
+        },
+        {
+          "position": "S",
+          "depth": 1,
+          "name": "Jevon Holland",
+          "rating": 4
+        },
+        {
+          "position": "S",
+          "depth": 2,
+          "name": "Tyler Nubin",
+          "rating": 4
+        },
+        {
+          "position": "S",
+          "depth": 3,
+          "name": "Jason Pinnock",
           "rating": 4
         }
       ],
@@ -42366,18 +42570,6 @@
         },
         {
           "position": "QB",
-          "depth": 1,
-          "name": "Jayden Daniels",
-          "rating": 7
-        },
-        {
-          "position": "DI",
-          "depth": 1,
-          "name": "Daron Payne",
-          "rating": 5
-        },
-        {
-          "position": "QB",
           "depth": 2,
           "name": "Tanner McKee",
           "rating": 2
@@ -42387,18 +42579,6 @@
           "depth": 2,
           "name": "Moro Ojomo",
           "rating": 7
-        },
-        {
-          "position": "QB",
-          "depth": 2,
-          "name": "Marcus Mariota",
-          "rating": 3
-        },
-        {
-          "position": "DI",
-          "depth": 2,
-          "name": "Charles Omenihu",
-          "rating": 5
         },
         {
           "position": "RB",
@@ -42411,6 +42591,132 @@
           "depth": 3,
           "name": "Jordan Davis",
           "rating": 7
+        },
+        {
+          "position": "RB",
+          "depth": 2,
+          "name": "Tank Bigsby",
+          "rating": 3
+        },
+        {
+          "position": "ED",
+          "depth": 1,
+          "name": "Jonathan Greenard",
+          "rating": 8
+        },
+        {
+          "position": "WR",
+          "depth": 1,
+          "name": "DeVonta Smith",
+          "rating": 7
+        },
+        {
+          "position": "ED",
+          "depth": 2,
+          "name": "Nolan Smith",
+          "rating": 6
+        },
+        {
+          "position": "WR",
+          "depth": 2,
+          "name": "Makai Lemon",
+          "rating": 5
+        },
+        {
+          "position": "ED",
+          "depth": 3,
+          "name": "Jalyx Hunt",
+          "rating": 5
+        },
+        {
+          "position": "WR",
+          "depth": 3,
+          "name": "Dontayvion Wicks",
+          "rating": 4
+        },
+        {
+          "position": "LB",
+          "depth": 1,
+          "name": "Zack Baun",
+          "rating": 9
+        },
+        {
+          "position": "WR",
+          "depth": 4,
+          "name": "Marquise Brown",
+          "rating": 5
+        },
+        {
+          "position": "LB",
+          "depth": 2,
+          "name": "Jihaad Campbell",
+          "rating": 6
+        },
+        {
+          "position": "TE",
+          "depth": 1,
+          "name": "Dallas Goedert",
+          "rating": 7
+        },
+        {
+          "position": "LB",
+          "depth": 3,
+          "name": "Jeremiah Trotter Jr.",
+          "rating": 3
+        },
+        {
+          "position": "TE",
+          "depth": 2,
+          "name": "Eli Stowers",
+          "rating": 4
+        },
+        {
+          "position": "CB",
+          "depth": 1,
+          "name": "Quinyon Mitchell",
+          "rating": 8
+        },
+        {
+          "position": "TE",
+          "depth": 3,
+          "name": "Johnny Mundt",
+          "rating": 3
+        },
+        {
+          "position": "CB",
+          "depth": 2,
+          "name": "Cooper DeJean",
+          "rating": 8
+        },
+        {
+          "position": "CB",
+          "depth": 3,
+          "name": "Tariq Woolen",
+          "rating": 5
+        },
+        {
+          "position": "CB",
+          "depth": 4,
+          "name": "Jonathan Jones",
+          "rating": 5
+        },
+        {
+          "position": "S",
+          "depth": 1,
+          "name": "Andrew Mukuba",
+          "rating": 4
+        },
+        {
+          "position": "S",
+          "depth": 2,
+          "name": "Marcus Epps",
+          "rating": 4
+        },
+        {
+          "position": "S",
+          "depth": 3,
+          "name": "J.T. Gray",
+          "rating": 1
         }
       ],
       "Washington Commanders": [
@@ -42429,18 +42735,6 @@
         {
           "position": "QB",
           "depth": 2,
-          "name": "Tanner McKee",
-          "rating": 2
-        },
-        {
-          "position": "DI",
-          "depth": 2,
-          "name": "Moro Ojomo",
-          "rating": 7
-        },
-        {
-          "position": "QB",
-          "depth": 2,
           "name": "Marcus Mariota",
           "rating": 3
         },
@@ -42453,18 +42747,6 @@
         {
           "position": "RB",
           "depth": 1,
-          "name": "Saquon Barkley",
-          "rating": 9
-        },
-        {
-          "position": "DI",
-          "depth": 3,
-          "name": "Jordan Davis",
-          "rating": 7
-        },
-        {
-          "position": "RB",
-          "depth": 1,
           "name": "Rachaad White",
           "rating": 4
         },
@@ -42472,6 +42754,132 @@
           "position": "DI",
           "depth": 3,
           "name": "Javon Kinlaw",
+          "rating": 4
+        },
+        {
+          "position": "RB",
+          "depth": 2,
+          "name": "Jacory Croskey-Merritt",
+          "rating": 4
+        },
+        {
+          "position": "ED",
+          "depth": 1,
+          "name": "Odafe Oweh",
+          "rating": 6
+        },
+        {
+          "position": "WR",
+          "depth": 1,
+          "name": "Terry McLaurin",
+          "rating": 8
+        },
+        {
+          "position": "ED",
+          "depth": 2,
+          "name": "Dorance Armstrong",
+          "rating": 5
+        },
+        {
+          "position": "WR",
+          "depth": 2,
+          "name": "Stefon Diggs",
+          "rating": 6
+        },
+        {
+          "position": "ED",
+          "depth": 3,
+          "name": "K'lavon Chaisson",
+          "rating": 4
+        },
+        {
+          "position": "WR",
+          "depth": 3,
+          "name": "Antonio Williams",
+          "rating": 3
+        },
+        {
+          "position": "LB",
+          "depth": 1,
+          "name": "Frankie Luvu",
+          "rating": 5
+        },
+        {
+          "position": "WR",
+          "depth": 4,
+          "name": "Dyami Brown",
+          "rating": 4
+        },
+        {
+          "position": "LB",
+          "depth": 2,
+          "name": "Sonny Styles",
+          "rating": 5
+        },
+        {
+          "position": "TE",
+          "depth": 1,
+          "name": "Chigoziem Okonkwo",
+          "rating": 5
+        },
+        {
+          "position": "LB",
+          "depth": 3,
+          "name": "Leo Chenal",
+          "rating": 5
+        },
+        {
+          "position": "TE",
+          "depth": 2,
+          "name": "John Bates",
+          "rating": 3
+        },
+        {
+          "position": "CB",
+          "depth": 1,
+          "name": "Mike Sainristil",
+          "rating": 5
+        },
+        {
+          "position": "TE",
+          "depth": 3,
+          "name": "Ben Sinnott",
+          "rating": 3
+        },
+        {
+          "position": "CB",
+          "depth": 2,
+          "name": "Rasul Douglas",
+          "rating": 7
+        },
+        {
+          "position": "CB",
+          "depth": 3,
+          "name": "Trey Amos",
+          "rating": 4
+        },
+        {
+          "position": "CB",
+          "depth": 4,
+          "name": "Amik Robertson",
+          "rating": 4
+        },
+        {
+          "position": "S",
+          "depth": 1,
+          "name": "Nick Cross",
+          "rating": 5
+        },
+        {
+          "position": "S",
+          "depth": 2,
+          "name": "Will Harris",
+          "rating": 4
+        },
+        {
+          "position": "S",
+          "depth": 3,
+          "name": "Jartavius Martin",
           "rating": 4
         }
       ]
@@ -42492,18 +42900,6 @@
         },
         {
           "position": "QB",
-          "depth": 1,
-          "name": "Jared Goff",
-          "rating": 6
-        },
-        {
-          "position": "DI",
-          "depth": 1,
-          "name": "Alim McNeill",
-          "rating": 8
-        },
-        {
-          "position": "QB",
           "depth": 2,
           "name": "Tyson Bagent",
           "rating": 3
@@ -42512,18 +42908,6 @@
           "position": "DI",
           "depth": 2,
           "name": "Gervon Dexter",
-          "rating": 5
-        },
-        {
-          "position": "QB",
-          "depth": 2,
-          "name": "Joshua Dobbs",
-          "rating": 2
-        },
-        {
-          "position": "DI",
-          "depth": 2,
-          "name": "Tyleik Williams",
           "rating": 5
         },
         {
@@ -42537,6 +42921,132 @@
           "depth": 3,
           "name": "Neville Gallimore",
           "rating": 4
+        },
+        {
+          "position": "RB",
+          "depth": 2,
+          "name": "Kyle Monangai",
+          "rating": 4
+        },
+        {
+          "position": "ED",
+          "depth": 1,
+          "name": "Montez Sweat",
+          "rating": 6
+        },
+        {
+          "position": "WR",
+          "depth": 1,
+          "name": "Rome Odunze",
+          "rating": 6
+        },
+        {
+          "position": "ED",
+          "depth": 2,
+          "name": "Austin Booker",
+          "rating": 4
+        },
+        {
+          "position": "WR",
+          "depth": 2,
+          "name": "Luther Burden III",
+          "rating": 6
+        },
+        {
+          "position": "ED",
+          "depth": 3,
+          "name": "Dayo Odeyingbo",
+          "rating": 5
+        },
+        {
+          "position": "WR",
+          "depth": 3,
+          "name": "Kalif Raymond",
+          "rating": 3
+        },
+        {
+          "position": "LB",
+          "depth": 1,
+          "name": "T.J. Edwards",
+          "rating": 6
+        },
+        {
+          "position": "WR",
+          "depth": 4,
+          "name": "Zavion Thomas",
+          "rating": 3
+        },
+        {
+          "position": "LB",
+          "depth": 2,
+          "name": "Devin Bush",
+          "rating": 8
+        },
+        {
+          "position": "TE",
+          "depth": 1,
+          "name": "Colston Loveland",
+          "rating": 7
+        },
+        {
+          "position": "LB",
+          "depth": 3,
+          "name": "D'Marco Jackson",
+          "rating": 3
+        },
+        {
+          "position": "TE",
+          "depth": 2,
+          "name": "Cole Kmet",
+          "rating": 5
+        },
+        {
+          "position": "CB",
+          "depth": 1,
+          "name": "Jaylon Johnson",
+          "rating": 8
+        },
+        {
+          "position": "TE",
+          "depth": 3,
+          "name": "Sam Roush",
+          "rating": 3
+        },
+        {
+          "position": "CB",
+          "depth": 2,
+          "name": "Kyler Gordon",
+          "rating": 6
+        },
+        {
+          "position": "CB",
+          "depth": 3,
+          "name": "Tyrique Stevenson",
+          "rating": 5
+        },
+        {
+          "position": "CB",
+          "depth": 4,
+          "name": "Malik Muhammad",
+          "rating": 4
+        },
+        {
+          "position": "S",
+          "depth": 1,
+          "name": "Dillon Thieneman",
+          "rating": 5
+        },
+        {
+          "position": "S",
+          "depth": 2,
+          "name": "Cameron Lewis",
+          "rating": 3
+        },
+        {
+          "position": "S",
+          "depth": 3,
+          "name": "Xavier Woods",
+          "rating": 5
         }
       ],
       "Detroit Lions": [
@@ -42555,18 +43065,6 @@
         {
           "position": "QB",
           "depth": 2,
-          "name": "Tyson Bagent",
-          "rating": 3
-        },
-        {
-          "position": "DI",
-          "depth": 2,
-          "name": "Gervon Dexter",
-          "rating": 5
-        },
-        {
-          "position": "QB",
-          "depth": 2,
           "name": "Joshua Dobbs",
           "rating": 2
         },
@@ -42579,18 +43077,6 @@
         {
           "position": "RB",
           "depth": 1,
-          "name": "D'Andre Swift",
-          "rating": 6
-        },
-        {
-          "position": "DI",
-          "depth": 3,
-          "name": "Neville Gallimore",
-          "rating": 4
-        },
-        {
-          "position": "RB",
-          "depth": 1,
           "name": "Jahmyr Gibbs",
           "rating": 9
         },
@@ -42599,6 +43085,132 @@
           "depth": 3,
           "name": "Mekhi Wingo",
           "rating": 3
+        },
+        {
+          "position": "RB",
+          "depth": 2,
+          "name": "Isiah Pacheco",
+          "rating": 3
+        },
+        {
+          "position": "ED",
+          "depth": 1,
+          "name": "Aidan Hutchinson",
+          "rating": 9
+        },
+        {
+          "position": "WR",
+          "depth": 1,
+          "name": "Amon-Ra St. Brown",
+          "rating": 9
+        },
+        {
+          "position": "ED",
+          "depth": 2,
+          "name": "D.J. Wonnum",
+          "rating": 4
+        },
+        {
+          "position": "WR",
+          "depth": 2,
+          "name": "Jameson Williams",
+          "rating": 6
+        },
+        {
+          "position": "ED",
+          "depth": 3,
+          "name": "Derrick Moore",
+          "rating": 4
+        },
+        {
+          "position": "WR",
+          "depth": 3,
+          "name": "Isaac TeSlaa",
+          "rating": 4
+        },
+        {
+          "position": "LB",
+          "depth": 1,
+          "name": "Jack Campbell",
+          "rating": 9
+        },
+        {
+          "position": "WR",
+          "depth": 4,
+          "name": "Greg Dortch",
+          "rating": 2
+        },
+        {
+          "position": "LB",
+          "depth": 2,
+          "name": "Derrick Barnes",
+          "rating": 5
+        },
+        {
+          "position": "TE",
+          "depth": 1,
+          "name": "Sam LaPorta",
+          "rating": 8
+        },
+        {
+          "position": "LB",
+          "depth": 3,
+          "name": "Devin White",
+          "rating": 4
+        },
+        {
+          "position": "TE",
+          "depth": 2,
+          "name": "Brock Wright",
+          "rating": 3
+        },
+        {
+          "position": "CB",
+          "depth": 1,
+          "name": "D.J. Reed",
+          "rating": 7
+        },
+        {
+          "position": "TE",
+          "depth": 3,
+          "name": "Tyler Conklin",
+          "rating": 2
+        },
+        {
+          "position": "CB",
+          "depth": 2,
+          "name": "Rock Ya-Sin",
+          "rating": 4
+        },
+        {
+          "position": "CB",
+          "depth": 3,
+          "name": "Roger McCreary",
+          "rating": 5
+        },
+        {
+          "position": "CB",
+          "depth": 4,
+          "name": "Ennis Rakestraw Jr.",
+          "rating": 2
+        },
+        {
+          "position": "S",
+          "depth": 1,
+          "name": "Kerby Joseph",
+          "rating": 7
+        },
+        {
+          "position": "S",
+          "depth": 2,
+          "name": "Brian Branch",
+          "rating": 8
+        },
+        {
+          "position": "S",
+          "depth": 3,
+          "name": "Chuck Clark",
+          "rating": 4
         }
       ],
       "Green Bay Packers": [
@@ -42616,18 +43228,6 @@
         },
         {
           "position": "QB",
-          "depth": 1,
-          "name": "Kyler Murray",
-          "rating": 4
-        },
-        {
-          "position": "DI",
-          "depth": 1,
-          "name": "Jalen Redmond",
-          "rating": 8
-        },
-        {
-          "position": "QB",
           "depth": 2,
           "name": "Tyrod Taylor",
           "rating": 3
@@ -42637,18 +43237,6 @@
           "depth": 2,
           "name": "Karl Brooks",
           "rating": 4
-        },
-        {
-          "position": "QB",
-          "depth": 2,
-          "name": "J.J. McCarthy",
-          "rating": 3
-        },
-        {
-          "position": "DI",
-          "depth": 2,
-          "name": "Caleb Banks",
-          "rating": 5
         },
         {
           "position": "RB",
@@ -42664,9 +43252,129 @@
         },
         {
           "position": "RB",
+          "depth": 2,
+          "name": "MarShawn Lloyd",
+          "rating": 3
+        },
+        {
+          "position": "ED",
           "depth": 1,
-          "name": "Aaron Jones",
+          "name": "Micah Parsons",
+          "rating": 9
+        },
+        {
+          "position": "WR",
+          "depth": 1,
+          "name": "Christian Watson",
+          "rating": 6
+        },
+        {
+          "position": "ED",
+          "depth": 2,
+          "name": "Lukas Van Ness",
           "rating": 5
+        },
+        {
+          "position": "WR",
+          "depth": 2,
+          "name": "Jayden Reed",
+          "rating": 5
+        },
+        {
+          "position": "ED",
+          "depth": 3,
+          "name": "Brenton Cox Jr.",
+          "rating": 3
+        },
+        {
+          "position": "WR",
+          "depth": 3,
+          "name": "Matthew Golden",
+          "rating": 5
+        },
+        {
+          "position": "LB",
+          "depth": 1,
+          "name": "Edgerrin Cooper",
+          "rating": 7
+        },
+        {
+          "position": "WR",
+          "depth": 4,
+          "name": "Savion Williams",
+          "rating": 4
+        },
+        {
+          "position": "LB",
+          "depth": 2,
+          "name": "Zaire Franklin",
+          "rating": 4
+        },
+        {
+          "position": "TE",
+          "depth": 1,
+          "name": "Tucker Kraft",
+          "rating": 7
+        },
+        {
+          "position": "LB",
+          "depth": 3,
+          "name": "Isaiah McDuffie",
+          "rating": 4
+        },
+        {
+          "position": "TE",
+          "depth": 2,
+          "name": "Luke Musgrave",
+          "rating": 3
+        },
+        {
+          "position": "CB",
+          "depth": 1,
+          "name": "Keisean Nixon",
+          "rating": 6
+        },
+        {
+          "position": "TE",
+          "depth": 3,
+          "name": "Josh Whyle",
+          "rating": 2
+        },
+        {
+          "position": "CB",
+          "depth": 2,
+          "name": "Carrington Valentine",
+          "rating": 5
+        },
+        {
+          "position": "CB",
+          "depth": 3,
+          "name": "Javon Bullard",
+          "rating": 5
+        },
+        {
+          "position": "CB",
+          "depth": 4,
+          "name": "Benjamin St-Juste",
+          "rating": 4
+        },
+        {
+          "position": "S",
+          "depth": 1,
+          "name": "Xavier McKinney",
+          "rating": 9
+        },
+        {
+          "position": "S",
+          "depth": 2,
+          "name": "Evan Williams",
+          "rating": 6
+        },
+        {
+          "position": "S",
+          "depth": 3,
+          "name": "Kitan Oladapo",
+          "rating": 2
         }
       ],
       "Minnesota Vikings": [
@@ -42685,18 +43393,6 @@
         {
           "position": "QB",
           "depth": 2,
-          "name": "Tyrod Taylor",
-          "rating": 3
-        },
-        {
-          "position": "DI",
-          "depth": 2,
-          "name": "Karl Brooks",
-          "rating": 4
-        },
-        {
-          "position": "QB",
-          "depth": 2,
           "name": "J.J. McCarthy",
           "rating": 3
         },
@@ -42709,18 +43405,6 @@
         {
           "position": "RB",
           "depth": 1,
-          "name": "Josh Jacobs",
-          "rating": 8
-        },
-        {
-          "position": "DI",
-          "depth": 3,
-          "name": "Javon Hargrave",
-          "rating": 6
-        },
-        {
-          "position": "RB",
-          "depth": 1,
           "name": "Aaron Jones",
           "rating": 5
         },
@@ -42729,6 +43413,132 @@
           "depth": 3,
           "name": "Levi Drake Rodriguez",
           "rating": 4
+        },
+        {
+          "position": "RB",
+          "depth": 2,
+          "name": "Jordan Mason",
+          "rating": 4
+        },
+        {
+          "position": "ED",
+          "depth": 1,
+          "name": "Andrew Van Ginkel",
+          "rating": 7
+        },
+        {
+          "position": "WR",
+          "depth": 1,
+          "name": "Justin Jefferson",
+          "rating": 9
+        },
+        {
+          "position": "ED",
+          "depth": 2,
+          "name": "Dallas Turner",
+          "rating": 5
+        },
+        {
+          "position": "WR",
+          "depth": 2,
+          "name": "Jordan Addison",
+          "rating": 6
+        },
+        {
+          "position": "ED",
+          "depth": 3,
+          "name": "Tyrion Ingram-Dawkins",
+          "rating": 3
+        },
+        {
+          "position": "WR",
+          "depth": 3,
+          "name": "Jauan Jennings",
+          "rating": 6
+        },
+        {
+          "position": "LB",
+          "depth": 1,
+          "name": "Blake Cashman",
+          "rating": 6
+        },
+        {
+          "position": "WR",
+          "depth": 4,
+          "name": "Tai Felton",
+          "rating": 3
+        },
+        {
+          "position": "LB",
+          "depth": 2,
+          "name": "Eric Wilson",
+          "rating": 5
+        },
+        {
+          "position": "TE",
+          "depth": 1,
+          "name": "T.J. Hockenson",
+          "rating": 7
+        },
+        {
+          "position": "LB",
+          "depth": 3,
+          "name": "Jake Golday",
+          "rating": 4
+        },
+        {
+          "position": "TE",
+          "depth": 2,
+          "name": "Josh Oliver",
+          "rating": 4
+        },
+        {
+          "position": "CB",
+          "depth": 1,
+          "name": "Byron Murphy",
+          "rating": 6
+        },
+        {
+          "position": "TE",
+          "depth": 3,
+          "name": "Ben Yurosek",
+          "rating": 2
+        },
+        {
+          "position": "CB",
+          "depth": 2,
+          "name": "Isaiah Rodgers",
+          "rating": 8
+        },
+        {
+          "position": "CB",
+          "depth": 3,
+          "name": "James Pierre",
+          "rating": 5
+        },
+        {
+          "position": "CB",
+          "depth": 4,
+          "name": "Charles Demmings",
+          "rating": 3
+        },
+        {
+          "position": "S",
+          "depth": 1,
+          "name": "Josh Metellus",
+          "rating": 5
+        },
+        {
+          "position": "S",
+          "depth": 2,
+          "name": "Theo Jackson",
+          "rating": 5
+        },
+        {
+          "position": "S",
+          "depth": 3,
+          "name": "Jay Ward",
+          "rating": 2
         }
       ]
     },
@@ -42748,18 +43558,6 @@
         },
         {
           "position": "QB",
-          "depth": 1,
-          "name": "Bryce Young",
-          "rating": 4
-        },
-        {
-          "position": "DI",
-          "depth": 1,
-          "name": "Derrick Brown",
-          "rating": 9
-        },
-        {
-          "position": "QB",
           "depth": 2,
           "name": "Michael Penix Jr.",
           "rating": 3
@@ -42768,18 +43566,6 @@
           "position": "DI",
           "depth": 2,
           "name": "Brandon Dorlus",
-          "rating": 5
-        },
-        {
-          "position": "QB",
-          "depth": 2,
-          "name": "Kenny Pickett",
-          "rating": 2
-        },
-        {
-          "position": "DI",
-          "depth": 2,
-          "name": "Tershawn Wharton",
           "rating": 5
         },
         {
@@ -42792,6 +43578,132 @@
           "position": "DI",
           "depth": 3,
           "name": "LaCale London",
+          "rating": 3
+        },
+        {
+          "position": "RB",
+          "depth": 2,
+          "name": "Brian Robinson Jr.",
+          "rating": 3
+        },
+        {
+          "position": "ED",
+          "depth": 1,
+          "name": "James Pearce Jr.",
+          "rating": 4
+        },
+        {
+          "position": "WR",
+          "depth": 1,
+          "name": "Drake London",
+          "rating": 8
+        },
+        {
+          "position": "ED",
+          "depth": 2,
+          "name": "Za'Darius Smith",
+          "rating": 6
+        },
+        {
+          "position": "WR",
+          "depth": 2,
+          "name": "Jahan Dotson",
+          "rating": 4
+        },
+        {
+          "position": "ED",
+          "depth": 3,
+          "name": "Samson Ebukam",
+          "rating": 4
+        },
+        {
+          "position": "WR",
+          "depth": 3,
+          "name": "Zachariah Branch",
+          "rating": 3
+        },
+        {
+          "position": "LB",
+          "depth": 1,
+          "name": "Divine Deablo",
+          "rating": 6
+        },
+        {
+          "position": "WR",
+          "depth": 4,
+          "name": "Olamide Zaccheaus",
+          "rating": 3
+        },
+        {
+          "position": "LB",
+          "depth": 2,
+          "name": "Christian Harris",
+          "rating": 4
+        },
+        {
+          "position": "TE",
+          "depth": 1,
+          "name": "Kyle Pitts",
+          "rating": 7
+        },
+        {
+          "position": "LB",
+          "depth": 3,
+          "name": "Kendal Daniels",
+          "rating": 4
+        },
+        {
+          "position": "TE",
+          "depth": 2,
+          "name": "Austin Hooper",
+          "rating": 4
+        },
+        {
+          "position": "CB",
+          "depth": 1,
+          "name": "A.J. Terrell",
+          "rating": 5
+        },
+        {
+          "position": "TE",
+          "depth": 3,
+          "name": "Charlie Woerner",
+          "rating": 3
+        },
+        {
+          "position": "CB",
+          "depth": 2,
+          "name": "Mike Hughes",
+          "rating": 5
+        },
+        {
+          "position": "CB",
+          "depth": 3,
+          "name": "Billy Bowman Jr.",
+          "rating": 4
+        },
+        {
+          "position": "CB",
+          "depth": 4,
+          "name": "Avieon Terrell",
+          "rating": 4
+        },
+        {
+          "position": "S",
+          "depth": 1,
+          "name": "Jessie Bates",
+          "rating": 7
+        },
+        {
+          "position": "S",
+          "depth": 2,
+          "name": "Xavier Watts",
+          "rating": 8
+        },
+        {
+          "position": "S",
+          "depth": 3,
+          "name": "Sydney Brown",
           "rating": 3
         }
       ],
@@ -42811,18 +43723,6 @@
         {
           "position": "QB",
           "depth": 2,
-          "name": "Michael Penix Jr.",
-          "rating": 3
-        },
-        {
-          "position": "DI",
-          "depth": 2,
-          "name": "Brandon Dorlus",
-          "rating": 5
-        },
-        {
-          "position": "QB",
-          "depth": 2,
           "name": "Kenny Pickett",
           "rating": 2
         },
@@ -42835,18 +43735,6 @@
         {
           "position": "RB",
           "depth": 1,
-          "name": "Bijan Robinson",
-          "rating": 9
-        },
-        {
-          "position": "DI",
-          "depth": 3,
-          "name": "LaCale London",
-          "rating": 3
-        },
-        {
-          "position": "RB",
-          "depth": 1,
           "name": "Chuba Hubbard",
           "rating": 5
         },
@@ -42855,6 +43743,132 @@
           "depth": 3,
           "name": "Bobby Brown III",
           "rating": 4
+        },
+        {
+          "position": "RB",
+          "depth": 2,
+          "name": "Jonathon Brooks",
+          "rating": 3
+        },
+        {
+          "position": "ED",
+          "depth": 1,
+          "name": "Jaelan Phillips",
+          "rating": 7
+        },
+        {
+          "position": "WR",
+          "depth": 1,
+          "name": "Tetairoa McMillan",
+          "rating": 7
+        },
+        {
+          "position": "ED",
+          "depth": 2,
+          "name": "Patrick Jones",
+          "rating": 4
+        },
+        {
+          "position": "WR",
+          "depth": 2,
+          "name": "Jalen Coker",
+          "rating": 5
+        },
+        {
+          "position": "ED",
+          "depth": 3,
+          "name": "Trevis Gipson",
+          "rating": 2
+        },
+        {
+          "position": "WR",
+          "depth": 3,
+          "name": "Xavier Legette",
+          "rating": 4
+        },
+        {
+          "position": "LB",
+          "depth": 1,
+          "name": "Devin Lloyd",
+          "rating": 8
+        },
+        {
+          "position": "WR",
+          "depth": 4,
+          "name": "Jimmy Horn Jr.",
+          "rating": 3
+        },
+        {
+          "position": "LB",
+          "depth": 2,
+          "name": "Trevin Wallace",
+          "rating": 4
+        },
+        {
+          "position": "TE",
+          "depth": 1,
+          "name": "Darren Waller",
+          "rating": 5
+        },
+        {
+          "position": "LB",
+          "depth": 3,
+          "name": "Claudin Cherelus",
+          "rating": 2
+        },
+        {
+          "position": "TE",
+          "depth": 2,
+          "name": "Tommy Tremble",
+          "rating": 4
+        },
+        {
+          "position": "CB",
+          "depth": 1,
+          "name": "Jaycee Horn",
+          "rating": 5
+        },
+        {
+          "position": "TE",
+          "depth": 3,
+          "name": "Ja'Tavion Sanders",
+          "rating": 4
+        },
+        {
+          "position": "CB",
+          "depth": 2,
+          "name": "Michael Jackson",
+          "rating": 8
+        },
+        {
+          "position": "CB",
+          "depth": 3,
+          "name": "Chau Smith-Wade",
+          "rating": 3
+        },
+        {
+          "position": "CB",
+          "depth": 4,
+          "name": "Corey Thornton",
+          "rating": 3
+        },
+        {
+          "position": "S",
+          "depth": 1,
+          "name": "Trevon Moehrig",
+          "rating": 5
+        },
+        {
+          "position": "S",
+          "depth": 2,
+          "name": "Nick Scott",
+          "rating": 4
+        },
+        {
+          "position": "S",
+          "depth": 3,
+          "name": "Lathan Ransom",
+          "rating": 3
         }
       ],
       "New Orleans Saints": [
@@ -42872,18 +43886,6 @@
         },
         {
           "position": "QB",
-          "depth": 1,
-          "name": "Baker Mayfield",
-          "rating": 6
-        },
-        {
-          "position": "DI",
-          "depth": 1,
-          "name": "Vita Vea",
-          "rating": 8
-        },
-        {
-          "position": "QB",
           "depth": 2,
           "name": "Spencer Rattler",
           "rating": 2
@@ -42892,18 +43894,6 @@
           "position": "DI",
           "depth": 2,
           "name": "Christen Miller",
-          "rating": 4
-        },
-        {
-          "position": "QB",
-          "depth": 2,
-          "name": "Jake Browning",
-          "rating": 2
-        },
-        {
-          "position": "DI",
-          "depth": 2,
-          "name": "Calijah Kancey",
           "rating": 4
         },
         {
@@ -42916,6 +43906,132 @@
           "position": "DI",
           "depth": 3,
           "name": "Davon Godchaux",
+          "rating": 4
+        },
+        {
+          "position": "RB",
+          "depth": 2,
+          "name": "Alvin Kamara",
+          "rating": 5
+        },
+        {
+          "position": "ED",
+          "depth": 1,
+          "name": "Chase Young",
+          "rating": 6
+        },
+        {
+          "position": "WR",
+          "depth": 1,
+          "name": "Chris Olave",
+          "rating": 8
+        },
+        {
+          "position": "ED",
+          "depth": 2,
+          "name": "Carl Granderson",
+          "rating": 6
+        },
+        {
+          "position": "WR",
+          "depth": 2,
+          "name": "Jordyn Tyson",
+          "rating": 6
+        },
+        {
+          "position": "ED",
+          "depth": 3,
+          "name": "Cameron Jordan",
+          "rating": 5
+        },
+        {
+          "position": "WR",
+          "depth": 3,
+          "name": "Devaughn Vele",
+          "rating": 4
+        },
+        {
+          "position": "LB",
+          "depth": 1,
+          "name": "Kaden Elliss",
+          "rating": 7
+        },
+        {
+          "position": "WR",
+          "depth": 4,
+          "name": "Bryce Lance",
+          "rating": 3
+        },
+        {
+          "position": "LB",
+          "depth": 2,
+          "name": "Pete Werner",
+          "rating": 4
+        },
+        {
+          "position": "TE",
+          "depth": 1,
+          "name": "Juwan Johnson",
+          "rating": 5
+        },
+        {
+          "position": "LB",
+          "depth": 3,
+          "name": "Danny Stutsman",
+          "rating": 3
+        },
+        {
+          "position": "TE",
+          "depth": 2,
+          "name": "Noah Fant",
+          "rating": 4
+        },
+        {
+          "position": "CB",
+          "depth": 1,
+          "name": "Kool-Aid McKinstry",
+          "rating": 7
+        },
+        {
+          "position": "TE",
+          "depth": 3,
+          "name": "Oscar Delp",
+          "rating": 3
+        },
+        {
+          "position": "CB",
+          "depth": 2,
+          "name": "Jonas Sanker",
+          "rating": 5
+        },
+        {
+          "position": "CB",
+          "depth": 3,
+          "name": "Martin Emerson",
+          "rating": 4
+        },
+        {
+          "position": "CB",
+          "depth": 4,
+          "name": "Quincy Riley",
+          "rating": 4
+        },
+        {
+          "position": "S",
+          "depth": 1,
+          "name": "Justin Reid",
+          "rating": 6
+        },
+        {
+          "position": "S",
+          "depth": 2,
+          "name": "Julian Blackmon",
+          "rating": 7
+        },
+        {
+          "position": "S",
+          "depth": 3,
+          "name": "Jordan Howden",
           "rating": 4
         }
       ],
@@ -42935,18 +44051,6 @@
         {
           "position": "QB",
           "depth": 2,
-          "name": "Spencer Rattler",
-          "rating": 2
-        },
-        {
-          "position": "DI",
-          "depth": 2,
-          "name": "Christen Miller",
-          "rating": 4
-        },
-        {
-          "position": "QB",
-          "depth": 2,
           "name": "Jake Browning",
           "rating": 2
         },
@@ -42954,18 +44058,6 @@
           "position": "DI",
           "depth": 2,
           "name": "Calijah Kancey",
-          "rating": 4
-        },
-        {
-          "position": "RB",
-          "depth": 1,
-          "name": "Travis Etienne",
-          "rating": 7
-        },
-        {
-          "position": "DI",
-          "depth": 3,
-          "name": "Davon Godchaux",
           "rating": 4
         },
         {
@@ -42979,6 +44071,132 @@
           "depth": 3,
           "name": "A'Shawn Robinson",
           "rating": 5
+        },
+        {
+          "position": "RB",
+          "depth": 2,
+          "name": "Kenneth Gainwell",
+          "rating": 5
+        },
+        {
+          "position": "ED",
+          "depth": 1,
+          "name": "YaYa Diaby",
+          "rating": 7
+        },
+        {
+          "position": "WR",
+          "depth": 1,
+          "name": "Emeka Egbuka",
+          "rating": 6
+        },
+        {
+          "position": "ED",
+          "depth": 2,
+          "name": "Rueben Bain Jr.",
+          "rating": 5
+        },
+        {
+          "position": "WR",
+          "depth": 2,
+          "name": "Chris Godwin",
+          "rating": 7
+        },
+        {
+          "position": "ED",
+          "depth": 3,
+          "name": "Al-Quadin Muhammad",
+          "rating": 5
+        },
+        {
+          "position": "WR",
+          "depth": 3,
+          "name": "Jalen McMillan",
+          "rating": 5
+        },
+        {
+          "position": "LB",
+          "depth": 1,
+          "name": "Alex Anzalone",
+          "rating": 6
+        },
+        {
+          "position": "WR",
+          "depth": 4,
+          "name": "Ted Hurst",
+          "rating": 4
+        },
+        {
+          "position": "LB",
+          "depth": 2,
+          "name": "SirVocea Dennis",
+          "rating": 4
+        },
+        {
+          "position": "TE",
+          "depth": 1,
+          "name": "Cade Otton",
+          "rating": 5
+        },
+        {
+          "position": "LB",
+          "depth": 3,
+          "name": "Josiah Trotter",
+          "rating": 4
+        },
+        {
+          "position": "TE",
+          "depth": 2,
+          "name": "Payne Durham",
+          "rating": 3
+        },
+        {
+          "position": "CB",
+          "depth": 1,
+          "name": "Zyon McCollum",
+          "rating": 6
+        },
+        {
+          "position": "TE",
+          "depth": 3,
+          "name": "Ko Kieft",
+          "rating": 1
+        },
+        {
+          "position": "CB",
+          "depth": 2,
+          "name": "Benjamin Morrison",
+          "rating": 4
+        },
+        {
+          "position": "CB",
+          "depth": 3,
+          "name": "Jacob Parrish",
+          "rating": 6
+        },
+        {
+          "position": "CB",
+          "depth": 4,
+          "name": "Keionte Scott",
+          "rating": 4
+        },
+        {
+          "position": "S",
+          "depth": 1,
+          "name": "Antoine Winfield Jr.",
+          "rating": 7
+        },
+        {
+          "position": "S",
+          "depth": 2,
+          "name": "Tykee Smith",
+          "rating": 5
+        },
+        {
+          "position": "S",
+          "depth": 3,
+          "name": "Ifeatu Melifonwu",
+          "rating": 4
         }
       ]
     },
@@ -42998,18 +44216,6 @@
         },
         {
           "position": "QB",
-          "depth": 1,
-          "name": "Matthew Stafford",
-          "rating": 9
-        },
-        {
-          "position": "DI",
-          "depth": 1,
-          "name": "Kobie Turner",
-          "rating": 8
-        },
-        {
-          "position": "QB",
           "depth": 2,
           "name": "Gardner Minshew",
           "rating": 2
@@ -43021,18 +44227,6 @@
           "rating": 5
         },
         {
-          "position": "QB",
-          "depth": 2,
-          "name": "Ty Simpson",
-          "rating": 3
-        },
-        {
-          "position": "DI",
-          "depth": 2,
-          "name": "Poona Ford",
-          "rating": 7
-        },
-        {
           "position": "RB",
           "depth": 1,
           "name": "Jeremiyah Love",
@@ -43042,6 +44236,132 @@
           "position": "DI",
           "depth": 3,
           "name": "Darius Robinson",
+          "rating": 4
+        },
+        {
+          "position": "RB",
+          "depth": 2,
+          "name": "Tyler Allgeier",
+          "rating": 4
+        },
+        {
+          "position": "ED",
+          "depth": 1,
+          "name": "Josh Sweat",
+          "rating": 6
+        },
+        {
+          "position": "WR",
+          "depth": 1,
+          "name": "Marvin Harrison Jr.",
+          "rating": 6
+        },
+        {
+          "position": "ED",
+          "depth": 2,
+          "name": "Baron Browning",
+          "rating": 3
+        },
+        {
+          "position": "WR",
+          "depth": 2,
+          "name": "Michael Wilson",
+          "rating": 6
+        },
+        {
+          "position": "ED",
+          "depth": 3,
+          "name": "Zaven Collins",
+          "rating": 5
+        },
+        {
+          "position": "WR",
+          "depth": 3,
+          "name": "Kendrick Bourne",
+          "rating": 4
+        },
+        {
+          "position": "LB",
+          "depth": 1,
+          "name": "Mack Wilson",
+          "rating": 5
+        },
+        {
+          "position": "WR",
+          "depth": 4,
+          "name": "Reggie Virgil",
+          "rating": 2
+        },
+        {
+          "position": "LB",
+          "depth": 2,
+          "name": "Cody Simon",
+          "rating": 3
+        },
+        {
+          "position": "TE",
+          "depth": 1,
+          "name": "Trey McBride",
+          "rating": 9
+        },
+        {
+          "position": "LB",
+          "depth": 3,
+          "name": "Owen Pappoe",
+          "rating": 2
+        },
+        {
+          "position": "TE",
+          "depth": 2,
+          "name": "Elijah Higgins",
+          "rating": 3
+        },
+        {
+          "position": "CB",
+          "depth": 1,
+          "name": "Will Johnson",
+          "rating": 5
+        },
+        {
+          "position": "TE",
+          "depth": 3,
+          "name": "Tip Reiman",
+          "rating": 2
+        },
+        {
+          "position": "CB",
+          "depth": 2,
+          "name": "Garrett Williams",
+          "rating": 6
+        },
+        {
+          "position": "CB",
+          "depth": 3,
+          "name": "Denzel Burke",
+          "rating": 3
+        },
+        {
+          "position": "CB",
+          "depth": 4,
+          "name": "Max Melton",
+          "rating": 4
+        },
+        {
+          "position": "S",
+          "depth": 1,
+          "name": "Budda Baker",
+          "rating": 5
+        },
+        {
+          "position": "S",
+          "depth": 2,
+          "name": "Dadrion Taylor-Demerson",
+          "rating": 3
+        },
+        {
+          "position": "S",
+          "depth": 3,
+          "name": "Andrew Wingard",
           "rating": 4
         }
       ],
@@ -43061,18 +44381,6 @@
         {
           "position": "QB",
           "depth": 2,
-          "name": "Gardner Minshew",
-          "rating": 2
-        },
-        {
-          "position": "DI",
-          "depth": 2,
-          "name": "Roy Lopez",
-          "rating": 5
-        },
-        {
-          "position": "QB",
-          "depth": 2,
           "name": "Ty Simpson",
           "rating": 3
         },
@@ -43085,18 +44393,6 @@
         {
           "position": "RB",
           "depth": 1,
-          "name": "Jeremiyah Love",
-          "rating": 8
-        },
-        {
-          "position": "DI",
-          "depth": 3,
-          "name": "Darius Robinson",
-          "rating": 4
-        },
-        {
-          "position": "RB",
-          "depth": 1,
           "name": "Kyren Williams",
           "rating": 7
         },
@@ -43105,6 +44401,296 @@
           "depth": 3,
           "name": "Braden Fiske",
           "rating": 4
+        },
+        {
+          "position": "RB",
+          "depth": 2,
+          "name": "Blake Corum",
+          "rating": 4
+        },
+        {
+          "position": "ED",
+          "depth": 1,
+          "name": "Myles Garrett",
+          "rating": 9
+        },
+        {
+          "position": "WR",
+          "depth": 1,
+          "name": "Puka Nacua",
+          "rating": 9
+        },
+        {
+          "position": "ED",
+          "depth": 2,
+          "name": "Byron I. Young",
+          "rating": 7
+        },
+        {
+          "position": "WR",
+          "depth": 2,
+          "name": "Davante Adams",
+          "rating": 7
+        },
+        {
+          "position": "ED",
+          "depth": 3,
+          "name": "Josaiah Stewart",
+          "rating": 5
+        },
+        {
+          "position": "WR",
+          "depth": 3,
+          "name": "Konata Mumpfield",
+          "rating": 3
+        },
+        {
+          "position": "LB",
+          "depth": 1,
+          "name": "Nate Landman",
+          "rating": 6
+        },
+        {
+          "position": "WR",
+          "depth": 4,
+          "name": "Jordan Whittington",
+          "rating": 3
+        },
+        {
+          "position": "LB",
+          "depth": 2,
+          "name": "Omar Speights",
+          "rating": 5
+        },
+        {
+          "position": "TE",
+          "depth": 1,
+          "name": "Terrance Ferguson",
+          "rating": 4
+        },
+        {
+          "position": "LB",
+          "depth": 3,
+          "name": "Shaun Dolac",
+          "rating": 3
+        },
+        {
+          "position": "TE",
+          "depth": 2,
+          "name": "Colby Parkinson",
+          "rating": 4
+        },
+        {
+          "position": "CB",
+          "depth": 1,
+          "name": "Trent McDuffie",
+          "rating": 9
+        },
+        {
+          "position": "TE",
+          "depth": 3,
+          "name": "Tyler Higbee",
+          "rating": 5
+        },
+        {
+          "position": "CB",
+          "depth": 2,
+          "name": "Quentin Lake",
+          "rating": 7
+        },
+        {
+          "position": "CB",
+          "depth": 3,
+          "name": "Jaylen Watson",
+          "rating": 8
+        },
+        {
+          "position": "CB",
+          "depth": 4,
+          "name": "Emmanuel Forbes",
+          "rating": 3
+        },
+        {
+          "position": "S",
+          "depth": 1,
+          "name": "Kamren Curl",
+          "rating": 7
+        },
+        {
+          "position": "S",
+          "depth": 2,
+          "name": "Kamren Kinchens",
+          "rating": 6
+        },
+        {
+          "position": "S",
+          "depth": 3,
+          "name": "Jaylen McCollough",
+          "rating": 4
+        }
+      ],
+      "San Francisco 49ers": [
+        {
+          "position": "QB",
+          "depth": 1,
+          "name": "Brock Purdy",
+          "rating": 7
+        },
+        {
+          "position": "DI",
+          "depth": 1,
+          "name": "Osa Odighizuwa",
+          "rating": 7
+        },
+        {
+          "position": "QB",
+          "depth": 2,
+          "name": "Mac Jones",
+          "rating": 3
+        },
+        {
+          "position": "DI",
+          "depth": 2,
+          "name": "Alfred Collins",
+          "rating": 4
+        },
+        {
+          "position": "RB",
+          "depth": 1,
+          "name": "Christian McCaffrey",
+          "rating": 9
+        },
+        {
+          "position": "DI",
+          "depth": 3,
+          "name": "CJ West",
+          "rating": 3
+        },
+        {
+          "position": "RB",
+          "depth": 2,
+          "name": "Kaelon Black",
+          "rating": 3
+        },
+        {
+          "position": "ED",
+          "depth": 1,
+          "name": "Nick Bosa",
+          "rating": 9
+        },
+        {
+          "position": "WR",
+          "depth": 1,
+          "name": "Mike Evans",
+          "rating": 7
+        },
+        {
+          "position": "ED",
+          "depth": 2,
+          "name": "Mykel Williams",
+          "rating": 5
+        },
+        {
+          "position": "WR",
+          "depth": 2,
+          "name": "Deebo Samuel",
+          "rating": 6
+        },
+        {
+          "position": "ED",
+          "depth": 3,
+          "name": "Sam Okuayinonu",
+          "rating": 4
+        },
+        {
+          "position": "WR",
+          "depth": 3,
+          "name": "De'Zhaun Stribling",
+          "rating": 4
+        },
+        {
+          "position": "LB",
+          "depth": 1,
+          "name": "Fred Warner",
+          "rating": 9
+        },
+        {
+          "position": "WR",
+          "depth": 4,
+          "name": "Christian Kirk",
+          "rating": 5
+        },
+        {
+          "position": "LB",
+          "depth": 2,
+          "name": "Dre Greenlaw",
+          "rating": 6
+        },
+        {
+          "position": "TE",
+          "depth": 1,
+          "name": "George Kittle",
+          "rating": 8
+        },
+        {
+          "position": "LB",
+          "depth": 3,
+          "name": "Tatum Bethune",
+          "rating": 3
+        },
+        {
+          "position": "TE",
+          "depth": 2,
+          "name": "Jake Tonges",
+          "rating": 4
+        },
+        {
+          "position": "CB",
+          "depth": 1,
+          "name": "Deommodore Lenoir",
+          "rating": 6
+        },
+        {
+          "position": "TE",
+          "depth": 3,
+          "name": "Luke Farrell",
+          "rating": 3
+        },
+        {
+          "position": "CB",
+          "depth": 2,
+          "name": "Renardo Green",
+          "rating": 4
+        },
+        {
+          "position": "CB",
+          "depth": 3,
+          "name": "Upton Stout",
+          "rating": 5
+        },
+        {
+          "position": "CB",
+          "depth": 4,
+          "name": "Nate Hobbs",
+          "rating": 4
+        },
+        {
+          "position": "S",
+          "depth": 1,
+          "name": "Malik Mustapha",
+          "rating": 4
+        },
+        {
+          "position": "S",
+          "depth": 2,
+          "name": "Ji'Ayir Brown",
+          "rating": 4
+        },
+        {
+          "position": "S",
+          "depth": 3,
+          "name": "Marques Sigle",
+          "rating": 3
         }
       ],
       "Seattle Seahawks": [
@@ -43123,18 +44709,6 @@
         {
           "position": "QB",
           "depth": 2,
-          "name": "Mac Jones",
-          "rating": 3
-        },
-        {
-          "position": "DI",
-          "depth": 2,
-          "name": "Alfred Collins",
-          "rating": 4
-        },
-        {
-          "position": "QB",
-          "depth": 2,
           "name": "Drew Lock",
           "rating": 2
         },
@@ -43143,18 +44717,6 @@
           "depth": 2,
           "name": "Byron Murphy II",
           "rating": 7
-        },
-        {
-          "position": "RB",
-          "depth": 1,
-          "name": "Christian McCaffrey",
-          "rating": 9
-        },
-        {
-          "position": "DI",
-          "depth": 3,
-          "name": "CJ West",
-          "rating": 3
         },
         {
           "position": "RB",
@@ -43171,70 +44733,128 @@
         {
           "position": "RB",
           "depth": 2,
-          "name": "Kaelon Black",
-          "rating": 3
-        }
-      ],
-      "San Francisco 49ers": [
+          "name": "Jadarian Price",
+          "rating": 5
+        },
         {
-          "position": "QB",
+          "position": "ED",
           "depth": 1,
-          "name": "Brock Purdy",
+          "name": "DeMarcus Lawrence",
           "rating": 7
         },
         {
-          "position": "DI",
+          "position": "WR",
           "depth": 1,
-          "name": "Osa Odighizuwa",
-          "rating": 7
-        },
-        {
-          "position": "QB",
-          "depth": 1,
-          "name": "Sam Darnold",
-          "rating": 6
-        },
-        {
-          "position": "DI",
-          "depth": 1,
-          "name": "Leonard Williams",
+          "name": "Jaxon Smith-Njigba",
           "rating": 9
         },
         {
-          "position": "QB",
+          "position": "ED",
           "depth": 2,
-          "name": "Mac Jones",
-          "rating": 3
-        },
-        {
-          "position": "DI",
-          "depth": 2,
-          "name": "Alfred Collins",
+          "name": "Uchenna Nwosu",
           "rating": 4
         },
         {
-          "position": "QB",
+          "position": "WR",
           "depth": 2,
-          "name": "Drew Lock",
-          "rating": 2
+          "name": "Rashid Shaheed",
+          "rating": 5
         },
         {
-          "position": "DI",
-          "depth": 2,
-          "name": "Byron Murphy II",
-          "rating": 7
+          "position": "ED",
+          "depth": 3,
+          "name": "Derick Hall",
+          "rating": 4
         },
         {
-          "position": "RB",
+          "position": "WR",
+          "depth": 3,
+          "name": "Cooper Kupp",
+          "rating": 5
+        },
+        {
+          "position": "LB",
           "depth": 1,
-          "name": "Christian McCaffrey",
+          "name": "Ernest Jones",
+          "rating": 5
+        },
+        {
+          "position": "WR",
+          "depth": 4,
+          "name": "Tory Horton",
+          "rating": 4
+        },
+        {
+          "position": "LB",
+          "depth": 2,
+          "name": "Drake Thomas",
+          "rating": 6
+        },
+        {
+          "position": "TE",
+          "depth": 1,
+          "name": "A.J. Barner",
+          "rating": 6
+        },
+        {
+          "position": "LB",
+          "depth": 3,
+          "name": "Tyrice Knight",
+          "rating": 4
+        },
+        {
+          "position": "TE",
+          "depth": 2,
+          "name": "Elijah Arroyo",
+          "rating": 4
+        },
+        {
+          "position": "CB",
+          "depth": 1,
+          "name": "Devon Witherspoon",
           "rating": 9
         },
         {
-          "position": "DI",
+          "position": "TE",
           "depth": 3,
-          "name": "CJ West",
+          "name": "Eric Saubert",
           "rating": 3
+        },
+        {
+          "position": "CB",
+          "depth": 2,
+          "name": "Nick Emmanwori",
+          "rating": 8
+        },
+        {
+          "position": "CB",
+          "depth": 3,
+          "name": "Josh Jobe",
+          "rating": 3
+        },
+        {
+          "position": "CB",
+          "depth": 4,
+          "name": "Terrion Arnold",
+          "rating": 4
+        },
+        {
+          "position": "S",
+          "depth": 1,
+          "name": "Julian Love",
+          "rating": 8
+        },
+        {
+          "position": "S",
+          "depth": 2,
+          "name": "Ty Okada",
+          "rating": 5
+        },
+        {
+          "position": "S",
+          "depth": 3,
+          "name": "Bud Clark",
+          "rating": 4
         }
       ]
     },
@@ -43254,18 +44874,6 @@
         },
         {
           "position": "QB",
-          "depth": 1,
-          "name": "Malik Willis",
-          "rating": 4
-        },
-        {
-          "position": "DI",
-          "depth": 1,
-          "name": "Zach Sieler",
-          "rating": 7
-        },
-        {
-          "position": "QB",
           "depth": 2,
           "name": "Kyle Allen",
           "rating": 2
@@ -43275,18 +44883,6 @@
           "depth": 2,
           "name": "Deone Walker",
           "rating": 5
-        },
-        {
-          "position": "QB",
-          "depth": 2,
-          "name": "Quinn Ewers",
-          "rating": 2
-        },
-        {
-          "position": "DI",
-          "depth": 2,
-          "name": "Kenneth Grant",
-          "rating": 4
         },
         {
           "position": "RB",
@@ -43302,9 +44898,129 @@
         },
         {
           "position": "RB",
+          "depth": 2,
+          "name": "Ty Johnson",
+          "rating": 3
+        },
+        {
+          "position": "ED",
           "depth": 1,
-          "name": "De'Von Achane",
+          "name": "Gregory Rousseau",
           "rating": 8
+        },
+        {
+          "position": "WR",
+          "depth": 1,
+          "name": "DJ Moore",
+          "rating": 6
+        },
+        {
+          "position": "ED",
+          "depth": 2,
+          "name": "Bradley Chubb",
+          "rating": 5
+        },
+        {
+          "position": "WR",
+          "depth": 2,
+          "name": "Khalil Shakir",
+          "rating": 5
+        },
+        {
+          "position": "ED",
+          "depth": 3,
+          "name": "Mike Danna",
+          "rating": 4
+        },
+        {
+          "position": "WR",
+          "depth": 3,
+          "name": "Keon Coleman",
+          "rating": 4
+        },
+        {
+          "position": "LB",
+          "depth": 1,
+          "name": "Terrel Bernard",
+          "rating": 4
+        },
+        {
+          "position": "WR",
+          "depth": 4,
+          "name": "Josh Palmer",
+          "rating": 4
+        },
+        {
+          "position": "LB",
+          "depth": 2,
+          "name": "Dorian Williams",
+          "rating": 3
+        },
+        {
+          "position": "TE",
+          "depth": 1,
+          "name": "Dalton Kincaid",
+          "rating": 7
+        },
+        {
+          "position": "LB",
+          "depth": 3,
+          "name": "Joe Andreessen",
+          "rating": 3
+        },
+        {
+          "position": "TE",
+          "depth": 2,
+          "name": "Dawson Knox",
+          "rating": 5
+        },
+        {
+          "position": "CB",
+          "depth": 1,
+          "name": "Christian Benford",
+          "rating": 8
+        },
+        {
+          "position": "TE",
+          "depth": 3,
+          "name": "Jackson Hawes",
+          "rating": 4
+        },
+        {
+          "position": "CB",
+          "depth": 2,
+          "name": "Maxwell Hairston",
+          "rating": 5
+        },
+        {
+          "position": "CB",
+          "depth": 3,
+          "name": "Dee Alford",
+          "rating": 3
+        },
+        {
+          "position": "CB",
+          "depth": 4,
+          "name": "Davison Igbinosun",
+          "rating": 4
+        },
+        {
+          "position": "S",
+          "depth": 1,
+          "name": "Cole Bishop",
+          "rating": 5
+        },
+        {
+          "position": "S",
+          "depth": 2,
+          "name": "Chauncey Gardner-Johnson",
+          "rating": 5
+        },
+        {
+          "position": "S",
+          "depth": 3,
+          "name": "Geno Stone",
+          "rating": 4
         }
       ],
       "Miami Dolphins": [
@@ -43323,18 +45039,6 @@
         {
           "position": "QB",
           "depth": 2,
-          "name": "Kyle Allen",
-          "rating": 2
-        },
-        {
-          "position": "DI",
-          "depth": 2,
-          "name": "Deone Walker",
-          "rating": 5
-        },
-        {
-          "position": "QB",
-          "depth": 2,
           "name": "Quinn Ewers",
           "rating": 2
         },
@@ -43342,18 +45046,6 @@
           "position": "DI",
           "depth": 2,
           "name": "Kenneth Grant",
-          "rating": 4
-        },
-        {
-          "position": "RB",
-          "depth": 1,
-          "name": "James Cook",
-          "rating": 8
-        },
-        {
-          "position": "DI",
-          "depth": 3,
-          "name": "T.J. Sanders",
           "rating": 4
         },
         {
@@ -43371,7 +45063,127 @@
         {
           "position": "RB",
           "depth": 2,
-          "name": "Ty Johnson",
+          "name": "Jaylen Wright",
+          "rating": 3
+        },
+        {
+          "position": "ED",
+          "depth": 1,
+          "name": "Chop Robinson",
+          "rating": 4
+        },
+        {
+          "position": "WR",
+          "depth": 1,
+          "name": "Caleb Douglas",
+          "rating": 3
+        },
+        {
+          "position": "ED",
+          "depth": 2,
+          "name": "Josh Uche",
+          "rating": 4
+        },
+        {
+          "position": "WR",
+          "depth": 2,
+          "name": "Malik Washington",
+          "rating": 3
+        },
+        {
+          "position": "ED",
+          "depth": 3,
+          "name": "Clelin Ferrell",
+          "rating": 3
+        },
+        {
+          "position": "WR",
+          "depth": 3,
+          "name": "Jalen Tolbert",
+          "rating": 3
+        },
+        {
+          "position": "LB",
+          "depth": 1,
+          "name": "Jordyn Brooks",
+          "rating": 8
+        },
+        {
+          "position": "WR",
+          "depth": 4,
+          "name": "Tutu Atwell",
+          "rating": 3
+        },
+        {
+          "position": "LB",
+          "depth": 2,
+          "name": "Tyrel Dodson",
+          "rating": 5
+        },
+        {
+          "position": "TE",
+          "depth": 1,
+          "name": "Greg Dulcich",
+          "rating": 4
+        },
+        {
+          "position": "LB",
+          "depth": 3,
+          "name": "Jacob Rodriguez",
+          "rating": 4
+        },
+        {
+          "position": "TE",
+          "depth": 2,
+          "name": "Will Kacmarek",
+          "rating": 3
+        },
+        {
+          "position": "CB",
+          "depth": 1,
+          "name": "Chris A. Johnson",
+          "rating": 5
+        },
+        {
+          "position": "TE",
+          "depth": 3,
+          "name": "Ben Sims",
+          "rating": 2
+        },
+        {
+          "position": "CB",
+          "depth": 2,
+          "name": "Julius Brents",
+          "rating": 4
+        },
+        {
+          "position": "CB",
+          "depth": 3,
+          "name": "Jason Marshall Jr.",
+          "rating": 2
+        },
+        {
+          "position": "CB",
+          "depth": 4,
+          "name": "Storm Duck",
+          "rating": 2
+        },
+        {
+          "position": "S",
+          "depth": 1,
+          "name": "Dante Trader Jr.",
+          "rating": 3
+        },
+        {
+          "position": "S",
+          "depth": 2,
+          "name": "Zayne Anderson",
+          "rating": 1
+        },
+        {
+          "position": "S",
+          "depth": 3,
+          "name": "Michael Taaffe",
           "rating": 3
         }
       ],
@@ -43390,18 +45202,6 @@
         },
         {
           "position": "QB",
-          "depth": 1,
-          "name": "Geno Smith",
-          "rating": 4
-        },
-        {
-          "position": "DI",
-          "depth": 1,
-          "name": "T'Vondre Sweat",
-          "rating": 7
-        },
-        {
-          "position": "QB",
           "depth": 2,
           "name": "Tommy DeVito",
           "rating": 1
@@ -43411,18 +45211,6 @@
           "depth": 2,
           "name": "Christian Barmore",
           "rating": 5
-        },
-        {
-          "position": "QB",
-          "depth": 2,
-          "name": "Cade Klubnik",
-          "rating": 2
-        },
-        {
-          "position": "DI",
-          "depth": 2,
-          "name": "Harrison Phillips",
-          "rating": 6
         },
         {
           "position": "RB",
@@ -43435,6 +45223,132 @@
           "depth": 3,
           "name": "Cory Durden",
           "rating": 6
+        },
+        {
+          "position": "RB",
+          "depth": 2,
+          "name": "TreVeyon Henderson",
+          "rating": 5
+        },
+        {
+          "position": "ED",
+          "depth": 1,
+          "name": "Harold Landry",
+          "rating": 6
+        },
+        {
+          "position": "WR",
+          "depth": 1,
+          "name": "A.J. Brown",
+          "rating": 8
+        },
+        {
+          "position": "ED",
+          "depth": 2,
+          "name": "Dre'Mont Jones",
+          "rating": 4
+        },
+        {
+          "position": "WR",
+          "depth": 2,
+          "name": "Romeo Doubs",
+          "rating": 6
+        },
+        {
+          "position": "ED",
+          "depth": 3,
+          "name": "Elijah Ponder",
+          "rating": 3
+        },
+        {
+          "position": "WR",
+          "depth": 3,
+          "name": "Kayshon Boutte",
+          "rating": 4
+        },
+        {
+          "position": "LB",
+          "depth": 1,
+          "name": "Robert Spillane",
+          "rating": 7
+        },
+        {
+          "position": "WR",
+          "depth": 4,
+          "name": "DeMario Douglas",
+          "rating": 4
+        },
+        {
+          "position": "LB",
+          "depth": 2,
+          "name": "Christian Elliss",
+          "rating": 4
+        },
+        {
+          "position": "TE",
+          "depth": 1,
+          "name": "Hunter Henry",
+          "rating": 7
+        },
+        {
+          "position": "LB",
+          "depth": 3,
+          "name": "K.J. Britt",
+          "rating": 3
+        },
+        {
+          "position": "TE",
+          "depth": 2,
+          "name": "Eli Raridon",
+          "rating": 3
+        },
+        {
+          "position": "CB",
+          "depth": 1,
+          "name": "Christian Gonzalez",
+          "rating": 8
+        },
+        {
+          "position": "TE",
+          "depth": 3,
+          "name": "CJ Dippre",
+          "rating": 1
+        },
+        {
+          "position": "CB",
+          "depth": 2,
+          "name": "Carlton Davis",
+          "rating": 8
+        },
+        {
+          "position": "CB",
+          "depth": 3,
+          "name": "Marcus Jones",
+          "rating": 6
+        },
+        {
+          "position": "CB",
+          "depth": 4,
+          "name": "Charles Woods",
+          "rating": 2
+        },
+        {
+          "position": "S",
+          "depth": 1,
+          "name": "Craig Woodson",
+          "rating": 8
+        },
+        {
+          "position": "S",
+          "depth": 2,
+          "name": "Kevin Byard",
+          "rating": 8
+        },
+        {
+          "position": "S",
+          "depth": 3,
+          "name": "Dell Pettus",
+          "rating": 3
         }
       ],
       "New York Jets": [
@@ -43453,18 +45367,6 @@
         {
           "position": "QB",
           "depth": 2,
-          "name": "Tommy DeVito",
-          "rating": 1
-        },
-        {
-          "position": "DI",
-          "depth": 2,
-          "name": "Christian Barmore",
-          "rating": 5
-        },
-        {
-          "position": "QB",
-          "depth": 2,
           "name": "Cade Klubnik",
           "rating": 2
         },
@@ -43472,18 +45374,6 @@
           "position": "DI",
           "depth": 2,
           "name": "Harrison Phillips",
-          "rating": 6
-        },
-        {
-          "position": "RB",
-          "depth": 1,
-          "name": "Rhamondre Stevenson",
-          "rating": 6
-        },
-        {
-          "position": "DI",
-          "depth": 3,
-          "name": "Cory Durden",
           "rating": 6
         },
         {
@@ -43497,6 +45387,132 @@
           "depth": 3,
           "name": "David Onyemata",
           "rating": 7
+        },
+        {
+          "position": "RB",
+          "depth": 2,
+          "name": "Braelon Allen",
+          "rating": 3
+        },
+        {
+          "position": "ED",
+          "depth": 1,
+          "name": "Will McDonald IV",
+          "rating": 4
+        },
+        {
+          "position": "WR",
+          "depth": 1,
+          "name": "Garrett Wilson",
+          "rating": 8
+        },
+        {
+          "position": "ED",
+          "depth": 2,
+          "name": "David Bailey",
+          "rating": 5
+        },
+        {
+          "position": "WR",
+          "depth": 2,
+          "name": "Adonai Mitchell",
+          "rating": 4
+        },
+        {
+          "position": "ED",
+          "depth": 3,
+          "name": "Joseph Ossai",
+          "rating": 4
+        },
+        {
+          "position": "WR",
+          "depth": 3,
+          "name": "Omar Cooper Jr.",
+          "rating": 5
+        },
+        {
+          "position": "LB",
+          "depth": 1,
+          "name": "Jamien Sherwood",
+          "rating": 7
+        },
+        {
+          "position": "WR",
+          "depth": 4,
+          "name": "Isaiah Williams",
+          "rating": 3
+        },
+        {
+          "position": "LB",
+          "depth": 2,
+          "name": "Demario Davis",
+          "rating": 9
+        },
+        {
+          "position": "TE",
+          "depth": 1,
+          "name": "Kenyon Sadiq",
+          "rating": 5
+        },
+        {
+          "position": "LB",
+          "depth": 3,
+          "name": "Marcelino McCrary-Ball",
+          "rating": 1
+        },
+        {
+          "position": "TE",
+          "depth": 2,
+          "name": "Mason Taylor",
+          "rating": 5
+        },
+        {
+          "position": "CB",
+          "depth": 1,
+          "name": "Brandon Stephens",
+          "rating": 6
+        },
+        {
+          "position": "TE",
+          "depth": 3,
+          "name": "Jeremy Ruckert",
+          "rating": 4
+        },
+        {
+          "position": "CB",
+          "depth": 2,
+          "name": "Nahshon Wright",
+          "rating": 7
+        },
+        {
+          "position": "CB",
+          "depth": 3,
+          "name": "D'Angelo Ponds",
+          "rating": 4
+        },
+        {
+          "position": "CB",
+          "depth": 4,
+          "name": "Azareye'h Thomas",
+          "rating": 4
+        },
+        {
+          "position": "S",
+          "depth": 1,
+          "name": "Minkah Fitzpatrick",
+          "rating": 8
+        },
+        {
+          "position": "S",
+          "depth": 2,
+          "name": "Andre Cisco",
+          "rating": 5
+        },
+        {
+          "position": "S",
+          "depth": 3,
+          "name": "Malachi Moore",
+          "rating": 4
         }
       ]
     },
@@ -43516,18 +45532,6 @@
         },
         {
           "position": "QB",
-          "depth": 1,
-          "name": "Joe Burrow",
-          "rating": 8
-        },
-        {
-          "position": "DI",
-          "depth": 1,
-          "name": "Dexter Lawrence",
-          "rating": 9
-        },
-        {
-          "position": "QB",
           "depth": 2,
           "name": "Tyler Huntley",
           "rating": 2
@@ -43539,18 +45543,6 @@
           "rating": 8
         },
         {
-          "position": "QB",
-          "depth": 2,
-          "name": "Joe Flacco",
-          "rating": 3
-        },
-        {
-          "position": "DI",
-          "depth": 2,
-          "name": "B.J. Hill",
-          "rating": 7
-        },
-        {
           "position": "RB",
           "depth": 1,
           "name": "Derrick Henry",
@@ -43560,6 +45552,132 @@
           "position": "DI",
           "depth": 3,
           "name": "Calais Campbell",
+          "rating": 7
+        },
+        {
+          "position": "RB",
+          "depth": 2,
+          "name": "Justice Hill",
+          "rating": 3
+        },
+        {
+          "position": "ED",
+          "depth": 1,
+          "name": "Trey Hendrickson",
+          "rating": 8
+        },
+        {
+          "position": "WR",
+          "depth": 1,
+          "name": "Zay Flowers",
+          "rating": 7
+        },
+        {
+          "position": "ED",
+          "depth": 2,
+          "name": "Mike Green",
+          "rating": 4
+        },
+        {
+          "position": "WR",
+          "depth": 2,
+          "name": "Rashod Bateman",
+          "rating": 5
+        },
+        {
+          "position": "ED",
+          "depth": 3,
+          "name": "Zion Young",
+          "rating": 4
+        },
+        {
+          "position": "WR",
+          "depth": 3,
+          "name": "Ja'Kobi Lane",
+          "rating": 3
+        },
+        {
+          "position": "LB",
+          "depth": 1,
+          "name": "Roquan Smith",
+          "rating": 7
+        },
+        {
+          "position": "WR",
+          "depth": 4,
+          "name": "Devontez Walker",
+          "rating": 3
+        },
+        {
+          "position": "LB",
+          "depth": 2,
+          "name": "Teddye Buchanan",
+          "rating": 4
+        },
+        {
+          "position": "TE",
+          "depth": 1,
+          "name": "Mark Andrews",
+          "rating": 6
+        },
+        {
+          "position": "LB",
+          "depth": 3,
+          "name": "Trenton Simpson",
+          "rating": 3
+        },
+        {
+          "position": "TE",
+          "depth": 2,
+          "name": "Durham Smythe",
+          "rating": 3
+        },
+        {
+          "position": "CB",
+          "depth": 1,
+          "name": "Nate Wiggins",
+          "rating": 6
+        },
+        {
+          "position": "TE",
+          "depth": 3,
+          "name": "Matthew Hibner",
+          "rating": 2
+        },
+        {
+          "position": "CB",
+          "depth": 2,
+          "name": "Marlon Humphrey",
+          "rating": 5
+        },
+        {
+          "position": "CB",
+          "depth": 3,
+          "name": "Chidobe Awuzie",
+          "rating": 6
+        },
+        {
+          "position": "CB",
+          "depth": 4,
+          "name": "T.J. Tampa",
+          "rating": 3
+        },
+        {
+          "position": "S",
+          "depth": 1,
+          "name": "Kyle Hamilton",
+          "rating": 9
+        },
+        {
+          "position": "S",
+          "depth": 2,
+          "name": "Malaki Starks",
+          "rating": 6
+        },
+        {
+          "position": "S",
+          "depth": 3,
+          "name": "Jaylinn Hawkins",
           "rating": 7
         }
       ],
@@ -43579,18 +45697,6 @@
         {
           "position": "QB",
           "depth": 2,
-          "name": "Tyler Huntley",
-          "rating": 2
-        },
-        {
-          "position": "DI",
-          "depth": 2,
-          "name": "Travis Jones",
-          "rating": 8
-        },
-        {
-          "position": "QB",
-          "depth": 2,
           "name": "Joe Flacco",
           "rating": 3
         },
@@ -43598,18 +45704,6 @@
           "position": "DI",
           "depth": 2,
           "name": "B.J. Hill",
-          "rating": 7
-        },
-        {
-          "position": "RB",
-          "depth": 1,
-          "name": "Derrick Henry",
-          "rating": 8
-        },
-        {
-          "position": "DI",
-          "depth": 3,
-          "name": "Calais Campbell",
           "rating": 7
         },
         {
@@ -43627,8 +45721,128 @@
         {
           "position": "RB",
           "depth": 2,
-          "name": "Justice Hill",
+          "name": "Samaje Perine",
           "rating": 3
+        },
+        {
+          "position": "ED",
+          "depth": 1,
+          "name": "Boye Mafe",
+          "rating": 6
+        },
+        {
+          "position": "WR",
+          "depth": 1,
+          "name": "Ja'Marr Chase",
+          "rating": 9
+        },
+        {
+          "position": "ED",
+          "depth": 2,
+          "name": "Myles Murphy",
+          "rating": 4
+        },
+        {
+          "position": "WR",
+          "depth": 2,
+          "name": "Tee Higgins",
+          "rating": 8
+        },
+        {
+          "position": "ED",
+          "depth": 3,
+          "name": "Shemar Stewart",
+          "rating": 4
+        },
+        {
+          "position": "WR",
+          "depth": 3,
+          "name": "Andrei Iosivas",
+          "rating": 4
+        },
+        {
+          "position": "LB",
+          "depth": 1,
+          "name": "Barrett Carter",
+          "rating": 4
+        },
+        {
+          "position": "WR",
+          "depth": 4,
+          "name": "Colbie Young",
+          "rating": 3
+        },
+        {
+          "position": "LB",
+          "depth": 2,
+          "name": "Demetrius Knight Jr.",
+          "rating": 4
+        },
+        {
+          "position": "TE",
+          "depth": 1,
+          "name": "Mike Gesicki",
+          "rating": 5
+        },
+        {
+          "position": "LB",
+          "depth": 3,
+          "name": "Oren Burks",
+          "rating": 2
+        },
+        {
+          "position": "TE",
+          "depth": 2,
+          "name": "Drew Sample",
+          "rating": 3
+        },
+        {
+          "position": "CB",
+          "depth": 1,
+          "name": "D.J. Turner",
+          "rating": 7
+        },
+        {
+          "position": "TE",
+          "depth": 3,
+          "name": "Erick All",
+          "rating": 2
+        },
+        {
+          "position": "CB",
+          "depth": 2,
+          "name": "Daxton Hill",
+          "rating": 6
+        },
+        {
+          "position": "CB",
+          "depth": 3,
+          "name": "Josh Newton",
+          "rating": 3
+        },
+        {
+          "position": "CB",
+          "depth": 4,
+          "name": "Tacario Davis",
+          "rating": 4
+        },
+        {
+          "position": "S",
+          "depth": 1,
+          "name": "Jordan Battle",
+          "rating": 4
+        },
+        {
+          "position": "S",
+          "depth": 2,
+          "name": "Bryan Cook",
+          "rating": 6
+        },
+        {
+          "position": "S",
+          "depth": 3,
+          "name": "Kyle Dugger",
+          "rating": 4
         }
       ],
       "Cleveland Browns": [
@@ -43646,18 +45860,6 @@
         },
         {
           "position": "QB",
-          "depth": 1,
-          "name": "Aaron Rodgers",
-          "rating": 4
-        },
-        {
-          "position": "DI",
-          "depth": 1,
-          "name": "Cameron Heyward",
-          "rating": 9
-        },
-        {
-          "position": "QB",
           "depth": 2,
           "name": "Shedeur Sanders",
           "rating": 3
@@ -43667,18 +45869,6 @@
           "depth": 2,
           "name": "Maliek Collins",
           "rating": 6
-        },
-        {
-          "position": "QB",
-          "depth": 2,
-          "name": "Drew Allar",
-          "rating": 2
-        },
-        {
-          "position": "DI",
-          "depth": 2,
-          "name": "Derrick Harmon",
-          "rating": 4
         },
         {
           "position": "RB",
@@ -43691,26 +45881,42 @@
           "depth": 3,
           "name": "Kalia Davis",
           "rating": 3
-        }
-      ],
-      "Kansas City Chiefs": [
+        },
+        {
+          "position": "RB",
+          "depth": 2,
+          "name": "Dylan Sampson",
+          "rating": 3
+        },
+        {
+          "position": "ED",
+          "depth": 1,
+          "name": "Jared Verse",
+          "rating": 8
+        },
+        {
+          "position": "WR",
+          "depth": 1,
+          "name": "Jerry Jeudy",
+          "rating": 6
+        },
+        {
+          "position": "ED",
+          "depth": 2,
+          "name": "Alex Wright",
+          "rating": 6
+        },
+        {
+          "position": "WR",
+          "depth": 2,
+          "name": "KC Concepcion",
+          "rating": 5
+        },
         {
           "position": "ED",
           "depth": 3,
           "name": "Isaiah McGuire",
           "rating": 5
-        },
-        {
-          "position": "WR",
-          "depth": 2,
-          "name": "DK Metcalf",
-          "rating": 7
-        },
-        {
-          "position": "ED",
-          "depth": 3,
-          "name": "Nick Herbig",
-          "rating": 7
         },
         {
           "position": "WR",
@@ -43726,18 +45932,6 @@
         },
         {
           "position": "WR",
-          "depth": 3,
-          "name": "Germie Bernard",
-          "rating": 4
-        },
-        {
-          "position": "LB",
-          "depth": 1,
-          "name": "Patrick Queen",
-          "rating": 4
-        },
-        {
-          "position": "WR",
           "depth": 4,
           "name": "Isaiah Bond",
           "rating": 3
@@ -43749,72 +45943,70 @@
           "rating": 5
         },
         {
-          "position": "WR",
-          "depth": 4,
-          "name": "Roman Wilson",
-          "rating": 3
-        }
-      ],
-      "Las Vegas Raiders": [
-        {
-          "position": "QB",
+          "position": "TE",
           "depth": 1,
-          "name": "Deshaun Watson",
-          "rating": 3
-        },
-        {
-          "position": "DI",
-          "depth": 1,
-          "name": "Mason Graham",
-          "rating": 8
-        },
-        {
-          "position": "QB",
-          "depth": 1,
-          "name": "Aaron Rodgers",
-          "rating": 4
-        },
-        {
-          "position": "DI",
-          "depth": 1,
-          "name": "Cameron Heyward",
-          "rating": 9
-        },
-        {
-          "position": "QB",
-          "depth": 2,
-          "name": "Shedeur Sanders",
-          "rating": 3
-        },
-        {
-          "position": "DI",
-          "depth": 2,
-          "name": "Maliek Collins",
+          "name": "Harold Fannin Jr.",
           "rating": 6
         },
         {
-          "position": "QB",
+          "position": "LB",
+          "depth": 3,
+          "name": "Justin X. Jefferson",
+          "rating": 3
+        },
+        {
+          "position": "TE",
           "depth": 2,
-          "name": "Drew Allar",
+          "name": "Joe Royer",
           "rating": 2
         },
         {
-          "position": "DI",
-          "depth": 2,
-          "name": "Derrick Harmon",
-          "rating": 4
+          "position": "CB",
+          "depth": 1,
+          "name": "Denzel Ward",
+          "rating": 5
         },
         {
-          "position": "RB",
-          "depth": 1,
-          "name": "Quinshon Judkins",
+          "position": "TE",
+          "depth": 3,
+          "name": "Jack Stoll",
+          "rating": 2
+        },
+        {
+          "position": "CB",
+          "depth": 2,
+          "name": "Tyson Campbell",
           "rating": 6
         },
         {
-          "position": "DI",
+          "position": "CB",
           "depth": 3,
-          "name": "Kalia Davis",
+          "name": "Myles Harden",
           "rating": 3
+        },
+        {
+          "position": "CB",
+          "depth": 4,
+          "name": "Myles Bryant",
+          "rating": 4
+        },
+        {
+          "position": "S",
+          "depth": 1,
+          "name": "Grant Delpit",
+          "rating": 6
+        },
+        {
+          "position": "S",
+          "depth": 2,
+          "name": "Ronnie Hickman",
+          "rating": 7
+        },
+        {
+          "position": "S",
+          "depth": 3,
+          "name": "Emmanuel McNeil-Warren",
+          "rating": 4
         }
       ],
       "Pittsburgh Steelers": [
@@ -43833,18 +46025,6 @@
         {
           "position": "QB",
           "depth": 2,
-          "name": "Shedeur Sanders",
-          "rating": 3
-        },
-        {
-          "position": "DI",
-          "depth": 2,
-          "name": "Maliek Collins",
-          "rating": 6
-        },
-        {
-          "position": "QB",
-          "depth": 2,
           "name": "Drew Allar",
           "rating": 2
         },
@@ -43857,18 +46037,6 @@
         {
           "position": "RB",
           "depth": 1,
-          "name": "Quinshon Judkins",
-          "rating": 6
-        },
-        {
-          "position": "DI",
-          "depth": 3,
-          "name": "Kalia Davis",
-          "rating": 3
-        },
-        {
-          "position": "RB",
-          "depth": 1,
           "name": "Jaylen Warren",
           "rating": 5
         },
@@ -43877,6 +46045,132 @@
           "depth": 3,
           "name": "Keeanu Benton",
           "rating": 6
+        },
+        {
+          "position": "RB",
+          "depth": 2,
+          "name": "Rico Dowdle",
+          "rating": 5
+        },
+        {
+          "position": "ED",
+          "depth": 1,
+          "name": "T.J. Watt",
+          "rating": 8
+        },
+        {
+          "position": "WR",
+          "depth": 1,
+          "name": "Michael Pittman Jr.",
+          "rating": 7
+        },
+        {
+          "position": "ED",
+          "depth": 2,
+          "name": "Alex Highsmith",
+          "rating": 8
+        },
+        {
+          "position": "WR",
+          "depth": 2,
+          "name": "DK Metcalf",
+          "rating": 7
+        },
+        {
+          "position": "ED",
+          "depth": 3,
+          "name": "Nick Herbig",
+          "rating": 7
+        },
+        {
+          "position": "WR",
+          "depth": 3,
+          "name": "Germie Bernard",
+          "rating": 4
+        },
+        {
+          "position": "LB",
+          "depth": 1,
+          "name": "Patrick Queen",
+          "rating": 4
+        },
+        {
+          "position": "WR",
+          "depth": 4,
+          "name": "Roman Wilson",
+          "rating": 3
+        },
+        {
+          "position": "LB",
+          "depth": 2,
+          "name": "Payton Wilson",
+          "rating": 4
+        },
+        {
+          "position": "TE",
+          "depth": 1,
+          "name": "Pat Freiermuth",
+          "rating": 5
+        },
+        {
+          "position": "LB",
+          "depth": 3,
+          "name": "Elandon Roberts",
+          "rating": 4
+        },
+        {
+          "position": "TE",
+          "depth": 2,
+          "name": "Darnell Washington",
+          "rating": 4
+        },
+        {
+          "position": "CB",
+          "depth": 1,
+          "name": "Joey Porter Jr.",
+          "rating": 6
+        },
+        {
+          "position": "TE",
+          "depth": 3,
+          "name": "Robert Tonyan",
+          "rating": 2
+        },
+        {
+          "position": "CB",
+          "depth": 2,
+          "name": "Jamel Dean",
+          "rating": 8
+        },
+        {
+          "position": "CB",
+          "depth": 3,
+          "name": "Jalen Ramsey",
+          "rating": 7
+        },
+        {
+          "position": "CB",
+          "depth": 4,
+          "name": "Asante Samuel Jr.",
+          "rating": 6
+        },
+        {
+          "position": "S",
+          "depth": 1,
+          "name": "Jaquan Brisker",
+          "rating": 6
+        },
+        {
+          "position": "S",
+          "depth": 2,
+          "name": "DeShon Elliott",
+          "rating": 6
+        },
+        {
+          "position": "S",
+          "depth": 3,
+          "name": "Rayshawn Jenkins",
+          "rating": 3
         }
       ]
     },
@@ -43896,18 +46190,6 @@
         },
         {
           "position": "QB",
-          "depth": 1,
-          "name": "Daniel Jones",
-          "rating": 5
-        },
-        {
-          "position": "DI",
-          "depth": 1,
-          "name": "DeForest Buckner",
-          "rating": 9
-        },
-        {
-          "position": "QB",
           "depth": 2,
           "name": "Davis Mills",
           "rating": 2
@@ -43916,18 +46198,6 @@
           "position": "DI",
           "depth": 2,
           "name": "Sheldon Rankins",
-          "rating": 6
-        },
-        {
-          "position": "QB",
-          "depth": 2,
-          "name": "Riley Leonard",
-          "rating": 2
-        },
-        {
-          "position": "DI",
-          "depth": 2,
-          "name": "Grover Stewart",
           "rating": 6
         },
         {
@@ -43941,6 +46211,132 @@
           "depth": 3,
           "name": "Logan Hall",
           "rating": 5
+        },
+        {
+          "position": "RB",
+          "depth": 2,
+          "name": "Woody Marks",
+          "rating": 4
+        },
+        {
+          "position": "ED",
+          "depth": 1,
+          "name": "Danielle Hunter",
+          "rating": 8
+        },
+        {
+          "position": "WR",
+          "depth": 1,
+          "name": "Nico Collins",
+          "rating": 8
+        },
+        {
+          "position": "ED",
+          "depth": 2,
+          "name": "Will Anderson Jr.",
+          "rating": 8
+        },
+        {
+          "position": "WR",
+          "depth": 2,
+          "name": "Tank Dell",
+          "rating": 5
+        },
+        {
+          "position": "ED",
+          "depth": 3,
+          "name": "Jadeveon Clowney",
+          "rating": 6
+        },
+        {
+          "position": "WR",
+          "depth": 3,
+          "name": "Jaylin Noel",
+          "rating": 4
+        },
+        {
+          "position": "LB",
+          "depth": 1,
+          "name": "Azeez Al-Shaair",
+          "rating": 7
+        },
+        {
+          "position": "WR",
+          "depth": 4,
+          "name": "Xavier Hutchinson",
+          "rating": 4
+        },
+        {
+          "position": "LB",
+          "depth": 2,
+          "name": "Henry To'oTo'o",
+          "rating": 5
+        },
+        {
+          "position": "TE",
+          "depth": 1,
+          "name": "Dalton Schultz",
+          "rating": 6
+        },
+        {
+          "position": "LB",
+          "depth": 3,
+          "name": "Marte Mapu",
+          "rating": 3
+        },
+        {
+          "position": "TE",
+          "depth": 2,
+          "name": "Cade Stover",
+          "rating": 3
+        },
+        {
+          "position": "CB",
+          "depth": 1,
+          "name": "Derek Stingley Jr.",
+          "rating": 7
+        },
+        {
+          "position": "TE",
+          "depth": 3,
+          "name": "Foster Moreau",
+          "rating": 3
+        },
+        {
+          "position": "CB",
+          "depth": 2,
+          "name": "Kamari Lassiter",
+          "rating": 8
+        },
+        {
+          "position": "CB",
+          "depth": 3,
+          "name": "Jalen Pitre",
+          "rating": 8
+        },
+        {
+          "position": "CB",
+          "depth": 4,
+          "name": "Jaylin Smith",
+          "rating": 4
+        },
+        {
+          "position": "S",
+          "depth": 1,
+          "name": "Calen Bullock",
+          "rating": 6
+        },
+        {
+          "position": "S",
+          "depth": 2,
+          "name": "Reed Blankenship",
+          "rating": 5
+        },
+        {
+          "position": "S",
+          "depth": 3,
+          "name": "Jaylen Reed",
+          "rating": 3
         }
       ],
       "Indianapolis Colts": [
@@ -43959,18 +46355,6 @@
         {
           "position": "QB",
           "depth": 2,
-          "name": "Davis Mills",
-          "rating": 2
-        },
-        {
-          "position": "DI",
-          "depth": 2,
-          "name": "Sheldon Rankins",
-          "rating": 6
-        },
-        {
-          "position": "QB",
-          "depth": 2,
           "name": "Riley Leonard",
           "rating": 2
         },
@@ -43983,18 +46367,6 @@
         {
           "position": "RB",
           "depth": 1,
-          "name": "David Montgomery",
-          "rating": 5
-        },
-        {
-          "position": "DI",
-          "depth": 3,
-          "name": "Logan Hall",
-          "rating": 5
-        },
-        {
-          "position": "RB",
-          "depth": 1,
           "name": "Jonathan Taylor",
           "rating": 9
         },
@@ -44002,6 +46374,132 @@
           "position": "DI",
           "depth": 3,
           "name": "Adetomiwa Adebawore",
+          "rating": 3
+        },
+        {
+          "position": "RB",
+          "depth": 2,
+          "name": "DJ Giddens",
+          "rating": 2
+        },
+        {
+          "position": "ED",
+          "depth": 1,
+          "name": "Laiatu Latu",
+          "rating": 7
+        },
+        {
+          "position": "WR",
+          "depth": 1,
+          "name": "Alec Pierce",
+          "rating": 6
+        },
+        {
+          "position": "ED",
+          "depth": 2,
+          "name": "Arden Key",
+          "rating": 6
+        },
+        {
+          "position": "WR",
+          "depth": 2,
+          "name": "Josh Downs",
+          "rating": 6
+        },
+        {
+          "position": "ED",
+          "depth": 3,
+          "name": "Micheal Clemons",
+          "rating": 3
+        },
+        {
+          "position": "WR",
+          "depth": 3,
+          "name": "Keenan Allen",
+          "rating": 6
+        },
+        {
+          "position": "LB",
+          "depth": 1,
+          "name": "Akeem Davis-Gaither",
+          "rating": 3
+        },
+        {
+          "position": "WR",
+          "depth": 4,
+          "name": "Ashton Dulin",
+          "rating": 2
+        },
+        {
+          "position": "LB",
+          "depth": 2,
+          "name": "CJ Allen",
+          "rating": 4
+        },
+        {
+          "position": "TE",
+          "depth": 1,
+          "name": "Tyler Warren",
+          "rating": 7
+        },
+        {
+          "position": "LB",
+          "depth": 3,
+          "name": "Austin Ajiake",
+          "rating": 1
+        },
+        {
+          "position": "TE",
+          "depth": 2,
+          "name": "Mo Alie-Cox",
+          "rating": 4
+        },
+        {
+          "position": "CB",
+          "depth": 1,
+          "name": "Sauce Gardner",
+          "rating": 8
+        },
+        {
+          "position": "TE",
+          "depth": 3,
+          "name": "Andrew Ogletree",
+          "rating": 3
+        },
+        {
+          "position": "CB",
+          "depth": 2,
+          "name": "Charvarius Ward",
+          "rating": 6
+        },
+        {
+          "position": "CB",
+          "depth": 3,
+          "name": "Mekhi Blackmon",
+          "rating": 4
+        },
+        {
+          "position": "CB",
+          "depth": 4,
+          "name": "Cam Taylor-Britt",
+          "rating": 5
+        },
+        {
+          "position": "S",
+          "depth": 1,
+          "name": "Camryn Bynum",
+          "rating": 6
+        },
+        {
+          "position": "S",
+          "depth": 2,
+          "name": "A.J. Haulcy",
+          "rating": 4
+        },
+        {
+          "position": "S",
+          "depth": 3,
+          "name": "Jonathan Owens",
           "rating": 3
         }
       ],
@@ -44020,18 +46518,6 @@
         },
         {
           "position": "QB",
-          "depth": 1,
-          "name": "Cameron Ward",
-          "rating": 4
-        },
-        {
-          "position": "DI",
-          "depth": 1,
-          "name": "Jeffery Simmons",
-          "rating": 9
-        },
-        {
-          "position": "QB",
           "depth": 2,
           "name": "Nick Mullens",
           "rating": 2
@@ -44041,18 +46527,6 @@
           "depth": 2,
           "name": "Davon Hamilton",
           "rating": 4
-        },
-        {
-          "position": "QB",
-          "depth": 2,
-          "name": "Mitchell Trubisky",
-          "rating": 3
-        },
-        {
-          "position": "DI",
-          "depth": 2,
-          "name": "Jordan Elliott",
-          "rating": 3
         },
         {
           "position": "RB",
@@ -44065,6 +46539,132 @@
           "depth": 3,
           "name": "Ruke Orhorhoro",
           "rating": 4
+        },
+        {
+          "position": "RB",
+          "depth": 2,
+          "name": "Chris Rodriguez",
+          "rating": 3
+        },
+        {
+          "position": "ED",
+          "depth": 1,
+          "name": "Joshua Hines-Allen",
+          "rating": 9
+        },
+        {
+          "position": "WR",
+          "depth": 1,
+          "name": "Jakobi Meyers",
+          "rating": 6
+        },
+        {
+          "position": "ED",
+          "depth": 2,
+          "name": "Travon Walker",
+          "rating": 5
+        },
+        {
+          "position": "WR",
+          "depth": 2,
+          "name": "Brian Thomas Jr.",
+          "rating": 6
+        },
+        {
+          "position": "ED",
+          "depth": 3,
+          "name": "Dennis Gardeck",
+          "rating": 3
+        },
+        {
+          "position": "WR",
+          "depth": 3,
+          "name": "Parker Washington",
+          "rating": 6
+        },
+        {
+          "position": "LB",
+          "depth": 1,
+          "name": "Foye Oluokun",
+          "rating": 7
+        },
+        {
+          "position": "WR",
+          "depth": 4,
+          "name": "Travis Hunter",
+          "rating": 5
+        },
+        {
+          "position": "LB",
+          "depth": 2,
+          "name": "Ventrell Miller",
+          "rating": 3
+        },
+        {
+          "position": "TE",
+          "depth": 1,
+          "name": "Brenton Strange",
+          "rating": 6
+        },
+        {
+          "position": "LB",
+          "depth": 3,
+          "name": "Jahlani Tavai",
+          "rating": 5
+        },
+        {
+          "position": "TE",
+          "depth": 2,
+          "name": "Nate Boerkircher",
+          "rating": 4
+        },
+        {
+          "position": "CB",
+          "depth": 1,
+          "name": "Montaric Brown",
+          "rating": 6
+        },
+        {
+          "position": "TE",
+          "depth": 3,
+          "name": "Tanner Koziol",
+          "rating": 2
+        },
+        {
+          "position": "CB",
+          "depth": 2,
+          "name": "Jourdan Lewis",
+          "rating": 6
+        },
+        {
+          "position": "CB",
+          "depth": 3,
+          "name": "Travis Hunter",
+          "rating": 5
+        },
+        {
+          "position": "CB",
+          "depth": 4,
+          "name": "Jarrian Jones",
+          "rating": 5
+        },
+        {
+          "position": "S",
+          "depth": 1,
+          "name": "Eric Murray",
+          "rating": 4
+        },
+        {
+          "position": "S",
+          "depth": 2,
+          "name": "Antonio Johnson",
+          "rating": 5
+        },
+        {
+          "position": "S",
+          "depth": 3,
+          "name": "Caleb Ransaw",
+          "rating": 5
         }
       ],
       "Tennessee Titans": [
@@ -44083,18 +46683,6 @@
         {
           "position": "QB",
           "depth": 2,
-          "name": "Nick Mullens",
-          "rating": 2
-        },
-        {
-          "position": "DI",
-          "depth": 2,
-          "name": "Davon Hamilton",
-          "rating": 4
-        },
-        {
-          "position": "QB",
-          "depth": 2,
           "name": "Mitchell Trubisky",
           "rating": 3
         },
@@ -44107,18 +46695,6 @@
         {
           "position": "RB",
           "depth": 1,
-          "name": "Bhayshul Tuten",
-          "rating": 4
-        },
-        {
-          "position": "DI",
-          "depth": 3,
-          "name": "Ruke Orhorhoro",
-          "rating": 4
-        },
-        {
-          "position": "RB",
-          "depth": 1,
           "name": "Tony Pollard",
           "rating": 5
         },
@@ -44127,6 +46703,132 @@
           "depth": 3,
           "name": "Solomon Thomas",
           "rating": 4
+        },
+        {
+          "position": "RB",
+          "depth": 2,
+          "name": "Tyjae Spears",
+          "rating": 4
+        },
+        {
+          "position": "ED",
+          "depth": 1,
+          "name": "Jermaine Johnson II",
+          "rating": 5
+        },
+        {
+          "position": "WR",
+          "depth": 1,
+          "name": "Carnell Tate",
+          "rating": 6
+        },
+        {
+          "position": "ED",
+          "depth": 2,
+          "name": "John Franklin-Myers",
+          "rating": 4
+        },
+        {
+          "position": "WR",
+          "depth": 2,
+          "name": "Wan'Dale Robinson",
+          "rating": 6
+        },
+        {
+          "position": "ED",
+          "depth": 3,
+          "name": "Keldric Faulk",
+          "rating": 5
+        },
+        {
+          "position": "WR",
+          "depth": 3,
+          "name": "Calvin Ridley",
+          "rating": 6
+        },
+        {
+          "position": "LB",
+          "depth": 1,
+          "name": "Cody Barton",
+          "rating": 4
+        },
+        {
+          "position": "WR",
+          "depth": 4,
+          "name": "Chimere Dike",
+          "rating": 4
+        },
+        {
+          "position": "LB",
+          "depth": 2,
+          "name": "Cedric Gray",
+          "rating": 6
+        },
+        {
+          "position": "TE",
+          "depth": 1,
+          "name": "Gunnar Helm",
+          "rating": 5
+        },
+        {
+          "position": "LB",
+          "depth": 3,
+          "name": "Anthony Hill Jr.",
+          "rating": 4
+        },
+        {
+          "position": "TE",
+          "depth": 2,
+          "name": "Daniel Bellinger",
+          "rating": 4
+        },
+        {
+          "position": "CB",
+          "depth": 1,
+          "name": "Alontae Taylor",
+          "rating": 5
+        },
+        {
+          "position": "TE",
+          "depth": 3,
+          "name": "David Martin-Robinson",
+          "rating": 2
+        },
+        {
+          "position": "CB",
+          "depth": 2,
+          "name": "CorDale Flott",
+          "rating": 6
+        },
+        {
+          "position": "CB",
+          "depth": 3,
+          "name": "Marcus X. Harris",
+          "rating": 4
+        },
+        {
+          "position": "CB",
+          "depth": 4,
+          "name": "Joshua Williams",
+          "rating": 4
+        },
+        {
+          "position": "S",
+          "depth": 1,
+          "name": "Amani Hooker",
+          "rating": 5
+        },
+        {
+          "position": "S",
+          "depth": 2,
+          "name": "Kevin Winston Jr.",
+          "rating": 4
+        },
+        {
+          "position": "S",
+          "depth": 3,
+          "name": "Tony Adams",
+          "rating": 5
         }
       ]
     },
@@ -44146,18 +46848,6 @@
         },
         {
           "position": "QB",
-          "depth": 1,
-          "name": "Patrick Mahomes",
-          "rating": 8
-        },
-        {
-          "position": "DI",
-          "depth": 1,
-          "name": "Chris D. Jones",
-          "rating": 8
-        },
-        {
-          "position": "QB",
           "depth": 2,
           "name": "Jarrett Stidham",
           "rating": 2
@@ -44166,18 +46856,6 @@
           "position": "DI",
           "depth": 2,
           "name": "Malcolm Roach",
-          "rating": 5
-        },
-        {
-          "position": "QB",
-          "depth": 2,
-          "name": "Justin Fields",
-          "rating": 3
-        },
-        {
-          "position": "DI",
-          "depth": 2,
-          "name": "Khyiris Tonga",
           "rating": 5
         },
         {
@@ -44194,9 +46872,129 @@
         },
         {
           "position": "RB",
+          "depth": 2,
+          "name": "RJ Harvey",
+          "rating": 5
+        },
+        {
+          "position": "ED",
           "depth": 1,
-          "name": "Ken Walker III",
+          "name": "Nik Bonitto",
+          "rating": 7
+        },
+        {
+          "position": "WR",
+          "depth": 1,
+          "name": "Jaylen Waddle",
+          "rating": 7
+        },
+        {
+          "position": "ED",
+          "depth": 2,
+          "name": "Jonathon Cooper",
+          "rating": 5
+        },
+        {
+          "position": "WR",
+          "depth": 2,
+          "name": "Courtland Sutton",
+          "rating": 7
+        },
+        {
+          "position": "ED",
+          "depth": 3,
+          "name": "Jonah Elliss",
+          "rating": 4
+        },
+        {
+          "position": "WR",
+          "depth": 3,
+          "name": "Pat Bryant",
+          "rating": 4
+        },
+        {
+          "position": "LB",
+          "depth": 1,
+          "name": "Alex Singleton",
+          "rating": 7
+        },
+        {
+          "position": "WR",
+          "depth": 4,
+          "name": "Troy Franklin",
+          "rating": 4
+        },
+        {
+          "position": "LB",
+          "depth": 2,
+          "name": "Justin Strnad",
+          "rating": 4
+        },
+        {
+          "position": "TE",
+          "depth": 1,
+          "name": "Evan Engram",
+          "rating": 5
+        },
+        {
+          "position": "LB",
+          "depth": 3,
+          "name": "Drew Sanders",
+          "rating": 1
+        },
+        {
+          "position": "TE",
+          "depth": 2,
+          "name": "Adam Trautman",
+          "rating": 3
+        },
+        {
+          "position": "CB",
+          "depth": 1,
+          "name": "Patrick Surtain II",
           "rating": 8
+        },
+        {
+          "position": "TE",
+          "depth": 3,
+          "name": "Nate Adkins",
+          "rating": 2
+        },
+        {
+          "position": "CB",
+          "depth": 2,
+          "name": "Riley Moss",
+          "rating": 5
+        },
+        {
+          "position": "CB",
+          "depth": 3,
+          "name": "Ja'Quan McMillian",
+          "rating": 6
+        },
+        {
+          "position": "CB",
+          "depth": 4,
+          "name": "Jahdae Barron",
+          "rating": 4
+        },
+        {
+          "position": "S",
+          "depth": 1,
+          "name": "Talanoa Hufanga",
+          "rating": 7
+        },
+        {
+          "position": "S",
+          "depth": 2,
+          "name": "Brandon Jones",
+          "rating": 6
+        },
+        {
+          "position": "S",
+          "depth": 3,
+          "name": "Devon Key",
+          "rating": 2
         }
       ],
       "Kansas City Chiefs": [
@@ -44215,18 +47013,6 @@
         {
           "position": "QB",
           "depth": 2,
-          "name": "Jarrett Stidham",
-          "rating": 2
-        },
-        {
-          "position": "DI",
-          "depth": 2,
-          "name": "Malcolm Roach",
-          "rating": 5
-        },
-        {
-          "position": "QB",
-          "depth": 2,
           "name": "Justin Fields",
           "rating": 3
         },
@@ -44239,18 +47025,6 @@
         {
           "position": "RB",
           "depth": 1,
-          "name": "J.K. Dobbins",
-          "rating": 6
-        },
-        {
-          "position": "DI",
-          "depth": 3,
-          "name": "D.J. Jones",
-          "rating": 6
-        },
-        {
-          "position": "RB",
-          "depth": 1,
           "name": "Ken Walker III",
           "rating": 8
         },
@@ -44259,6 +47033,132 @@
           "depth": 3,
           "name": "Peter Woods",
           "rating": 5
+        },
+        {
+          "position": "RB",
+          "depth": 2,
+          "name": "Emari Demercado",
+          "rating": 3
+        },
+        {
+          "position": "ED",
+          "depth": 1,
+          "name": "George Karlaftis",
+          "rating": 7
+        },
+        {
+          "position": "WR",
+          "depth": 1,
+          "name": "Rashee Rice",
+          "rating": 8
+        },
+        {
+          "position": "ED",
+          "depth": 2,
+          "name": "Ashton Gillotte",
+          "rating": 4
+        },
+        {
+          "position": "WR",
+          "depth": 2,
+          "name": "Xavier Worthy",
+          "rating": 5
+        },
+        {
+          "position": "ED",
+          "depth": 3,
+          "name": "R Mason Thomas",
+          "rating": 4
+        },
+        {
+          "position": "WR",
+          "depth": 3,
+          "name": "Tyquan Thornton",
+          "rating": 3
+        },
+        {
+          "position": "LB",
+          "depth": 1,
+          "name": "Nick Bolton",
+          "rating": 7
+        },
+        {
+          "position": "WR",
+          "depth": 4,
+          "name": "Cyrus Allen",
+          "rating": 2
+        },
+        {
+          "position": "LB",
+          "depth": 2,
+          "name": "Drue Tranquill",
+          "rating": 7
+        },
+        {
+          "position": "TE",
+          "depth": 1,
+          "name": "Travis Kelce",
+          "rating": 7
+        },
+        {
+          "position": "LB",
+          "depth": 3,
+          "name": "Jack Cochrane",
+          "rating": 2
+        },
+        {
+          "position": "TE",
+          "depth": 2,
+          "name": "Noah Gray",
+          "rating": 4
+        },
+        {
+          "position": "CB",
+          "depth": 1,
+          "name": "Mansoor Delane",
+          "rating": 5
+        },
+        {
+          "position": "TE",
+          "depth": 3,
+          "name": "Jared Wiley",
+          "rating": 2
+        },
+        {
+          "position": "CB",
+          "depth": 2,
+          "name": "L'Jarius Sneed",
+          "rating": 5
+        },
+        {
+          "position": "CB",
+          "depth": 3,
+          "name": "Kader Kohou",
+          "rating": 5
+        },
+        {
+          "position": "CB",
+          "depth": 4,
+          "name": "Nohl Williams",
+          "rating": 5
+        },
+        {
+          "position": "S",
+          "depth": 1,
+          "name": "Alohi Gilman",
+          "rating": 6
+        },
+        {
+          "position": "S",
+          "depth": 2,
+          "name": "Chamarri Conner",
+          "rating": 4
+        },
+        {
+          "position": "S",
+          "depth": 3,
+          "name": "Jaden Hicks",
+          "rating": 3
         }
       ],
       "Los Angeles Chargers": [
@@ -44276,18 +47176,6 @@
         },
         {
           "position": "QB",
-          "depth": 1,
-          "name": "Kirk Cousins",
-          "rating": 3
-        },
-        {
-          "position": "DI",
-          "depth": 1,
-          "name": "Adam Butler",
-          "rating": 5
-        },
-        {
-          "position": "QB",
           "depth": 2,
           "name": "Trey Lance",
           "rating": 2
@@ -44297,18 +47185,6 @@
           "depth": 2,
           "name": "Jamaree Caldwell",
           "rating": 5
-        },
-        {
-          "position": "QB",
-          "depth": 2,
-          "name": "Fernando Mendoza",
-          "rating": 4
-        },
-        {
-          "position": "DI",
-          "depth": 2,
-          "name": "Jonah Laulu",
-          "rating": 3
         },
         {
           "position": "RB",
@@ -44321,6 +47197,132 @@
           "depth": 3,
           "name": "Dalvin Tomlinson",
           "rating": 4
+        },
+        {
+          "position": "RB",
+          "depth": 2,
+          "name": "Keaton Mitchell",
+          "rating": 3
+        },
+        {
+          "position": "ED",
+          "depth": 1,
+          "name": "Tuli Tuipulotu",
+          "rating": 6
+        },
+        {
+          "position": "WR",
+          "depth": 1,
+          "name": "Ladd McConkey",
+          "rating": 6
+        },
+        {
+          "position": "ED",
+          "depth": 2,
+          "name": "Khalil Mack",
+          "rating": 8
+        },
+        {
+          "position": "WR",
+          "depth": 2,
+          "name": "Quentin Johnston",
+          "rating": 5
+        },
+        {
+          "position": "ED",
+          "depth": 3,
+          "name": "Akheem Mesidor",
+          "rating": 5
+        },
+        {
+          "position": "WR",
+          "depth": 3,
+          "name": "Tre Harris",
+          "rating": 4
+        },
+        {
+          "position": "LB",
+          "depth": 1,
+          "name": "Daiyan Henley",
+          "rating": 6
+        },
+        {
+          "position": "WR",
+          "depth": 4,
+          "name": "Brenen Thompson",
+          "rating": 3
+        },
+        {
+          "position": "LB",
+          "depth": 2,
+          "name": "Denzel Perryman",
+          "rating": 3
+        },
+        {
+          "position": "TE",
+          "depth": 1,
+          "name": "David Njoku",
+          "rating": 5
+        },
+        {
+          "position": "LB",
+          "depth": 3,
+          "name": "Troy Dye",
+          "rating": 3
+        },
+        {
+          "position": "TE",
+          "depth": 2,
+          "name": "Charlie Kolar",
+          "rating": 5
+        },
+        {
+          "position": "CB",
+          "depth": 1,
+          "name": "Tarheeb Still",
+          "rating": 6
+        },
+        {
+          "position": "TE",
+          "depth": 3,
+          "name": "Oronde Gadsden II",
+          "rating": 5
+        },
+        {
+          "position": "CB",
+          "depth": 2,
+          "name": "Cam Hart",
+          "rating": 4
+        },
+        {
+          "position": "CB",
+          "depth": 3,
+          "name": "Donte Jackson",
+          "rating": 5
+        },
+        {
+          "position": "CB",
+          "depth": 4,
+          "name": "Deane Leonard",
+          "rating": 2
+        },
+        {
+          "position": "S",
+          "depth": 1,
+          "name": "Derwin James",
+          "rating": 8
+        },
+        {
+          "position": "S",
+          "depth": 2,
+          "name": "Elijah Molden",
+          "rating": 4
+        },
+        {
+          "position": "S",
+          "depth": 3,
+          "name": "Tony Jefferson",
+          "rating": 5
         }
       ],
       "Las Vegas Raiders": [
@@ -44339,18 +47341,6 @@
         {
           "position": "QB",
           "depth": 2,
-          "name": "Trey Lance",
-          "rating": 2
-        },
-        {
-          "position": "DI",
-          "depth": 2,
-          "name": "Jamaree Caldwell",
-          "rating": 5
-        },
-        {
-          "position": "QB",
-          "depth": 2,
           "name": "Fernando Mendoza",
           "rating": 4
         },
@@ -44363,18 +47353,6 @@
         {
           "position": "RB",
           "depth": 1,
-          "name": "Omarion Hampton",
-          "rating": 7
-        },
-        {
-          "position": "DI",
-          "depth": 3,
-          "name": "Dalvin Tomlinson",
-          "rating": 4
-        },
-        {
-          "position": "RB",
-          "depth": 1,
           "name": "Ashton Jeanty",
           "rating": 8
         },
@@ -44383,6 +47361,132 @@
           "depth": 3,
           "name": "Thomas Booker",
           "rating": 3
+        },
+        {
+          "position": "RB",
+          "depth": 2,
+          "name": "Mike Washington Jr.",
+          "rating": 3
+        },
+        {
+          "position": "ED",
+          "depth": 1,
+          "name": "Maxx Crosby",
+          "rating": 9
+        },
+        {
+          "position": "WR",
+          "depth": 1,
+          "name": "Tre Tucker",
+          "rating": 5
+        },
+        {
+          "position": "ED",
+          "depth": 2,
+          "name": "Kwity Paye",
+          "rating": 4
+        },
+        {
+          "position": "WR",
+          "depth": 2,
+          "name": "Jalen Nailor",
+          "rating": 4
+        },
+        {
+          "position": "ED",
+          "depth": 3,
+          "name": "Malcolm Koonce",
+          "rating": 3
+        },
+        {
+          "position": "WR",
+          "depth": 3,
+          "name": "Jack Bech",
+          "rating": 4
+        },
+        {
+          "position": "LB",
+          "depth": 1,
+          "name": "Nakobe Dean",
+          "rating": 7
+        },
+        {
+          "position": "WR",
+          "depth": 4,
+          "name": "Malik Benson",
+          "rating": 3
+        },
+        {
+          "position": "LB",
+          "depth": 2,
+          "name": "Quay Walker",
+          "rating": 4
+        },
+        {
+          "position": "TE",
+          "depth": 1,
+          "name": "Brock Bowers",
+          "rating": 9
+        },
+        {
+          "position": "LB",
+          "depth": 3,
+          "name": "Tommy Eichenberg",
+          "rating": 2
+        },
+        {
+          "position": "TE",
+          "depth": 2,
+          "name": "Michael Mayer",
+          "rating": 4
+        },
+        {
+          "position": "CB",
+          "depth": 1,
+          "name": "Eric Stokes",
+          "rating": 7
+        },
+        {
+          "position": "TE",
+          "depth": 3,
+          "name": "Ian Thomas",
+          "rating": 3
+        },
+        {
+          "position": "CB",
+          "depth": 2,
+          "name": "Darien Porter",
+          "rating": 4
+        },
+        {
+          "position": "CB",
+          "depth": 3,
+          "name": "Taron Johnson",
+          "rating": 4
+        },
+        {
+          "position": "CB",
+          "depth": 4,
+          "name": "Jermod McCoy",
+          "rating": 4
+        },
+        {
+          "position": "S",
+          "depth": 1,
+          "name": "Jeremy Chinn",
+          "rating": 6
+        },
+        {
+          "position": "S",
+          "depth": 2,
+          "name": "Treydan Stukes",
+          "rating": 4
+        },
+        {
+          "position": "S",
+          "depth": 3,
+          "name": "Isaiah Pola-Mao",
+          "rating": 4
         }
       ]
     }
