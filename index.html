@@ -1,0 +1,1959 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2026 NFL Offseason Delta Dashboard</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+* { box-sizing: border-box; }
+body { font-family: 'Inter', sans-serif; background: #0a0e17; color: #e2e8f0; }
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #1a1f2e; }
+::-webkit-scrollbar-thumb { background: #3b4261; border-radius: 4px; }
+.glass { background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(12px); border: 1px solid rgba(71, 85, 105, 0.3); }
+.new-badge { background: linear-gradient(135deg, #10b981, #059669); animation: pulse-green 2s infinite; font-size: 11px; }
+.lost-badge { background: linear-gradient(135deg, #ef4444, #b91c1c); font-size: 11px; }
+@keyframes pulse-green { 0%,100% { box-shadow: 0 0 0 0 rgba(16,185,129,0.4); } 50% { box-shadow: 0 0 0 6px rgba(16,185,129,0); } }
+.blockbuster { border-left: 4px solid #f59e0b; background: rgba(245,158,11,0.05); }
+.team-card { transition: transform 0.2s, box-shadow 0.2s; }
+.team-card:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0,0,0,0.4); }
+.tab-btn.active { background: linear-gradient(135deg, #1e40af, #3b82f6); color: white; }
+.cap-positive { color: #10b981; }
+.cap-negative { color: #ef4444; }
+.cap-bar { height: 6px; border-radius: 3px; background: #1e293b; overflow: hidden; }
+.cap-fill { height: 100%; border-radius: 3px; transition: width 0.6s ease; }
+.draft-pick { display: inline-flex; align-items: center; justify-content: center; min-width: 34px; height: 26px; border-radius: 6px; font-size: 0.7rem; font-weight: 600; margin: 2px; padding: 0 5px; }
+.r1 { background: #7c3aed; color: white; } .r2 { background: #2563eb; color: white; }
+.r3 { background: #0891b2; color: white; } .r4 { background: #059669; color: white; }
+.r5 { background: #65a30d; color: white; } .r6 { background: #ca8a04; color: white; }
+.r7 { background: #9a3412; color: white; }
+.notes-area { resize: vertical; min-height: 50px; }
+.division-header { background: linear-gradient(90deg, rgba(30,64,175,0.3), transparent); border-left: 3px solid #3b82f6; }
+.search-glow:focus { box-shadow: 0 0 0 3px rgba(59,130,246,0.3); }
+
+/* Dropdown accordion */
+.dropdown-toggle { cursor: pointer; user-select: none; }
+.dropdown-content { max-height: 0; overflow: hidden; transition: max-height 0.3s ease; }
+.dropdown-content.open { max-height: 600px; }
+.division-content { transition: max-height 0.35s ease; }
+.division-content.open { max-height: 4000px; }
+.dropdown-chevron { transition: transform 0.2s; }
+.dropdown-toggle.open .dropdown-chevron { transform: rotate(180deg); }
+
+/* Roster Modal */
+.roster-modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 100; overflow-y: auto; }
+.roster-modal-overlay.active { display: flex; align-items: flex-start; justify-content: center; padding: 2rem 1rem; }
+.roster-modal { background: #0f1729; border: 1px solid rgba(71,85,105,0.4); border-radius: 16px; width: 100%; max-width: 1100px; position: relative; overflow: hidden; }
+.roster-close { position: absolute; top: 12px; right: 16px; background: rgba(255,255,255,0.1); border: none; color: white; width: 36px; height: 36px; border-radius: 50%; cursor: pointer; font-size: 18px; display: flex; align-items: center; justify-content: center; z-index: 10; }
+.roster-close:hover { background: rgba(255,255,255,0.2); }
+
+/* Player card in roster */
+.player-slot { background: rgba(30,41,59,0.7); border: 1px solid rgba(71,85,105,0.4); border-radius: 10px; padding: 8px; text-align: center; min-width: 100px; max-width: 120px; transition: transform 0.15s, border-color 0.15s; position: relative; }
+.player-slot:hover { transform: scale(1.05); border-color: rgba(59,130,246,0.5); }
+.player-slot.is-new { border-color: rgba(16,185,129,0.6); box-shadow: 0 0 12px rgba(16,185,129,0.15); }
+.player-slot.is-lost { border-color: rgba(239,68,68,0.4); opacity: 0.5; }
+.rating-badge { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px; margin: 0 auto 4px; }
+.rating-elite { background: linear-gradient(135deg, #f59e0b, #d97706); color: #000; }
+.rating-star { background: linear-gradient(135deg, #22c55e, #16a34a); color: #000; }
+.rating-solid { background: linear-gradient(135deg, #3b82f6, #2563eb); color: white; }
+.rating-dev { background: linear-gradient(135deg, #64748b, #475569); color: white; }
+
+/* Roster formation layout */
+.formation-row { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }
+.position-group-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: rgba(148,163,184,0.6); text-align: center; margin: 12px 0 6px; }
+.roster-tab { padding: 6px 16px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; border: 1px solid transparent; transition: all 0.15s; text-transform: uppercase; letter-spacing: 0.5px; }
+.roster-tab.active-off { background: rgba(59,130,246,0.2); border-color: #3b82f6; color: #60a5fa; }
+.roster-tab.active-def { background: rgba(239,68,68,0.2); border-color: #ef4444; color: #f87171; }
+.roster-tab.active-st { background: rgba(245,158,11,0.2); border-color: #f59e0b; color: #fbbf24; }
+.roster-tab:not(.active-off):not(.active-def):not(.active-st) { background: rgba(30,41,59,0.5); color: #64748b; }
+.roster-tab:not(.active-off):not(.active-def):not(.active-st):hover { background: rgba(30,41,59,0.8); color: #94a3b8; }
+
+/* Compact roster list styles */
+.pos-group { margin-bottom: 12px; }
+.pos-group-header { display: flex; align-items: center; gap: 6px; cursor: pointer; padding: 6px 10px; border-radius: 8px; background: rgba(30,41,59,0.5); border: 1px solid rgba(71,85,105,0.3); margin-bottom: 4px; user-select: none; }
+.pos-group-header:hover { background: rgba(30,41,59,0.8); }
+.pos-group-header .pg-label { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+.pos-group-header .pg-count { font-size: 11px; color: #64748b; margin-left: auto; }
+.pos-group-header .pg-chevron { transition: transform 0.2s; font-size: 11px; color: #64748b; }
+.pos-group-header.collapsed .pg-chevron { transform: rotate(-90deg); }
+.pos-group-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 3px; }
+.pos-group-header.collapsed + .pos-group-list { display: none; }
+.compact-player { display: flex; align-items: center; gap: 6px; padding: 4px 8px; border-radius: 6px; background: rgba(30,41,59,0.4); border: 1px solid rgba(71,85,105,0.2); font-size: 11px; transition: background 0.1s; }
+.compact-player:hover { background: rgba(30,41,59,0.8); }
+.compact-player.is-new { border-color: rgba(16,185,129,0.5); background: rgba(16,185,129,0.05); }
+.compact-player .cp-num { color: #64748b; font-weight: 600; min-width: 22px; text-align: right; font-size: 10px; }
+.compact-player .cp-name { color: #e2e8f0; font-weight: 600; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.compact-player .cp-pos { color: #94a3b8; font-size: 11px; min-width: 24px; }
+.compact-player .cp-age { color: #64748b; font-size: 11px; }
+.compact-player .cp-new { font-size: 9px; font-weight: 800; color: #10b981; background: rgba(16,185,129,0.15); padding: 1px 4px; border-radius: 3px; white-space: nowrap; }
+
+/* Phase 3: rookie/new badges + sort tweaks */
+.badge-rook { background: linear-gradient(135deg, #10b981, #059669); color: white; font-size: 9px; font-weight: 800; padding: 1px 5px; border-radius: 3px; letter-spacing: 0.5px; margin-left: auto; flex-shrink: 0; }
+.badge-new { background: linear-gradient(135deg, #3b82f6, #2563eb); color: white; font-size: 9px; font-weight: 800; padding: 1px 5px; border-radius: 3px; letter-spacing: 0.5px; margin-left: auto; flex-shrink: 0; }
+.compact-player.is-rookie { border-color: rgba(16,185,129,0.45); background: rgba(16,185,129,0.06); }
+.compact-player .rating-badge { margin: 0 4px 0 0; flex-shrink: 0; }
+.filter-chip { font-size: 11px; padding: 4px 12px; border-radius: 999px; background: rgba(30,41,59,0.6); color: #94a3b8; border: 1px solid rgba(71,85,105,0.6); cursor: pointer; user-select: none; transition: all 0.15s; }
+.filter-chip:hover { background: rgba(30,41,59,1); color: #cbd5e1; }
+.filter-chip.active { background: rgba(16,185,129,0.2); color: #6ee7b7; border-color: rgba(16,185,129,0.6); }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+/* ── Phase 2: Power rankings heatmap ── */
+.hm-grid { display:grid; grid-template-columns: 110px repeat(10, minmax(50px, 1fr)); gap:2px; min-width:720px; }
+.hm-th { font-size:10px; font-weight:700; color:#94a3b8; text-align:center; padding:6px 0; text-transform:uppercase; letter-spacing:0.5px; cursor:pointer; user-select:none; border-radius:4px; }
+.hm-th:hover { color:#e2e8f0; background:rgba(59,130,246,0.1); }
+.hm-th.sorted { color:#60a5fa; background:rgba(59,130,246,0.18); }
+.hm-team { font-size:11px; font-weight:600; color:#cbd5e1; padding:4px 8px; display:flex; align-items:center; gap:6px; cursor:pointer; border-radius:4px; }
+.hm-team:hover { background:rgba(59,130,246,0.1); }
+.hm-team .hm-color { width:3px; height:14px; border-radius:1px; flex-shrink:0; }
+.hm-cell { height:28px; border-radius:3px; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; cursor:default; transition:transform 0.12s; }
+.hm-cell:hover { transform:scale(1.15); z-index:2; box-shadow:0 0 0 2px rgba(255,255,255,0.2); }
+.hm-cell.unrated { background:#1e293b; color:#475569; }
+.hm-cell.elite { background:#16a34a; color:#fff; }
+.hm-cell.star  { background:#65a30d; color:#fff; }
+.hm-cell.solid { background:#84cc16; color:#000; }
+.hm-cell.mid   { background:#eab308; color:#000; }
+.hm-cell.below { background:#f97316; color:#fff; }
+.hm-cell.bot   { background:#dc2626; color:#fff; }
+
+/* Macro summary chips above heatmap */
+.macro-chip { background:rgba(15,23,42,0.7); border-left:3px solid #3b82f6; border:1px solid rgba(71,85,105,0.3); border-radius:8px; padding:6px 10px; flex-shrink:0; min-width:120px; }
+.macro-chip .label { font-size:9px; color:#64748b; text-transform:uppercase; letter-spacing:0.6px; }
+.macro-chip .leader { font-size:13px; font-weight:800; color:#fff; margin-top:1px; }
+.macro-chip .score { color:#34d399; font-size:11px; margin-left:4px; }
+
+/* ── Phase 4: Transactions table + chips ── */
+.tx-tbl { display:grid; grid-template-columns: 80px 70px 1.5fr 50px 1fr 1.6fr; gap:0; background:rgba(15,23,42,0.5); border-radius:8px; overflow:hidden; border:1px solid rgba(71,85,105,0.3); }
+.tx-th-cell { font-size:10px; color:#94a3b8; text-transform:uppercase; padding:8px 10px; letter-spacing:0.5px; background:rgba(30,41,59,0.6); cursor:pointer; user-select:none; font-weight:700; border-bottom:1px solid rgba(71,85,105,0.3); }
+.tx-th-cell:hover { background:rgba(59,130,246,0.15); color:#93c5fd; }
+.tx-th-cell.sorted { color:#3b82f6; background:rgba(59,130,246,0.12); }
+.tx-th-cell.no-sort { cursor:default; }
+.tx-th-cell.no-sort:hover { background:rgba(30,41,59,0.6); color:#94a3b8; }
+.tx-td-cell { padding:6px 10px; font-size:11px; color:#cbd5e1; border-bottom:1px solid rgba(71,85,105,0.15); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.tx-td-cell.bb { background:rgba(245,158,11,0.06); }
+.tx-row-bb-marker { color:#f59e0b; font-weight:700; margin-right:4px; }
+.tx-pill { display:inline-block; padding:1px 6px; border-radius:3px; font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; }
+.tx-pill.trade { background:rgba(59,130,246,0.2); color:#93c5fd; }
+.tx-pill.signing { background:rgba(16,185,129,0.2); color:#6ee7b7; }
+.tx-pill.draft { background:rgba(124,58,237,0.2); color:#a78bfa; }
+.tx-draft-group { grid-column: 1 / -1; border-bottom: 1px solid rgba(71,85,105,0.15); }
+.tx-draft-rnd-hdr { display:flex; align-items:center; gap:8px; padding:8px 12px; background:rgba(124,58,237,0.04); }
+.tx-draft-picks-wrap { display:flex; flex-wrap:wrap; gap:4px; padding:4px 12px 10px; }
+.tx-dp { display:inline-flex; align-items:center; gap:5px; background:rgba(30,41,59,0.6); border:1px solid rgba(71,85,105,0.3); border-radius:6px; padding:3px 8px; font-size:10px; white-space:nowrap; }
+.tx-dp .dp-num { color:#64748b; font-weight:700; min-width:20px; }
+.tx-dp .dp-team { font-weight:800; color:#e2e8f0; }
+.tx-dp .dp-name { color:#94a3b8; }
+.tx-dp .dp-pos { color:#64748b; }
+.team-tile { background:rgba(15,23,42,0.8); border:1px solid rgba(71,85,105,0.3); border-radius:10px; padding:10px 8px; cursor:pointer; transition:transform 0.15s,border-color 0.2s,box-shadow 0.2s; text-align:center; }
+.team-tile:hover { transform:translateY(-2px); border-color:rgba(71,85,105,0.6); }
+.team-tile.cmp-sel { border-color:#3b82f6 !important; box-shadow:0 0 0 2px rgba(59,130,246,0.35); }
+.conf-split { display:grid; grid-template-columns:1fr 1fr; gap:2rem; }
+@media(max-width:900px){ .conf-split { grid-template-columns:1fr; } }
+</style>
+</head>
+<body class="min-h-screen">
+
+<!-- HEADER -->
+<header class="sticky top-0 z-50 glass border-b border-slate-700/50">
+  <div class="max-w-[1600px] mx-auto px-4 py-3 flex flex-col md:flex-row items-center justify-between gap-3">
+    <div class="flex items-center gap-3">
+      <div class="text-2xl font-black tracking-tight">
+        <span class="text-blue-400">NFL</span><span class="text-slate-300"> 2026</span>
+        <span class="text-amber-400 text-lg font-semibold ml-1">OFFSEASON DELTA</span>
+      </div>
+      <span class="text-xs text-slate-500 border border-slate-700 rounded px-2 py-0.5">Updated — Aug 7, 2026</span>
+    </div>
+    <div class="flex items-center gap-3 w-full md:w-auto">
+      <input id="searchBox" type="text" placeholder="Search player or team..." class="search-glow bg-slate-800/80 border border-slate-600 rounded-lg px-4 py-2 text-sm w-full md:w-72 focus:outline-none focus:border-blue-500 transition" oninput="filterDashboard(this.value)">
+      <div class="flex gap-1 shrink-0">
+        <button onclick="showTab('home')" class="tab-btn active text-xs px-3 py-2 rounded-lg font-semibold transition" data-tab="home">Home</button>
+        <button onclick="showTab('feed')" class="tab-btn text-xs px-3 py-2 rounded-lg font-semibold bg-slate-800 text-slate-400 hover:bg-slate-700 transition" data-tab="feed">Transactions</button>
+        <button onclick="showTab('teams')" class="tab-btn text-xs px-3 py-2 rounded-lg font-semibold bg-slate-800 text-slate-400 hover:bg-slate-700 transition" data-tab="teams">Teams</button>
+        <button onclick="showTab('draft')" class="tab-btn text-xs px-3 py-2 rounded-lg font-semibold bg-slate-800 text-slate-400 hover:bg-slate-700 transition" data-tab="draft">Draft</button>
+        <button onclick="showTab('projections')" class="tab-btn text-xs px-3 py-2 rounded-lg font-semibold bg-slate-800 text-slate-400 hover:bg-slate-700 transition" data-tab="projections">Projections</button>
+        <button onclick="exportRostersCSV()" class="text-xs px-3 py-2 rounded-lg font-semibold bg-emerald-600/20 text-emerald-400 border border-emerald-500/40 hover:bg-emerald-500/30 transition flex items-center gap-1.5 shrink-0" title="Export rosters as CSV for Excel / Google Sheets">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+          Export CSV
+        </button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ROSTER MODAL -->
+<div id="rosterModal" class="roster-modal-overlay" onclick="if(event.target===this)closeRoster()">
+  <div class="roster-modal">
+    <button class="roster-close" onclick="closeRoster()">&times;</button>
+    <div id="rosterHeader" class="p-1"></div>
+    <div class="p-6">
+      <div id="rosterTitle" class="text-xl font-black text-white mb-1"></div>
+      <div id="rosterSubtitle" class="text-xs text-slate-500 mb-4"></div>
+      <div class="flex gap-2 mb-3">
+        <div class="roster-tab active-off" onclick="showRosterSide('offense',this)">Offense</div>
+        <div class="roster-tab" onclick="showRosterSide('defense',this)">Defense</div>
+        <div class="roster-tab" onclick="showRosterSide('special',this)">Special Teams</div>
+      </div>
+      <div class="flex gap-2 mb-3 items-center">
+        <span class="text-[10px] text-slate-500 uppercase tracking-wider font-bold">Filter:</span>
+        <button id="rookiesOnlyChip" onclick="toggleRookiesFilter()" class="filter-chip">Rookies only</button>
+      </div>
+      <div id="rosterBody"></div>
+      <div id="rosterChanges" class="mt-6 border-t border-slate-700/50 pt-4"></div>
+    </div>
+  </div>
+</div>
+
+<!-- COMPARE MODAL -->
+<div id="compareModal" class="roster-modal-overlay" onclick="if(event.target===this)closeCompare()">
+  <div style="background:#0f1729;border:1px solid rgba(71,85,105,0.4);border-radius:16px;width:100%;max-width:1400px;position:relative;max-height:88vh;overflow:hidden;display:flex;flex-direction:column;">
+    <button class="roster-close" onclick="closeCompare()">&times;</button>
+    <div id="compareBody" style="display:grid;grid-template-columns:1fr 1fr;flex:1;overflow:hidden;min-height:0;"></div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<main class="max-w-[1600px] mx-auto px-4 py-6">
+  <div id="tab-home">
+    <h2 class="text-xl font-bold mb-3 flex items-center gap-2">
+      <svg class="w-5 h-5 text-emerald-400" fill="currentColor" viewBox="0 0 20 20"><path d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm9.541 6.708a1 1 0 00-1.414-1.414L9 11.586l-1.293-1.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/></svg>
+      League at a Glance
+      <span class="text-xs text-slate-500 font-normal ml-1">2026 Offseason — Power rankings via Madden 27</span>
+    </h2>
+    <div id="macroRow" class="flex gap-2 mb-3 overflow-x-auto pb-1"></div>
+    <div id="heatmapContainer" class="glass rounded-xl p-3 mb-3 overflow-x-auto"></div>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+      <div id="capStrip" class="glass rounded-xl p-3"></div>
+      <div id="miniFeed" class="glass rounded-xl p-3"></div>
+    </div>
+  </div>
+  <div id="tab-feed" class="hidden">
+    <h2 class="text-xl font-bold mb-3 flex items-center gap-2">
+      <svg class="w-5 h-5 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1.323l3.954 1.582 1.599-.8a1 1 0 01.894 1.79l-1.233.616 1.738 5.42a1 1 0 01-.285 1.05A3.989 3.989 0 0115 15a3.989 3.989 0 01-2.667-1.019 1 1 0 01-.285-1.05l1.715-5.349L11 6.477V16h2a1 1 0 110 2H7a1 1 0 110-2h2V6.477L6.237 7.582l1.715 5.349a1 1 0 01-.285 1.05A3.989 3.989 0 015 15a3.989 3.989 0 01-2.667-1.019 1 1 0 01-.285-1.05l1.738-5.42-1.233-.617a1 1 0 01.894-1.789l1.599.799L9 4.323V3a1 1 0 011-1z"/></svg>
+      Transactions
+      <span class="text-xs text-slate-500 font-normal ml-1">Since Super Bowl 60</span>
+    </h2>
+    <div class="mb-4">
+      <div class="text-[10px] uppercase tracking-wider text-amber-400 font-bold mb-2 flex items-center gap-2">
+        <span>⚡</span> Biggest Moves
+      </div>
+      <div id="biggestMoves" class="flex gap-3 overflow-x-auto pb-2"></div>
+    </div>
+    <div id="txFilterChips" class="flex flex-wrap gap-2 mb-3 items-center"></div>
+    <div id="feedContainer"></div>
+  </div>
+  <div id="tab-teams" class="hidden">
+    <div class="flex items-center justify-between flex-wrap gap-3 mb-4">
+      <div class="flex items-center gap-3">
+        <h2 class="text-xl font-bold">Teams</h2>
+        <button id="compareModeBtn" onclick="toggleCompareMode()" class="text-[11px] font-bold px-3 py-1 rounded-lg border border-slate-600 bg-slate-800/80 text-slate-400 hover:bg-slate-700 transition">⚖ Compare</button>
+      </div>
+      <div id="divNavBtns" class="flex items-center flex-wrap gap-1.5"></div>
+    </div>
+    <div id="teamsContainer"></div>
+  </div>
+  <div id="tab-draft" class="hidden">
+    <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
+      <svg class="w-5 h-5 text-violet-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/></svg>
+      2026 Draft Asset Tracker <span class="text-xs text-slate-500 font-normal ml-1">Pittsburgh, PA — Rounds 1-7</span>
+    </h2>
+    <div id="draftContainer" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4"></div>
+  </div>
+  <div id="tab-projections" class="hidden">
+    <h2 class="text-xl font-bold mb-3 flex items-center gap-2">
+      <svg class="w-5 h-5 text-cyan-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"/><path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clip-rule="evenodd"/></svg>
+      Mike Clay 2026 Projections
+      <span class="text-xs text-slate-500 font-normal ml-1">Updated 8/19/2026</span>
+    </h2>
+    <div id="projSubTabs" class="flex flex-wrap gap-1.5 mb-4"></div>
+    <div id="projContent" class="glass rounded-xl p-4 overflow-x-auto"></div>
+  </div>
+</main>
+
+<footer class="text-center text-xs text-slate-600 py-8 border-t border-slate-800">
+  Data sourced from NFL.com, ESPN, PFF · Player ratings via Madden 27 · Last updated Aug 7, 2026
+</footer>
+
+<!-- Back to Top Button -->
+<button id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" class="fixed bottom-6 right-6 z-50 w-11 h-11 rounded-full bg-blue-600/80 hover:bg-blue-600 text-white shadow-lg backdrop-blur border border-blue-400/30 flex items-center justify-center transition-all duration-300 opacity-0 translate-y-4 pointer-events-none" style="font-size:18px">&#x2191;</button>
+
+<script>
+// ═══════════════════════════════════════════════════════════
+// SUPABASE CLIENT
+// ═══════════════════════════════════════════════════════════
+const SUPABASE_URL = "https://nedyoydylpbjvihaoexy.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_cQOHCiQh2kZQQUn5sEEfIA_t9NScNZz";
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+// Loaded asynchronously from Supabase. Render functions read from DATA.* fields.
+let DATA = { teams: [], players: [], transactions: [], draftPicks: [], draftGrades: [] };
+
+async function fetchAllPlayers() {
+  const PAGE = 1000;
+  let all = [], from = 0;
+  while (true) {
+    const { data, error } = await sb.from('nfl_players').select('*').range(from, from + PAGE - 1);
+    if (error) throw new Error(error.message);
+    all = all.concat(data);
+    if (data.length < PAGE) break;
+    from += PAGE;
+  }
+  return all;
+}
+
+function applySummer2026Updates(data) {
+  const summerTxs = [
+    {
+      id: "tx-2026-08-07-1",
+      type: "signing",
+      blockbuster: false,
+      player_name: "O'Cyrus Torrence",
+      pos: "OG",
+      from_team: "Buffalo Bills",
+      to_team: "Buffalo Bills",
+      detail: "Signed 4-year, $78.4M contract extension ($46M guaranteed)",
+      date_str: "Aug 07, 2026",
+      sort_date: "2026-08-07"
+    },
+    {
+      id: "tx-2026-08-07-2",
+      type: "signing",
+      blockbuster: false,
+      player_name: "Kristian Wilkerson",
+      pos: "WR",
+      from_team: "Free Agent",
+      to_team: "Atlanta Falcons",
+      detail: "Signed 1-year contract following release of LB Troy Andersen",
+      date_str: "Aug 07, 2026",
+      sort_date: "2026-08-07"
+    },
+    {
+      id: "tx-2026-08-05-1",
+      type: "signing",
+      blockbuster: false,
+      player_name: "Ogbonnia Okoronkwo",
+      pos: "EDGE",
+      from_team: "Cleveland Browns",
+      to_team: "San Francisco 49ers",
+      detail: "Signed 1-year contract to bolster pass rush",
+      date_str: "Aug 05, 2026",
+      sort_date: "2026-08-05"
+    },
+    {
+      id: "tx-2026-08-04-1",
+      type: "signing",
+      blockbuster: true,
+      player_name: "Darnell Wright",
+      pos: "OT",
+      from_team: "Chicago Bears",
+      to_team: "Chicago Bears",
+      detail: "4-year, $116M extension ($93M guaranteed) - highest-paid RT in NFL history",
+      date_str: "Aug 04, 2026",
+      sort_date: "2026-08-04"
+    },
+    {
+      id: "tx-2026-07-28-1",
+      type: "signing",
+      blockbuster: true,
+      player_name: "Jahmyr Gibbs",
+      pos: "RB",
+      from_team: "Detroit Lions",
+      to_team: "Detroit Lions",
+      detail: "3-year, $67.5M extension ($45M guaranteed)",
+      date_str: "Jul 28, 2026",
+      sort_date: "2026-07-28"
+    },
+    {
+      id: "tx-2026-07-24-1",
+      type: "trade",
+      blockbuster: true,
+      player_name: "Myles Garrett",
+      pos: "EDGE",
+      from_team: "Cleveland Browns",
+      to_team: "Los Angeles Rams",
+      detail: "Traded to Rams for EDGE Jared Verse, 2027 1st round pick, and 2028 2nd round pick",
+      date_str: "Jul 24, 2026",
+      sort_date: "2026-07-24"
+    },
+    {
+      id: "tx-2026-07-24-2",
+      type: "trade",
+      blockbuster: false,
+      player_name: "Jared Verse",
+      pos: "EDGE",
+      from_team: "Los Angeles Rams",
+      to_team: "Cleveland Browns",
+      detail: "Acquired by Browns in blockbuster Myles Garrett package",
+      date_str: "Jul 24, 2026",
+      sort_date: "2026-07-24"
+    },
+    {
+      id: "tx-2026-07-20-1",
+      type: "trade",
+      blockbuster: true,
+      player_name: "A.J. Brown",
+      pos: "WR",
+      from_team: "Philadelphia Eagles",
+      to_team: "New England Patriots",
+      detail: "Traded to Patriots for 2027 1st round pick and 2027 3rd round pick",
+      date_str: "Jul 20, 2026",
+      sort_date: "2026-07-20"
+    },
+    {
+      id: "tx-2026-07-18-1",
+      type: "trade",
+      blockbuster: false,
+      player_name: "Dontayvion Wicks",
+      pos: "WR",
+      from_team: "Green Bay Packers",
+      to_team: "Philadelphia Eagles",
+      detail: "Acquired to reinforce receiving corps following A.J. Brown trade",
+      date_str: "Jul 18, 2026",
+      sort_date: "2026-07-18"
+    },
+    {
+      id: "tx-2026-07-15-1",
+      type: "signing",
+      blockbuster: true,
+      player_name: "Denzel Ward",
+      pos: "CB",
+      from_team: "Cleveland Browns",
+      to_team: "Cleveland Browns",
+      detail: "2-year, $62.2M contract extension ($40M guaranteed)",
+      date_str: "Jul 15, 2026",
+      sort_date: "2026-07-15"
+    },
+    {
+      id: "tx-2026-07-10-1",
+      type: "signing",
+      blockbuster: false,
+      player_name: "Jonathan Taylor",
+      pos: "RB",
+      from_team: "Indianapolis Colts",
+      to_team: "Indianapolis Colts",
+      detail: "2-year, $38M contract extension ($24M guaranteed)",
+      date_str: "Jul 10, 2026",
+      sort_date: "2026-07-10"
+    },
+    {
+      id: "tx-2026-06-25-1",
+      type: "signing",
+      blockbuster: true,
+      player_name: "Tyler Linderbaum",
+      pos: "C",
+      from_team: "Baltimore Ravens",
+      to_team: "Las Vegas Raiders",
+      detail: "Signed 4-year, $68M contract in free agency",
+      date_str: "Jun 25, 2026",
+      sort_date: "2026-06-25"
+    },
+    {
+      id: "tx-2026-06-18-1",
+      type: "signing",
+      blockbuster: true,
+      player_name: "Malik Willis",
+      pos: "QB",
+      from_team: "Green Bay Packers",
+      to_team: "Miami Dolphins",
+      detail: "Signed 3-year, $67.5M contract to assume starting QB role",
+      date_str: "Jun 18, 2026",
+      sort_date: "2026-06-18"
+    },
+    {
+      id: "tx-2026-06-12-1",
+      type: "signing",
+      blockbuster: true,
+      player_name: "Chris Olave",
+      pos: "WR",
+      from_team: "New Orleans Saints",
+      to_team: "New Orleans Saints",
+      detail: "4-year, $92M contract extension ($58M guaranteed)",
+      date_str: "Jun 12, 2026",
+      sort_date: "2026-06-12"
+    },
+    {
+      id: "tx-2026-06-05-1",
+      type: "signing",
+      blockbuster: true,
+      player_name: "Stefon Diggs",
+      pos: "WR",
+      from_team: "New England Patriots",
+      to_team: "Washington Commanders",
+      detail: "Signed 1-year, $14M contract after offseason release",
+      date_str: "Jun 05, 2026",
+      sort_date: "2026-06-05"
+    },
+    {
+      id: "tx-2026-05-28-1",
+      type: "trade",
+      blockbuster: false,
+      player_name: "Irvin Charles",
+      pos: "WR",
+      from_team: "New York Jets",
+      to_team: "Seattle Seahawks",
+      detail: "Traded for 2027 6th round pick",
+      date_str: "May 28, 2026",
+      sort_date: "2026-05-28"
+    },
+    {
+      id: "tx-2026-05-20-1",
+      type: "signing",
+      blockbuster: false,
+      player_name: "Tyrod Taylor",
+      pos: "QB",
+      from_team: "New York Jets",
+      to_team: "Green Bay Packers",
+      detail: "Signed 1-year backup QB contract",
+      date_str: "May 20, 2026",
+      sort_date: "2026-05-20"
+    },
+    {
+      id: "tx-2026-05-14-1",
+      type: "signing",
+      blockbuster: false,
+      player_name: "DJ Reader",
+      pos: "DT",
+      from_team: "Detroit Lions",
+      to_team: "New York Giants",
+      detail: "Signed 2-year, $18M contract",
+      date_str: "May 14, 2026",
+      sort_date: "2026-05-14"
+    },
+    {
+      id: "tx-2026-05-08-1",
+      type: "signing",
+      blockbuster: false,
+      player_name: "Scott Miller",
+      pos: "WR",
+      from_team: "Atlanta Falcons",
+      to_team: "Chicago Bears",
+      detail: "Signed 1-year contract",
+      date_str: "May 08, 2026",
+      sort_date: "2026-05-08"
+    },
+    {
+      id: "tx-2026-05-02-1",
+      type: "signing",
+      blockbuster: false,
+      player_name: "Henry To'oTo'o",
+      pos: "LB",
+      from_team: "Houston Texans",
+      to_team: "Houston Texans",
+      detail: "2-year contract extension",
+      date_str: "May 02, 2026",
+      sort_date: "2026-05-02"
+    }
+  ];
+
+  // Combine & sort transactions
+  data.transactions = [...summerTxs, ...data.transactions].sort((a,b) => (b.sort_date||'').localeCompare(a.sort_date||''));
+
+  // Team ID lookup
+  const teamIdByName = Object.fromEntries(data.teams.map(t => [t.name, t.id]));
+
+  // Player roster moves & additions
+  const playerUpdates = [
+    { name: 'Myles Garrett', newTeam: 'Los Angeles Rams', acq: 'trade', pos: 'EDGE', unit: 'defense', ovr: 98, age: 30, jersey: 95 },
+    { name: 'Jared Verse', newTeam: 'Cleveland Browns', acq: 'trade', pos: 'EDGE', unit: 'defense', ovr: 85, age: 25, jersey: 55 },
+    { name: 'A.J. Brown', newTeam: 'New England Patriots', acq: 'trade', pos: 'WR', unit: 'offense', ovr: 92, age: 29, jersey: 11 },
+    { name: 'Stefon Diggs', newTeam: 'Washington Commanders', acq: 'fa', pos: 'WR', unit: 'offense', ovr: 88, age: 32, jersey: 1 },
+    { name: 'Tyler Linderbaum', newTeam: 'Las Vegas Raiders', acq: 'fa', pos: 'C', unit: 'offense', ovr: 89, age: 26, jersey: 64 },
+    { name: 'Malik Willis', newTeam: 'Miami Dolphins', acq: 'fa', pos: 'QB', unit: 'offense', ovr: 71, age: 27, jersey: 7 },
+    { name: 'DJ Reader', newTeam: 'New York Giants', acq: 'fa', pos: 'DT', unit: 'defense', ovr: 84, age: 32, jersey: 98 },
+    { name: 'Dontayvion Wicks', newTeam: 'Philadelphia Eagles', acq: 'trade', pos: 'WR', unit: 'offense', ovr: 78, age: 25, jersey: 13 },
+    { name: 'Ogbonnia Okoronkwo', newTeam: 'San Francisco 49ers', acq: 'fa', pos: 'EDGE', unit: 'defense', ovr: 77, age: 31, jersey: 94 },
+    { name: 'Kristian Wilkerson', newTeam: 'Atlanta Falcons', acq: 'fa', pos: 'WR', unit: 'offense', ovr: 70, age: 29, jersey: 83 },
+    { name: 'Tyrod Taylor', newTeam: 'Green Bay Packers', acq: 'fa', pos: 'QB', unit: 'offense', ovr: 71, age: 37, jersey: 2 },
+    { name: 'Scott Miller', newTeam: 'Chicago Bears', acq: 'fa', pos: 'WR', unit: 'offense', ovr: 72, age: 29, jersey: 10 },
+    { name: 'Irvin Charles', newTeam: 'Seattle Seahawks', acq: 'trade', pos: 'WR', unit: 'offense', ovr: 68, age: 29, jersey: 82 }
+  ];
+
+  for (const item of playerUpdates) {
+    const targetTeamId = teamIdByName[item.newTeam];
+    if (!targetTeamId) continue;
+    let p = data.players.find(x => x.name.toLowerCase() === item.name.toLowerCase());
+    if (p) {
+      p.team_id = targetTeamId;
+      p.acquisition_type = item.acq;
+      p.unit = item.unit || p.unit;
+    } else {
+      data.players.push({
+        id: `custom-p-${Date.now()}-${Math.random().toString(36).substr(2,4)}`,
+        name: item.name,
+        pos: item.pos,
+        team_id: targetTeamId,
+        ovr: item.ovr,
+        unit: item.unit,
+        jersey: item.jersey,
+        age: item.age,
+        is_rookie: false,
+        acquisition_type: item.acq
+      });
+    }
+  }
+
+  // Adjust cap space estimates for teams with major summer contracts
+  const capAdjustments = {
+    'Los Angeles Rams': -22000000,
+    'New England Patriots': -18500000,
+    'Cleveland Browns': 12000000,
+    'Chicago Bears': -8000000,
+    'Buffalo Bills': -6500000,
+    'Detroit Lions': -7500000,
+    'Las Vegas Raiders': -12000000,
+    'Miami Dolphins': -11000000,
+    'Washington Commanders': -9000000,
+    'New Orleans Saints': -7000000
+  };
+
+  for (const t of data.teams) {
+    if (capAdjustments[t.name]) {
+      t.cap_space = (Number(t.cap_space) + capAdjustments[t.name]).toString();
+    }
+  }
+}
+
+async function loadAllData() {
+  const [teams, players, transactions, picks, grades] = await Promise.all([
+    sb.from('nfl_teams').select('*'),
+    fetchAllPlayers(),
+    sb.from('nfl_transactions').select('*').order('sort_date', { ascending: false }),
+    sb.from('nfl_draft_picks').select('*').order('pick_number'),
+    sb.from('nfl_draft_grades').select('*')
+  ]);
+  for (const r of [teams, transactions, picks, grades]) {
+    if (r.error) throw new Error(r.error.message);
+  }
+  DATA.teams = teams.data;
+  DATA.players = players;
+  DATA.transactions = transactions.data;
+  DATA.draftPicks = picks.data;
+  DATA.draftGrades = grades.data;
+
+  // Apply summer 2026 transactions & roster updates (May 1 - Aug 7, 2026)
+  applySummer2026Updates(DATA);
+
+  // Overlay EA Madden ratings from madden_official_ratings.json if present
+  try {
+    const mRes = await fetch('./madden_official_ratings.json');
+    if (mRes.ok) {
+      const maddenMap = await mRes.json();
+      function normName(n) { return (n||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[''.\-]/g,"").replace(/\b(jr|sr|ii|iii|iv|v)\b/gi,"").replace(/\s+/g," ").trim(); }
+      for (const p of DATA.players) {
+        const match = maddenMap[normName(p.name)];
+        if (match && match.ovr) {
+          p.ovr = match.ovr;
+          p.ratings_source = 'madden_official';
+          if (match.age) p.age = match.age;
+          if (match.jersey !== undefined && match.jersey !== null) p.jersey = match.jersey;
+        }
+      }
+    }
+  } catch (e) {
+    console.warn("Could not load local madden_official_ratings.json map", e);
+  }
+
+  // Build legacy-shaped lookups so render functions need minimal changes
+  DATA.teamColors = Object.fromEntries(DATA.teams.map(t => [t.name, t.primary_color]));
+  DATA.teamAbbr = Object.fromEntries(DATA.teams.map(t => [t.name, t.abbr]));
+  DATA.capData = Object.fromEntries(DATA.teams.map(t => [t.name,
+    { space: Number(t.cap_space), dead: Number(t.dead_money), status: t.status }
+  ]));
+  const divOrder = ['AFC East','AFC North','AFC South','AFC West','NFC East','NFC North','NFC South','NFC West'];
+  const divMap = {};
+  for (const t of DATA.teams) {
+    if (!divMap[t.division]) divMap[t.division] = [];
+    divMap[t.division].push(t.name);
+  }
+  DATA.divisions = Object.fromEntries(divOrder.filter(d => divMap[d]).map(d => [d, divMap[d]]));
+
+  const teamById = Object.fromEntries(DATA.teams.map(t => [t.id, t.name]));
+  DATA.draftPicksByTeam = {};
+  for (const p of DATA.draftPicks) {
+    const teamName = teamById[p.team_id];
+    if (!teamName) continue;
+    if (!DATA.draftPicksByTeam[teamName]) DATA.draftPicksByTeam[teamName] = [];
+    DATA.draftPicksByTeam[teamName].push(p.pick_number);
+  }
+  for (const t of Object.keys(DATA.draftPicksByTeam)) DATA.draftPicksByTeam[t].sort((a,b)=>a-b);
+
+  DATA.fullRosters = {};
+  for (const p of DATA.players) {
+    const teamName = teamById[p.team_id];
+    if (!teamName) continue;
+    if (!DATA.fullRosters[teamName]) DATA.fullRosters[teamName] = { offense: [], defense: [], special: [] };
+    DATA.fullRosters[teamName][p.unit].push({
+      num: p.jersey,
+      name: p.name,
+      pos: p.pos,
+      age: p.age,
+      ovr: p.ovr,
+      isRookie: p.is_rookie,
+      acquisitionType: p.acquisition_type,
+      isNew: p.is_rookie || p.acquisition_type === 'fa' || p.acquisition_type === 'trade'
+    });
+  }
+}
+
+function exportRostersCSV() {
+  if (!DATA || !DATA.players || DATA.players.length === 0) {
+    alert("Roster data is still loading, please try again in a moment.");
+    return;
+  }
+  const teamById = Object.fromEntries(DATA.teams.map(t => [t.id, t]));
+  const csvHeaders = ['Team Name', 'Abbr', 'Division', 'Player Name', 'Position', 'Unit', 'Overall Rating (OVR)', 'Age', 'Jersey #', 'Is Rookie', 'Acquisition Type'];
+  const rows = [csvHeaders.join(',')];
+
+  const processed = DATA.players.map(p => {
+    const team = teamById[p.team_id] || { name: 'Free Agent', abbr: 'FA', division: 'N/A' };
+    return {
+      team_name: team.name,
+      team_abbr: team.abbr,
+      division: team.division || 'N/A',
+      name: p.name,
+      pos: p.pos || '',
+      unit: (p.unit || 'offense').toUpperCase(),
+      ovr: p.ovr !== null && p.ovr !== undefined ? p.ovr : '',
+      age: p.age !== null && p.age !== undefined ? p.age : '',
+      jersey: p.jersey !== null && p.jersey !== undefined ? p.jersey : '',
+      is_rookie: p.is_rookie ? 'Yes' : 'No',
+      acquisition_type: p.acquisition_type || 'veteran'
+    };
+  });
+
+  const unitOrder = { 'OFFENSE': 1, 'DEFENSE': 2, 'SPECIAL': 3 };
+  processed.sort((a, b) => {
+    if (a.team_name !== b.team_name) return a.team_name.localeCompare(b.team_name);
+    const uA = unitOrder[a.unit] || 4;
+    const uB = unitOrder[b.unit] || 4;
+    if (uA !== uB) return uA - uB;
+    return (Number(b.ovr) || 0) - (Number(a.ovr) || 0);
+  });
+
+  for (const p of processed) {
+    const row = [
+      `"${p.team_name.replace(/"/g, '""')}"`,
+      `"${p.team_abbr}"`,
+      `"${p.division}"`,
+      `"${p.name.replace(/"/g, '""')}"`,
+      `"${p.pos}"`,
+      `"${p.unit}"`,
+      p.ovr,
+      p.age,
+      p.jersey,
+      p.is_rookie,
+      `"${p.acquisition_type}"`
+    ];
+    rows.push(row.join(','));
+  }
+
+  const blob = new Blob([rows.join('\n')], { type: 'text/csv;charset=utf-8;' });
+  const link = document.createElement('a');
+  const url = URL.createObjectURL(blob);
+  link.setAttribute('href', url);
+  link.setAttribute('download', 'nfl_rosters_2026.csv');
+  link.style.visibility = 'hidden';
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
+
+
+// ═══════════════════════════════════════════════════════════
+// PHASE 2: Power Rankings & Home Page
+// ═══════════════════════════════════════════════════════════
+const POS_GROUPS = {
+  QB:   { positions: ['QB'], n: 1 },
+  RB:   { positions: ['RB','FB','HB'], n: 2 },
+  WR:   { positions: ['WR'], n: 3 },
+  TE:   { positions: ['TE'], n: 2 },
+  OL:   { positions: ['OT','OG','C','G','OL','T'], n: 5 },
+  IDL:  { positions: ['DT','NT','DL'], n: 2 },
+  EDGE: { positions: ['DE','EDGE'], n: 2 },
+  LB:   { positions: ['LB','ILB','OLB'], n: 3 },
+  CB:   { positions: ['CB'], n: 3 },
+  S:    { positions: ['S','FS','SS'], n: 2 }
+};
+const POS_GROUP_ORDER = ['QB','RB','WR','TE','OL','IDL','EDGE','LB','CB','S'];
+
+const MACRO_FORMULAS = {
+  'Pass Off': [['QB',0.4],['WR',0.3],['TE',0.1],['OL',0.2]],
+  'Run Off':  [['RB',0.5],['OL',0.5]],
+  'Pass Def': [['EDGE',0.3],['CB',0.4],['S',0.3]],
+  'Run Def':  [['IDL',0.5],['LB',0.5]],
+  'Pass Rush':[['EDGE',0.7],['IDL',0.3]],
+  'Coverage': [['CB',0.5],['S',0.5]]
+};
+
+function ovrTier(ovr) {
+  if (ovr === null || ovr === undefined) return 'unrated';
+  if (ovr >= 90) return 'elite';
+  if (ovr >= 85) return 'star';
+  if (ovr >= 80) return 'solid';
+  if (ovr >= 75) return 'mid';
+  if (ovr >= 70) return 'below';
+  return 'bot';
+}
+
+function computeTeamPositionRating(teamName, group) {
+  const cfg = POS_GROUPS[group];
+  if (!cfg) return null;
+  const teamObj = DATA.teams.find(t => t.name === teamName);
+  if (!teamObj) return null;
+  const players = DATA.players.filter(p =>
+    p.team_id === teamObj.id
+    && cfg.positions.includes((p.pos || '').toUpperCase())
+    && p.ovr !== null && p.ovr !== undefined
+  );
+  if (players.length === 0) return null;
+  const sorted = players.slice().sort((a, b) => b.ovr - a.ovr).slice(0, cfg.n);
+  const sum = sorted.reduce((s, p) => s + p.ovr, 0);
+  return Math.round(sum / sorted.length);
+}
+
+function computeMacroRating(teamName, macro) {
+  const formula = MACRO_FORMULAS[macro];
+  if (!formula) return null;
+  let total = 0, totalWeight = 0;
+  for (const [group, weight] of formula) {
+    const r = computeTeamPositionRating(teamName, group);
+    if (r !== null) { total += r * weight; totalWeight += weight; }
+  }
+  return totalWeight === 0 ? null : Math.round(total / totalWeight);
+}
+
+function computeAllRankings() {
+  const teamNames = DATA.teams.map(t => t.name);
+  const matrix = {};
+  for (const t of teamNames) matrix[t] = {};
+  for (const group of POS_GROUP_ORDER) {
+    const ratings = teamNames.map(t => ({ team: t, rating: computeTeamPositionRating(t, group) }));
+    const sorted = [...ratings].sort((a, b) => (b.rating ?? -1) - (a.rating ?? -1));
+    sorted.forEach((entry, idx) => {
+      matrix[entry.team][group] = { rating: entry.rating, rank: entry.rating === null ? null : idx + 1 };
+    });
+  }
+  for (const macro of Object.keys(MACRO_FORMULAS)) {
+    const ratings = teamNames.map(t => ({ team: t, rating: computeMacroRating(t, macro) }));
+    const sorted = [...ratings].sort((a, b) => (b.rating ?? -1) - (a.rating ?? -1));
+    sorted.forEach((entry, idx) => {
+      matrix[entry.team][macro] = { rating: entry.rating, rank: entry.rating === null ? null : idx + 1 };
+    });
+  }
+  return matrix;
+}
+
+let heatmapSortGroup = 'QB';
+
+function renderHeatmap() {
+  const c = document.getElementById('heatmapContainer');
+  if (!c || !DATA.rankings) return;
+  const teams = DATA.teams.slice().sort((a, b) => {
+    const ar = DATA.rankings[a.name]?.[heatmapSortGroup]?.rating ?? -1;
+    const br = DATA.rankings[b.name]?.[heatmapSortGroup]?.rating ?? -1;
+    return br - ar;
+  });
+  let h = '<div class="hm-grid">';
+  h += '<div></div>';
+  for (const g of POS_GROUP_ORDER) {
+    const sortedCls = g === heatmapSortGroup ? 'sorted' : '';
+    h += `<div class="hm-th ${sortedCls}" onclick="sortHeatmap('${g}')">${g}</div>`;
+  }
+  for (const t of teams) {
+    h += `<div class="hm-team" onclick="openRoster('${t.name.replace(/'/g, "\\'")}')">
+      <span class="hm-color" style="background:${t.primary_color}"></span>${t.abbr}
+    </div>`;
+    for (const g of POS_GROUP_ORDER) {
+      const cell = DATA.rankings[t.name]?.[g];
+      const ovr = cell?.rating;
+      const tier = ovrTier(ovr);
+      const display = ovr === null || ovr === undefined ? '—' : ovr;
+      const tooltip = `${t.name} · ${g}: ${display}${cell?.rank ? ` (rank #${cell.rank})` : ''}`;
+      h += `<div class="hm-cell ${tier}" title="${tooltip}">${display}</div>`;
+    }
+  }
+  h += '</div>';
+  c.innerHTML = h;
+}
+
+function sortHeatmap(group) {
+  heatmapSortGroup = group;
+  renderHeatmap();
+}
+
+function renderMacroRow() {
+  const c = document.getElementById('macroRow');
+  if (!c || !DATA.rankings) return;
+  let h = '';
+  for (const macro of Object.keys(MACRO_FORMULAS)) {
+    let leader = null, leaderRating = -1;
+    for (const t of DATA.teams) {
+      const r = DATA.rankings[t.name]?.[macro]?.rating;
+      if (r !== null && r !== undefined && r > leaderRating) { leaderRating = r; leader = t; }
+    }
+    if (!leader) continue;
+    h += `<div class="macro-chip" style="border-left-color:${leader.primary_color}">
+      <div class="label">${macro} Leader</div>
+      <div class="leader">${leader.abbr}<span class="score">${leaderRating}</span></div>
+    </div>`;
+  }
+  c.innerHTML = h;
+}
+
+function renderCapStrip() {
+  const c = document.getElementById('capStrip');
+  if (!c) return;
+  const sorted = DATA.teams.slice().sort((a, b) => Number(b.cap_space) - Number(a.cap_space));
+  const top3 = sorted.slice(0, 3);
+  const bot3 = sorted.slice(-3).reverse();
+  let h = `<div class="text-xs font-bold text-slate-300 mb-2 flex items-center gap-2">
+    <svg class="w-4 h-4 text-emerald-400" fill="currentColor" viewBox="0 0 20 20"><path d="M4 4a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2H4zm3 4a1 1 0 011-1h4a1 1 0 110 2H8a1 1 0 01-1-1z"/></svg>
+    Cap Snapshot
+  </div>
+  <div class="grid grid-cols-2 gap-3">
+    <div>
+      <div class="text-[10px] uppercase tracking-wider text-emerald-400 mb-1 font-bold">Most Space</div>`;
+  for (const t of top3) {
+    h += `<div class="flex items-center justify-between py-1 text-xs border-b border-slate-800 last:border-0">
+      <span class="font-semibold text-white">${t.abbr}</span>
+      <span class="cap-positive font-bold">${formatCap(Number(t.cap_space))}</span>
+    </div>`;
+  }
+  h += `</div><div>
+      <div class="text-[10px] uppercase tracking-wider text-red-400 mb-1 font-bold">Cap Strapped</div>`;
+  for (const t of bot3) {
+    h += `<div class="flex items-center justify-between py-1 text-xs border-b border-slate-800 last:border-0">
+      <span class="font-semibold text-white">${t.abbr}</span>
+      <span class="cap-negative font-bold">${formatCap(Number(t.cap_space))}</span>
+    </div>`;
+  }
+  h += '</div></div>';
+  c.innerHTML = h;
+}
+
+function renderMiniFeed() {
+  const c = document.getElementById('miniFeed');
+  if (!c) return;
+  const recent = DATA.transactions
+    .slice()
+    .filter(t => t.type !== 'draft')
+    .sort((a, b) => (b.sort_date || '').localeCompare(a.sort_date || ''))
+    .slice(0, 6);
+  let h = `<div class="text-xs font-bold text-slate-300 mb-2 flex items-center justify-between">
+    <span class="flex items-center gap-2">
+      <svg class="w-4 h-4 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm.75-13a.75.75 0 00-1.5 0v5c0 .2.08.39.22.53l3 3a.75.75 0 101.06-1.06L10.75 9.69V5z" clip-rule="evenodd"/></svg>
+      Recent Activity
+    </span>
+    <a href="javascript:showTab('feed')" class="text-blue-400 hover:text-blue-300 text-[11px] font-normal">see full feed →</a>
+  </div>`;
+  for (const t of recent) {
+    const typeColor = t.type === 'trade' ? 'text-blue-300' : 'text-emerald-300';
+    h += `<div class="text-xs py-1.5 border-b border-slate-800 last:border-0">
+      <span class="${typeColor} font-bold uppercase mr-2 text-[9px]">${t.type}</span>
+      <span class="text-white font-medium">${t.player_name}</span>
+      <span class="text-slate-500 text-[10px] ml-1">${t.pos}</span>
+      <span class="text-slate-400 ml-1">→ ${DATA.teamAbbr[t.to_team] || t.to_team}</span>
+    </div>`;
+  }
+  c.innerHTML = h;
+}
+
+// ═══════════════════════════════════════════════════════════
+// COMPUTED: derive gains and losses per team from transactions
+// ═══════════════════════════════════════════════════════════
+function getTeamGains(team) {
+  return DATA.transactions.filter(t => t.to_team === team && t.from_team !== team);
+}
+function getTeamLosses(team) {
+  return DATA.transactions.filter(t => t.from_team === team && t.to_team !== team);
+}
+
+// ═══════════════════════════════════════════════════════════
+// RENDER FUNCTIONS
+// ═══════════════════════════════════════════════════════════
+function getPickRound(p){if(p<=32)return 1;if(p<=64)return 2;if(p<=100)return 3;if(p<=135)return 4;if(p<=172)return 5;if(p<=215)return 6;return 7;}
+function formatCap(v){const a=Math.abs(v);if(a>=1e6)return(v<0?'-':'')+'$'+(a/1e6).toFixed(1)+'M';return(v<0?'-':'')+'$'+(a/1e3).toFixed(0)+'K';}
+function getStatusColor(s){
+  const m={"All-In":"text-green-400","Competing":"text-blue-400","Building":"text-cyan-400","Reloading":"text-teal-400",
+    "Rising":"text-emerald-400","Flexible":"text-sky-400","Retooling":"text-yellow-400","Rebuilding":"text-orange-400",
+    "Cap Crunch":"text-red-400","Cap Hell":"text-red-500","Dynasty Tax":"text-red-600"};
+  return m[s]||"text-slate-400";
+}
+function ratingClass(r){if(r>=90)return'rating-elite';if(r>=80)return'rating-star';if(r>=70)return'rating-solid';return'rating-dev';}
+
+// Phase 4: transaction filter/sort state
+let txSortKey = 'sort_date';
+let txSortDir = 'desc';
+let txTypeFilter = 'all';   // 'all' | 'trade' | 'signing' | 'draft' | 'blockbuster'
+let txTeamFilter = '';
+let txSearchQuery = '';
+
+function getFilteredSortedTransactions() {
+  let list = DATA.transactions.slice();
+  if (txTypeFilter === 'blockbuster') list = list.filter(t => t.blockbuster);
+  else if (txTypeFilter !== 'all') list = list.filter(t => t.type === txTypeFilter);
+  if (txTeamFilter) list = list.filter(t => t.from_team === txTeamFilter || t.to_team === txTeamFilter);
+  if (txSearchQuery) {
+    list = list.filter(t =>
+      (t.player_name || '').toLowerCase().includes(txSearchQuery) ||
+      (t.from_team || '').toLowerCase().includes(txSearchQuery) ||
+      (t.to_team || '').toLowerCase().includes(txSearchQuery) ||
+      (t.pos || '').toLowerCase().includes(txSearchQuery)
+    );
+  }
+  list.sort((a, b) => {
+    let av = a[txSortKey], bv = b[txSortKey];
+    if (av === null || av === undefined) av = '';
+    if (bv === null || bv === undefined) bv = '';
+    const cmp = (av < bv) ? -1 : (av > bv) ? 1 : 0;
+    return txSortDir === 'asc' ? cmp : -cmp;
+  });
+  return list;
+}
+
+function getDraftRoundFromDetail(d){const m=(d||'').match(/Round\s+(\d)/i);return m?+m[1]:7;}
+function getPickNumFromDetail(d){const m=(d||'').match(/Pick\s+#?(\d+)/i);return m?+m[1]:null;}
+
+function renderFeed(){
+  const c = document.getElementById('feedContainer');
+  if (!c) return;
+  const list = getFilteredSortedTransactions();
+  const arrow = (key) => key === txSortKey ? (txSortDir === 'asc' ? ' ↑' : ' ↓') : '';
+  let h = `<div class="tx-tbl">
+    <div class="tx-th-cell ${txSortKey==='sort_date'?'sorted':''}" onclick="sortTx('sort_date')">Date${arrow('sort_date')}</div>
+    <div class="tx-th-cell ${txSortKey==='type'?'sorted':''}" onclick="sortTx('type')">Type${arrow('type')}</div>
+    <div class="tx-th-cell ${txSortKey==='player_name'?'sorted':''}" onclick="sortTx('player_name')">Player${arrow('player_name')}</div>
+    <div class="tx-th-cell ${txSortKey==='pos'?'sorted':''}" onclick="sortTx('pos')">Pos${arrow('pos')}</div>
+    <div class="tx-th-cell ${txSortKey==='to_team'?'sorted':''}" onclick="sortTx('to_team')">Move${arrow('to_team')}</div>
+    <div class="tx-th-cell no-sort">Detail</div>`;
+  const draftTxs = list.filter(t => t.type === 'draft');
+  const otherTxs  = list.filter(t => t.type !== 'draft');
+
+  for (const t of otherTxs) {
+    const bbCls = t.blockbuster ? 'bb' : '';
+    const fromAbbr = DATA.teamAbbr[t.from_team] || (t.from_team || '').split(' ').pop();
+    const toAbbr = DATA.teamAbbr[t.to_team] || (t.to_team || '').split(' ').pop();
+    const moveText = t.from_team === t.to_team ? `re-signed ${toAbbr}` : `${fromAbbr} → ${toAbbr}`;
+    h += `<div class="tx-td-cell ${bbCls}">${t.date_str || ''}</div>
+      <div class="tx-td-cell ${bbCls}"><span class="tx-pill ${t.type}">${t.type}</span></div>
+      <div class="tx-td-cell ${bbCls}">${t.blockbuster ? '<span class="tx-row-bb-marker">⚡</span>' : ''}<span class="text-white font-semibold">${t.player_name}</span></div>
+      <div class="tx-td-cell ${bbCls} text-slate-400">${t.pos}</div>
+      <div class="tx-td-cell ${bbCls}">${moveText}</div>
+      <div class="tx-td-cell ${bbCls} text-slate-500" title="${(t.detail || '').replace(/"/g,'&quot;')}">${t.detail || ''}</div>`;
+  }
+
+  if (draftTxs.length > 0) {
+    const byRound = {};
+    for (const t of draftTxs) {
+      const r = getDraftRoundFromDetail(t.detail);
+      if (!byRound[r]) byRound[r] = [];
+      byRound[r].push(t);
+    }
+    const rounds = Object.keys(byRound).map(Number).sort((a,b) => a - b);
+    for (const r of rounds) {
+      const picks = byRound[r].slice().sort((a,b) => (getPickNumFromDetail(a.detail)||999) - (getPickNumFromDetail(b.detail)||999));
+      const pips = picks.map(t => {
+        const abbr = DATA.teamAbbr[t.to_team] || (t.to_team||'').split(' ').pop();
+        const num = getPickNumFromDetail(t.detail);
+        return `<div class="tx-dp"><span class="dp-num">#${num||'?'}</span><span class="dp-team">${abbr}</span><span class="dp-name">${t.player_name}</span><span class="dp-pos">${t.pos}</span></div>`;
+      }).join('');
+      h += `<div class="tx-draft-group">
+        <div class="tx-draft-rnd-hdr">
+          <span class="tx-pill draft">DRAFT</span>
+          <span style="font-size:12px;font-weight:700;color:#e2e8f0">Round ${r}</span>
+          <span style="font-size:10px;color:#64748b">${picks.length} picks</span>
+        </div>
+        <div class="tx-draft-picks-wrap">${pips}</div>
+      </div>`;
+    }
+  }
+
+  h += '</div>';
+  if (list.length === 0) h += '<div class="text-center py-12 text-slate-500"><div class="text-3xl mb-2">🔍</div><div class="text-sm">No transactions match the current filters.</div></div>';
+  c.innerHTML = h;
+}
+
+function sortTx(key) {
+  if (txSortKey === key) {
+    txSortDir = txSortDir === 'asc' ? 'desc' : 'asc';
+  } else {
+    txSortKey = key;
+    txSortDir = key === 'sort_date' ? 'desc' : 'asc';
+  }
+  renderFeed();
+}
+
+function setTxTypeFilter(key) {
+  txTypeFilter = key;
+  renderTxFilterChips();
+  renderFeed();
+}
+
+function setTxTeamFilter(name) {
+  txTeamFilter = name;
+  renderFeed();
+}
+
+function renderBiggestMoves() {
+  const c = document.getElementById('biggestMoves');
+  if (!c) return;
+  const moves = DATA.transactions.filter(t => t.blockbuster).slice(0, 8);
+  let h = '';
+  for (const t of moves) {
+    const fromAbbr = DATA.teamAbbr[t.from_team] || (t.from_team || '').split(' ').pop();
+    const toAbbr = DATA.teamAbbr[t.to_team] || (t.to_team || '').split(' ').pop();
+    const fromColor = DATA.teamColors[t.from_team] || '#64748b';
+    const toColor = DATA.teamColors[t.to_team] || '#64748b';
+    const typeBg = t.type === 'trade' ? 'bg-blue-900/40 text-blue-300' : 'bg-emerald-900/40 text-emerald-300';
+    h += `<div class="glass rounded-xl p-3 shrink-0 w-64 blockbuster relative" style="border-left-color:#f59e0b">
+      <div class="flex items-center gap-2 mb-2">
+        <span class="text-[9px] font-black bg-amber-500/20 text-amber-400 px-2 py-0.5 rounded-full">⚡ BLOCKBUSTER</span>
+        <span class="text-[9px] font-bold ${typeBg} px-2 py-0.5 rounded-full uppercase">${t.type}</span>
+      </div>
+      <div class="font-bold text-white text-base mb-1">${t.player_name}</div>
+      <div class="flex items-center gap-2 text-xs mb-2 flex-wrap">
+        <span class="text-slate-400">${t.pos}</span>
+        <span class="text-slate-600">·</span>
+        <span class="px-1.5 py-0.5 rounded text-[10px] font-bold" style="background:${fromColor}40;color:${fromColor};">${fromAbbr}</span>
+        <span class="text-slate-500">→</span>
+        <span class="px-1.5 py-0.5 rounded text-[10px] font-bold" style="background:${toColor}40;color:${toColor};">${toAbbr}</span>
+      </div>
+      <div class="text-[10px] text-slate-500" style="display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">${t.detail || ''}</div>
+    </div>`;
+  }
+  c.innerHTML = h || '<div class="text-xs text-slate-500 px-2 py-4">No blockbusters yet.</div>';
+}
+
+function renderTxFilterChips() {
+  const c = document.getElementById('txFilterChips');
+  if (!c) return;
+  const types = [
+    { key: 'all',         label: 'All',          color: '71,85,105' },
+    { key: 'trade',       label: 'Trades',       color: '59,130,246' },
+    { key: 'signing',     label: 'Signings',     color: '16,185,129' },
+    { key: 'draft',       label: 'Draft',        color: '124,58,237' },
+    { key: 'blockbuster', label: '⚡ Blockbusters', color: '245,158,11' }
+  ];
+  let h = '';
+  for (const t of types) {
+    const active = txTypeFilter === t.key;
+    const styleAttr = active
+      ? `background:rgba(${t.color},0.3);color:#fff;border:1px solid rgba(${t.color},0.85);`
+      : `background:rgba(30,41,59,0.6);color:#94a3b8;border:1px solid rgba(71,85,105,0.6);`;
+    h += `<button onclick="setTxTypeFilter('${t.key}')" class="text-[11px] px-3 py-1 rounded-full transition font-semibold" style="${styleAttr}">${t.label}</button>`;
+  }
+  h += `<select onchange="setTxTeamFilter(this.value)" class="bg-slate-800 text-slate-300 text-[11px] px-3 py-1 rounded-full border border-slate-600 ml-2 focus:outline-none focus:border-blue-500">
+    <option value="">All Teams</option>`;
+  for (const team of DATA.teams.slice().sort((a,b)=>a.abbr.localeCompare(b.abbr))) {
+    const sel = txTeamFilter === team.name ? 'selected' : '';
+    h += `<option value="${team.name}" ${sel}>${team.abbr} — ${team.name}</option>`;
+  }
+  h += `</select>`;
+  c.innerHTML = h;
+}
+
+function scrollToDiv(divName){
+  const el=document.getElementById('div-'+divName.replace(/ /g,'-').toLowerCase());
+  if(el)el.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+let compareModeActive=false;
+let compareSelections=[];
+
+function toggleCompareMode(){
+  compareModeActive=!compareModeActive;
+  compareSelections=[];
+  document.querySelectorAll('.team-tile').forEach(t=>t.classList.remove('cmp-sel'));
+  const btn=document.getElementById('compareModeBtn');
+  if(btn){
+    if(compareModeActive){btn.style.cssText='background:rgba(59,130,246,0.2);border-color:#3b82f6;color:#93c5fd;';btn.textContent='⚖ Pick 2 teams…';}
+    else{btn.style.cssText='';btn.textContent='⚖ Compare';}
+  }
+}
+
+function selectForCompare(team){
+  const abbr=DATA.teamAbbr[team];
+  const tile=document.getElementById('tile-'+abbr);
+  if(compareSelections.includes(team)){
+    compareSelections=compareSelections.filter(t=>t!==team);
+    if(tile)tile.classList.remove('cmp-sel');
+  } else if(compareSelections.length<2){
+    compareSelections.push(team);
+    if(tile)tile.classList.add('cmp-sel');
+    if(compareSelections.length===2)openCompare(compareSelections[0],compareSelections[1]);
+  }
+}
+
+function openCompare(t1,t2){
+  const modal=document.getElementById('compareModal');
+  const body=document.getElementById('compareBody');
+  if(!modal||!body)return;
+  body.innerHTML=renderComparePanel(t1)+renderComparePanel(t2);
+  modal.classList.add('active');
+  document.body.style.overflow='hidden';
+}
+
+function closeCompare(){
+  const modal=document.getElementById('compareModal');
+  if(modal)modal.classList.remove('active');
+  document.body.style.overflow='';
+  compareSelections=[];
+  document.querySelectorAll('.team-tile').forEach(t=>t.classList.remove('cmp-sel'));
+  if(compareModeActive)toggleCompareMode();
+}
+
+function renderComparePanel(team){
+  const color=DATA.teamColors[team]||'#64748b';
+  const abbr=DATA.teamAbbr[team]||'';
+  const cap=DATA.capData[team]||{};
+  const roster=DATA.fullRosters[team]||{offense:[],defense:[],special:[]};
+  const all=[...roster.offense,...roster.defense,...roster.special];
+  const GRP={QB:['QB'],RB:['RB','FB'],WR:['WR'],TE:['TE'],OL:['OT','OG','C'],IDL:['DT','NT'],EDGE:['EDGE','DE'],LB:['LB','MLB','OLB'],CB:['CB'],S:['S','SS','FS'],ST:['K','P','LS']};
+  let rows='';
+  for(const[grp,pos] of Object.entries(GRP)){
+    const players=all.filter(p=>pos.includes(p.pos)).sort((a,b)=>(b.ovr||0)-(a.ovr||0));
+    if(!players.length)continue;
+    rows+=`<div style="font-size:9px;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:0.8px;padding:7px 16px 3px;background:rgba(30,41,59,0.4)">${grp}</div>`;
+    for(const p of players){
+      const rc=p.ovr>=90?'rating-elite':p.ovr>=80?'rating-star':p.ovr>=70?'rating-solid':'rating-dev';
+      const badge=p.isRookie?'<span class="badge-rook" style="margin-left:auto;flex-shrink:0">ROOK</span>':p.acquisitionType?'<span class="badge-new" style="margin-left:auto;flex-shrink:0">NEW</span>':'';
+      rows+=`<div style="display:flex;align-items:center;gap:7px;padding:3px 16px;font-size:11px;border-bottom:1px solid rgba(71,85,105,0.08)">
+        <div class="rating-badge ${rc}" style="width:24px;height:24px;font-size:11px;flex-shrink:0">${p.ovr??'—'}</div>
+        <span style="color:#e2e8f0;font-weight:600;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${p.name}</span>
+        <span style="color:#64748b;font-size:10px;min-width:30px;text-align:right">${p.pos}</span>
+        ${badge}
+      </div>`;
+    }
+  }
+  return `<div style="overflow-y:auto;display:flex;flex-direction:column;border-right:1px solid rgba(71,85,105,0.3);">
+    <div style="height:4px;background:linear-gradient(90deg,${color},transparent);flex-shrink:0"></div>
+    <div style="padding:12px 16px 10px;display:flex;align-items:center;gap:10px;border-bottom:1px solid rgba(71,85,105,0.25);flex-shrink:0;background:#0f1729;position:sticky;top:0;z-index:1">
+      <div style="width:4px;height:36px;border-radius:2px;background:${color};flex-shrink:0"></div>
+      <div style="flex:1">
+        <div style="font-size:20px;font-weight:900;color:#fff;letter-spacing:-0.5px">${abbr}</div>
+        <div style="font-size:11px;color:#94a3b8">${team}</div>
+      </div>
+      <div style="text-align:right">
+        <div style="font-size:9px;color:#64748b;text-transform:uppercase;letter-spacing:0.5px">Cap Space</div>
+        <div style="font-size:13px;font-weight:700" class="${cap.space>=0?'cap-positive':'cap-negative'}">${formatCap(cap.space||0)}</div>
+        <div style="font-size:10px;font-weight:600" class="${getStatusColor(cap.status)}">${cap.status||''}</div>
+      </div>
+    </div>
+    ${rows}
+  </div>`;
+}
+
+function renderTeams(){
+  const c=document.getElementById('teamsContainer');
+  const navC=document.getElementById('divNavBtns');
+  if(!c)return;
+  const allDivs=Object.entries(DATA.divisions);
+  const afcDivs=allDivs.filter(([k])=>k.startsWith('AFC'));
+  const nfcDivs=allDivs.filter(([k])=>k.startsWith('NFC'));
+
+  if(navC){
+    let navH='';
+    for(const[divs,prefix,cls] of [[afcDivs,'A','border-red-800/50 text-red-400 hover:bg-red-900/30'],[nfcDivs,'N','border-blue-800/50 text-blue-400 hover:bg-blue-900/30']]){
+      for(const[divName] of divs){
+        const short=divName.replace(/AFC |NFC /,'');
+        navH+=`<button onclick="scrollToDiv('${divName}')" class="text-[10px] font-bold px-2 py-0.5 rounded border transition bg-slate-800/60 ${cls}">${prefix}: ${short}</button>`;
+      }
+      navH+='<div class="w-px h-4 bg-slate-700 mx-0.5 self-center"></div>';
+    }
+    navC.innerHTML=navH;
+  }
+
+  const renderTile=(team)=>{
+    const abbr=DATA.teamAbbr[team];
+    const color=DATA.teamColors[team];
+    const cap=DATA.capData[team];
+    const tEsc=team.replace(/'/g,"\\'");
+    return `<div class="team-tile" id="tile-${abbr}" onclick="compareModeActive?selectForCompare('${tEsc}'):openRoster('${tEsc}')" style="border-top:3px solid ${color};">
+      <div style="font-size:17px;font-weight:900;color:#e2e8f0;letter-spacing:-0.5px">${abbr}</div>
+      <div style="font-size:9px;color:#64748b;margin-top:2px;line-height:1.2">${team}</div>
+      <div style="font-size:8px;font-weight:700;margin-top:3px" class="${getStatusColor(cap.status)}">${cap.status}</div>
+    </div>`;
+  };
+
+  const renderConf=(confDivs,confName,colorCls)=>{
+    let col=`<div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;padding-bottom:8px;border-bottom:1px solid rgba(71,85,105,0.3)">
+        <span style="font-size:18px;font-weight:900;letter-spacing:-0.5px" class="${colorCls}">${confName}</span>
+      </div>`;
+    for(const[divName,teams] of confDivs){
+      const divId='div-'+divName.replace(/ /g,'-').toLowerCase();
+      col+=`<div id="${divId}" class="division-header dropdown-toggle open rounded-lg px-3 py-1.5 mb-2 mt-4 flex items-center justify-between hover:bg-slate-800/40 transition" onclick="toggleDropdown(this)">
+        <h3 style="font-size:11px;font-weight:700;letter-spacing:0.3px" class="${colorCls}">${divName}</h3>
+        <svg class="dropdown-chevron w-3.5 h-3.5 ${colorCls}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"/></svg>
+      </div>
+      <div class="dropdown-content division-content open">
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:8px">
+          ${teams.map(renderTile).join('')}
+        </div>
+      </div>`;
+    }
+    return col+'</div>';
+  };
+
+  c.innerHTML=`<div class="conf-split">
+    ${renderConf(afcDivs,'AFC','text-red-400')}
+    ${renderConf(nfcDivs,'NFC','text-blue-400')}
+  </div>`;
+}
+
+function renderDraft(){
+  const c=document.getElementById('draftContainer');let h='';
+  const sorted=Object.entries(DATA.draftPicksByTeam).sort((a,b)=>(a[1][0]||999)-(b[1][0]||999));
+  sorted.forEach(([team,picks])=>{
+    const color=DATA.teamColors[team];
+    const r1=picks.filter(p=>p<=32),r2=picks.filter(p=>p>32&&p<=64),r3=picks.filter(p=>p>64&&p<=100),later=picks.filter(p=>p>100);
+    h+=`<div class="glass rounded-xl overflow-hidden team-card" data-team="${team.toLowerCase()}">
+      <div class="h-1" style="background:linear-gradient(90deg,${color},transparent)"></div>
+      <div class="p-4">
+        <div class="flex items-center justify-between mb-2">
+          <span class="font-bold text-white text-sm">${team}</span>
+          <span class="text-xs text-slate-500">${picks.length} picks</span>
+        </div>
+        <div class="space-y-1">
+          ${r1.length?`<div class="text-[11px] text-violet-400 font-bold">RD 1: ${r1.map(p=>`<span class="draft-pick r1">#${p}</span>`).join('')}</div>`:''}
+          ${r2.length?`<div class="text-[11px] text-blue-400 font-bold">RD 2: ${r2.map(p=>`<span class="draft-pick r2">#${p}</span>`).join('')}</div>`:''}
+          ${r3.length?`<div class="text-[11px] text-cyan-400 font-bold">RD 3: ${r3.map(p=>`<span class="draft-pick r3">#${p}</span>`).join('')}</div>`:''}
+          ${later.length?`<div class="text-[11px] text-slate-400 font-bold">RD 4-7: ${later.map(p=>`<span class="draft-pick r${getPickRound(p)}">#${p}</span>`).join('')}</div>`:''}
+        </div>
+      </div>
+    </div>`;
+  });
+  c.innerHTML=h;
+}
+
+// ═══════════════════════════════════════════════════════════
+// ROSTER MODAL (Madden-style)
+// ═══════════════════════════════════════════════════════════
+let currentRosterTeam = null;
+let currentRosterSide = 'offense';
+let rookiesOnlyFilter = false;
+
+function toggleRookiesFilter() {
+  rookiesOnlyFilter = !rookiesOnlyFilter;
+  const chip = document.getElementById('rookiesOnlyChip');
+  if (chip) chip.classList.toggle('active', rookiesOnlyFilter);
+  if (currentRosterTeam) renderRosterBody(currentRosterTeam, currentRosterSide);
+}
+
+function openRoster(team){
+  currentRosterTeam=team;currentRosterSide='offense';
+  rookiesOnlyFilter = false;
+  const chip = document.getElementById('rookiesOnlyChip');
+  if (chip) chip.classList.remove('active');
+  const modal=document.getElementById('rosterModal');
+  const color=DATA.teamColors[team];
+  document.getElementById('rosterHeader').style.background=`linear-gradient(90deg,${color},transparent)`;
+  document.getElementById('rosterTitle').textContent=team;
+  const cap=DATA.capData[team];
+  document.getElementById('rosterSubtitle').innerHTML=`<span class="${getStatusColor(cap.status)} font-semibold">${cap.status}</span> &middot; Cap: <span class="${cap.space>=0?'cap-positive':'cap-negative'} font-bold">${formatCap(cap.space)}</span>`;
+  // Reset tabs
+  document.querySelectorAll('.roster-tab').forEach(t=>{t.className='roster-tab';});
+  document.querySelectorAll('.roster-tab')[0].classList.add('active-off');
+  renderRosterBody(team,'offense');
+  renderRosterChanges(team);
+  modal.classList.add('active');
+  document.body.style.overflow='hidden';
+}
+
+function closeRoster(){
+  document.getElementById('rosterModal').classList.remove('active');
+  document.body.style.overflow='';
+}
+
+function showRosterSide(side,el){
+  currentRosterSide=side;
+  document.querySelectorAll('.roster-tab').forEach(t=>{t.className='roster-tab';});
+  const cls=side==='offense'?'active-off':side==='defense'?'active-def':'active-st';
+  el.classList.add(cls);
+  renderRosterBody(currentRosterTeam,side);
+}
+
+function renderRosterBody(team,side){
+  const roster=DATA.fullRosters[team];
+  if(!roster){document.getElementById('rosterBody').innerHTML='<div class="text-sm text-slate-500">No roster data available.</div>';return;}
+  let players=roster[side]||[];
+  if(rookiesOnlyFilter) players = players.filter(p => p.isRookie);
+  if(!players.length){document.getElementById('rosterBody').innerHTML=`<div class="text-sm text-slate-500 py-8 text-center">${rookiesOnlyFilter ? 'No rookies on this unit' : 'No data for this unit'}</div>`;return;}
+
+  // Group by position type for depth-chart formation
+  let groups=[];
+  if(side==='offense'){
+    const qbs=players.filter(p=>p.pos==='QB');
+    const rbs=players.filter(p=>p.pos==='RB');
+    const fbs=players.filter(p=>p.pos==='FB');
+    const wrs=players.filter(p=>p.pos==='WR');
+    const tes=players.filter(p=>p.pos==='TE');
+    const cs=players.filter(p=>p.pos==='C');
+    const gs=players.filter(p=>p.pos==='G');
+    const ots=players.filter(p=>p.pos==='OT');
+    groups=[
+      {label:'Quarterbacks',players:qbs,color:'#3b82f6'},
+      {label:'Running Backs',players:[...rbs,...fbs],color:'#22c55e'},
+      {label:'Wide Receivers',players:wrs,color:'#f59e0b'},
+      {label:'Tight Ends',players:tes,color:'#8b5cf6'},
+      {label:'Centers',players:cs,color:'#64748b'},
+      {label:'Guards',players:gs,color:'#64748b'},
+      {label:'Offensive Tackles',players:ots,color:'#64748b'}
+    ];
+  } else if(side==='defense'){
+    const des=players.filter(p=>p.pos==='DE');
+    const dts=players.filter(p=>p.pos==='DT');
+    const lbs=players.filter(p=>p.pos==='LB');
+    const cbs=players.filter(p=>p.pos==='CB');
+    const ss=players.filter(p=>p.pos==='S');
+    groups=[
+      {label:'Defensive Ends',players:des,color:'#ef4444'},
+      {label:'Defensive Tackles',players:dts,color:'#f97316'},
+      {label:'Linebackers',players:lbs,color:'#eab308'},
+      {label:'Cornerbacks',players:cbs,color:'#06b6d4'},
+      {label:'Safeties',players:ss,color:'#8b5cf6'}
+    ];
+  } else {
+    const ks=players.filter(p=>p.pos==='PK'||p.pos==='K');
+    const ps=players.filter(p=>p.pos==='P');
+    const ls=players.filter(p=>p.pos==='LS');
+    groups=[
+      {label:'Kickers',players:ks,color:'#f59e0b'},
+      {label:'Punters',players:ps,color:'#f59e0b'},
+      {label:'Long Snappers',players:ls,color:'#f59e0b'}
+    ];
+  }
+
+  let h='';
+  groups.forEach(grp=>{
+    if(!grp.players.length)return;
+    h+=`<div class="pos-group">
+      <div class="pos-group-header" onclick="this.classList.toggle('collapsed')">
+        <span style="width:3px;height:14px;border-radius:2px;background:${grp.color};display:inline-block"></span>
+        <span class="pg-label" style="color:${grp.color}">${grp.label}</span>
+        <span class="pg-count">${grp.players.length}</span>
+        <span class="pg-chevron">&#9660;</span>
+      </div>
+      <div class="pos-group-list">`;
+    grp.players.sort((a,b) => (b.ovr ?? -1) - (a.ovr ?? -1));
+    grp.players.forEach(p=>{
+      const tier = (p.ovr === null || p.ovr === undefined) ? 'rating-dev' : ratingClass(p.ovr);
+      const ovrDisplay = (p.ovr === null || p.ovr === undefined) ? '—' : p.ovr;
+      let badge = '';
+      if (p.isRookie) badge = `<span class="badge-rook">ROOK</span>`;
+      else if (p.acquisitionType === 'fa' || p.acquisitionType === 'trade') badge = `<span class="badge-new">NEW</span>`;
+      const rowCls = p.isRookie ? 'is-rookie' : (p.isNew ? 'is-new' : '');
+      h+=`<div class="compact-player ${rowCls}">
+        <span class="rating-badge ${tier}" style="width:26px;height:26px;font-size:11px">${ovrDisplay}</span>
+        <span class="cp-num">${p.num||'-'}</span>
+        <span class="cp-name" title="${p.name}">${p.name}</span>
+        <span class="cp-pos">${p.pos}</span>
+        <span class="cp-age">${p.age||''}</span>
+        ${badge}
+      </div>`;
+    });
+    h+=`</div></div>`;
+  });
+  document.getElementById('rosterBody').innerHTML=h;
+}
+
+function renderRosterChanges(team){
+  const gains=getTeamGains(team);const losses=getTeamLosses(team);
+  let h='<div class="grid grid-cols-1 md:grid-cols-2 gap-4">';
+  // Gains
+  h+=`<div><div class="text-xs font-bold text-emerald-400 mb-2">&#x2B06; ACQUIRED THIS OFFSEASON (${gains.length})</div>`;
+  if(gains.length){
+    gains.forEach(g=>{
+      h+=`<div class="flex items-center gap-2 text-xs py-1 border-b border-slate-800">
+        <span class="new-badge text-[9px] px-1.5 py-0 rounded-full font-bold text-white">NEW</span>
+        <span class="text-white font-medium">${g.player_name}</span>
+        <span class="text-slate-500">${g.pos}</span>
+        <span class="text-slate-600">&larr; ${g.from_team}</span>
+      </div>`;
+    });
+  } else { h+='<div class="text-xs text-slate-600">No acquisitions</div>'; }
+  h+='</div>';
+  // Losses
+  h+=`<div><div class="text-xs font-bold text-red-400 mb-2">&#x2B07; LOST THIS OFFSEASON (${losses.length})</div>`;
+  if(losses.length){
+    losses.forEach(l=>{
+      h+=`<div class="flex items-center gap-2 text-xs py-1 border-b border-slate-800">
+        <span class="lost-badge text-[9px] px-1.5 py-0 rounded-full font-bold text-white">OUT</span>
+        <span class="text-slate-400 font-medium">${l.player_name}</span>
+        <span class="text-slate-500">${l.pos}</span>
+        <span class="text-slate-600">&rarr; ${l.to_team}</span>
+      </div>`;
+    });
+  } else { h+='<div class="text-xs text-slate-600">No losses</div>'; }
+  h+='</div></div>';
+  document.getElementById('rosterChanges').innerHTML=h;
+}
+
+// ═══════════════════════════════════════════════════════════
+// INTERACTIONS
+// ═══════════════════════════════════════════════════════════
+function showTab(tab){
+  document.querySelectorAll('[id^="tab-"]').forEach(el=>{
+    if(el.id==='tab-'+tab){el.classList.remove('hidden');el.style.animation='fadeIn 0.25s ease';}
+    else{el.classList.add('hidden');el.style.animation='';}
+  });
+  document.querySelectorAll('.tab-btn').forEach(btn=>{btn.classList.remove('active');btn.classList.add('bg-slate-800','text-slate-400');});
+  document.querySelector(`[data-tab="${tab}"]`).classList.add('active');
+  document.querySelector(`[data-tab="${tab}"]`).classList.remove('bg-slate-800','text-slate-400');
+  if (tab === 'projections') {
+    renderProjSubTabs();
+    renderProjContent();
+  }
+}
+
+function filterDashboard(q){
+  q = (q || '').toLowerCase().trim();
+  txSearchQuery = q;
+  // Re-render the transactions feed via the new pipeline
+  if (typeof renderFeed === 'function') renderFeed();
+  // Filter team cards (DOM-level, since rendering is the same)
+  let teamVisible = 0;
+  document.querySelectorAll('#teamsContainer .team-card').forEach(el => {
+    const t = el.dataset.team || ''; const p = el.dataset.players || '';
+    const show = (!q || t.includes(q) || p.includes(q));
+    el.style.display = show ? '' : 'none';
+    if (show) teamVisible++;
+  });
+  // Filter draft cards
+  let draftVisible = 0;
+  document.querySelectorAll('#draftContainer .team-card').forEach(el => {
+    const t = el.dataset.team || '';
+    const show = (!q || t.includes(q));
+    el.style.display = show ? '' : 'none';
+    if (show) draftVisible++;
+  });
+  // Empty-state for teams + draft (transactions handles its own empty state in renderFeed)
+  ['teamsEmpty','draftEmpty'].forEach(id=>{const el=document.getElementById(id);if(el)el.remove();});
+  if (q) {
+    if (teamVisible === 0) {
+      const el = document.createElement('div'); el.id = 'teamsEmpty';
+      el.className = 'text-center py-12 text-slate-500';
+      el.innerHTML = '<div class="text-4xl mb-2">&#128269;</div><div class="text-sm">No teams match "<span class="text-slate-300">'+q+'</span>"</div>';
+      document.getElementById('teamsContainer').appendChild(el);
+    }
+    if (draftVisible === 0) {
+      const el = document.createElement('div'); el.id = 'draftEmpty';
+      el.className = 'text-center py-12 text-slate-500';
+      el.innerHTML = '<div class="text-4xl mb-2">&#128269;</div><div class="text-sm">No draft cards match "<span class="text-slate-300">'+q+'</span>"</div>';
+      document.getElementById('draftContainer').appendChild(el);
+    }
+  }
+}
+
+function toggleDropdown(el){
+  el.classList.toggle('open');
+  const content=el.nextElementSibling;
+  content.classList.toggle('open');
+}
+
+function saveNote(abbr,value){localStorage.setItem(`note-${abbr}`,value);}
+
+// ESC to close modal
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeRoster();});
+
+// Back to top button visibility
+window.addEventListener('scroll',()=>{
+  const btn=document.getElementById('backToTop');
+  if(window.scrollY>400){btn.style.opacity='1';btn.style.transform='translateY(0)';btn.style.pointerEvents='auto';}
+  else{btn.style.opacity='0';btn.style.transform='translateY(1rem)';btn.style.pointerEvents='none';}
+});
+
+// INIT
+loadAllData().then(() => {
+  console.log('[DATA loaded]', {
+    teams: DATA.teams.length,
+    players: DATA.players.length,
+    transactions: DATA.transactions.length,
+    draftPicks: DATA.draftPicks.length,
+    rookies: DATA.players.filter(p => p.is_rookie).length,
+    rated: DATA.players.filter(p => p.ovr !== null).length
+  });
+  DATA.rankings = computeAllRankings();
+  renderHeatmap(); renderMacroRow(); renderCapStrip(); renderMiniFeed();
+  renderBiggestMoves(); renderTxFilterChips(); renderFeed();
+  renderTeams(); renderDraft();
+}).catch(e => {
+  document.body.innerHTML = '<div style="padding:40px;color:#ef4444;font-family:monospace">Failed to load data from Supabase: ' + e.message + '</div>';
+  console.error('[loadAllData failed]', e);
+});
+
+// ═══════════════════════════════════════════════════════════
+// CLAY PROJECTIONS TAB
+// ═══════════════════════════════════════════════════════════
+let CLAY_DATA = null;
+let currentProjSubTab = 'standings';
+
+const PROJ_SUB_TABS = [
+  { id: 'standings', label: 'Standings', icon: '🏈' },
+  { id: 'categories', label: 'Leaders', icon: '🏆' },
+  { id: 'sos', label: 'Schedule', icon: '📅' },
+  { id: 'teamproj', label: 'Teams', icon: '🏟' },
+  { id: 'qb', label: 'QB', icon: '🎯' },
+  { id: 'rb', label: 'RB', icon: '🏃' },
+  { id: 'wr', label: 'WR', icon: '📡' },
+  { id: 'te', label: 'TE', icon: '🤲' },
+  { id: 'def', label: 'Defense', icon: '🛡' },
+  { id: 'unitgrades', label: 'Unit Grades', icon: '📊' },
+  { id: 'starters', label: 'Starters', icon: '⭐' },
+  { id: 'coaching', label: 'Coaching', icon: '📋' },
+];
+
+async function loadClayProjections() {
+  if (CLAY_DATA) return CLAY_DATA;
+  try {
+    const res = await fetch('./clay_projections_2026.json');
+    if (!res.ok) throw new Error('Failed to load projections');
+    CLAY_DATA = await res.json();
+    return CLAY_DATA;
+  } catch (e) {
+    console.warn('Could not load clay_projections_2026.json', e);
+    return null;
+  }
+}
+
+function renderProjSubTabs() {
+  const c = document.getElementById('projSubTabs');
+  if (!c) return;
+  c.innerHTML = PROJ_SUB_TABS.map(t => {
+    const active = t.id === currentProjSubTab;
+    return `<button onclick="switchProjSubTab('${t.id}')" class="px-3 py-1.5 rounded-lg text-xs font-bold transition ${active ? 'bg-cyan-600/30 text-cyan-300 border border-cyan-500/50' : 'bg-slate-800/80 text-slate-400 border border-transparent hover:bg-slate-700'}">${t.icon} ${t.label}</button>`;
+  }).join('');
+}
+
+function switchProjSubTab(id) {
+  currentProjSubTab = id;
+  renderProjSubTabs();
+  renderProjContent();
+}
+
+async function renderProjContent() {
+  const c = document.getElementById('projContent');
+  if (!c) return;
+  const data = await loadClayProjections();
+  if (!data) { c.innerHTML = '<p class="text-slate-500 text-sm">Projections data not found. Run extract_clay_projections.py first.</p>'; return; }
+
+  switch (currentProjSubTab) {
+    case 'standings': renderStandingsProj(c, data); break;
+    case 'categories': renderCategories(c, data); break;
+    case 'sos': renderSOS(c, data); break;
+    case 'teamproj': renderTeamProj(c, data); break;
+    case 'qb': renderPosProj(c, data, 'QB'); break;
+    case 'rb': renderPosProj(c, data, 'RB'); break;
+    case 'wr': renderPosProj(c, data, 'WR'); break;
+    case 'te': renderPosProj(c, data, 'TE'); break;
+    case 'def': renderDefProj(c, data); break;
+    case 'unitgrades': renderUnitGrades(c, data); break;
+    case 'starters': renderStarters(c, data); break;
+    case 'coaching': renderCoaching(c, data); break;
+  }
+}
+
+function renderCategories(c, data) {
+  if (!data.category_leaders) { c.innerHTML = '<p class="text-slate-500">No category leaders data</p>'; return; }
+  const cats = Object.entries(data.category_leaders);
+  let h = '<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">';
+  for (const [catName, players] of cats) {
+    h += `<div class="glass rounded-lg p-3">
+      <div class="text-xs font-bold text-cyan-400 uppercase tracking-wider mb-2">${catName}</div>
+      <table class="w-full text-xs">
+        <thead><tr class="text-slate-500 border-b border-slate-700/50">
+          <th class="text-left px-2 py-1">#</th><th class="text-left px-2 py-1">Player</th><th class="text-left px-2 py-1">Team</th><th class="text-right px-2 py-1">Value</th>
+        </tr></thead><tbody>`;
+    for (let i = 0; i < Math.min(players.length, 10); i++) {
+      const p = players[i];
+      const tier = i === 0 ? 'text-amber-400 font-bold' : i < 3 ? 'text-slate-200' : 'text-slate-400';
+      h += `<tr class="border-b border-slate-800/30 hover:bg-slate-800/20">
+        <td class="px-2 py-1 text-slate-500">${i+1}</td>
+        <td class="px-2 py-1 ${tier}">${p.name}</td>
+        <td class="px-2 py-1 text-slate-400">${p.team}</td>
+        <td class="px-2 py-1 text-right font-bold text-cyan-300">${p.value}</td>
+      </tr>`;
+    }
+    h += '</tbody></table></div>';
+  }
+  h += '</div>';
+  c.innerHTML = h;
+}
+
+function renderSOS(c, data) {
+  if (!data.strength_of_schedule) { c.innerHTML = '<p class="text-slate-500">No SOS data</p>'; return; }
+  const teams = Object.entries(data.strength_of_schedule).sort((a,b) => a[1].rank - b[1].rank);
+  let h = '<div class="overflow-x-auto"><table class="w-full text-xs">' +
+    '<thead><tr class="text-slate-500 border-b border-slate-700/50">' +
+      '<th class="text-center px-2 py-2 font-semibold">Rk</th>' +
+      '<th class="text-left px-3 py-2 font-semibold">Team</th>';
+  for (let w = 1; w <= 18; w++) h += `<th class="text-center px-1 py-2 font-semibold">${w}</th>`;
+  h += '</tr></thead><tbody>';
+  for (const [abbr, info] of teams) {
+    h += `<tr class="border-b border-slate-800/50 hover:bg-slate-800/30">
+      <td class="text-center px-2 py-2 font-bold text-cyan-400">${info.rank}</td>
+      <td class="px-3 py-2 font-semibold text-slate-200">${info.team}</td>`;
+    for (let w = 0; w < 18; w++) {
+      const opp = info.schedule[w] || '';
+      const isBye = opp === '0';
+      const isHome = !opp.startsWith('@') && !isBye;
+      const cls = isBye ? 'text-slate-600' : isHome ? 'text-slate-300' : 'text-slate-500';
+      h += `<td class="text-center px-1 py-2 ${cls} text-[10px]">${isBye ? 'BYE' : opp}</td>`;
+    }
+    h += '</tr>';
+  }
+  h += '</tbody></table></div>';
+  c.innerHTML = h;
+}
+
+function renderTeamProj(c, data) {
+  if (!data.team_projections) { c.innerHTML = '<p class="text-slate-500">No team projections data</p>'; return; }
+  const teams = Object.entries(data.team_projections).sort((a,b) => (b[1].projected_wins||0) - (a[1].projected_wins||0));
+  let h = '<div class="grid grid-cols-1 md:grid-cols-2 gap-3">';
+  for (const [name, t] of teams) {
+    const winsClass = (t.projected_wins||0) >= 10 ? 'text-emerald-400' : (t.projected_wins||0) >= 7 ? 'text-slate-300' : 'text-red-400';
+    h += `<div class="glass rounded-lg p-3">
+      <div class="flex items-center justify-between mb-2">
+        <div class="text-sm font-bold text-slate-200">${name}</div>
+        <div class="text-xs">
+          <span class="font-bold ${winsClass}">${t.projected_wins || '-'} wins</span>
+          <span class="text-slate-500 ml-1">#${t.nfl_rank || '?'}</span>
+        </div>
+      </div>
+      <div class="grid grid-cols-3 gap-2 text-[10px]">
+        <div><span class="text-slate-500">SOS:</span> <span class="text-slate-300">#${t.sos_ranking || '?'}</span></div>
+        <div><span class="text-slate-500">Off:</span> <span class="text-slate-300">${t.offense.length} players</span></div>
+        <div><span class="text-slate-500">Def:</span> <span class="text-slate-300">${t.defense.length} players</span></div>
+      </div>`;
+    if (t.unit_grades && Object.keys(t.unit_grades).length) {
+      h += '<div class="flex gap-1 mt-2 flex-wrap">';
+      for (const [pos, grade] of Object.entries(t.unit_grades)) {
+        const gc = grade >= 8 ? 'bg-emerald-600/30 text-emerald-300' : grade >= 6 ? 'bg-slate-700/50 text-slate-300' : 'bg-red-600/20 text-red-300';
+        h += `<span class="px-1.5 py-0.5 rounded text-[9px] font-bold ${gc}">${pos} ${grade}</span>`;
+      }
+      h += '</div>';
+    }
+    // Top offensive player
+    if (t.offense.length > 0) {
+      const top = t.offense[0];
+      h += `<div class="mt-2 text-[10px] text-slate-500">Top: <span class="text-slate-300">${top.name}</span> - ${top.ppr_pts} PPR</div>`;
+    }
+    h += '</div>';
+  }
+  h += '</div>';
+  c.innerHTML = h;
+}
+
+function renderStandingsProj(c, data) {
+  if (!data.standings || !data.standings.divisions) { c.innerHTML = '<p class="text-slate-500">No standings data</p>'; return; }
+  let h = '';
+  for (const [div, teams] of Object.entries(data.standings.divisions)) {
+    h += `<div class="mb-4">
+      <div class="text-xs font-bold text-cyan-400 uppercase tracking-wider mb-2 division-header px-3 py-1.5 rounded">${div}</div>
+      <div class="overflow-x-auto"><table class="w-full text-xs">
+        <thead><tr class="text-slate-500 border-b border-slate-700/50">
+          <th class="text-left px-3 py-2 font-semibold">Team</th>
+          <th class="text-center px-2 py-2 font-semibold">W</th>
+          <th class="text-center px-2 py-2 font-semibold">L</th>
+          <th class="text-center px-2 py-2 font-semibold">PF</th>
+          <th class="text-center px-2 py-2 font-semibold">PA</th>
+          <th class="text-center px-2 py-2 font-semibold">Diff</th>
+          <th class="text-center px-2 py-2 font-semibold">Fav</th>
+          <th class="text-center px-2 py-2 font-semibold">SOS</th>
+        </tr></thead>
+        <tbody>`;
+    for (const t of teams.sort((a,b) => b.wins - a.wins)) {
+      const diffClass = t.diff > 0 ? 'text-emerald-400' : t.diff < 0 ? 'text-red-400' : '';
+      h += `<tr class="border-b border-slate-800/50 hover:bg-slate-800/30">
+        <td class="px-3 py-2 font-semibold text-slate-200">${t.name}</td>
+        <td class="text-center px-2 py-2 font-bold text-emerald-400">${t.wins}</td>
+        <td class="text-center px-2 py-2 font-bold text-red-400">${t.losses}</td>
+        <td class="text-center px-2 py-2 text-slate-300">${t.pf}</td>
+        <td class="text-center px-2 py-2 text-slate-300">${t.pa}</td>
+        <td class="text-center px-2 py-2 font-bold ${diffClass}">${t.diff > 0 ? '+' : ''}${t.diff}</td>
+        <td class="text-center px-2 py-2 font-bold text-cyan-400">${t.favored_games}</td>
+        <td class="text-center px-2 py-2 text-slate-400">#${t.sos_rank}</td>
+      </tr>`;
+    }
+    h += '</tbody></table></div></div>';
+  }
+  c.innerHTML = h;
+}
+
+function renderPosProj(c, data, pos) {
+  const players = data.positional_projections?.[pos] || [];
+  if (!players.length) { c.innerHTML = '<p class="text-slate-500">No data</p>'; return; }
+
+  let h = `<div class="mb-3 flex items-center gap-3">
+    <span class="text-sm font-bold text-slate-300">${players.length} players</span>
+    <input id="projSearch_${pos}" type="text" placeholder="Search..." class="bg-slate-800/80 border border-slate-600 rounded-lg px-3 py-1.5 text-xs w-48 focus:outline-none focus:border-cyan-500" oninput="filterProjTable('${pos}')">
+  </div>`;
+
+  h += `<div class="overflow-x-auto"><table id="projTable_${pos}" class="w-full text-xs">
+    <thead><tr class="text-slate-500 border-b border-slate-700/50">
+      <th class="text-left px-3 py-2 font-semibold cursor-pointer" onclick="sortProjTable('${pos}','pos_rank')">#</th>
+      <th class="text-left px-3 py-2 font-semibold cursor-pointer" onclick="sortProjTable('${pos}','name')">Player</th>
+      <th class="text-left px-3 py-2 font-semibold cursor-pointer" onclick="sortProjTable('${pos}','team')">Team</th>
+      <th class="text-center px-2 py-2 font-semibold cursor-pointer" onclick="sortProjTable('${pos}','ff_pts')">FF Pts</th>`;
+
+  if (pos === 'QB') {
+    h += `<th class="text-center px-2 py-2">G</th><th class="text-center px-2 py-2">Att</th><th class="text-center px-2 py-2">Comp</th><th class="text-center px-2 py-2">Yds</th><th class="text-center px-2 py-2">TD</th><th class="text-center px-2 py-2">INT</th><th class="text-center px-2 py-2">Rush</th><th class="text-center px-2 py-2">RuYd</th><th class="text-center px-2 py-2">RuTD</th>`;
+  } else if (pos === 'RB' || pos === 'TE') {
+    h += `<th class="text-center px-2 py-2">G</th><th class="text-center px-2 py-2">Car</th><th class="text-center px-2 py-2">RuYd</th><th class="text-center px-2 py-2">RuTD</th><th class="text-center px-2 py-2">Tgt</th><th class="text-center px-2 py-2">Rec</th><th class="text-center px-2 py-2">ReYd</th><th class="text-center px-2 py-2">ReTD</th>`;
+  } else if (pos === 'WR') {
+    h += `<th class="text-center px-2 py-2">G</th><th class="text-center px-2 py-2">Tgt</th><th class="text-center px-2 py-2">Rec</th><th class="text-center px-2 py-2">ReYd</th><th class="text-center px-2 py-2">ReTD</th><th class="text-center px-2 py-2">Car</th><th class="text-center px-2 py-2">RuYd</th><th class="text-center px-2 py-2">RuTD</th>`;
+  }
+  h += '</tr></thead><tbody>';
+
+  for (const p of players) {
+    h += `<tr class="border-b border-slate-800/50 hover:bg-slate-800/30">
+      <td class="px-3 py-2 text-slate-400 font-bold">${p.pos_rank}</td>
+      <td class="px-3 py-2 font-semibold text-slate-200">${p.name}</td>
+      <td class="px-3 py-2 text-slate-400">${p.team_abbr || p.team}</td>
+      <td class="text-center px-2 py-2 font-bold text-cyan-400">${p.ff_pts}</td>`;
+    if (pos === 'QB') {
+      h += `<td class="text-center px-2 py-2">${p.games}</td><td class="text-center px-2 py-2">${p.pass_att}</td><td class="text-center px-2 py-2">${p.pass_comp}</td><td class="text-center px-2 py-2">${p.pass_yds}</td><td class="text-center px-2 py-2 text-emerald-400">${p.pass_td}</td><td class="text-center px-2 py-2 text-red-400">${p.interceptions}</td><td class="text-center px-2 py-2">${p.rush_att}</td><td class="text-center px-2 py-2">${p.rush_yds}</td><td class="text-center px-2 py-2 text-emerald-400">${p.rush_td}</td>`;
+    } else if (pos === 'RB' || pos === 'TE') {
+      h += `<td class="text-center px-2 py-2">${p.games}</td><td class="text-center px-2 py-2">${p.carries}</td><td class="text-center px-2 py-2">${p.rush_yds}</td><td class="text-center px-2 py-2 text-emerald-400">${p.rush_td}</td><td class="text-center px-2 py-2">${p.targets}</td><td class="text-center px-2 py-2">${p.rec}</td><td class="text-center px-2 py-2">${p.rec_yds}</td><td class="text-center px-2 py-2 text-emerald-400">${p.rec_td}</td>`;
+    } else if (pos === 'WR') {
+      h += `<td class="text-center px-2 py-2">${p.games}</td><td class="text-center px-2 py-2">${p.targets}</td><td class="text-center px-2 py-2">${p.rec}</td><td class="text-center px-2 py-2">${p.rec_yds}</td><td class="text-center px-2 py-2 text-emerald-400">${p.rec_td}</td><td class="text-center px-2 py-2">${p.carries}</td><td class="text-center px-2 py-2">${p.rush_yds}</td><td class="text-center px-2 py-2 text-emerald-400">${p.rush_td}</td>`;
+    }
+    h += '</tr>';
+  }
+  h += '</tbody></table></div>';
+  c.innerHTML = h;
+}
+
+function renderDefProj(c, data) {
+  const positions = ['IDL', 'EDGE', 'LB', 'CB', 'S'];
+  let h = '<div class="flex flex-wrap gap-2 mb-3">';
+  for (const pos of positions) {
+    const active = !c.dataset.defPos || c.dataset.defPos === pos;
+    h += `<button onclick="c.dataset.defPos='${pos}';renderDefProj(c,window._clayData||{})" class="px-3 py-1 rounded-lg text-xs font-bold ${c.dataset.defPos === pos || (!c.dataset.defPos && pos==='IDL') ? 'bg-red-600/30 text-red-300 border border-red-500/50' : 'bg-slate-800/80 text-slate-400 border border-transparent hover:bg-slate-700'}">${pos}</button>`;
+  }
+  h += '</div>';
+  const activePos = c.dataset.defPos || 'IDL';
+  const players = data.positional_projections?.[activePos] || [];
+  h += `<div class="overflow-x-auto"><table class="w-full text-xs">
+    <thead><tr class="text-slate-500 border-b border-slate-700/50">
+      <th class="text-left px-3 py-2 font-semibold">#</th><th class="text-left px-3 py-2 font-semibold">Player</th><th class="text-left px-3 py-2 font-semibold">Team</th>
+      <th class="text-center px-2 py-2 font-semibold">FF Pts</th><th class="text-center px-2 py-2">Snaps</th><th class="text-center px-2 py-2">Tkl</th>
+      <th class="text-center px-2 py-2">Solo</th><th class="text-center px-2 py-2">TFL</th><th class="text-center px-2 py-2">Sack</th><th class="text-center px-2 py-2">INT</th><th class="text-center px-2 py-2">FF</th>
+    </tr></thead><tbody>`;
+  for (const p of players) {
+    h += `<tr class="border-b border-slate-800/50 hover:bg-slate-800/30">
+      <td class="px-3 py-2 text-slate-400 font-bold">${p.pos_rank}</td><td class="px-3 py-2 font-semibold text-slate-200">${p.name}</td>
+      <td class="px-3 py-2 text-slate-400">${p.team_abbr}</td><td class="text-center px-2 py-2 font-bold text-cyan-400">${p.ff_pts}</td>
+      <td class="text-center px-2 py-2">${p.snaps}</td><td class="text-center px-2 py-2">${p.total_tackles}</td>
+      <td class="text-center px-2 py-2">${p.solo_tackles}</td><td class="text-center px-2 py-2">${p.tfl}</td>
+      <td class="text-center px-2 py-2 text-amber-400">${p.sacks}</td><td class="text-center px-2 py-2 text-blue-400">${p.interceptions}</td>
+      <td class="text-center px-2 py-2 text-emerald-400">${p.ff}</td>
+    </tr>`;
+  }
+  h += '</tbody></table></div>';
+  c.innerHTML = h;
+  window._clayData = data;
+}
+
+function renderUnitGrades(c, data) {
+  if (!data.unit_grades) { c.innerHTML = '<p class="text-slate-500">No unit grades data</p>'; return; }
+  const teams = Object.entries(data.unit_grades).sort((a,b) => (b[1].offense_grade || 0) - (a[1].offense_grade || 0));
+  let h = `<div class="overflow-x-auto"><table class="w-full text-xs">
+    <thead><tr class="text-slate-500 border-b border-slate-700/50">
+      <th class="text-left px-3 py-2 font-semibold">Team</th>
+      <th class="text-center px-2 py-2 font-semibold">QB</th><th class="text-center px-2 py-2">RB</th><th class="text-center px-2 py-2">WR</th><th class="text-center px-2 py-2">TE</th><th class="text-center px-2 py-2">OL</th>
+      <th class="text-center px-2 py-2 font-semibold">DI</th><th class="text-center px-2 py-2">ED</th><th class="text-center px-2 py-2">LB</th><th class="text-center px-2 py-2">CB</th><th class="text-center px-2 py-2">S</th>
+      <th class="text-center px-2 py-2 font-semibold">Off</th><th class="text-center px-2 py-2 font-semibold">Def</th>
+    </tr></thead><tbody>`;
+  for (const [name, g] of teams) {
+    const gradeCell = (v) => {
+      if (v >= 9) return `<td class="text-center px-2 py-2 font-bold text-amber-400">${v}</td>`;
+      if (v >= 7) return `<td class="text-center px-2 py-2 font-bold text-emerald-400">${v}</td>`;
+      if (v >= 5) return `<td class="text-center px-2 py-2 font-bold text-slate-300">${v}</td>`;
+      return `<td class="text-center px-2 py-2 font-bold text-red-400">${v}</td>`;
+    };
+    h += `<tr class="border-b border-slate-800/50 hover:bg-slate-800/30">
+      <td class="px-3 py-2 font-semibold text-slate-200">${name}</td>
+      ${gradeCell(g.QB)}${gradeCell(g.RB)}${gradeCell(g.WR)}${gradeCell(g.TE)}${gradeCell(g.OL)}
+      ${gradeCell(g.DI)}${gradeCell(g.ED)}${gradeCell(g.LB)}${gradeCell(g.CB)}${gradeCell(g.S)}
+      <td class="text-center px-2 py-2 font-bold text-cyan-400">${g.offense_grade}</td>
+      <td class="text-center px-2 py-2 font-bold text-red-400">${g.defense_grade}</td>
+    </tr>`;
+  }
+  h += '</tbody></table></div>';
+  c.innerHTML = h;
+}
+
+function renderStarters(c, data) {
+  if (!data.projected_starters) { c.innerHTML = '<p class="text-slate-500">No starters data</p>'; return; }
+  let h = '';
+  for (const [conf, teams] of Object.entries(data.projected_starters)) {
+    h += `<div class="mb-4">
+      <div class="text-xs font-bold text-cyan-400 uppercase tracking-wider mb-2 division-header px-3 py-1.5 rounded">${conf}</div>`;
+    for (const [team, starters] of Object.entries(teams)) {
+      h += `<div class="mb-3 glass rounded-lg p-3">
+        <div class="text-sm font-bold text-slate-200 mb-2">${team}</div>
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2">`;
+      for (const s of starters) {
+        const tier = s.rating >= 9 ? 'text-amber-400' : s.rating >= 7 ? 'text-emerald-400' : s.rating >= 5 ? 'text-slate-300' : 'text-red-400';
+        h += `<div class="bg-slate-800/50 rounded-lg px-2 py-1.5 border border-slate-700/50">
+          <div class="text-[10px] text-slate-500 font-bold uppercase">${s.position}${s.depth}</div>
+          <div class="text-xs font-semibold text-slate-200 truncate">${s.name}</div>
+          <div class="text-xs font-bold ${tier}">${s.rating}</div>
+        </div>`;
+      }
+      h += '</div></div>';
+    }
+    h += '</div>';
+  }
+  c.innerHTML = h;
+}
+
+function renderCoaching(c, data) {
+  if (!data.coaching_staffs) { c.innerHTML = '<p class="text-slate-500">No coaching data</p>'; return; }
+  let h = `<div class="overflow-x-auto"><table class="w-full text-xs">
+    <thead><tr class="text-slate-500 border-b border-slate-700/50">
+      <th class="text-left px-3 py-2 font-semibold">Team</th>
+      <th class="text-left px-3 py-2 font-semibold">Head Coach</th>
+      <th class="text-left px-3 py-2">OC</th><th class="text-left px-3 py-2">Playcaller</th>
+      <th class="text-left px-3 py-2">DC</th><th class="text-left px-3 py-2">GM</th>
+    </tr></thead><tbody>`;
+  for (const s of data.coaching_staffs.sort((a,b) => a.team.localeCompare(b.team))) {
+    h += `<tr class="border-b border-slate-800/50 hover:bg-slate-800/30">
+      <td class="px-3 py-2 font-semibold text-slate-200">${s.team}</td>
+      <td class="px-3 py-2 text-slate-300">${s.head_coach}</td>
+      <td class="px-3 py-2 text-slate-400">${s.offensive_coord}</td>
+      <td class="px-3 py-2 text-slate-400">${s.offensive_playcaller}</td>
+      <td class="px-3 py-2 text-slate-400">${s.defensive_coord}</td>
+      <td class="px-3 py-2 text-slate-400">${s.gm}</td>
+    </tr>`;
+  }
+  h += '</tbody></table></div>';
+  c.innerHTML = h;
+}
+
+function filterProjTable(pos) {
+  const q = (document.getElementById(`projSearch_${pos}`)?.value || '').toLowerCase();
+  const rows = document.querySelectorAll(`#projTable_${pos} tbody tr`);
+  rows.forEach(r => { r.style.display = r.textContent.toLowerCase().includes(q) ? '' : 'none'; });
+}
+
+let projSortCol = {};
+function sortProjTable(pos, col) {
+  if (!CLAY_DATA) return;
+  const arr = CLAY_DATA.positional_projections[pos] || [];
+  const dir = projSortCol[pos] === col ? -1 : 1;
+  projSortCol[pos] = col;
+  arr.sort((a,b) => {
+    let va = a[col], vb = b[col];
+    if (typeof va === 'string') return va.localeCompare(vb) * dir;
+    return ((va||0) - (vb||0)) * dir;
+  });
+  renderProjContent();
+}
+
+
+</script>
+</body>
+</html>

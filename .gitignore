@@ -1,0 +1,32 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Node
+node_modules/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temp
+tmp/
+screenshots/
+*.log
+
+# PDF source (too large for git)
+*.pdf
+
+# Excel/CSV data files (generated)
+*.csv
+processed_transactions.json
+
+# Shell scripts
+~/
