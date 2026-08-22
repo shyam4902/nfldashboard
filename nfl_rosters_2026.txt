@@ -1,0 +1,2883 @@
+================================================================================
+                      2026 NFL ROSTERS REFERENCE DIRECTORY                       
+================================================================================
+Total Teams: 32
+Total Players: 2523
+Updated: August 2026
+================================================================================
+
+################################################################################
+DIVISION: AFC EAST
+################################################################################
+
+--------------------------------------------------------------------------------
+TEAM: Buffalo Bills (BUF) - Cap Space: $-7,449,001
+--------------------------------------------------------------------------------
+  [OFFENSE]
+    #17  QB    Josh Allen                 OVR: 99  Age: 29   
+    # 4  RB    James Cook III             OVR: 92  Age: 25   
+    #73  OT    Dion Dawkins               OVR: 89  Age: 31   
+    #79  OT    Spencer Brown              OVR: 85  Age: 27   
+    # 2  WR    DJ Moore                   OVR: 85  Age: 28   (TRADE)
+    #10  WR    Khalil Shakir              OVR: 82  Age: 25   
+    #86  TE    Dalton Kincaid             OVR: 81  Age: 25   
+    # 5  WR    Joshua Palmer              OVR: 77  Age: 25   
+    # 0  WR    Keon Coleman               OVR: 77  Age: 22   
+    #66  C     Connor McGovern            OVR: 77  Age: 27   
+    #63  C     Austin Corbett             OVR: 75  Age: 29   
+    #79  C     Lloyd Cushenberry III      OVR: 75  Age: 27   
+    #22  RB    Ray Davis                  OVR: 74  Age: 25   
+    #88  TE    Dawson Knox                OVR: 74  Age: 28   
+    #26  RB    Ty Johnson                 OVR: 73  Age: 27   
+    # 1  WR    Mecole Hardman Jr.         OVR: 73  Age: 28   
+    #64  G     O'Cyrus Torrence           OVR: 73  Age: 25   
+    # 5  WR    Trent Sherfield            OVR: 72  Age: 29   
+    #20  RB    Frank Gore Jr.             OVR: 70  Age: 24   
+    #89  WR    Stephen Gosnell            OVR: 70  Age: 24   
+    #67  OT    Travis Clayton             OVR: 70  Age: 25   
+    #13  WR    Jalen Virgil               OVR: 70  Age: 27   
+         G     Nick Broeker               OVR: 68  Age: 25   
+    #85  TE    Jackson Hawes              OVR: 67  Age: 24   
+    #14  WR    Tyrell Shavers             OVR: 67  Age: 26   
+    #70  OT    Alec Anderson              OVR: 66  Age: 25   
+    #62  C     Sedrick Van Pran-Granger   OVR: 66  Age: 23   
+         WR    Skyler Bell                OVR: 65          [ROOKIE] (DRAFT)
+         OT    Jude Bowry                 OVR: 65          [ROOKIE] (DRAFT)
+    #77  OT    Chase Lundt                OVR: 65  Age: 23   
+         OG    Ar'maj Reed-Adams          OVR: 63          [ROOKIE] (DRAFT)
+    #68  OT    Tylan Grable               OVR: 63  Age: 25   
+    #83  TE    Keleki Latu                OVR: 62  Age: 23   
+    # 8  QB    Kyle Allen                 OVR: 60  Age: 29   
+    # 6  QB    Shane Buechele             OVR: 52  Age: 28   
+
+  [DEFENSE]
+    #50  LB    Greg Rousseau              OVR: 87  Age: 25   
+    # 8  LB    Terrel Bernard             OVR: 83  Age: 26   
+    #47  CB    Christian Benford          OVR: 83  Age: 24   
+    #91  DT    Ed Oliver                  OVR: 82  Age: 27   
+    # 2  LB    Bradley Chubb              OVR: 79  Age: 29   (FA)
+    #31  CB    Maxwell Hairston           OVR: 78  Age: 22   
+    #22  S     Geno Stone                 OVR: 78  Age: 26   
+    #35  S     C.J. Gardner-Johnson       OVR: 76  Age: 27   (FA)
+    #55  DE    Michael Hoecht             OVR: 75  Age: 27   
+    #42  LB    Dorian Williams            OVR: 74  Age: 24   
+    #24  S     Cole Bishop                OVR: 74  Age: 22   
+    #98  DT    T.J. Sanders               OVR: 73  Age: 22   
+    #94  DE    Landon Jackson             OVR: 73  Age: 22   
+    #20  CB    Dee Alford                 OVR: 73  Age: 27   
+    # 3  S     Damar Hamlin               OVR: 73  Age: 27   
+    #43  CB    Dorian Strong              OVR: 72  Age: 23   
+    #75  DE    Andre Jones Jr.            OVR: 70  Age: 27   
+    #49  LB    Keonta Jenkins             OVR: 70  Age: 24   
+    #33  CB    Te'Cory Couch              OVR: 70  Age: 26   
+    #38  CB    MJ Devonshire Jr.          OVR: 70  Age: 25   
+    #46  CB    Daryl Porter Jr.           OVR: 70  Age: 24   
+         CB    Davison Igbinosun          OVR: 70          [ROOKIE] (DRAFT)
+         EDGE  T.J. Parker                OVR: 70          [ROOKIE] (DRAFT)
+    #90  DT    DeWayne Carter             OVR: 70  Age: 24   
+    #96  DT    Deone Walker               OVR: 70  Age: 21   
+    #37  CB    Jordan Hancock             OVR: 69  Age: 22   
+    #72  DT    Phidarian Mathis           OVR: 69  Age: 27   
+    #44  LB    Joe Andreessen             OVR: 69  Age: 25   
+    #56  LB    Javon Solomon              OVR: 69  Age: 24   
+    #28  S     Sam Franklin Jr.           OVR: 69  Age: 29   
+    #71  DT    Tommy Akingbesote          OVR: 68  Age: 23   
+    #93  DT    Zion Logue                 OVR: 68  Age: 24   
+    #30  S     Wande Owens                OVR: 68  Age: 25   
+         S     Jalon Kilgore              OVR: 65          [ROOKIE] (DRAFT)
+         LB    Kaleb Elarms-Orr           OVR: 65          [ROOKIE] (DRAFT)
+    #35  LB    Jimmy Ciarlo               OVR: 64  Age: 25   
+         CB    Toriano Pride Jr.          OVR: 63          [ROOKIE] (DRAFT)
+         DT    Zane Durant                OVR: 63          [ROOKIE] (DRAFT)
+
+  [SPECIAL]
+    #19  P     Mitch Wishnowsky           OVR: 77  Age: 33   
+    # 2  PK    Tyler Bass                 OVR: 74  Age: 28   
+    #69  LS    Reid Ferguson              OVR: 71  Age: 32   
+         PK    Maddux Trujillo            OVR: 70  Age: 23   
+         P     Tommy Doman Jr.            OVR: 63          [ROOKIE] (DRAFT)
+
+
+--------------------------------------------------------------------------------
+TEAM: Miami Dolphins (MIA) - Cap Space: $-16,413,613
+--------------------------------------------------------------------------------
+  [OFFENSE]
+    #28  RB    De'Von Achane              OVR: 86  Age: 23   
+    #55  C     Aaron Brewer               OVR: 77  Age: 27   
+    # 1  WR    Jalen Tolbert              OVR: 76  Age: 26   
+         OT    Kadyn Proctor              OVR: 76  Age: 22  [ROOKIE] (DRAFT)
+    #52  OT    Patrick Paul               OVR: 76  Age: 23   
+    # 5  WR    Tutu Atwell                OVR: 75  Age: 25   
+    #73  OT    Austin Jackson             OVR: 74  Age: 26   
+    #31  RB    Ollie Gordon II            OVR: 72  Age: 21   
+    # 5  RB    Jaylen Wright              OVR: 72  Age: 22   
+    # 6  WR    Malik Washington           OVR: 72  Age: 24   
+    #36  RB    Donovan Edwards            OVR: 70  Age: 23   
+    #88  WR    AJ Henning                 OVR: 70  Age: 24   
+    #86  WR    Terrace Marshall Jr.       OVR: 70  Age: 25   
+    #81  WR    Theo Wease Jr.             OVR: 70  Age: 24   
+    #66  OT    Braeden Daniels            OVR: 70  Age: 25   
+    #77  OT    Carter Warren              OVR: 70  Age: 27   
+    #72  G     Jonah Savaiinaea           OVR: 69  Age: 21   
+    #68  G     Jamaree Salyer             OVR: 69  Age: 25   
+    #83  TE    Zack Kuntz                 OVR: 68  Age: 26   
+    #87  TE    Cole Turner                OVR: 68  Age: 26   
+    #68  G     Josh Priebe                OVR: 68  Age: 24   
+    #84  WR    Tahj Washington            OVR: 68  Age: 24   
+         WR    Caleb Douglas              OVR: 67          [ROOKIE] (DRAFT)
+         WR    Chris Bell                 OVR: 67          [ROOKIE] (DRAFT)
+         TE    Will Kacmarek              OVR: 67          [ROOKIE] (DRAFT)
+    #85  TE    Greg Dulcich               OVR: 67  Age: 25   
+    # 2  QB    Malik Willis               OVR: 65  Age: 26   (FA)
+    #77  OT    Charlie Heck               OVR: 64  Age: 28   
+         OG    DJ Campbell                OVR: 63          [ROOKIE] (DRAFT)
+         TE    Seydou Traore              OVR: 63          [ROOKIE] (DRAFT)
+         WR    Kevin Coleman Jr.          OVR: 63          [ROOKIE] (DRAFT)
+    #14  QB    Quinn Ewers                OVR: 63  Age: 22   
+    #89  TE    Ben Sims                   OVR: 62  Age: 25   
+    #47  TE    Jalin Conyers              OVR: 62  Age: 24   
+    #60  C     Andrew Meyer               OVR: 62  Age: 25   
+    #15  QB    Cam Miller                 OVR: 60  Age: 24   
+    #71  G     Kion Smith                 OVR: 59  Age: 26   
+
+  [DEFENSE]
+    #92  DT    Zach Sieler                OVR: 83  Age: 29   
+    #20  LB    Jordyn Brooks              OVR: 79  Age: 27   
+    #90  DT    Kenneth Grant              OVR: 76  Age: 21   
+    # 0  LB    Joshua Uche                OVR: 75  Age: 26   
+    #25  LB    Tyrel Dodson               OVR: 75  Age: 27   
+    #44  LB    Chop Robinson              OVR: 75  Age: 22   
+    #39  CB    Darrell Baker Jr.          OVR: 75  Age: 27   
+         CB    Chris Johnson              OVR: 73  Age: 22  [ROOKIE] (DRAFT)
+    #40  LB    Willie Gay Jr.             OVR: 73  Age: 27   
+    #32  S     Lonnie Johnson Jr.         OVR: 73  Age: 29   
+    #36  LB    Ronnie Harrison Jr.        OVR: 72  Age: 28   
+    #90  LB    David Ojabo                OVR: 72  Age: 25   
+    #94  DT    Jordan Phillips            OVR: 71  Age: 21   
+    #58  DE    Seth Coleman               OVR: 70  Age: 25   
+    #59  LB    Derrick McLendon           OVR: 70  Age: 25   
+    #57  LB    K.C. Ossai                 OVR: 70  Age: 23   
+    #31  CB    Jason Maitre               OVR: 70  Age: 26   
+    #38  CB    Ethan Robinson             OVR: 70  Age: 22   
+         LB    Jacob Rodriguez            OVR: 70          [ROOKIE] (DRAFT)
+    #28  CB    Alex Austin                OVR: 70  Age: 24   
+    #33  CB    Jason Marshall Jr.         OVR: 69  Age: 22   
+    #24  CB    Marco Wilson               OVR: 69  Age: 26   
+    #97  DT    Keith Cooper Jr.           OVR: 68  Age: 23   
+    #96  DT    Alex Huntley               OVR: 68  Age: 24   
+    #32  CB    JuJu Brents                OVR: 68  Age: 25   
+    #34  S     Omar Brown                 OVR: 68  Age: 25   
+    #24  CB    A.J. Green III             OVR: 68  Age: 27   
+    #91  DT    Matthew Butler             OVR: 67  Age: 26   
+    #27  CB    Ethan Bonner               OVR: 67  Age: 25   
+    #11  S     Dante Trader Jr.           OVR: 67  Age: 22   
+    #53  LB    Cameron Goode              OVR: 66  Age: 27   
+    #39  S     Zayne Anderson             OVR: 66  Age: 28   
+         S     Zakee Wheatley             OVR: 65          [ROOKIE] (DRAFT)
+         S     Michael Taaffe             OVR: 65          [ROOKIE] (DRAFT)
+         EDGE  Trey Moore                 OVR: 65          [ROOKIE] (DRAFT)
+         LB    Kyle Louis                 OVR: 65          [ROOKIE] (DRAFT)
+    #93  DT    Zeek Biggers               OVR: 65  Age: 21   
+    #37  CB    Isaiah Johnson             OVR: 65  Age: 26   
+    #35  CB    Miles Battle               OVR: 64  Age: 26   
+         EDGE  Max Llewellyn              OVR: 63          [ROOKIE] (DRAFT)
+    #51  DE    Robert Beal Jr.            OVR: 63  Age: 26   
+    #42  LB    Jackson Woodard            OVR: 63  Age: 23   
+    #29  CB    Storm Duck                 OVR: 63  Age: 25   
+    #43  S     Jordan Colbert             OVR: 63  Age: 25   
+
+  [SPECIAL]
+    #13  P     Bradley Pinion             OVR: 80  Age: 31   
+    #45  PK    Zane Gonzalez              OVR: 74  Age: 30   
+    #47  PK    Riley Patterson            OVR: 72  Age: 25   
+    #49  P     Seth Vernon                OVR: 65  Age: 27   
+    #46  LS    Tucker Addington           OVR: 60  Age: 28   
+    #41  LS    Taybor Pepper              OVR: 60  Age: 31   
+
+
+--------------------------------------------------------------------------------
+TEAM: New England Patriots (NE) - Cap Space: $42,735,263
+--------------------------------------------------------------------------------
+  [OFFENSE]
+    #11  WR    A.J. Brown                 OVR: 89  Age: 28   (TRADE)
+    #10  QB    Drake Maye                 OVR: 85  Age: 23   
+    #85  TE    Hunter Henry               OVR: 85  Age: 30   
+    #75  G     Alijah Vera-Tucker         OVR: 84  Age: 26   (FA)
+    #71  G     Mike Onwenu                OVR: 83  Age: 27   
+    #44  FB    Reggie Gilliam             OVR: 83  Age: 28   
+    #66  OT    Will Campbell              OVR: 81  Age: 21   
+    #76  OT    Morgan Moses               OVR: 81  Age: 34   
+    # 9  WR    Kayshon Boutte             OVR: 79  Age: 23   
+    #87  WR    Romeo Doubs                OVR: 79  Age: 25   (FA)
+    #38  RB    Rhamondre Stevenson        OVR: 78  Age: 27   
+    # 3  WR    DeMario Douglas            OVR: 77  Age: 24   
+    #32  RB    TreVeyon Henderson         OVR: 76  Age: 22   
+    #13  WR    Mack Hollins               OVR: 75  Age: 31   
+    #25  RB    Elijah Mitchell            OVR: 74  Age: 27   
+         OT    Caleb Lomu                 OVR: 73  Age: 22  [ROOKIE] (DRAFT)
+    #18  WR    Kyle Williams              OVR: 72  Age: 22   
+    #37  FB    Jack Westover              OVR: 71  Age: 26   
+    #58  G     Jared Wilson               OVR: 71  Age: 22   
+    #34  RB    Lan Larison                OVR: 70  Age: 24   
+         WR    Jalen Hurd                 OVR: 70  Age: 30   
+    #83  WR    John Jiles                 OVR: 70  Age: 25   
+    #29  WR    Jeremiah Webb              OVR: 70  Age: 24   
+    #61  OT    Sebastian Gutierrez        OVR: 70  Age: 27   
+    #72  OT    Lorenz Metz                OVR: 70  Age: 29   
+    #70  OT    Caedan Wallace             OVR: 69  Age: 25   
+    #84  TE    Marshall Lang              OVR: 68  Age: 24   
+    #63  G     Mehki Butler               OVR: 68  Age: 25   
+    #67  G     Andrew Rupcich             OVR: 68  Age: 27   
+    #86  WR    Efton Chism III            OVR: 68  Age: 23   
+         TE    Eli Raridon                OVR: 67          [ROOKIE] (DRAFT)
+    #46  FB    Brock Lampe                OVR: 65  Age: 23   
+    #26  RB    Terrell Jennings           OVR: 65  Age: 22   
+    #52  OT    Marcus Bryant              OVR: 64  Age: 23   
+         QB    Behren Morton              OVR: 63          [ROOKIE] (DRAFT)
+         OT    Dametrious Crownover       OVR: 63          [ROOKIE] (DRAFT)
+         RB    Jam Miller                 OVR: 63          [ROOKIE] (DRAFT)
+    #89  TE    Julian Hill                OVR: 63  Age: 25   
+    #77  C     Ben Brown                  OVR: 63  Age: 27   
+    #55  OT    James Hudson III           OVR: 63  Age: 26   
+    #81  TE    CJ Dippre                  OVR: 62  Age: 23   
+    #16  QB    Tommy DeVito               OVR: 61  Age: 27   
+
+  [DEFENSE]
+    # 0  CB    Christian Gonzalez         OVR: 96  Age: 23   
+    #97  DE    Milton Williams            OVR: 86  Age: 26   
+    # 7  CB    Carlton Davis III          OVR: 84  Age: 28   
+    # 2  LB    Harold Landry III          OVR: 82  Age: 29   
+    #14  LB    Robert Spillane            OVR: 82  Age: 29   
+    #31  S     Kevin Byard                OVR: 81  Age: 32   (FA)
+    #90  DT    Christian Barmore          OVR: 80  Age: 26   
+    #25  CB    Marcus Jones               OVR: 80  Age: 26   
+    #45  DE    Dre'Mont Jones             OVR: 76  Age: 28   (FA)
+    #31  S     Craig Woodson              OVR: 72  Age: 24   
+    #22  CB    Kindle Vildor              OVR: 72  Age: 27   
+    #92  DT    Joshua Farmer              OVR: 71  Age: 22   
+    # 3  LB    K.J. Britt                 OVR: 71  Age: 26   
+    #53  LB    Christian Elliss           OVR: 71  Age: 26   
+    #62  DE    Niko Lalos                 OVR: 70  Age: 28   
+    #99  LB    Amari Gainer               OVR: 70  Age: 25   
+    #42  LB    Jesse Luketa               OVR: 70  Age: 27   
+    #54  LB    Otis Reese                 OVR: 70  Age: 27   
+    #39  CB    Brandon Crossley           OVR: 70  Age: 25   
+    #55  LB    Chad Muma                  OVR: 70  Age: 26   
+         EDGE  Gabe Jacas                 OVR: 70          [ROOKIE] (DRAFT)
+    #98  DT    Jeremiah Pharms Jr.        OVR: 69  Age: 29   
+    #43  LB    Bradyn Swinson             OVR: 69  Age: 23   
+    #24  S     Dell Pettus                OVR: 68  Age: 24   
+    #27  CB    Marcellas Dial Jr.         OVR: 66  Age: 24   
+    #41  S     Brenden Schooler           OVR: 66  Age: 28   
+         CB    Karon Prunty               OVR: 65          [ROOKIE] (DRAFT)
+    #93  DT    Leonard Taylor III         OVR: 65  Age: 23   
+    #19  CB    Kobee Minor                OVR: 65  Age: 23   
+    #22  CB    Charles Woods              OVR: 65  Age: 25   
+    #55  DT    Eric Gregory               OVR: 64  Age: 24   
+    #91  LB    Elijah Ponder              OVR: 64  Age: 23   
+    #44  S     Mike Brown                 OVR: 64  Age: 26   
+    #23  S     John Saunders Jr.          OVR: 64  Age: 23   
+         EDGE  Quintayvious Hutchins      OVR: 63          [ROOKIE] (DRAFT)
+         LB    Namdi Obiazor              OVR: 63          [ROOKIE] (DRAFT)
+    #94  DT    Cory Durden                OVR: 57  Age: 26   
+
+  [SPECIAL]
+    #17  P     Bryce Baringer             OVR: 78  Age: 26   
+    #36  PK    Andy Borregales            OVR: 70  Age: 23   
+    #47  LS    Julian Ashby               OVR: 65  Age: 23   
+
+
+--------------------------------------------------------------------------------
+TEAM: New York Jets (NYJ) - Cap Space: $83,263,050
+--------------------------------------------------------------------------------
+  [OFFENSE]
+    # 5  WR    Garrett Wilson             OVR: 87  Age: 25   
+    #20  RB    Breece Hall                OVR: 86  Age: 24   (FA)
+    #70  OT    Armand Membou              OVR: 80  Age: 21   
+    #66  G     Joe Tippmann               OVR: 78  Age: 24   
+    #66  G     Dylan Parham               OVR: 77  Age: 26   
+    #85  TE    Mason Taylor               OVR: 75  Age: 21   
+    #74  OT    Olu Fashanu                OVR: 75  Age: 22   
+         TE    Kenyon Sadiq               OVR: 73  Age: 22  [ROOKIE] (DRAFT)
+         WR    Omar Cooper Jr.            OVR: 73  Age: 22  [ROOKIE] (DRAFT)
+    #10  WR    Adonai Mitchell            OVR: 73  Age: 22   
+    #11  QB    Bailey Zappe               OVR: 72  Age: 26   
+    # 7  QB    Geno Smith                 OVR: 72  Age: 34   (TRADE)
+    # 0  RB    Braelon Allen              OVR: 72  Age: 21   
+    #84  WR    Mac Dalena                 OVR: 70  Age: 24   
+    #81  WR    Jamaal Pritchett           OVR: 70  Age: 22   
+    #88  WR    Quentin Skinner            OVR: 70  Age: 24   
+    #71  C     Josh Myers                 OVR: 70  Age: 27   
+    #32  RB    Isaiah Davis               OVR: 69  Age: 23   
+    #47  FB    Andrew Beck                OVR: 69  Age: 29   
+    #63  C     Gus Hartwig                OVR: 68  Age: 24   
+    #50  G     Liam Fornadel              OVR: 68  Age: 26   
+    #77  G     Marquis Hayes              OVR: 68  Age: 27   
+    #60  G     Kohl Levao                 OVR: 68  Age: 28   
+    #89  TE    Jeremy Ruckert             OVR: 68  Age: 25   
+    #82  WR    Arian Smith                OVR: 68  Age: 24   
+    #79  OT    Chukwuma Okorafor          OVR: 67  Age: 28   
+    #34  RB    Kene Nwangwu               OVR: 67  Age: 27   
+    #18  WR    Isaiah Williams            OVR: 67  Age: 24   
+    #86  TE    Jelani Woods               OVR: 67  Age: 26   
+    #61  OT    Max Mitchell               OVR: 66  Age: 25   
+         QB    Cade Klubnik               OVR: 65          [ROOKIE] (DRAFT)
+         OG    Anez Cooper                OVR: 63          [ROOKIE] (DRAFT)
+    # 4  QB    Brady Cook                 OVR: 62  Age: 24   
+    #65  G     Xavier Newman              OVR: 58  Age: 26   
+
+  [DEFENSE]
+    #29  S     Minkah Fitzpatrick         OVR: 92  Age: 28   (TRADE)
+    #56  LB    Demario Davis              OVR: 90  Age: 36   (FA)
+    #93  DT    T'Vondre Sweat             OVR: 79  Age: 24   (TRADE)
+    #90  DT    David Onyemata             OVR: 79  Age: 32   
+         DE    David Bailey               OVR: 78  Age: 22  [ROOKIE] (DRAFT)
+    #97  DT    Harrison Phillips          OVR: 78  Age: 29   
+    # 8  S     Andre Cisco                OVR: 77  Age: 25   
+    # 9  DE    Will McDonald IV           OVR: 77  Age: 26   
+    #44  LB    Jamien Sherwood            OVR: 76  Age: 25   
+    #29  CB    Jarvis Brownlee Jr.        OVR: 76  Age: 24   
+    #24  S     Dane Belton                OVR: 75  Age: 24   
+    #21  CB    Brandon Stephens           OVR: 74  Age: 27   
+    #23  CB    Azareye'h Thomas           OVR: 74  Age: 21   
+    #35  CB    Samuel Womack III          OVR: 72  Age: 26   
+    #58  DE    Joseph Ossai               OVR: 72  Age: 25   
+    #58  DT    Mazi Smith                 OVR: 72  Age: 24   
+    #55  LB    Kingsley Enagbare          OVR: 71  Age: 25   
+    #30  CB    Tre Brown                  OVR: 71  Age: 28   
+    #54  DE    Paschal Ekeji              OVR: 70  Age: 24   
+    #57  DE    Kingsley Jonathan          OVR: 70  Age: 27   
+    #92  LB    Ochaun Mathis              OVR: 70  Age: 27   
+    #51  LB    Kiko Mauigoa               OVR: 70  Age: 23   
+    #53  LB    Mykal Walker               OVR: 70  Age: 28   
+         CB    D'Angelo Ponds             OVR: 70          [ROOKIE] (DRAFT)
+    #91  DT    Jowon Briggs               OVR: 70  Age: 24   
+    #26  CB    Nahshon Wright             OVR: 69  Age: 27   
+    #17  S     Chris Smith II             OVR: 69  Age: 25   
+    #94  DE    Tyler Baron                OVR: 69  Age: 23   
+    #96  DT    Jack Heflin                OVR: 68  Age: 28   
+    #98  DT    Payton Page                OVR: 68  Age: 23   
+    #27  S     Malachi Moore              OVR: 68  Age: 23   
+    #37  CB    Qwan'tez Stiggers          OVR: 67  Age: 23   
+    #55  DE    Braiden McGregor           OVR: 67  Age: 24   
+    #45  LB    Kobe King                  OVR: 66  Age: 22   
+         DT    Darrell Jackson Jr.        OVR: 65          [ROOKIE] (DRAFT)
+    #95  DE    Eric Watts                 OVR: 65  Age: 25   
+    #41  LB    Marcelino McCrary-Ball     OVR: 64  Age: 26   
+    #35  S     Dean Clark                 OVR: 64  Age: 24   
+    #22  S     Keidron Smith              OVR: 64  Age: 26   
+    #33  CB    Jordan Clark               OVR: 63  Age: 25   
+         S     VJ Payne                   OVR: 63          [ROOKIE] (DRAFT)
+    #25  S     Jarius Monroe              OVR: 62  Age: 25   
+
+  [SPECIAL]
+    #42  LS    Thomas Hennessy            OVR: 73  Age: 31   
+    #14  P     Austin McNamara            OVR: 71  Age: 24   
+    #48  PK    Lenny Krieg                OVR: 70  Age: 23   
+    #36  PK    Cade York                  OVR: 70  Age: 25   
+
+
+################################################################################
+DIVISION: AFC NORTH
+################################################################################
+
+--------------------------------------------------------------------------------
+TEAM: Baltimore Ravens (BAL) - Cap Space: $22,043,387
+--------------------------------------------------------------------------------
+  [OFFENSE]
+    # 8  QB    Lamar Jackson              OVR: 98  Age: 28   
+    #22  RB    Derrick Henry              OVR: 96  Age: 31   
+    #89  TE    Mark Andrews               OVR: 90  Age: 29   
+    # 4  WR    Zay Flowers                OVR: 87  Age: 24   
+    #79  OT    Ronnie Stanley             OVR: 87  Age: 31   
+    # 7  WR    Rashod Bateman             OVR: 81  Age: 25   
+    #76  G     John Simpson               OVR: 81  Age: 28   
+    #43  RB    Justice Hill               OVR: 77  Age: 27   
+         G     Olaivavega Ioane           OVR: 76  Age: 22  [ROOKIE] (DRAFT)
+    #70  OT    Roger Rosengarten          OVR: 75  Age: 23   
+    #81  WR    Devontez Walker            OVR: 71  Age: 24   
+    #81  TE    Durham Smythe              OVR: 71  Age: 30   
+    #87  WR    Xavier Guillory            OVR: 70  Age: 24   
+    #86  WR    Cornelius Johnson          OVR: 70  Age: 25   
+    #82  WR    Dayton Wade                OVR: 70  Age: 25   
+    #78  OT    Gerad Lichtenhan           OVR: 70  Age: 24   
+    #83  WR    LaJohntay Wester           OVR: 70  Age: 24   
+    #72  G     Andrew Vorhees             OVR: 70  Age: 26   
+    #51  OT    Emery Jones Jr.            OVR: 70  Age: 21   
+    #74  G     Jared Penning              OVR: 68  Age: 25   
+    # 5  QB    Tyler Huntley              OVR: 68  Age: 27   
+    #26  RB    Rasheen Ali                OVR: 68  Age: 24   
+         WR    Ja'Kobi Lane               OVR: 67          [ROOKIE] (DRAFT)
+    #71  OT    Carson Vinson              OVR: 67  Age: 23   
+    #47  FB    Lucas Scott                OVR: 65  Age: 22   
+         TE    Matthew Hibner             OVR: 65          [ROOKIE] (DRAFT)
+         WR    Elijah Sarratt             OVR: 65          [ROOKIE] (DRAFT)
+    #63  C     Danny Pinter               OVR: 65  Age: 29   
+         RB    Adam Randall               OVR: 63          [ROOKIE] (DRAFT)
+         OG    Evan Beerntsen             OVR: 63          [ROOKIE] (DRAFT)
+         TE    Josh Cuevas                OVR: 63          [ROOKIE] (DRAFT)
+    #52  G     Jovaughn Gwyn              OVR: 62  Age: 26   
+    #67  C     Corey Bullock              OVR: 60  Age: 23   
+
+  [DEFENSE]
+    # 0  LB    Roquan Smith               OVR: 93  Age: 28   
+    #92  DT    Nnamdi Madubuike           OVR: 92  Age: 27   
+    #91  LB    Trey Hendrickson           OVR: 92  Age: 30   (FA)
+    #14  S     Kyle Hamilton              OVR: 91  Age: 24   
+    #44  CB    Marlon Humphrey            OVR: 90  Age: 29   
+    # 3  CB    Chidobe Awuzie             OVR: 83  Age: 30   
+    # 2  CB    Nate Wiggins               OVR: 82  Age: 22   
+    #32  LB    Trenton Simpson            OVR: 78  Age: 24   
+    #98  DT    Travis Jones               OVR: 77  Age: 25   
+    #45  LB    Mike Green                 OVR: 76  Age: 22   
+    #94  DT    John Jenkins               OVR: 75  Age: 36   
+    #24  S     Malaki Starks              OVR: 75  Age: 21   
+    #21  S     Jaylinn Hawkins            OVR: 74  Age: 28   
+    #40  LB    Teddye Buchanan            OVR: 73  Age: 22   
+    #95  LB    Tavius Robinson            OVR: 73  Age: 26   
+    #50  LB    Adisa Isaac                OVR: 72  Age: 23   
+    #96  DT    Broderick Washington Jr.   OVR: 71  Age: 28   
+    #36  CB    Amani Oruwariye            OVR: 70  Age: 30   
+    #28  CB    Marquise Robinson          OVR: 70  Age: 23   
+         EDGE  Zion Young                 OVR: 70          [ROOKIE] (DRAFT)
+    #56  LB    Kaimon Rucker              OVR: 70  Age: 24   
+    #31  CB    Bilhal Kone                OVR: 69  Age: 23   
+    #37  CB    Robert Longerbeam          OVR: 69  Age: 24   
+    #27  CB    T.J. Tampa                 OVR: 69  Age: 23   
+    #93  DT    Aeneas Peebles             OVR: 68  Age: 23   
+    #65  DT    David Olajiga              OVR: 68  Age: 28   
+         CB    Chandler Rivers            OVR: 65          [ROOKIE] (DRAFT)
+    #38  CB    Keyon Martin               OVR: 64  Age: 24   
+         DT    Rayshaun Benny             OVR: 63          [ROOKIE] (DRAFT)
+    #91  DT    CJ Okoye                   OVR: 63  Age: 23   
+    #43  LB    Carl Jones                 OVR: 62  Age: 24   
+    #49  LB    Jay Higgins IV             OVR: 61  Age: 23   
+    #39  S     Keondre Jackson            OVR: 60  Age: 22   
+
+  [SPECIAL]
+    #33  PK    Tyler Loop                 OVR: 77  Age: 24   
+    #46  LS    Nick Moore                 OVR: 70  Age: 32   
+         P     Luke Elzinga               OVR: 65  Age: 0   
+         P     Ryan Eckley                OVR: 63          [ROOKIE] (DRAFT)
+
+
+--------------------------------------------------------------------------------
+TEAM: Cincinnati Bengals (CIN) - Cap Space: $54,504,672
+--------------------------------------------------------------------------------
+  [OFFENSE]
+    # 1  WR    Ja'Marr Chase              OVR: 99  Age: 25   
+    # 9  QB    Joe Burrow                 OVR: 96  Age: 28   
+    # 5  WR    Tee Higgins                OVR: 87  Age: 26   
+    #30  RB    Chase Brown                OVR: 80  Age: 25   
+    #88  TE    Mike Gesicki               OVR: 78  Age: 29   
+    #75  OT    Orlando Brown Jr.          OVR: 77  Age: 29   (FA)
+    #34  RB    Samaje Perine              OVR: 77  Age: 29   
+    #64  C     Ted Karras                 OVR: 76  Age: 32   
+    #71  OT    Amarius Mims               OVR: 74  Age: 22   
+    #16  QB    Joe Flacco                 OVR: 72  Age: 40   
+    #66  G     Dalton Risner              OVR: 72  Age: 30   
+    #80  WR    Andrei Iosivas             OVR: 71  Age: 25   
+    #25  RB    Tahj Brooks                OVR: 71  Age: 23   
+    #82  WR    Mitchell Tinsley           OVR: 71  Age: 25   
+    #32  RB    Gary Brightwell            OVR: 70  Age: 28   
+    #36  RB    Kendall Milton             OVR: 70  Age: 24   
+    #18  WR    Xavier Johnson             OVR: 70  Age: 26   
+    #14  WR    Jordan Moore               OVR: 70  Age: 24   
+    #19  WR    Kendric Pryor              OVR: 70  Age: 28   
+    #79  OT    Andrew Coker               OVR: 70  Age: 25   
+    #73  OT    Javon Foster               OVR: 70  Age: 26   
+    #15  WR    Charlie Jones              OVR: 70  Age: 26   
+    #83  TE    Erick All Jr.              OVR: 70  Age: 24   
+    #63  G     Dylan Fairchild            OVR: 70  Age: 22   
+    #69  C     Jacob Bayer                OVR: 68  Age: 23   
+    #89  TE    Drew Sample                OVR: 68  Age: 29   
+    #74  G     Jalen Rivers               OVR: 68  Age: 22   
+    #61  OT    Cody Ford                  OVR: 68  Age: 28   
+    #85  WR    Ke'Shawn Williams          OVR: 66  Age: 23   
+    #87  TE    Tanner Hudson              OVR: 66  Age: 30   
+         WR    Colbie Young               OVR: 65          [ROOKIE] (DRAFT)
+         C     Conor Lew                  OVR: 65          [ROOKIE] (DRAFT)
+         TE    Jack Endries               OVR: 63          [ROOKIE] (DRAFT)
+         C     Brian Parker II            OVR: 63          [ROOKIE] (DRAFT)
+    #85  TE    Cam Grandy                 OVR: 61  Age: 24   
+    #14  QB    Josh Johnson               OVR: 59  Age: 39   
+    # 4  QB    Sean Clifford              OVR: 57  Age: 27   
+
+  [DEFENSE]
+    #97  DT    Dexter Lawrence II         OVR: 97  Age: 27   (TRADE)
+    #93  DT    Jonathan Allen             OVR: 88  Age: 30   (FA)
+    #20  CB    DJ Turner II               OVR: 82  Age: 24   
+    # 6  S     Bryan Cook                 OVR: 80  Age: 25   (FA)
+    #53  DE    Boye Mafe                  OVR: 78  Age: 26   (FA)
+    #23  S     Kyle Dugger                OVR: 77  Age: 29   
+    #97  DE    Shemar Stewart             OVR: 77  Age: 21   
+    #23  CB    Dax Hill                   OVR: 77  Age: 24   
+    #92  DT    B.J. Hill                  OVR: 76  Age: 29   
+    #27  S     Jordan Battle              OVR: 75  Age: 24   
+    #90  DT    Kris Jenkins Jr.           OVR: 74  Age: 23   
+    #44  LB    Demetrius Knight Jr.       OVR: 73  Age: 25   
+    #36  CB    Ja'Sir Taylor              OVR: 71  Age: 26   
+    #28  CB    Josh Newton                OVR: 71  Age: 24   
+    #45  LB    Liam Anderson              OVR: 70  Age: 25   
+    #40  CB    Jalen Kimber               OVR: 70  Age: 25   
+    #21  CB    Bralyn Lux                 OVR: 70  Age: 25   
+         EDGE  Cashius Howell             OVR: 70          [ROOKIE] (DRAFT)
+    #51  DE    Isaiah Foskey              OVR: 70  Age: 25   
+    #99  DE    Myles Murphy               OVR: 70  Age: 23   
+    #98  DT    T.J. Slaton Jr.            OVR: 70  Age: 27   
+    #42  LB    Oren Burks                 OVR: 70  Age: 30   
+    #56  LB    Antwaun Powell-Ryland      OVR: 70  Age: 24   
+    #49  LB    Barrett Carter             OVR: 69  Age: 22   
+    #93  DT    McKinnley Jackson          OVR: 69  Age: 23   
+    #94  DT    Jordan Jefferson           OVR: 69  Age: 23   
+    #39  S     Russ Yeast                 OVR: 68  Age: 26   
+    #52  DE    Cedric Johnson             OVR: 68  Age: 22   
+         CB    Tacario Davis              OVR: 67          [ROOKIE] (DRAFT)
+    #35  CB    Jalen Davis                OVR: 67  Age: 30   
+    #38  CB    DJ Ivey                    OVR: 66  Age: 25   
+    #33  S     Daijahn Anthony            OVR: 66  Age: 24   
+    #43  LB    Joe Giles-Harris           OVR: 64  Age: 28   
+         DT    Landon Robinson            OVR: 63          [ROOKIE] (DRAFT)
+    #37  S     PJ Jules                   OVR: 63  Age: 27   
+    #50  LB    Shaka Heyward              OVR: 62  Age: 25   
+    #95  DT    Howard Cross III           OVR: 61  Age: 24   
+
+  [SPECIAL]
+    # 2  PK    Evan McPherson             OVR: 78  Age: 26   
+    # 8  P     Ryan Rehkow                OVR: 74  Age: 26   
+    #46  LS    William Wagner             OVR: 63  Age: 24   
+
+
+--------------------------------------------------------------------------------
+TEAM: Cleveland Browns (CLE) - Cap Space: $3,210,721
+--------------------------------------------------------------------------------
+  [OFFENSE]
+    #74  C     Elgton Jenkins             OVR: 86  Age: 29   
+    # 3  WR    Jerry Jeudy                OVR: 83  Age: 26   
+    #74  G     Teven Jenkins              OVR: 80  Age: 27   
+    #10  RB    Quinshon Judkins           OVR: 80  Age: 21   
+    #77  G     Zion Johnson               OVR: 78  Age: 25   (FA)
+    #71  OT    Tytus Howard               OVR: 78  Age: 29   (TRADE)
+         OT    Spencer Fano               OVR: 76  Age: 22  [ROOKIE] (DRAFT)
+    #22  RB    Dylan Sampson              OVR: 74  Age: 20   
+    #19  WR    Cedric Tillman             OVR: 74  Age: 25   
+    #44  TE    Harold Fannin Jr.          OVR: 74  Age: 21   
+         WR    KC Concepcion              OVR: 73  Age: 22  [ROOKIE] (DRAFT)
+    #16  WR    Tylan Wallace              OVR: 71  Age: 26   
+    #67  OT    Jack Conley                OVR: 70  Age: 24   
+    #23  RB    Ahmani Marshall            OVR: 70  Age: 24   
+    #81  WR    Luke Floriea               OVR: 70  Age: 24   
+    #85  WR    Isaiah Wooden              OVR: 70  Age: 26   
+    #69  OT    Tyre Phillips              OVR: 70  Age: 29   
+         WR    Denzel Boston              OVR: 70          [ROOKIE] (DRAFT)
+    #70  G     Zak Zinter                 OVR: 70  Age: 24   
+    #79  OT    Dawand Jones               OVR: 69  Age: 24   
+    # 4  QB    Deshaun Watson             OVR: 69  Age: 29   
+    #35  RB    Raheim Sanders             OVR: 69  Age: 22   
+    #16  WR    Isaiah Bond                OVR: 69  Age: 21   
+    #83  WR    Malachi Corley             OVR: 69  Age: 23   
+    #80  WR    Jamari Thrash              OVR: 69  Age: 24   
+    #53  G     Kendrick Green             OVR: 69  Age: 27   
+    #87  TE    Sal Cannella               OVR: 68  Age: 29   
+    #88  TE    Caden Prieskorn            OVR: 68  Age: 26   
+    # 8  QB    Dillon Gabriel             OVR: 68  Age: 24   
+         OT    Austin Barber              OVR: 67          [ROOKIE] (DRAFT)
+    #72  OT    KT Leveston                OVR: 67  Age: 25   
+    #12  QB    Shedeur Sanders            OVR: 66  Age: 23   
+    #84  WR    Gage Larvadain             OVR: 66  Age: 22   
+    #56  C     Luke Wypler                OVR: 66  Age: 24   
+         C     Parker Brailsford          OVR: 65          [ROOKIE] (DRAFT)
+         TE    Justin Joly                OVR: 65          [ROOKIE] (DRAFT)
+         TE    Joe Royer                  OVR: 65          [ROOKIE] (DRAFT)
+    #88  TE    Jack Stoll                 OVR: 65  Age: 27   
+    #82  TE    Brenden Bates              OVR: 64  Age: 25   
+         QB    Taylen Green               OVR: 63          [ROOKIE] (DRAFT)
+         TE    Carsen Ryan                OVR: 63          [ROOKIE] (DRAFT)
+    #86  TE    Blake Whiteheart           OVR: 62  Age: 25   
+    #63  OT    Jeremiah Byers             OVR: 61  Age: 25   
+    #65  C     Kingsley Eguakun           OVR: 58  Age: 25   
+
+  [DEFENSE]
+    #18  LB    Justin Jefferson           OVR: 94          [ROOKIE] (DRAFT)
+    #21  CB    Denzel Ward                OVR: 92  Age: 28   
+    # 8  LB    Jared Verse                OVR: 88  Age: 24   (TRADE)
+    # 6  LB    Jeremiah Owusu-Koramoah    OVR: 83  Age: 25   
+    # 9  S     Grant Delpit               OVR: 82  Age: 26   
+    #56  LB    Quincy Williams            OVR: 81  Age: 29   
+    #94  DT    Mason Graham               OVR: 80  Age: 21   
+    #49  LB    Carson Schwesinger         OVR: 79  Age: 22   
+    # 7  CB    Tyson Campbell             OVR: 79  Age: 25   
+    #96  DT    Maliek Collins             OVR: 77  Age: 30   
+    #33  S     Ronnie Hickman             OVR: 75  Age: 23   
+    #57  DE    Isaiah McGuire             OVR: 72  Age: 24   
+    #51  DT    Mike Hall Jr.              OVR: 72  Age: 22   
+    #99  DE    Julian Okwara              OVR: 70  Age: 28   
+    #54  LB    Edefuan Ulofoshio          OVR: 70  Age: 26   
+         S     Emmanuel McNeil-Warren     OVR: 70          [ROOKIE] (DRAFT)
+    #91  DE    Alex Wright                OVR: 70  Age: 24   
+    #41  S     Christopher Edmonds        OVR: 68  Age: 24   
+    #26  CB    Myles Harden               OVR: 68  Age: 23   
+    #40  LB    Nathaniel Watson           OVR: 68  Age: 25   
+    #27  CB    Myles Bryant               OVR: 68  Age: 28   
+    #59  LB    Winston Reid               OVR: 67  Age: 26   
+    # 2  S     Daniel Thomas              OVR: 66  Age: 27   
+    #98  DE    Adin Huntington            OVR: 65  Age: 23   
+    #93  DT    Kalia Davis                OVR: 65  Age: 26   
+    #20  CB    D'Angelo Ross              OVR: 64  Age: 32   
+    #42  LB    Easton Mascarenas-Arnold   OVR: 63  Age: 22   
+    #37  CB    Dom Jones                  OVR: 63  Age: 25   
+    #28  CB    Tre Avery                  OVR: 62  Age: 28   
+    #31  S     Donovan McMillon           OVR: 62  Age: 23   
+    #92  DT    Sam Kamara                 OVR: 61  Age: 28   
+
+  [SPECIAL]
+    #13  P     Corey Bojorquez            OVR: 80  Age: 29   
+    #25  PK    Andre Szmyt                OVR: 71  Age: 26   
+    #30  P     Nik Constantinou           OVR: 65  Age: 26   
+    #50  LS    Rex Sunahara               OVR: 58  Age: 28   
+
+
+--------------------------------------------------------------------------------
+TEAM: Pittsburgh Steelers (PIT) - Cap Space: $44,943,582
+--------------------------------------------------------------------------------
+  [OFFENSE]
+    # 4  WR    DK Metcalf                 OVR: 86  Age: 27   
+    #54  C     Zach Frazier               OVR: 84  Age: 24   
+    #11  WR    Michael Pittman Jr.        OVR: 83  Age: 27   (TRADE)
+    # 5  RB    Rico Dowdle                OVR: 83  Age: 27   (FA)
+    #88  TE    Pat Freiermuth             OVR: 82  Age: 26   
+    #30  RB    Jaylen Warren              OVR: 81  Age: 26   
+    #76  OT    Troy Fautanu               OVR: 77  Age: 24   
+    #80  TE    Darnell Washington         OVR: 76  Age: 24   
+    #66  G     Mason McCormick            OVR: 75  Age: 25   
+    #20  RB    Kaleb Johnson              OVR: 74  Age: 22   
+         OT    Max Iheanachor             OVR: 73  Age: 22  [ROOKIE] (DRAFT)
+    #10  WR    Roman Wilson               OVR: 71  Age: 24   
+    #77  OT    Broderick Jones            OVR: 71  Age: 24   
+         WR    Germie Bernard             OVR: 70          [ROOKIE] (DRAFT)
+         RB    Max Hurleman               OVR: 70  Age: 24   
+    #35  RB    Lew Nichols                OVR: 70  Age: 24   
+         WR    Cole Burgess               OVR: 70  Age: 26   
+         WR    A.T. Perry                 OVR: 70  Age: 26   
+         WR    John Rhys Plumlee          OVR: 70  Age: 25   
+         WR    Brandon Smith              OVR: 70  Age: 27   
+    #15  WR    Ben Skowronek              OVR: 70  Age: 28   
+         OT    Lorenzo Thompson           OVR: 70  Age: 25   
+    #21  RB    Travis Homer               OVR: 69  Age: 27   
+         TE    JJ Galbreath               OVR: 68  Age: 24   
+         G     Steven Jones               OVR: 68  Age: 25   
+         G     Sataoa Laumea              OVR: 68  Age: 25   
+    #69  G     Doug Nester                OVR: 68  Age: 25   
+         G     Aiden Williams             OVR: 68  Age: 25   
+         OG    Gennings Dunker            OVR: 67          [ROOKIE] (DRAFT)
+         QB    Drew Allar                 OVR: 67          [ROOKIE] (DRAFT)
+    #67  C     Brock Hoffman              OVR: 67  Age: 26   
+    #68  OT    Jack Driscoll              OVR: 67  Age: 29   
+    # 2  QB    Mason Rudolph              OVR: 66  Age: 30   
+    #74  G     Spencer Anderson           OVR: 66  Age: 25   
+         TE    Riley Nowakowski           OVR: 65          [ROOKIE] (DRAFT)
+         WR    Kaden Wetjen               OVR: 65          [ROOKIE] (DRAFT)
+    #18  QB    Will Howard                OVR: 64  Age: 23   
+         RB    Eli Heidenreich            OVR: 63          [ROOKIE] (DRAFT)
+    #60  OT    Dylan Cook                 OVR: 63  Age: 28   
+    #62  C     Ryan McCollum              OVR: 53  Age: 27   
+
+  [DEFENSE]
+    #90  LB    T.J. Watt                  OVR: 96  Age: 30   
+    #97  DT    Cameron Heyward            OVR: 95  Age: 36   (FA)
+    # 5  CB    Jalen Ramsey               OVR: 94  Age: 30   
+    #56  LB    Alex Highsmith             OVR: 87  Age: 28   
+    #35  CB    Jamel Dean                 OVR: 86  Age: 28   (FA)
+    # 9  S     Jaquan Brisker             OVR: 83  Age: 26   (FA)
+    #25  S     DeShon Elliott             OVR: 82  Age: 28   
+    # 6  LB    Patrick Queen              OVR: 81  Age: 26   
+    #24  CB    Joey Porter Jr.            OVR: 79  Age: 25   
+    #69  DT    Sebastian Joseph-Day       OVR: 78  Age: 30   
+    #55  LB    Cole Holcomb               OVR: 78  Age: 29   
+    #99  DT    Derrick Harmon             OVR: 77  Age: 22   
+    #51  LB    Nick Herbig                OVR: 77  Age: 23   
+    #22  CB    Asante Samuel Jr.          OVR: 76  Age: 26   
+    #95  DT    Keeanu Benton              OVR: 75  Age: 24   
+    #41  LB    Payton Wilson              OVR: 75  Age: 25   
+    #26  CB    Brandin Echols             OVR: 73  Age: 27   
+    #50  LB    Malik Harrison             OVR: 72  Age: 27   
+    #33  LB    Jack Sawyer                OVR: 72  Age: 23   
+         DE    Anthony Goodlow            OVR: 70  Age: 25   
+         DE    Jahvaree Ritzie            OVR: 70  Age: 23   
+         LB    KJ Henry                   OVR: 70  Age: 27   
+    #45  LB    Julius Welschof            OVR: 70  Age: 29   
+         CB    Daequan Hardy              OVR: 70  Age: 24   
+    #38  CB    D'Shawn Jamison            OVR: 70  Age: 26   
+         CB    Doneiko Slaughter          OVR: 70  Age: 24   
+    #91  DT    Logan Lee                  OVR: 70  Age: 25   
+         DT    Kyler Baugh                OVR: 68  Age: 24   
+    #94  DE    Yahya Black                OVR: 68  Age: 23   
+    #34  CB    Donte Kent                 OVR: 68  Age: 23   
+         S     Jack Henderson             OVR: 68  Age: 24   
+         CB    Daylen Everette            OVR: 67          [ROOKIE] (DRAFT)
+    #27  CB    Cory Trice Jr.             OVR: 67  Age: 25   
+    #93  DE    Esezi Otomewo              OVR: 66  Age: 26   
+    #44  LB    Carson Bruener             OVR: 64  Age: 24   
+         S     Robert Spears-Jennings     OVR: 63          [ROOKIE] (DRAFT)
+         EDGE  Gabe Rubio                 OVR: 63          [ROOKIE] (DRAFT)
+    #24  S     Sebastian Castro           OVR: 62  Age: 24   
+
+  [SPECIAL]
+    # 9  PK    Chris Boswell              OVR: 86  Age: 34   
+    #16  P     Cameron Johnston           OVR: 74  Age: 33   
+    #57  LS    Cal Adomitis               OVR: 63  Age: 27   
+    #46  LS    Christian Kuntz            OVR: 62  Age: 31   
+
+
+################################################################################
+DIVISION: AFC SOUTH
+################################################################################
+
+--------------------------------------------------------------------------------
+TEAM: Houston Texans (HOU) - Cap Space: $-1,498,295
+--------------------------------------------------------------------------------
+  [OFFENSE]
+    #12  WR    Nico Collins               OVR: 88  Age: 26   
+    # 5  RB    David Montgomery           OVR: 85  Age: 28   (TRADE)
+    #77  OT    Trent Brown                OVR: 84  Age: 32   
+    #72  OT    Braden Smith               OVR: 83  Age: 29   
+    # 3  WR    Tank Dell                  OVR: 81  Age: 25   
+    #86  TE    Dalton Schultz             OVR: 80  Age: 29   
+    #77  G     Wyatt Teller               OVR: 79  Age: 30   
+    # 7  QB    C.J. Stroud                OVR: 78  Age: 23   
+    #69  G     Ed Ingram                  OVR: 77  Age: 26   
+    #63  G     Evan Brown                 OVR: 76  Age: 28   
+    #81  WR    Jayden Higgins             OVR: 74  Age: 22   
+    #27  RB    Woody Marks                OVR: 74  Age: 24   
+    #14  WR    Jaylin Noel                OVR: 73  Age: 22   
+    #84  WR    Justin Watson              OVR: 73  Age: 30   
+         G     Keylan Rutledge            OVR: 73  Age: 22  [ROOKIE] (DRAFT)
+    #87  TE    Foster Moreau              OVR: 72  Age: 28   
+    #54  G     Jarrett Patterson          OVR: 72  Age: 26   
+    #26  RB    Jawhar Jordan              OVR: 71  Age: 26   
+    #19  WR    Xavier Hutchinson          OVR: 71  Age: 25   
+         TE    Marlin Klein               OVR: 70          [ROOKIE] (DRAFT)
+    #89  WR    Jared Wayne                OVR: 70  Age: 25   
+    #57  OT    Blake Fisher               OVR: 70  Age: 22   
+    #79  OT    Aireontae Ersery           OVR: 70  Age: 23   
+    #85  WR    Josh Kelly                 OVR: 70  Age: 24   
+    #83  TE    Luke Lachey                OVR: 68  Age: 24   
+    #49  TE    Layne Pryor                OVR: 68  Age: 23   
+    # 9  TE    Brevin Jordan              OVR: 68  Age: 25   
+    #65  C     Eli Cox                    OVR: 68  Age: 25   
+    #62  G     Sidy Sow                   OVR: 68  Age: 27   
+    #44  RB    British Brooks             OVR: 68  Age: 25   
+    #87  TE    Cade Stover                OVR: 67  Age: 25   
+    #60  C     Jake Andrews               OVR: 67  Age: 25   
+    #63  OT    Jarrett Kingston           OVR: 67  Age: 25   
+         OG    Febechi Nwaiwu             OVR: 65          [ROOKIE] (DRAFT)
+    #10  QB    Davis Mills                OVR: 65  Age: 26   
+         WR    Lewis Bond                 OVR: 63          [ROOKIE] (DRAFT)
+    #18  QB    Graham Mertz               OVR: 60  Age: 24   
+
+  [DEFENSE]
+    #51  DE    Will Anderson Jr.          OVR: 91  Age: 23   (FA)
+    #24  CB    Derek Stingley Jr.         OVR: 91  Age: 24   
+    #55  DE    Danielle Hunter            OVR: 90  Age: 30   (FA)
+    # 5  S     Jalen Pitre                OVR: 83  Age: 26   
+    # 4  CB    Kamari Lassiter            OVR: 81  Age: 22   
+    #32  S     Reed Blankenship           OVR: 80  Age: 26   (FA)
+    # 0  LB    Azeez Al-Shaair            OVR: 80  Age: 28   
+    #90  DT    Sheldon Rankins            OVR: 76  Age: 31   
+    #39  LB    Henry To'oTo'o             OVR: 75  Age: 24   
+    #45  LB    E.J. Speed                 OVR: 74  Age: 30   
+    # 2  S     Calen Bullock              OVR: 74  Age: 22   
+    #46  CB    Ja'Marcus Ingram           OVR: 73  Age: 27   
+    #90  DE    Logan Hall                 OVR: 72  Age: 25   
+    #15  LB    Marte Mapu                 OVR: 71  Age: 25   (TRADE)
+    #54  LB    Xavier Thomas              OVR: 71  Age: 25   
+         DT    Kayden McDonald            OVR: 70          [ROOKIE] (DRAFT)
+    #22  CB    Jaylin Smith               OVR: 70  Age: 21   
+    #29  S     M.J. Stewart               OVR: 70  Age: 29   
+    #90  DE    Dominique Robinson         OVR: 69  Age: 27   
+    #53  DT    Junior Tafuna              OVR: 68  Age: 25   
+    #23  S     Jaylen Reed                OVR: 68  Age: 22   
+    #11  CB    Tremon Smith               OVR: 68  Age: 29   
+    #92  DE    Dylan Horton               OVR: 67  Age: 25   
+    #72  DT    Tommy Togiai               OVR: 67  Age: 25   
+    #58  DT    Kyonte Hamilton            OVR: 66  Age: 22   
+    #56  LB    Jamal Hill                 OVR: 66  Age: 24   
+    #26  S     Kaevon Merriweather        OVR: 66  Age: 25   
+         LB    Wade Woodaz                OVR: 65          [ROOKIE] (DRAFT)
+         S     Kamari Ramsey              OVR: 65          [ROOKIE] (DRAFT)
+    #96  DT    Naquan Jones               OVR: 65  Age: 27   
+    #29  CB    Brandon Codrington         OVR: 65  Age: 24   
+    #35  LB    Jake Hansen                OVR: 64  Age: 27   
+    #34  CB    Ajani Carter               OVR: 64  Age: 25   
+    #36  CB    Alijah Huzzie              OVR: 64  Age: 25   
+         LB    Aiden Fisher               OVR: 63          [ROOKIE] (DRAFT)
+    #50  DE    Solomon Byrd               OVR: 62  Age: 26   
+    #42  LB    Jake Hummel                OVR: 62  Age: 27   
+
+  [SPECIAL]
+    #15  PK    Ka'imi Fairbairn           OVR: 81  Age: 31   
+    #32  P     Kai Kroeger                OVR: 69  Age: 23   (TRADE)
+    #40  LS    Austin Brinkman            OVR: 65  Age: 23   
+
+
+--------------------------------------------------------------------------------
+TEAM: Indianapolis Colts (IND) - Cap Space: $35,598,489
+--------------------------------------------------------------------------------
+  [OFFENSE]
+    #28  RB    Jonathan Taylor            OVR: 95  Age: 26   
+    #56  G     Quenton Nelson             OVR: 94  Age: 29   
+    #79  OT    Bernhard Raimann           OVR: 86  Age: 27   
+    #84  TE    Tyler Warren               OVR: 83  Age: 23   
+    #17  QB    Daniel Jones               OVR: 81  Age: 28   (FA)
+    #14  WR    Alec Pierce                OVR: 80  Age: 25   (FA)
+    # 1  WR    Josh Downs                 OVR: 80  Age: 24   
+    #60  C     Tanor Bortolini            OVR: 76  Age: 23   
+    #18  WR    Nick Westbrook-Ikhine      OVR: 75  Age: 28   
+    #71  G     Matt Goncalves             OVR: 74  Age: 24   
+    # 4  QB    Seth Henigan               OVR: 72  Age: 23   
+    #16  WR    Ashton Dulin               OVR: 72  Age: 28   
+    #81  TE    Mo Alie-Cox                OVR: 72  Age: 31   
+    #21  RB    DJ Giddens                 OVR: 71  Age: 22   
+    #37  RB    Ulysses Bentley IV         OVR: 70  Age: 25   
+    #78  OT    Bayron Matos               OVR: 70  Age: 25   
+    #76  OT    Jack Wilson                OVR: 70  Age: 26   
+    # 9  WR    Coleman Owen               OVR: 70  Age: 25   
+    #83  WR    Eli Pancol                 OVR: 70  Age: 25   
+    # 5  QB    Anthony Richardson Sr.     OVR: 69  Age: 23   
+    # 6  WR    Anthony Gould              OVR: 69  Age: 24   
+    #69  G     LaDarius Henderson         OVR: 68  Age: 24   
+    #62  G     Bill Murray                OVR: 68  Age: 28   
+    #66  G     Josh Sills                 OVR: 68  Age: 27   
+    #75  OT    Jalen Travis               OVR: 68  Age: 23   
+    #13  WR    Laquon Treadwell           OVR: 68  Age: 30   
+    #49  TE    Sean McKeon                OVR: 68  Age: 28   
+         TE    Carson Towt                OVR: 68  Age: 24   
+    #65  C     Jimmy Morrissey            OVR: 68  Age: 27   
+         OG    Jalen Farmer               OVR: 65          [ROOKIE] (DRAFT)
+    #15  QB    Riley Leonard              OVR: 65  Age: 22   
+    #68  G     Dalton Tucker              OVR: 65  Age: 25   
+    #73  OT    Blake Freeland             OVR: 65  Age: 24   
+    #86  TE    Will Mallory               OVR: 65  Age: 26   
+    #85  TE    Drew Ogletree              OVR: 65  Age: 27   
+         WR    Deion Burks                OVR: 63          [ROOKIE] (DRAFT)
+         RB    Seth McGowan               OVR: 63          [ROOKIE] (DRAFT)
+    #67  OT    Luke Tenuta                OVR: 61  Age: 26   
+
+  [DEFENSE]
+    # 1  CB    Sauce Gardner              OVR: 93  Age: 25   
+    #99  DT    DeForest Buckner           OVR: 91  Age: 31   
+    #23  CB    Kenny Moore II             OVR: 89  Age: 30   
+    # 7  CB    Charvarius Ward            OVR: 89  Age: 29   
+    #90  DT    Grover Stewart             OVR: 86  Age: 31   
+    #29  CB    Cam Taylor-Britt           OVR: 82  Age: 25   
+    #97  DE    Laiatu Latu                OVR: 77  Age: 24   
+    #36  S     Jonathan Owens             OVR: 75  Age: 30   
+    #29  CB    Mekhi Blackmon             OVR: 75  Age: 26   
+    #40  CB    Jaylon Jones               OVR: 75  Age: 23   
+    #49  DE    Arden Key                  OVR: 75  Age: 29   
+    #91  DE    JT Tuimoloau               OVR: 74  Age: 22   
+    #92  DT    Derrick Nnadi              OVR: 73  Age: 29   
+    #72  DE    Micheal Clemons            OVR: 72  Age: 28   
+    #27  CB    Justin Walley              OVR: 71  Age: 22   
+    #99  DT    Jerry Tillery              OVR: 71  Age: 28   
+    #27  LB    Akeem Davis-Gaither        OVR: 71  Age: 27   
+         LB    CJ Allen                   OVR: 70          [ROOKIE] (DRAFT)
+    #61  DE    Viliami Fehoko Jr.         OVR: 70  Age: 26   
+    #74  DE    Durell Nchami              OVR: 70  Age: 26   
+    #49  LB    Joseph Vaughn              OVR: 70  Age: 25   
+         CB    Rob Carter Jr.             OVR: 70  Age: 23   
+    #42  CB    Wyett Ekeler               OVR: 70  Age: 25   
+    #57  LB    Jaylon Carlies             OVR: 70  Age: 23   
+    #43  CB    Cameron Mitchell           OVR: 70  Age: 24   
+    #96  DT    Colby Wooden               OVR: 69  Age: 24   (TRADE)
+    #93  DT    Tim Smith                  OVR: 68  Age: 23   
+         S     Nasir Adderley             OVR: 68  Age: 28   
+    # 0  S     Cam Bynum                  OVR: 68  Age: 27   
+    #34  S     Ben Nikkel                 OVR: 68  Age: 24   
+    #32  S     Daniel Scott               OVR: 68  Age: 26   
+         S     A.J. Haulcy                OVR: 67          [ROOKIE] (DRAFT)
+    #35  CB    Johnathan Edwards          OVR: 67  Age: 23   
+    #58  LB    Austin Ajiake              OVR: 66  Age: 25   
+    # 2  S     Juanyeh Thomas             OVR: 66  Age: 25   
+    #95  DT    Adetomiwa Adebawore        OVR: 65  Age: 24   
+    #30  S     Hunter Wohler              OVR: 65  Age: 22   
+         EDGE  George Gumbs Jr.           OVR: 65          [ROOKIE] (DRAFT)
+         LB    Bryce Boettcher            OVR: 65          [ROOKIE] (DRAFT)
+    #57  LB    John Bullock               OVR: 65  Age: 24   
+    #36  S     Reuben Lowery III          OVR: 63  Age: 23   
+         EDGE  Caden Curry                OVR: 63          [ROOKIE] (DRAFT)
+    #41  S     Trey Washington            OVR: 62  Age: 22   
+
+  [SPECIAL]
+    #46  LS    Luke Rhodes                OVR: 79  Age: 33   
+    # 8  P     Rigoberto Sanchez          OVR: 77  Age: 30   
+    # 3  PK    Spencer Shrader            OVR: 75  Age: 26   
+    #19  PK    Blake Grupe                OVR: 73  Age: 26   
+
+
+--------------------------------------------------------------------------------
+TEAM: Jacksonville Jaguars (JAX) - Cap Space: $-11,433,472
+--------------------------------------------------------------------------------
+  [OFFENSE]
+    #12  WR    Travis Hunter              OVR: 82  Age: 22   
+    #16  WR    Jakobi Meyers              OVR: 82  Age: 28   
+    # 7  WR    Brian Thomas Jr.           OVR: 81  Age: 22   
+    #76  G     Ezra Cleveland             OVR: 78  Age: 27   
+    #16  QB    Trevor Lawrence            OVR: 77  Age: 25   
+    #85  TE    Brenton Strange            OVR: 77  Age: 24   
+    #72  OT    Walker Little              OVR: 77  Age: 26   
+    #11  WR    Parker Washington          OVR: 75  Age: 23   
+    #77  OT    Anton Harrison             OVR: 75  Age: 23   
+    #33  RB    Bhayshul Tuten             OVR: 75  Age: 23   
+    #65  G     Patrick Mekari             OVR: 74  Age: 28   
+    #10  QB    Carter Bradley             OVR: 72  Age: 26   
+    #36  RB    LeQuint Allen Jr.          OVR: 71  Age: 21   
+    #73  C     Robert Hainsey             OVR: 71  Age: 27   
+    #64  G     Wyatt Milum                OVR: 71  Age: 22   
+         TE    Nate Boerkircher           OVR: 70          [ROOKIE] (DRAFT)
+    #66  OT    Ricky Lee                  OVR: 70  Age: 26   
+    #78  OT    Kilian Zierer              OVR: 70  Age: 28   
+    #38  RB    Ja'Quinden Jackson         OVR: 70  Age: 24   
+    #15  WR    Chandler Brayboy           OVR: 70  Age: 24   
+    #36  RB    Chris Rodriguez Jr.        OVR: 69  Age: 24   
+    #20  RB    DeeJay Dallas              OVR: 68  Age: 26   
+    #88  TE    Patrick Herbert            OVR: 68  Age: 25   
+    #79  C     Jerome Carvin              OVR: 68  Age: 25   
+    #61  G     Sal Wormley                OVR: 68  Age: 24   
+    #55  G     Chuma Edoga                OVR: 68  Age: 28   
+         OG    Emmanuel Pregnon           OVR: 67          [ROOKIE] (DRAFT)
+    #81  WR    Austin Trammell            OVR: 65  Age: 27   
+    #84  TE    Hunter Long                OVR: 65  Age: 27   
+         TE    Tanner Koziol              OVR: 65          [ROOKIE] (DRAFT)
+    #13  WR    Tim Jones                  OVR: 64  Age: 27   
+    #80  TE    Quintin Morris             OVR: 63  Age: 26   
+    #60  C     Jonah Monheim              OVR: 63  Age: 23   
+         WR    C.J. Williams              OVR: 63          [ROOKIE] (DRAFT)
+         WR    Josh Cameron               OVR: 63          [ROOKIE] (DRAFT)
+    #14  QB    Nick Mullens               OVR: 61  Age: 30   
+    #70  OT    Cole Van Lanen             OVR: 59  Age: 27   
+
+  [DEFENSE]
+    #41  DE    Josh Hines-Allen           OVR: 89  Age: 28   
+    #23  LB    Foyesade Oluokun           OVR: 86  Age: 30   
+    # 2  CB    Jourdan Lewis              OVR: 81  Age: 30   
+    #44  DE    Travon Walker              OVR: 80  Age: 24   (FA)
+    #91  DT    Arik Armstead              OVR: 78  Age: 31   
+    #29  S     Eric Murray                OVR: 74  Age: 31   
+    #52  DT    DaVon Hamilton             OVR: 74  Age: 28   
+    #22  CB    Jarrian Jones              OVR: 73  Age: 24   
+    #27  CB    Caleb Ransaw               OVR: 73  Age: 22   
+    #98  DT    Ruke Orhorhoro             OVR: 73  Age: 23   (TRADE)
+    #47  LB    Dennis Gardeck             OVR: 72  Age: 31   
+    #26  S     Antonio Johnson            OVR: 71  Age: 23   
+    #31  CB    Keni-H Lovely              OVR: 70  Age: 25   
+    #37  CB    Jabbar Muhammad            OVR: 70  Age: 24   
+    #30  CB    Montaric Brown             OVR: 69  Age: 26   (FA)
+    #54  LB    Jack Kiser                 OVR: 69  Age: 24   
+    #51  LB    Ventrell Miller            OVR: 69  Age: 26   
+    #97  DT    Keivie Rose                OVR: 68  Age: 25   
+    #24  S     Cam'Ron Silmon-Craig       OVR: 68  Age: 23   
+         S     Jalen Huskey               OVR: 67          [ROOKIE] (DRAFT)
+         DT    Albert Regis               OVR: 67          [ROOKIE] (DRAFT)
+    #25  S     Rayuan Lane III            OVR: 66  Age: 22   
+    #93  DE    Matt Dickerson             OVR: 65  Age: 30   
+    #21  CB    Christian Braswell         OVR: 65  Age: 25   
+    #32  CB    Keith Taylor               OVR: 65  Age: 26   
+    #56  LB    Yasir Abdullah             OVR: 64  Age: 25   
+    #95  DE    B.J. Green II              OVR: 64  Age: 22   
+    #35  LB    Jalen McLeod               OVR: 64  Age: 23   
+    #34  S     Trevian Thomas             OVR: 63  Age: 24   
+         EDGE  Zach Durfee                OVR: 63          [ROOKIE] (DRAFT)
+         LB    Parker Hughes              OVR: 63          [ROOKIE] (DRAFT)
+    #50  LB    Branson Combs              OVR: 62  Age: 25   
+    #92  DE    Danny Striggow             OVR: 62  Age: 23   
+
+  [SPECIAL]
+    # 9  P     Logan Cooke                OVR: 83  Age: 30   
+    #39  PK    Cam Little                 OVR: 77  Age: 22   
+    #46  LS    Ross Matiscik              OVR: 72  Age: 29   
+
+
+--------------------------------------------------------------------------------
+TEAM: Tennessee Titans (TEN) - Cap Space: $104,769,062
+--------------------------------------------------------------------------------
+  [OFFENSE]
+    #20  RB    Tony Pollard               OVR: 83  Age: 28   
+    #17  WR    Wan'Dale Robinson          OVR: 81  Age: 24   (FA)
+    #77  G     Peter Skoronski            OVR: 80  Age: 24   
+    # 2  RB    Tyjae Spears               OVR: 79  Age: 24   
+    # 0  WR    Calvin Ridley              OVR: 79  Age: 30   
+         WR    Carnell Tate               OVR: 78  Age: 22  [ROOKIE] (DRAFT)
+    #35  RB    Michael Carter             OVR: 76  Age: 26   
+    #55  OT    JC Latham                  OVR: 76  Age: 22   
+    # 5  WR    Elic Ayomanor              OVR: 74  Age: 22   
+    #75  OT    Dan Moore Jr.              OVR: 73  Age: 26   
+    #17  WR    Chimere Dike               OVR: 72  Age: 23   
+    #16  QB    Hendon Hooker              OVR: 72  Age: 28   
+    # 1  QB    Cam Ward                   OVR: 72  Age: 23   
+    #82  TE    Daniel Bellinger           OVR: 71  Age: 24   
+    #31  RB    Kalel Mullings             OVR: 70  Age: 22   
+    #32  RB    Blake Watson               OVR: 70  Age: 26   
+    #89  WR    Lance McCutcheon           OVR: 70  Age: 27   
+    #85  WR    K.J. Osborn                OVR: 70  Age: 28   
+    #81  WR    Hal Presley III            OVR: 70  Age: 24   
+    #87  WR    Xavier Restrepo            OVR: 70  Age: 24   
+    #72  OT    Ryan Hayes                 OVR: 70  Age: 26   
+    # 8  QB    Will Levis                 OVR: 69  Age: 26   
+    #83  TE    Kylen Granson              OVR: 69  Age: 27   
+    #64  G     Jackson Slater             OVR: 68  Age: 22   
+    #83  TE    Joel Wilson                OVR: 68  Age: 25   
+    #61  C     Trey Hill                  OVR: 68  Age: 26   
+    #73  G     Cordell Volson             OVR: 68  Age: 27   
+    #60  G     Clay Webb                  OVR: 68  Age: 26   
+    #84  TE    Gunnar Helm                OVR: 68  Age: 22   
+    #36  RB    Julius Chestnut            OVR: 67  Age: 24   
+    #65  C     Austin Schlottmann         OVR: 67  Age: 29   
+    #80  WR    Bryce Oliver               OVR: 65  Age: 25   
+         RB    Nicholas Singleton         OVR: 65          [ROOKIE] (DRAFT)
+         OG    Fernando Carmona           OVR: 65          [ROOKIE] (DRAFT)
+    #11  QB    Mitchell Trubisky          OVR: 64  Age: 31   
+    #71  G     Garrett Dellinger          OVR: 64  Age: 24   
+    #74  OT    Austin Deculus             OVR: 64  Age: 26   
+    #12  WR    Mason Kinsey               OVR: 63  Age: 27   
+         C     Pat Coogan                 OVR: 63          [ROOKIE] (DRAFT)
+         TE    Jaren Kanak                OVR: 63          [ROOKIE] (DRAFT)
+    #88  TE    David Martin-Robinson      OVR: 62  Age: 25   
+    #65  G     Drew Moss                  OVR: 62  Age: 22   
+    #78  OT    Brandon Crenshaw-Dickson   OVR: 61  Age: 24   
+
+  [DEFENSE]
+    #98  DT    Jeffery Simmons            OVR: 94  Age: 28   
+    #98  DE    John Franklin-Myers        OVR: 80  Age: 28   (FA)
+    #11  DE    Jermaine Johnson II        OVR: 79  Age: 26   (TRADE)
+    #37  S     Amani Hooker               OVR: 78  Age: 27   
+    #28  CB    Cor'Dale Flott             OVR: 78  Age: 24   (FA)
+    #50  LB    Cody Barton                OVR: 77  Age: 28   
+    #55  DE    Jacob Martin               OVR: 76  Age: 29   
+    #33  LB    Cedric Gray                OVR: 76  Age: 22   
+    #22  S     Tony Adams                 OVR: 76  Age: 26   
+    # 1  CB    Alontae Taylor             OVR: 75  Age: 26   (FA)
+    # 7  LB    Oluwafemi Oladejo          OVR: 74  Age: 21   
+    # 2  CB    Joshua Williams            OVR: 74  Age: 25   
+         DE    Keldric Faulk              OVR: 73  Age: 22  [ROOKIE] (DRAFT)
+    #90  DT    Solomon Thomas             OVR: 72  Age: 30   
+    #23  S     Kevin Winston Jr.          OVR: 71  Age: 21   
+         LB    Anthony Hill Jr.           OVR: 70          [ROOKIE] (DRAFT)
+    #58  DE    David Ebuka Agoha          OVR: 70  Age: 24   
+    #69  DE    Earnest Brown IV           OVR: 70  Age: 27   
+    #45  DE    Nate Lynn                  OVR: 70  Age: 23   
+    #47  LB    Cam Riley                  OVR: 70  Age: 24   
+    #29  CB    Keydrain Calligan          OVR: 70  Age: 24   
+    #26  CB    Marcus Harris              OVR: 69  Age: 24   
+    #92  DT    Jordan Elliott             OVR: 69  Age: 27   
+    #94  DT    Timmy Horne                OVR: 68  Age: 28   
+    #68  DT    Cam Horsley                OVR: 68  Age: 24   
+    #76  DT    Isaiah Raikes              OVR: 68  Age: 24   
+    #43  LB    Mohamoud Diabate           OVR: 68  Age: 24   
+    #52  LB    James Williams Sr.         OVR: 67  Age: 22   
+    #21  CB    Micah Robinson             OVR: 67  Age: 23   
+    #99  LB    Ali Gaye                   OVR: 66  Age: 26   
+    #36  S     Erick Hallett II           OVR: 66  Age: 25   
+    #21  S     Sanoussi Kane              OVR: 66  Age: 23   
+    #56  DE    Truman Jones               OVR: 65  Age: 25   
+    #28  S     Jerrick Reed II            OVR: 65  Age: 25   
+    #93  DE    Malik Herring              OVR: 63  Age: 28   
+    #92  LB    Jaylen Harrell             OVR: 63  Age: 23   
+    #30  S     Kendell Brooks             OVR: 63  Age: 25   
+         DT    Jackie Marshall            OVR: 63          [ROOKIE] (DRAFT)
+    #91  DE    C.J. Ravenell              OVR: 62  Age: 25   
+    #54  LB    Dorian Mausi               OVR: 62  Age: 23   
+
+  [SPECIAL]
+    # 6  P     Tommy Townsend             OVR: 79  Age: 28   
+    # 6  PK    Joey Slye                  OVR: 76  Age: 29   
+    #46  LS    Morgan Cox                 OVR: 66  Age: 39   
+
+
+################################################################################
+DIVISION: AFC WEST
+################################################################################
+
+--------------------------------------------------------------------------------
+TEAM: Denver Broncos (DEN) - Cap Space: $28,885,734
+--------------------------------------------------------------------------------
+  [OFFENSE]
+    #77  G     Quinn Meinerz              OVR: 96  Age: 26   
+    #72  OT    Garett Bolles              OVR: 92  Age: 33   
+    #14  WR    Courtland Sutton           OVR: 86  Age: 29   
+    #17  WR    Jaylen Waddle              OVR: 85  Age: 26   (TRADE)
+    #27  RB    J.K. Dobbins               OVR: 83  Age: 26   
+    #69  OT    Mike McGlinchey            OVR: 81  Age: 30   
+    #10  QB    Bo Nix                     OVR: 80  Age: 25   
+    # 1  TE    Evan Engram                OVR: 80  Age: 30   
+    #19  WR    Marvin Mims Jr.            OVR: 77  Age: 23   
+    #12  RB    RJ Harvey                  OVR: 77  Age: 24   
+    #11  WR    Troy Franklin              OVR: 76  Age: 22   
+    #60  C     Luke Wattenberg            OVR: 76  Age: 27   
+    #74  G     Ben Powers                 OVR: 75  Age: 28   
+    #38  RB    Jaleel McLaughlin          OVR: 71  Age: 24   
+    #82  TE    Adam Trautman              OVR: 71  Age: 28   
+    #13  WR    Pat Bryant                 OVR: 70  Age: 22   
+    #42  RB    Deuce Vaughn               OVR: 70  Age: 24   
+    #46  FB    Adam Prentice              OVR: 70  Age: 28   
+         OT    Marques Cox                OVR: 70  Age: 26   
+    #28  RB    Tyler Badie                OVR: 69  Age: 25   
+    #17  WR    Lil'Jordan Humphrey        OVR: 69  Age: 28   
+    #63  OT    Alex Palczewski            OVR: 68  Age: 26   
+    #84  TE    Caleb Lohner               OVR: 68  Age: 24   
+         C     Michael Deiter             OVR: 68  Age: 29   
+         G     Nash Jones                 OVR: 68  Age: 24   
+    #79  OT    Matt Peart                 OVR: 68  Age: 28   
+    #32  RB    Cody Schrader              OVR: 67  Age: 25   
+    #76  G     Calvin Throckmorton        OVR: 67  Age: 29   
+    #54  C     Alex Forsyth               OVR: 66  Age: 26   
+    #66  G     Nick Gargiulo              OVR: 66  Age: 25   
+         OT    Kage Casey                 OVR: 65          [ROOKIE] (DRAFT)
+         RB    Jonah Coleman              OVR: 65          [ROOKIE] (DRAFT)
+    #85  TE    Lucas Krull                OVR: 64  Age: 27   
+         TE    Dallen Bentley             OVR: 63          [ROOKIE] (DRAFT)
+    #83  WR    Michael Bandy              OVR: 63  Age: 28   
+    #73  OT    Frank Crum                 OVR: 63  Age: 25   
+    # 8  QB    Jarrett Stidham            OVR: 62  Age: 29   
+    #45  TE    Nate Adkins                OVR: 61  Age: 26   
+    # 4  QB    Sam Ehlinger               OVR: 56  Age: 27   
+
+  [DEFENSE]
+    #15  LB    Nik Bonitto                OVR: 88  Age: 25   
+    #99  DE    Zach Allen                 OVR: 85  Age: 28   
+    # 9  S     Talanoa Hufanga            OVR: 85  Age: 25   
+    #22  S     Brandon Jones              OVR: 84  Age: 27   
+    # 0  LB    Jonathon Cooper            OVR: 81  Age: 27   
+    #93  DT    D.J. Jones                 OVR: 78  Age: 30   
+    #49  LB    Alex Singleton             OVR: 78  Age: 31   
+    #23  CB    Jahdae Barron              OVR: 77  Age: 23   
+    #21  CB    Riley Moss                 OVR: 77  Age: 25   
+    #29  CB    Ja'Quan McMillian          OVR: 75  Age: 25   
+    #40  LB    Justin Strnad              OVR: 74  Age: 29   
+    #97  DT    Malcolm Roach              OVR: 73  Age: 27   
+    #52  LB    Jonah Elliss               OVR: 73  Age: 22   
+    #31  CB    Kris Abrams-Draine         OVR: 73  Age: 23   
+    #41  LB    Drew Sanders               OVR: 71  Age: 23   
+    #91  DE    Matt Henningsen            OVR: 70  Age: 26   
+    #53  DE    Garrett Nelson             OVR: 70  Age: 26   
+    #56  LB    Levelle Bailey             OVR: 70  Age: 25   
+    #33  CB    Jaden Robinson             OVR: 70  Age: 25   
+    # 2  CB    Pat Surtain II             OVR: 70  Age: 26   
+    #95  DE    Sai'vion Jones             OVR: 70  Age: 22   
+    #96  DE    Eyioma Uwazurike           OVR: 69  Age: 27   
+    #75  DT    Kristian Williams          OVR: 68  Age: 25   
+    #90  DT    Jordan Miller              OVR: 68  Age: 26   
+    #92  LB    Dondrea Tillman            OVR: 68  Age: 27   
+         DT    Tyler Onyedim              OVR: 67          [ROOKIE] (DRAFT)
+    #51  LB    Que Robinson               OVR: 67  Age: 24   
+    #35  CB    Reese Taylor               OVR: 66  Age: 26   
+    #34  S     JL Skinner                 OVR: 66  Age: 24   
+    #94  DT    Jordan Jackson             OVR: 65  Age: 27   
+    #26  S     Devon Key                  OVR: 65  Age: 27   
+    #26  S     Tycen Anderson             OVR: 65  Age: 26   
+         LB    Red Murdock                OVR: 63          [ROOKIE] (DRAFT)
+         CB    Miles Scott                OVR: 63          [ROOKIE] (DRAFT)
+    #55  LB    Jordan Turner              OVR: 63  Age: 24   
+    #47  LB    Karene Reid                OVR: 62  Age: 25   
+    #59  LB    Johnny Walker              OVR: 60  Age: 23   
+
+  [SPECIAL]
+    # 3  PK    Wil Lutz                   OVR: 78  Age: 31   
+    #16  P     Jeremy Crawshaw            OVR: 73  Age: 24   
+    #48  LS    Mitchell Fraboni           OVR: 68  Age: 28   
+
+
+--------------------------------------------------------------------------------
+TEAM: Kansas City Chiefs (KC) - Cap Space: $-54,910,166
+--------------------------------------------------------------------------------
+  [OFFENSE]
+    #15  QB    Patrick Mahomes            OVR: 97  Age: 29   
+    #52  C     Creed Humphrey             OVR: 95  Age: 27   
+    #87  TE    Travis Kelce               OVR: 92  Age: 35   (FA)
+    #65  G     Trey Smith                 OVR: 91  Age: 26   
+    # 9  RB    Kenneth Walker III         OVR: 88  Age: 24   (FA)
+    # 4  WR    Rashee Rice                OVR: 84  Age: 25   
+    #71  OT    Josh Simmons               OVR: 79  Age: 22   
+    # 1  WR    Xavier Worthy              OVR: 79  Age: 22   
+    #80  WR    Tyquan Thornton            OVR: 76  Age: 25   
+    # 7  QB    Justin Fields              OVR: 74  Age: 26   (TRADE)
+    #83  TE    Noah Gray                  OVR: 74  Age: 26   
+    #76  OT    Kingsley Suamataia         OVR: 72  Age: 22   
+    #11  WR    Jalen Royals               OVR: 71  Age: 22   
+    #77  OT    Jaylon Moore               OVR: 71  Age: 27   
+    #12  TE    Jared Wiley                OVR: 70  Age: 24   
+         RB    ShunDerrick Powell         OVR: 70  Age: 23   
+         WR    Andrew Armstrong           OVR: 70  Age: 25   
+    #82  WR    Jimmy Holiday              OVR: 70  Age: 24   
+    #73  OT    Matt Waletzko              OVR: 70  Age: 26   
+    #24  RB    Brashard Smith             OVR: 70  Age: 22   
+    #31  RB    Emari Demercado            OVR: 70  Age: 26   
+    #64  OT    Wanya Morris               OVR: 70  Age: 24   
+    #72  OT    Chukwuebuka Godrick        OVR: 70  Age: 25   
+    #49  TE    Tre Watson                 OVR: 68  Age: 23   
+    #89  WR    Jason Brownlee             OVR: 67  Age: 27   
+    #81  WR    Nikko Remigio              OVR: 67  Age: 25   
+    #60  C     Hunter Nourzad             OVR: 66  Age: 25   
+         RB    Emmett Johnson             OVR: 65          [ROOKIE] (DRAFT)
+    #66  G     Mike Caliendo              OVR: 65  Age: 27   
+    #61  G     C.J. Hanson                OVR: 64  Age: 25   
+         WR    Cyrus Allen                OVR: 63          [ROOKIE] (DRAFT)
+         QB    Garrett Nussmeier          OVR: 63          [ROOKIE] (DRAFT)
+    #88  TE    Jake Briningstool          OVR: 63  Age: 22   
+    # 3  QB    Jake Haener                OVR: 63  Age: 27   
+    #75  OT    Ethan Driskell             OVR: 62  Age: 25   
+    #79  OT    Esa Pole                   OVR: 61  Age: 24   
+    #19  QB    Chris Oladokun             OVR: 55  Age: 28   
+
+  [DEFENSE]
+    #95  DT    Chris Jones                OVR: 96  Age: 31   
+    #23  LB    Drue Tranquill             OVR: 87  Age: 30   
+    #56  DE    George Karlaftis           OVR: 84  Age: 24   
+    #32  LB    Nick Bolton                OVR: 83  Age: 25   
+    # 8  CB    Kristian Fulton            OVR: 77  Age: 26   
+    #12  S     Alohi Gilman               OVR: 77  Age: 27   
+    # 4  CB    Kader Kohou                OVR: 76  Age: 26   
+    #27  S     Chamarri Conner            OVR: 76  Age: 25   
+         CB    Mansoor Delane             OVR: 76  Age: 22  [ROOKIE] (DRAFT)
+    #20  CB    Nohl Williams              OVR: 74  Age: 22   
+    #20  CB    Kaiir Elam                 OVR: 73  Age: 24   
+    #97  DE    Ashton Gillotte            OVR: 73  Age: 22   
+    #21  S     Jaden Hicks                OVR: 73  Age: 23   
+         DT    Peter Woods                OVR: 73  Age: 22  [ROOKIE] (DRAFT)
+    #91  DE    Felix Anudike-Uzomah       OVR: 72  Age: 23   
+    #55  DT    Omarr Norman-Lott          OVR: 71  Age: 23   
+    #95  DT    Khyiris Tonga              OVR: 71  Age: 29   
+         EDGE  R Mason Thomas             OVR: 70          [ROOKIE] (DRAFT)
+    #48  LB    Cole Christiansen          OVR: 70  Age: 28   
+    #40  DE    Ethan Downs                OVR: 70  Age: 23   
+    #57  DE    Tyreke Smith               OVR: 70  Age: 26   
+    #53  LB    Kam Arnold                 OVR: 70  Age: 24   
+    #50  LB    Brandon George             OVR: 70  Age: 25   
+    #39  CB    Melvin Smith Jr.           OVR: 70  Age: 24   
+    #26  DT    Marcus Harris              OVR: 69  Age: 24   
+         S     Tanner McCalister          OVR: 68  Age: 26   
+    #93  DT    Zacch Pickens              OVR: 68  Age: 26   
+    #31  LB    Jeffrey Bassa              OVR: 68  Age: 22   
+         CB    Jadon Canady               OVR: 65          [ROOKIE] (DRAFT)
+    #59  LB    Cooper McDonald            OVR: 64  Age: 24   
+    #38  CB    Kevin Knowles              OVR: 64  Age: 22   
+    #30  CB    Chris Roland-Wallace       OVR: 64  Age: 23   
+    #43  LB    Jack Cochrane              OVR: 62  Age: 26   
+
+  [SPECIAL]
+    # 7  PK    Harrison Butker            OVR: 81  Age: 30   
+    #14  P     Matt Araiza                OVR: 75  Age: 25   
+    #41  LS    James Winchester           OVR: 75  Age: 36   
+
+
+--------------------------------------------------------------------------------
+TEAM: Las Vegas Raiders (LV) - Cap Space: $91,522,807
+--------------------------------------------------------------------------------
+  [OFFENSE]
+    #74  OT    Kolton Miller              OVR: 92  Age: 29   
+    #89  TE    Brock Bowers               OVR: 91  Age: 22   
+    #64  C     Tyler Linderbaum           OVR: 87  Age: 25   (FA)
+    # 2  RB    Ashton Jeanty              OVR: 83  Age: 21   
+    #58  G     Jackson Powers-Johnson     OVR: 79  Age: 22   
+         QB    Fernando Mendoza           OVR: 78  Age: 22  [ROOKIE] (DRAFT)
+    # 1  WR    Tre Tucker                 OVR: 78  Age: 24   
+    # 1  WR    Jalen Nailor               OVR: 75  Age: 26   
+    #18  WR    Jack Bech                  OVR: 73  Age: 22   
+    #87  TE    Michael Mayer              OVR: 73  Age: 24   
+    #61  C     Jordan Meredith            OVR: 73  Age: 27   
+    #71  OT    DJ Glaze                   OVR: 73  Age: 23   
+    #76  G     Caleb Rogers               OVR: 71  Age: 23   
+    #18  QB    Kirk Cousins               OVR: 71  Age: 37   (FA)
+    #33  RB    Chris Collier              OVR: 70  Age: 26   
+    #13  WR    Phillip Dorsett II         OVR: 70  Age: 33   
+    # 4  WR    Shedrick Jackson           OVR: 70  Age: 26   
+    #82  WR    Brenden Rice               OVR: 70  Age: 24   
+    #79  OT    Laki Tasi                  OVR: 70  Age: 22   
+    #78  OT    Dalton Wagner              OVR: 70  Age: 27   
+    #60  OT    Charles Grant              OVR: 70  Age: 23   
+    #80  TE    Ian Thomas                 OVR: 69  Age: 29   
+    #23  RB    Dylan Laube                OVR: 68  Age: 25   
+    #10  WR    Dont'e Thornton Jr.        OVR: 68  Age: 22   
+    #86  TE    Albert Okwuegbunam Jr.     OVR: 68  Age: 27   
+    #63  G     McClendon Curtis           OVR: 68  Age: 26   
+    #64  G     Layden Robinson            OVR: 68  Age: 24   
+         C     Trey Zuhn III              OVR: 67          [ROOKIE] (DRAFT)
+    #83  WR    Dareke Young               OVR: 67  Age: 26   
+    #12  QB    Aidan O'Connell            OVR: 67  Age: 27   
+    #83  FB    Connor Heyward             OVR: 66  Age: 26   
+    #74  G     Spencer Burford            OVR: 66  Age: 25   
+         RB    Mike Washington Jr.        OVR: 65          [ROOKIE] (DRAFT)
+         WR    Malik Benson               OVR: 63          [ROOKIE] (DRAFT)
+    #56  G     Atonio Mafi                OVR: 62  Age: 25   
+    #88  WR    Justin Shorter             OVR: 60  Age: 26   
+    #46  TE    Carter Runyon              OVR: 59  Age: 24   
+    #67  C     Will Putnam                OVR: 59  Age: 25   
+
+  [DEFENSE]
+    #98  DE    Maxx Crosby                OVR: 97  Age: 28   
+    # 7  CB    Taron Johnson              OVR: 84  Age: 29   (TRADE)
+    #11  S     Jeremy Chinn               OVR: 83  Age: 27   
+    # 7  LB    Quay Walker                OVR: 79  Age: 25   (FA)
+    #17  LB    Nakobe Dean                OVR: 77  Age: 24   (FA)
+    #51  DE    Kwity Paye                 OVR: 77  Age: 26   (FA)
+    #22  CB    Eric Stokes                OVR: 76  Age: 26   
+    #26  CB    Darien Porter              OVR: 74  Age: 24   
+    #51  DE    Malcolm Koonce             OVR: 73  Age: 27   
+    # 9  DE    Tyree Wilson               OVR: 73  Age: 25   
+    #69  DT    Adam Butler                OVR: 73  Age: 31   
+         S     Treydan Stukes             OVR: 70          [ROOKIE] (DRAFT)
+    #44  LB    Tommy Eichenberg           OVR: 70  Age: 24   
+    #54  LB    Brennan Jackson            OVR: 70  Age: 24   
+    #49  DE    Charles Snowden            OVR: 69  Age: 27   
+    #96  DT    Jonah Laulu                OVR: 69  Age: 25   
+    #25  CB    Decamerion Richardson      OVR: 69  Age: 24   
+    #20  S     Isaiah Pola-Mao            OVR: 69  Age: 26   
+    #97  DT    Tonka Hemingway            OVR: 68  Age: 23   
+    #68  DT    Treven Ma'ae               OVR: 68  Age: 25   
+    #93  DT    Brodric Martin-Rhodes      OVR: 68  Age: 26   
+    #28  S     Terrell Edmunds            OVR: 68  Age: 29   
+         EDGE  Keyron Crawford            OVR: 67          [ROOKIE] (DRAFT)
+    #99  DT    Thomas Booker IV           OVR: 67  Age: 25   
+    #92  DT    JJ Pegues                  OVR: 67  Age: 23   
+    #52  LB    Jamin Davis                OVR: 67  Age: 27   
+         S     Dalton Johnson             OVR: 65          [ROOKIE] (DRAFT)
+         CB    Jermod McCoy               OVR: 65          [ROOKIE] (DRAFT)
+    #29  CB    Chigozie Anusiem           OVR: 65  Age: 25   
+    #50  LB    Segun Olubi                OVR: 65  Age: 25   
+         CB    Hezekiah Masses            OVR: 63          [ROOKIE] (DRAFT)
+         DT    Brandon Cleveland          OVR: 63          [ROOKIE] (DRAFT)
+    #91  DE    Jahfari Harvey             OVR: 63  Age: 24   
+    #22  CB    Greedy Vance               OVR: 63  Age: 24   
+    #55  LB    Cody Lindenberg            OVR: 62  Age: 23   
+    #27  S     Tristin McCollum           OVR: 62  Age: 26   
+
+  [SPECIAL]
+    # 6  P     AJ Cole                    OVR: 84  Age: 29   
+    #16  PK    Matt Gay                   OVR: 74  Age: 31   
+    #47  LS    Alex Ward                  OVR: 62  Age: 26   
+
+
+--------------------------------------------------------------------------------
+TEAM: Los Angeles Chargers (LAC) - Cap Space: $83,542,941
+--------------------------------------------------------------------------------
+  [OFFENSE]
+    #70  OT    Rashawn Slater             OVR: 93  Age: 26   
+    #10  QB    Justin Herbert             OVR: 90  Age: 27   
+    #76  OT    Joe Alt                    OVR: 85  Age: 22   
+    #15  WR    Ladd McConkey              OVR: 84  Age: 23   
+    #63  C     Tyler Biadasz              OVR: 81  Age: 27   
+    # 8  RB    Omarion Hampton            OVR: 80  Age: 22   
+    # 1  WR    Quentin Johnston           OVR: 80  Age: 23   
+    #34  RB    Keaton Mitchell            OVR: 74  Age: 23   
+    #30  FB    Alec Ingold                OVR: 74  Age: 29   
+    #86  TE    Oronde Gadsden             OVR: 74  Age: 22   
+    # 7  QB    DJ Uiagalelei              OVR: 72  Age: 25   
+    #30  RB    Kimani Vidal               OVR: 72  Age: 24   
+    #69  G     Cole Strange               OVR: 72  Age: 27   
+    # 9  WR    Tre' Harris                OVR: 72  Age: 23   
+    #70  G     Trevor Penning             OVR: 72  Age: 26   
+         C     Jake Slaughter             OVR: 70          [ROOKIE] (DRAFT)
+    #34  RB    Amar Johnson               OVR: 70  Age: 23   
+         WR    Luke Grimm                 OVR: 70  Age: 24   
+    #82  WR    JaQuae Jackson             OVR: 70  Age: 26   
+    #12  WR    Derius Davis               OVR: 70  Age: 24   
+    #84  WR    KeAndre Lambert-Smith      OVR: 70  Age: 23   
+    #44  FB    Scott Matlock              OVR: 69  Age: 25   
+    #79  OT    Trey Pipkins III           OVR: 69  Age: 28   
+    #88  TE    Tanner McLachlan           OVR: 68  Age: 27   
+    #49  TE    Thomas Yassmin             OVR: 68  Age: 26   
+    #63  C     Josh Kaltenberger          OVR: 68  Age: 24   
+    #71  G     Branson Taylor             OVR: 68  Age: 24   
+    #66  G     Ben Cleveland              OVR: 68  Age: 27   
+    #32  RB    Jaret Patterson            OVR: 67  Age: 26   
+    #88  TE    Charlie Kolar              OVR: 66  Age: 26   
+         OT    Travis Burke               OVR: 65          [ROOKIE] (DRAFT)
+         WR    Brenen Thompson            OVR: 65          [ROOKIE] (DRAFT)
+    #81  WR    Dalevon Campbell           OVR: 65  Age: 24   
+         OG    Logan Taylor               OVR: 63          [ROOKIE] (DRAFT)
+         OG    Alex Harkey                OVR: 63          [ROOKIE] (DRAFT)
+    # 5  QB    Trey Lance                 OVR: 63  Age: 25   
+    #74  G     Kayode Awosika             OVR: 63  Age: 26   
+
+  [DEFENSE]
+    # 3  S     Derwin James Jr.           OVR: 93  Age: 29   
+    #52  LB    Khalil Mack                OVR: 86  Age: 34   
+    #26  CB    Donte Jackson              OVR: 83  Age: 29   
+    # 0  LB    Daiyan Henley              OVR: 82  Age: 25   
+    #29  CB    Tarheeb Still              OVR: 80  Age: 23   
+    #23  S     Tony Jefferson             OVR: 79  Age: 33   
+    # 2  CB    Elijah Molden              OVR: 79  Age: 26   
+    #94  DT    Dalvin Tomlinson           OVR: 77  Age: 31   
+    #45  LB    Tuli Tuipulotu             OVR: 77  Age: 22   
+    #90  DT    Teair Tart                 OVR: 76  Age: 28   
+    # 6  LB    Denzel Perryman            OVR: 76  Age: 32   
+         DE    Akheem Mesidor             OVR: 73  Age: 22  [ROOKIE] (DRAFT)
+    #20  CB    Cam Hart                   OVR: 73  Age: 24   
+    #48  LB    Bud Dupree                 OVR: 72  Age: 32   
+    #92  DT    Justin Eboigbe             OVR: 71  Age: 24   
+    #25  LB    Junior Colson              OVR: 71  Age: 22   
+    #43  LB    Troy Dye                   OVR: 71  Age: 28   
+    #97  LB    Garmon Randolph            OVR: 70  Age: 25   
+    #37  CB    Jordan Oladokun            OVR: 70  Age: 23   
+         CB    Isas Waxter                OVR: 70  Age: 24   
+    #99  DT    Jamaree Caldwell           OVR: 70  Age: 25   
+    #50  LB    Emany Johnson              OVR: 70  Age: 25   
+    #54  LB    Kyle Kennard               OVR: 69  Age: 23   
+    #94  DT    TeRah Edwards              OVR: 68  Age: 24   
+    #69  DT    Josh Fuga                  OVR: 68  Age: 25   
+    #27  S     RJ Mickens                 OVR: 68  Age: 24   
+    #33  CB    Deane Leonard              OVR: 68  Age: 25   
+         S     Genesis Smith              OVR: 65          [ROOKIE] (DRAFT)
+         DT    Nick Barrett               OVR: 65          [ROOKIE] (DRAFT)
+    #53  LB    Del'Shawn Phillips         OVR: 65  Age: 28   
+    #40  S     Kendall Williamson         OVR: 64  Age: 25   
+    #58  LB    Marlowe Wax                OVR: 64  Age: 22   
+    #46  CB    Nikko Reed                 OVR: 64  Age: 22   
+    #39  CB    Eric Rogers                OVR: 62  Age: 23   
+
+  [SPECIAL]
+    #11  PK    Cameron Dicker             OVR: 82  Age: 25   
+    #47  LS    Josh Harris                OVR: 81  Age: 36   
+    #16  P     JK Scott                   OVR: 80  Age: 28   
+         LS    Peter Bowden               OVR: 60  Age: 25   
+
+
+################################################################################
+DIVISION: NFC EAST
+################################################################################
+
+--------------------------------------------------------------------------------
+TEAM: Dallas Cowboys (DAL) - Cap Space: $-29,168,257
+--------------------------------------------------------------------------------
+  [OFFENSE]
+    #88  WR    CeeDee Lamb                OVR: 95  Age: 26   
+    # 4  QB    Dak Prescott               OVR: 91  Age: 32   
+    #73  G     Tyler Smith                OVR: 88  Age: 24   
+    # 3  WR    George Pickens             OVR: 86  Age: 24   (FA)
+    #33  RB    Javonte Williams           OVR: 84  Age: 25   (FA)
+    #87  TE    Jake Ferguson              OVR: 84  Age: 26   
+    #52  G     Tyler Booker               OVR: 77  Age: 21   
+    # 9  WR    KaVontae Turpin            OVR: 76  Age: 29   
+    #56  C     Cooper Beebe               OVR: 74  Age: 24   
+    #78  OT    Terence Steele             OVR: 74  Age: 28   
+    #43  RB    Malik Davis                OVR: 73  Age: 27   
+    #23  RB    Jaydon Blue                OVR: 72  Age: 21   
+    #40  RB    Hunter Luepke              OVR: 72  Age: 25   
+    #19  WR    Ryan Flournoy              OVR: 72  Age: 25   
+    #81  WR    Jonathan Mingo             OVR: 72  Age: 24   
+    #60  OT    Tyler Guyton               OVR: 72  Age: 23   
+    #30  RB    Israel Abanikanda          OVR: 70  Age: 23   
+    #11  WR    Parris Campbell            OVR: 70  Age: 28   
+    #80  WR    Traeshon Holden            OVR: 70  Age: 24   
+    #79  OT    Marcellus Johnson          OVR: 70  Age: 26   
+    #71  OT    Nate Thomas                OVR: 70  Age: 24   
+    #86  TE    Luke Schoonmaker           OVR: 69  Age: 26   
+    #66  G     T.J. Bass                  OVR: 69  Age: 26   
+    #85  TE    Princeton Fant             OVR: 68  Age: 27   
+    #61  G     Nick Leverett              OVR: 68  Age: 29   
+    #10  QB    Joe Milton III             OVR: 68  Age: 25   
+    #37  RB    Phil Mafah                 OVR: 68  Age: 22   
+    #61  C     Matt Hennessy              OVR: 67  Age: 27   
+    #76  G     Trevor Keegan              OVR: 66  Age: 25   
+    #14  QB    Sam Howell                 OVR: 65  Age: 24   (FA)
+         OT    Drew Shelton               OVR: 65          [ROOKIE] (DRAFT)
+    #69  OT    Ajani Cornelius            OVR: 65  Age: 23   
+    #89  TE    Brevyn Spann-Ford          OVR: 64  Age: 25   
+         WR    Anthony Smith              OVR: 63          [ROOKIE] (DRAFT)
+
+  [DEFENSE]
+    #95  DT    Quinnen Williams           OVR: 89  Age: 27   
+    #26  CB    DaRon Bland                OVR: 87  Age: 26   
+    #52  LB    Rashan Gary                OVR: 84  Age: 27   (TRADE)
+    #34  S     Jalen Thompson             OVR: 82  Age: 27   
+    #14  CB    Cobie Durant               OVR: 78  Age: 27   
+    #95  DT    Kenny Clark                OVR: 78  Age: 29   
+    #28  S     Malik Hooker               OVR: 78  Age: 29   
+         S     Caleb Downs                OVR: 76  Age: 22  [ROOKIE] (DRAFT)
+    # 0  LB    DeMarvion Overshown        OVR: 76  Age: 25   
+    #41  DE    Donovan Ezeiruaku          OVR: 75  Age: 21   
+    # 1  CB    Derion Kendrick            OVR: 75  Age: 25   
+    #34  CB    Shavon Revel Jr.           OVR: 74  Age: 24   
+    #98  DE    Jonathan Bullard           OVR: 73  Age: 31   
+         DE    Malachi Lawrence           OVR: 73  Age: 22  [ROOKIE] (DRAFT)
+    #14  S     Markquese Bell             OVR: 73  Age: 26   
+    # 6  S     P.J. Locke                 OVR: 73  Age: 28   
+    #35  LB    Marist Liufau              OVR: 72  Age: 24   
+    #21  CB    Caelen Carson              OVR: 72  Age: 23   
+    #53  DE    James Houston              OVR: 71  Age: 26   
+    #96  DE    Adedayo Odeleye            OVR: 70  Age: 28   
+    #45  LB    Justin Barron              OVR: 70  Age: 24   
+    #91  LB    Isaiah Land                OVR: 70  Age: 26   
+    #36  CB    Corey Ballentine           OVR: 70  Age: 30   
+    #50  LB    Shemar James               OVR: 70  Age: 21   
+    #31  CB    Josh Butler                OVR: 69  Age: 28   
+    #32  S     Julius Wood                OVR: 68  Age: 24   
+    #93  DT    Otito Ogbonnia             OVR: 68  Age: 25   
+    #25  CB    Trikweze Bridges           OVR: 68  Age: 24   
+         EDGE  Jaishawn Barham            OVR: 67          [ROOKIE] (DRAFT)
+         EDGE  LT Overton                 OVR: 65          [ROOKIE] (DRAFT)
+         CB    Devin Moore                OVR: 65          [ROOKIE] (DRAFT)
+    #99  DE    Tyrus Wheat                OVR: 65  Age: 25   
+    #93  DT    Jay Toia                   OVR: 65  Age: 22   
+    #27  CB    Reddy Steward              OVR: 64  Age: 24   
+    #48  CB    Zion Childress             OVR: 63  Age: 24   
+    #38  S     Alijah Clark               OVR: 63  Age: 22   
+
+  [SPECIAL]
+    #17  PK    Brandon Aubrey             OVR: 88  Age: 30   (FA)
+    # 5  P     Bryan Anger                OVR: 81  Age: 36   
+    #44  LS    Trent Sieg                 OVR: 73  Age: 30   
+
+
+--------------------------------------------------------------------------------
+TEAM: New York Giants (NYG) - Cap Space: $6,947,721
+--------------------------------------------------------------------------------
+  [OFFENSE]
+    #78  OT    Andrew Thomas              OVR: 91  Age: 26   
+    # 1  WR    Malik Nabers               OVR: 88  Age: 22   
+    #45  FB    Patrick Ricard             OVR: 82  Age: 31   
+    #44  RB    Cam Skattebo               OVR: 81  Age: 23   
+    #29  RB    Tyrone Tracy Jr.           OVR: 79  Age: 25   
+    # 1  WR    Darnell Mooney             OVR: 78  Age: 27   (FA)
+    #80  TE    Isaiah Likely              OVR: 77  Age: 25   (FA)
+    #18  WR    Darius Slayton             OVR: 77  Age: 28   
+    #72  OT    Jermaine Eluemunor         OVR: 77  Age: 30   
+         OT    Francis Mauigoa            OVR: 76  Age: 22  [ROOKIE] (DRAFT)
+    #19  WR    Calvin Austin III          OVR: 76  Age: 26   
+    #84  TE    Theo Johnson               OVR: 76  Age: 24   
+    #26  RB    Devin Singletary           OVR: 75  Age: 27   
+    #77  G     Daniel Faalele             OVR: 74  Age: 25   
+    #62  G     Lucas Patrick              OVR: 74  Age: 32   
+    # 6  QB    Jaxson Dart                OVR: 73  Age: 22   
+    #73  OT    Evan Neal                  OVR: 73  Age: 24   
+    #61  C     John Michael Schmitz Jr.   OVR: 72  Age: 26   
+    #76  G     Jon Runyan                 OVR: 72  Age: 28   
+    #13  WR    Jalin Hyatt                OVR: 71  Age: 23   
+    #87  WR    Xavier Gipson              OVR: 71  Age: 24   
+    #89  WR    Isaiah Hodgins             OVR: 71  Age: 27   
+    #85  TE    Chris Manhertz             OVR: 71  Age: 33   
+    #25  RB    Dante Miller               OVR: 70  Age: 26   
+    #87  WR    Courtney Jackson           OVR: 70  Age: 25   
+    #67  OT    Reid Holskey               OVR: 70  Age: 24   
+    #19  QB    Jameis Winston             OVR: 70  Age: 31   
+    #64  G     Aaron Stinnie              OVR: 69  Age: 31   
+    #60  C     Bryan Hudson               OVR: 68  Age: 25   
+    #63  G     Jake Kubas                 OVR: 68  Age: 25   
+    #20  RB    Eric Gray                  OVR: 68  Age: 25   
+         WR    Malachi Fields             OVR: 67          [ROOKIE] (DRAFT)
+    #81  WR    Beaux Collins              OVR: 67  Age: 22   
+    #71  OT    Marcus Mbow                OVR: 67  Age: 22   
+    #83  WR    Dalen Cambre               OVR: 66  Age: 25   
+    #81  WR    Ryan Miller                OVR: 66  Age: 25   
+    #80  WR    Gunner Olszewski           OVR: 66  Age: 28   
+    #86  TE    Thomas Fidone II           OVR: 65  Age: 22   
+    #75  G     Joshua Ezeudu              OVR: 64  Age: 25   
+         OT    J.C. Davis                 OVR: 63          [ROOKIE] (DRAFT)
+    #80  TE    Tanner Conner              OVR: 57  Age: 27   
+    #10  QB    Brandon Allen              OVR: 54  Age: 32   
+
+  [DEFENSE]
+    # 0  LB    Brian Burns                OVR: 89  Age: 27   
+    # 8  S     Jevon Holland              OVR: 84  Age: 25   
+    #98  DT    DJ Reader                  OVR: 84  Age: 31   (FA)
+    #49  LB    Tremaine Edmunds           OVR: 82  Age: 27   (FA)
+    #51  LB    Abdul Carter               OVR: 81  Age: 21   
+    #29  S     Ar'Darius Washington       OVR: 80  Age: 25   
+    #21  CB    Paulson Adebo              OVR: 79  Age: 26   
+    # 6  CB    Greg Newsome II            OVR: 79  Age: 25   
+    #22  CB    Dru Phillips               OVR: 78  Age: 23   
+         LB    Arvell Reese               OVR: 78  Age: 22  [ROOKIE] (DRAFT)
+    # 5  LB    Kayvon Thibodeaux          OVR: 78  Age: 24   
+    #41  LB    Micah McFadden             OVR: 76  Age: 25   
+    # 2  CB    Deonte Banks               OVR: 75  Age: 24   
+    #57  DE    Chauncey Golston           OVR: 74  Age: 27   
+    #27  S     Tyler Nubin                OVR: 74  Age: 24   
+    #95  DT    Roy Robertson-Harris       OVR: 73  Age: 32   
+    #25  S     Jason Pinnock              OVR: 73  Age: 26   
+    #91  DT    Darius Alexander           OVR: 72  Age: 25   
+         CB    Colton Hood                OVR: 70          [ROOKIE] (DRAFT)
+    #48  LB    Trace Ford                 OVR: 70  Age: 25   
+    #53  LB    Darius Muasau              OVR: 70  Age: 24   
+    #94  DT    Elijah Chatman             OVR: 68  Age: 25   
+    #96  DT    Marlon Tuipulotu           OVR: 68  Age: 26   
+    #43  S     Raheem Layne               OVR: 68  Age: 26   
+    #38  CB    Korie Black                OVR: 68  Age: 23   
+    #99  DT    Sam Roberts                OVR: 66  Age: 27   
+    #98  LB    DeMarvin Leal              OVR: 66  Age: 25   
+    #35  CB    Jarrick Bernard-Converse   OVR: 66  Age: 25   
+    #35  CB    Rico Payton                OVR: 66  Age: 25   
+    #46  LB    Zaire Barnes               OVR: 65  Age: 26   
+    #54  LB    Swayze Bozeman             OVR: 65  Age: 27   
+    #23  CB    Art Green                  OVR: 65  Age: 25   
+    #43  LB    Cam Jones                  OVR: 64  Age: 25   
+    #45  LB    Caleb Murphy               OVR: 64  Age: 25   
+    #31  CB    Nic Jones                  OVR: 64  Age: 22   
+         DT    Bobby Jamison-Travis       OVR: 63          [ROOKIE] (DRAFT)
+         LB    Jack Kelly                 OVR: 63          [ROOKIE] (DRAFT)
+    #34  S     Beau Brade                 OVR: 63  Age: 23   
+    #22  S     Elijah Campbell            OVR: 63  Age: 30   
+
+  [SPECIAL]
+    # 7  PK    Jason Sanders              OVR: 77  Age: 29   
+    #11  P     Jordan Stout               OVR: 75  Age: 27   
+    #30  PK    Ben Sauls                  OVR: 70  Age: 24   
+    #55  LS    Zach Triner                OVR: 60  Age: 35   
+
+
+--------------------------------------------------------------------------------
+TEAM: Philadelphia Eagles (PHI) - Cap Space: $20,557,388
+--------------------------------------------------------------------------------
+  [OFFENSE]
+    #26  RB    Saquon Barkley             OVR: 99  Age: 28   
+    #65  OT    Lane Johnson               OVR: 99  Age: 35   
+    #68  OT    Jordan Mailata             OVR: 94  Age: 28   
+    # 6  WR    DeVonta Smith              OVR: 90  Age: 26   
+    #88  TE    Dallas Goedert             OVR: 88  Age: 30   
+    # 1  QB    Jalen Hurts                OVR: 87  Age: 27   
+    #69  G     Landon Dickerson           OVR: 86  Age: 26   
+    #37  RB    Tank Bigsby                OVR: 78  Age: 24   
+    #51  C     Cam Jurgens                OVR: 78  Age: 26   
+    #18  WR    Elijah Moore               OVR: 76  Age: 25   
+    #13  WR    Dontayvion Wicks           OVR: 75  Age: 24   (TRADE)
+    #31  RB    Dameon Pierce              OVR: 75  Age: 25   
+         WR    Makai Lemon                OVR: 73  Age: 22  [ROOKIE] (DRAFT)
+    #56  G     Tyler Steen                OVR: 73  Age: 25   
+    #28  RB    Will Shipley               OVR: 72  Age: 23   
+         TE    Eli Stowers                OVR: 70          [ROOKIE] (DRAFT)
+    #14  QB    Andy Dalton                OVR: 70  Age: 37   (TRADE)
+    #34  RB    Carson Steele              OVR: 70  Age: 23   
+    # 0  WR    Hollywood Brown            OVR: 70  Age: 28   
+    #82  WR    Danny Gray                 OVR: 70  Age: 27   
+    #86  WR    Quez Watkins               OVR: 70  Age: 27   
+    #63  OT    Hollin Pierce              OVR: 70  Age: 25   
+    #81  TE    Grant Calcaterra           OVR: 69  Age: 26   
+         TE    Jaheim Bell                OVR: 68  Age: 24   
+    #84  TE    E.J. Jenkins               OVR: 68  Age: 27   
+    #75  C     Jake Majors                OVR: 68  Age: 24   
+    #86  TE    Johnny Mundt               OVR: 68  Age: 30   
+    #80  WR    Darius Cooper              OVR: 68  Age: 23   
+    #89  WR    Johnny Wilson              OVR: 68  Age: 24   
+         OT    Markel Bell                OVR: 67          [ROOKIE] (DRAFT)
+    #73  OT    Cameron Williams           OVR: 66  Age: 21   
+    #18  WR    Britain Covey              OVR: 65  Age: 29   
+    #36  TE    Cameron Latu               OVR: 65  Age: 25   
+    #66  C     Drew Kendall               OVR: 65  Age: 23   
+    #78  OT    Myles Hinton               OVR: 65  Age: 23   
+    #16  QB    Tanner McKee               OVR: 64  Age: 25   
+    #74  OT    Fred Johnson               OVR: 64  Age: 28   
+         QB    Cole Payton                OVR: 63          [ROOKIE] (DRAFT)
+         OG    Micah Morris               OVR: 63          [ROOKIE] (DRAFT)
+    #84  TE    Stone Smartt               OVR: 63  Age: 26   
+    #61  C     Willie Lampkin             OVR: 63  Age: 23   
+    #67  OT    John Ojukwu                OVR: 61  Age: 27   
+
+  [DEFENSE]
+    #98  DT    Jalen Carter               OVR: 90  Age: 24   
+    #53  LB    Zack Baun                  OVR: 90  Age: 28   
+    #27  CB    Quinyon Mitchell           OVR: 87  Age: 24   
+    #33  CB    Cooper DeJean              OVR: 84  Age: 22   
+    # 3  LB    Nolan Smith Jr.            OVR: 83  Age: 24   
+    #30  LB    Jihaad Campbell            OVR: 81  Age: 21   
+    #90  DT    Jordan Davis               OVR: 80  Age: 25   (FA)
+    #55  DE    Brandon Graham             OVR: 78  Age: 37   
+    #17  LB    Arnold Ebiketie            OVR: 77  Age: 26   
+    #39  S     Marcus Epps                OVR: 77  Age: 29   
+    #30  CB    Michael Carter II          OVR: 76  Age: 26   
+    #24  S     Andrew Mukuba              OVR: 74  Age: 22   
+    #97  DT    Moro Ojomo                 OVR: 74  Age: 24   
+    #90  LB    Joe Tryon-Shoyinka         OVR: 74  Age: 26   
+    # 7  CB    Kelee Ringo                OVR: 74  Age: 23   
+    #23  CB    Jakorian Bennett           OVR: 73  Age: 25   
+    #31  CB    Jonathan Jones             OVR: 73  Age: 31   
+    #95  DT    Ty Robinson                OVR: 71  Age: 24   
+    #58  LB    Jalyx Hunt                 OVR: 71  Age: 24   
+    #22  CB    Mac McWilliams             OVR: 71  Age: 23   
+    # 2  CB    Riq Woolen                 OVR: 70  Age: 26   (FA)
+         S     Bud Clark                  OVR: 70          [ROOKIE] (DRAFT)
+    #59  LB    Chance Campbell            OVR: 70  Age: 26   
+         LB    Chandler Martin            OVR: 70  Age: 23   
+    #43  LB    Jose Ramirez               OVR: 70  Age: 26   
+    #41  CB    Tariq Castro-Fields        OVR: 70  Age: 27   
+    #49  CB    Brandon Johnson            OVR: 70  Age: 23   
+         CB    Ambry Thomas               OVR: 70  Age: 26   
+    #95  DE    Ta'Quon Graham             OVR: 69  Age: 26   
+    #94  DT    Byron Young                OVR: 69  Age: 24   
+    #42  LB    Smael Mondon Jr.           OVR: 69  Age: 22   
+    #31  S     Andre' Sam                 OVR: 68  Age: 27   
+    #54  LB    Jeremiah Trotter Jr.       OVR: 67  Age: 22   
+    #96  DT    Gabe Hall                  OVR: 64  Age: 25   
+         S     Cole Wisniewski            OVR: 63          [ROOKIE] (DRAFT)
+         DT    Uar Bernard                OVR: 63          [ROOKIE] (DRAFT)
+         EDGE  Keyshawn James-Newby       OVR: 63          [ROOKIE] (DRAFT)
+    #25  S     J.T. Gray                  OVR: 62  Age: 29   
+
+  [SPECIAL]
+    # 4  PK    Jake Elliott               OVR: 81  Age: 30   
+    #10  P     Braden Mann                OVR: 78  Age: 27   
+
+
+--------------------------------------------------------------------------------
+TEAM: Washington Commanders (WAS) - Cap Space: $76,041,469
+--------------------------------------------------------------------------------
+  [OFFENSE]
+    #78  OT    Laremy Tunsil              OVR: 95  Age: 31   (FA)
+    #17  WR    Terry McLaurin             OVR: 92  Age: 29   
+    # 8  WR    Stefon Diggs               OVR: 89  Age: 31   (FA)
+    #76  G     Sam Cosmi                  OVR: 87  Age: 26   
+    # 5  QB    Jayden Daniels             OVR: 83  Age: 24   
+    # 1  RB    Rachaad White              OVR: 80  Age: 26   
+    #71  G     Andrew Wylie               OVR: 76  Age: 31   
+    #34  RB    Jerome Ford                OVR: 76  Age: 25   
+    #22  RB    Jacory Croskey-Merritt     OVR: 75  Age: 24   
+    # 5  WR    Dyami Brown                OVR: 75  Age: 25   
+    #75  G     Chris Paul                 OVR: 74  Age: 26   
+    #13  WR    Treylon Burks              OVR: 73  Age: 26   
+    #83  WR    Jaylin Lane                OVR: 73  Age: 23   
+    #67  G     Nick Allegretti            OVR: 73  Age: 29   
+    # 8  QB    Marcus Mariota             OVR: 72  Age: 31   
+    #26  RB    Jeremy McNichols           OVR: 72  Age: 29   
+    #11  WR    Van Jefferson              OVR: 72  Age: 29   
+    #11  WR    Luke McCaffrey             OVR: 72  Age: 24   
+    #72  OT    Josh Conerly Jr.           OVR: 71  Age: 21   
+    #74  G     Brandon Coleman            OVR: 71  Age: 24   
+    #88  WR    Ja'Corey Brooks            OVR: 70  Age: 24   
+         WR    Nick Nash                  OVR: 70  Age: 26   
+    #64  OT    Malaesala Aumavae-Laulu    OVR: 70  Age: 26   
+    #82  TE    Ben Sinnott                OVR: 69  Age: 23   
+         TE    Chig Okonkwo               OVR: 68  Age: 26   (FA)
+    #89  TE    Lawrence Cager             OVR: 68  Age: 28   
+    #61  G     Tyler Cooper               OVR: 68  Age: 25   
+    #61  G     Julian Good-Jones          OVR: 68  Age: 29   
+    #68  G     Timothy McKay              OVR: 68  Age: 24   
+         WR    Antonio Williams           OVR: 67          [ROOKIE] (DRAFT)
+    #87  TE    John Bates                 OVR: 66  Age: 27   
+    #84  WR    Jacoby Jones               OVR: 65  Age: 24   
+         RB    Kaytron Allen              OVR: 63          [ROOKIE] (DRAFT)
+         C     Matt Gulbin                OVR: 63          [ROOKIE] (DRAFT)
+         QB    Athan Kaliakmanis          OVR: 63          [ROOKIE] (DRAFT)
+    #80  TE    Colson Yankoff             OVR: 61  Age: 25   
+    #73  OT    Trent Scott                OVR: 60  Age: 31   
+    #15  QB    Sam Hartman                OVR: 57  Age: 26   
+    #67  OT    Foster Sarell              OVR: 56  Age: 27   
+
+  [DEFENSE]
+    #54  LB    Leo Chenal                 OVR: 84  Age: 24   (FA)
+    #94  DT    Daron Payne                OVR: 84  Age: 28   
+    # 4  LB    Frankie Luvu               OVR: 80  Age: 28   
+    #98  LB    Odafe Oweh                 OVR: 79  Age: 26   (FA)
+    #92  DE    Dorance Armstrong          OVR: 79  Age: 28   
+    #20  S     Nick Cross                 OVR: 79  Age: 23   
+    # 0  CB    Mike Sainristil            OVR: 78  Age: 24   
+    # 4  CB    Ahkello Witherspoon        OVR: 78  Age: 30   
+    #23  CB    Trey Amos                  OVR: 77  Age: 23   
+    #21  CB    Amik Robertson             OVR: 77  Age: 27   
+    #20  S     Quan Martin                OVR: 77  Age: 25   
+         LB    Sonny Styles               OVR: 76  Age: 22  [ROOKIE] (DRAFT)
+    #90  DE    Charles Omenihu            OVR: 75  Age: 28   
+    #91  DE    Deatrich Wise Jr.          OVR: 75  Age: 31   
+    #95  DT    Jer'Zhan Newton            OVR: 75  Age: 23   
+    #39  S     Jeremy Reaves              OVR: 73  Age: 29   
+    #93  DE    Drake Jackson              OVR: 73  Age: 24   
+    #99  DT    Javon Kinlaw               OVR: 73  Age: 27   
+    #98  DT    Tim Settle                 OVR: 73  Age: 28   
+    #44  DE    K'Lavon Chaisson           OVR: 73  Age: 26   
+    # 3  S     Will Harris                OVR: 72  Age: 29   
+    #52  LB    DJ Johnson                 OVR: 71  Age: 27   
+    #90  DT    Shy Tuttle                 OVR: 71  Age: 29   
+    #35  S     Percy Butler               OVR: 71  Age: 25   
+    #59  DE    T.J. Maguranyanga          OVR: 70  Age: 23   
+    #46  CB    Tre Hawkins III            OVR: 70  Age: 25   
+         CB    Qwuantrezz Knight          OVR: 70  Age: 28   
+    #29  CB    Darius Rush                OVR: 70  Age: 26   
+    #37  CB    Car'lin Vigers             OVR: 70  Age: 25   
+    #57  LB    Nick Bellore               OVR: 69  Age: 36   
+    #66  DT    Ricky Barber               OVR: 68  Age: 24   
+    #47  S     Robert McDaniel            OVR: 68  Age: 25   
+    #98  DT    D.J. Davidson              OVR: 67  Age: 27   
+    #58  LB    Jordan Magee               OVR: 66  Age: 24   
+    #56  LB    Kain Medrano               OVR: 66  Age: 24   
+    #90  DE    Javontae Jean-Baptiste     OVR: 66  Age: 25   
+    #51  LB    Ale Kaho                   OVR: 65  Age: 25   
+         EDGE  Joshua Josephs             OVR: 65          [ROOKIE] (DRAFT)
+    #50  LB    Andre Carter II            OVR: 65  Age: 26   
+    #18  S     Tyler Owens                OVR: 65  Age: 24   
+
+  [SPECIAL]
+    #10  P     Tress Way                  OVR: 73  Age: 35   
+    #16  PK    Jake Moody                 OVR: 68  Age: 26   
+    #69  LS    Tyler Ott                  OVR: 66  Age: 33   
+
+
+################################################################################
+DIVISION: NFC NORTH
+################################################################################
+
+--------------------------------------------------------------------------------
+TEAM: Chicago Bears (CHI) - Cap Space: $-5,300,354
+--------------------------------------------------------------------------------
+  [OFFENSE]
+    #62  G     Joe Thuney                 OVR: 92  Age: 32   
+    #15  WR    Rome Odunze                OVR: 83  Age: 23   
+    # 4  RB    D'Andre Swift              OVR: 82  Age: 26   
+    #58  OT    Darnell Wright             OVR: 82  Age: 24   
+    #85  TE    Cole Kmet                  OVR: 79  Age: 26   
+    #10  WR    Luther Burden III          OVR: 78  Age: 21   
+    #73  G     Jonah Jackson              OVR: 76  Age: 28   
+    #18  QB    Caleb Williams             OVR: 76  Age: 23   
+    #11  WR    Kalif Raymond              OVR: 75  Age: 31   
+    #65  C     Garrett Bradbury           OVR: 75  Age: 30   (TRADE)
+    #70  OT    Braxton Jones              OVR: 74  Age: 26   
+    #25  RB    Kyle Monangai              OVR: 72  Age: 23   
+    #84  TE    Colston Loveland           OVR: 72  Age: 21   
+    #23  RB    Roschon Johnson            OVR: 71  Age: 24   
+    #75  OT    Ozzy Trapilo               OVR: 71  Age: 23   
+         C     Logan Jones                OVR: 70          [ROOKIE] (DRAFT)
+    #36  RB    Deion Hankins              OVR: 70  Age: 25   
+    #13  WR    Maurice Alexander          OVR: 70  Age: 29   
+    #83  WR    JP Richardson              OVR: 70  Age: 24   
+    #71  OT    Jedrick Wills Jr.          OVR: 70  Age: 26   
+    #13  WR    Scott Miller               OVR: 70  Age: 28   (FA)
+    #20  WR    Jahdae Walker              OVR: 69  Age: 23   
+    #72  OT    Kiran Amegadjie            OVR: 69  Age: 23   
+    #88  TE    Stephen Carlson            OVR: 68  Age: 29   
+    #80  TE    Qadir Ismail               OVR: 68  Age: 26   
+    #86  TE    Nikola Kalinic             OVR: 68  Age: 29   
+    #60  G     Kyle Hergel                OVR: 68  Age: 26   
+         TE    Sam Roush                  OVR: 67          [ROOKIE] (DRAFT)
+         WR    Zavion Thomas              OVR: 67          [ROOKIE] (DRAFT)
+    #74  G     Jordan McFadden            OVR: 66  Age: 26   
+    #65  OT    Luke Newman                OVR: 66  Age: 23   
+    #79  OT    Theo Benedet               OVR: 64  Age: 23   
+    #11  QB    Case Keenum                OVR: 63  Age: 37   
+    #38  RB    Brittain Brown             OVR: 61  Age: 28   
+    #17  QB    Tyson Bagent               OVR: 59  Age: 25   
+
+  [DEFENSE]
+    # 1  CB    Jaylon Johnson             OVR: 89  Age: 26   
+    #98  DE    Montez Sweat               OVR: 82  Age: 28   
+    #53  LB    T.J. Edwards               OVR: 82  Age: 29   
+    # 6  CB    Kyler Gordon               OVR: 82  Age: 25   
+    #50  DE    Grady Jarrett              OVR: 81  Age: 32   
+    #30  LB    Devin Bush                 OVR: 80  Age: 27   
+    #99  DT    Gervon Dexter Sr.          OVR: 79  Age: 23   
+    # 8  S     Coby Bryant                OVR: 75  Age: 26   (FA)
+    #29  CB    Tyrique Stevenson          OVR: 75  Age: 25   
+         S     Dillon Thieneman           OVR: 73  Age: 22  [ROOKIE] (DRAFT)
+    #55  DE    Dayo Odeyingbo             OVR: 73  Age: 25   
+    #92  DT    Neville Gallimore          OVR: 72  Age: 28   
+    #95  DT    Shemar Turner              OVR: 72  Age: 22   
+    #39  CB    Cam Lewis                  OVR: 72  Age: 28   
+    #93  DT    Kentavius Street           OVR: 71  Age: 29   
+    #57  LB    Jack Sanborn               OVR: 71  Age: 25   
+    #52  DE    Jonathan Garvin            OVR: 70  Age: 26   
+    #59  DE    Jamree Kromah              OVR: 70  Age: 25   
+    #69  DE    Jeremiah Martin            OVR: 70  Age: 25   
+         LB    Dominique Hampton          OVR: 70  Age: 25   
+    #45  LB    Nephi Sewell               OVR: 70  Age: 27   
+    #37  CB    Dallis Flowers             OVR: 70  Age: 28   
+    #27  CB    Dontae Manning             OVR: 70  Age: 24   
+    #33  CB    Jaylon Jones               OVR: 70  Age: 27   
+    #35  CB    Zah Frazier                OVR: 70  Age: 24   
+    #32  CB    Terell Smith               OVR: 69  Age: 26   
+    #94  DE    Austin Booker              OVR: 69  Age: 22   
+    #92  DE    Daniel Hardy               OVR: 68  Age: 26   
+    #44  LB    Noah Sewell                OVR: 68  Age: 23   
+    #97  DT    James Lynch                OVR: 68  Age: 26   
+    #30  S     Gervarrius Owens           OVR: 68  Age: 26   
+    #22  S     Elijah Hicks               OVR: 68  Age: 25   
+    #47  LB    Ruben Hyppolite II         OVR: 67  Age: 23   
+    #39  CB    Josh Blackwell             OVR: 65  Age: 26   
+         LB    Keyshaun Elliott           OVR: 65          [ROOKIE] (DRAFT)
+         CB    Malik Muhammad             OVR: 65          [ROOKIE] (DRAFT)
+    #48  LB    D'Marco Jackson            OVR: 65  Age: 27   
+         DT    Jordan Van Den Berg        OVR: 63          [ROOKIE] (DRAFT)
+
+  [SPECIAL]
+    # 8  PK    Cairo Santos               OVR: 78  Age: 33   
+    #19  P     Tory Taylor                OVR: 75  Age: 28   
+    #46  LS    Luke Elkin                 OVR: 60  Age: 23   
+
+
+--------------------------------------------------------------------------------
+TEAM: Detroit Lions (DET) - Cap Space: $-8,531,146
+--------------------------------------------------------------------------------
+  [OFFENSE]
+    # 0  RB    Jahmyr Gibbs               OVR: 97  Age: 23   
+    #58  OT    Penei Sewell               OVR: 97  Age: 24   
+    #14  WR    Amon-Ra St. Brown          OVR: 96  Age: 25   
+    #16  QB    Jared Goff                 OVR: 89  Age: 30   
+    #87  TE    Sam LaPorta                OVR: 87  Age: 24   
+    # 1  WR    Jameson Williams           OVR: 82  Age: 24   
+    #10  RB    Isiah Pacheco              OVR: 81  Age: 25   (FA)
+    #83  TE    Tyler Conklin              OVR: 74  Age: 30   
+    #69  G     Tate Ratledge              OVR: 74  Age: 24   
+    #64  C     Cade Mays                  OVR: 74  Age: 26   
+    # 4  WR    Greg Dortch                OVR: 74  Age: 27   
+    #18  WR    Isaac TeSlaa               OVR: 73  Age: 23   
+         OT    Blake Miller               OVR: 73  Age: 22  [ROOKIE] (DRAFT)
+    #78  G     Ben Bartch                 OVR: 72  Age: 27   
+    #70  G     Juice Scruggs              OVR: 71  Age: 25   (TRADE)
+    #73  G     Christian Mahogany         OVR: 70  Age: 24   
+    #38  RB    Justin Jackson             OVR: 70  Age: 30   
+    #25  RB    Kye Robichaux              OVR: 70  Age: 23   
+    #83  WR    Jackson Meeks              OVR: 70  Age: 23   
+    #77  OT    Devin Cochran              OVR: 70  Age: 27   
+    #26  RB    Jabari Small               OVR: 70  Age: 25   
+    #80  WR    Malik Cunningham           OVR: 70  Age: 27   
+    #71  G     Miles Frazier              OVR: 69  Age: 23   
+         TE    Thomas Gordon              OVR: 68  Age: 25   
+    #40  TE    Zach Horton                OVR: 68  Age: 23   
+         C     Seth McLaughlin            OVR: 68  Age: 24   
+    #63  G     Mason Miller               OVR: 68  Age: 24   
+    #33  RB    Sione Vaki                 OVR: 68  Age: 24   
+    #85  WR    Tom Kennedy                OVR: 68  Age: 29   
+    #19  WR    Dominic Lovett             OVR: 67  Age: 23   
+    #59  OT    Giovanni Manu              OVR: 67  Age: 24   
+    #79  OT    Larry Borom                OVR: 67  Age: 26   
+    #10  QB    Teddy Bridgewater          OVR: 67  Age: 32   
+    #89  TE    Brock Wright               OVR: 66  Age: 26   
+    #25  RB    Jacob Saylors              OVR: 66  Age: 24   
+         WR    Kendrick Law               OVR: 65          [ROOKIE] (DRAFT)
+    #62  G     Michael Niese              OVR: 64  Age: 28   
+    #75  OT    Colby Sorsdal              OVR: 63  Age: 25   
+
+  [DEFENSE]
+    #97  DE    Aidan Hutchinson           OVR: 93  Age: 25   
+    #31  S     Kerby Joseph               OVR: 91  Age: 24   
+    #32  S     Brian Branch               OVR: 90  Age: 23   
+    #46  LB    Jack Campbell              OVR: 86  Age: 25   
+    # 4  CB    D.J. Reed                  OVR: 85  Age: 28   
+    #54  DT    Alim McNeill               OVR: 83  Age: 25   
+    #21  S     Chuck Clark                OVR: 78  Age: 30   
+    #25  CB    Roger McCreary             OVR: 78  Age: 25   (FA)
+    #91  DT    Tyleik Williams            OVR: 77  Age: 22   
+    #44  LB    Malcolm Rodriguez          OVR: 77  Age: 26   
+    #98  LB    DJ Wonnum                  OVR: 76  Age: 27   
+    # 6  CB    Terrion Arnold             OVR: 75  Age: 23   
+    #29  CB    Avonte Maddox              OVR: 75  Age: 29   
+    #78  DE    Levi Onwuzurike            OVR: 74  Age: 27   
+    #55  LB    Derrick Barnes             OVR: 74  Age: 26   
+    #29  S     Christian Izien            OVR: 74  Age: 25   
+    #98  DE    Payton Turner              OVR: 73  Age: 26   
+    # 9  CB    Ennis Rakestraw Jr.        OVR: 72  Age: 23   
+    #18  LB    Damone Clark               OVR: 72  Age: 25   
+    #23  CB    Rock Ya-Sin                OVR: 71  Age: 29   
+    #94  DT    Mekhi Wingo                OVR: 70  Age: 22   
+         EDGE  Derrick Moore              OVR: 70          [ROOKIE] (DRAFT)
+    #66  DE    Myles Adams                OVR: 70  Age: 28   
+    #61  DE    Ahmed Hassanein            OVR: 70  Age: 23   
+    #90  DT    Chris Smith                OVR: 69  Age: 26   
+    #28  S     Dan Jackson                OVR: 68  Age: 25   
+    #78  DT    Tyler Lacy                 OVR: 68  Age: 25   
+    #38  CB    Nick Whiteside             OVR: 66  Age: 25   
+         CB    Keith Abney II             OVR: 65          [ROOKIE] (DRAFT)
+         LB    Jimmy Rolder               OVR: 65          [ROOKIE] (DRAFT)
+    #53  LB    Trevor Nowaske             OVR: 64  Age: 26   
+    #30  CB    Khalil Dorsey              OVR: 64  Age: 28   
+    #12  S     Thomas Harper              OVR: 64  Age: 24   
+    #24  S     Loren Strickland           OVR: 64  Age: 25   
+         DT    Skyler Gill-Howard         OVR: 63          [ROOKIE] (DRAFT)
+         DT    Tyre West                  OVR: 63          [ROOKIE] (DRAFT)
+
+  [SPECIAL]
+    # 3  P     Jack Fox                   OVR: 78  Age: 29   
+    #49  LS    Hogan Hatten               OVR: 77  Age: 25   
+    #39  PK    Jake Bates                 OVR: 76  Age: 26   
+
+
+--------------------------------------------------------------------------------
+TEAM: Green Bay Packers (GB) - Cap Space: $-1,436,657
+--------------------------------------------------------------------------------
+  [OFFENSE]
+    # 8  RB    Josh Jacobs                OVR: 89  Age: 27   
+    #50  OT    Zach Tom                   OVR: 87  Age: 26   
+    #10  QB    Jordan Love                OVR: 86  Age: 26   
+    #85  TE    Tucker Kraft               OVR: 83  Age: 24   
+    #11  WR    Jayden Reed                OVR: 80  Age: 25   
+    # 0  WR    Matthew Golden             OVR: 79  Age: 22   
+    # 9  WR    Christian Watson           OVR: 78  Age: 26   
+    #77  G     Jordan Morgan              OVR: 74  Age: 24   
+    #65  G     Aaron Banks                OVR: 73  Age: 27   
+    # 9  WR    Skyy Moore                 OVR: 72  Age: 24   
+    # 6  QB    Kyle McCord                OVR: 72  Age: 23   
+    #32  RB    MarShawn Lloyd             OVR: 72  Age: 24   
+    #75  G     Sean Rhyan                 OVR: 71  Age: 26   
+    #71  OT    Anthony Belton             OVR: 71  Age: 24   
+    #88  TE    Luke Musgrave              OVR: 70  Age: 24   
+    #26  RB    Damien Martinez            OVR: 70  Age: 22   
+    #22  RB    Pierre Strong Jr.          OVR: 70  Age: 27   
+    #80  WR    Isaiah Neyor               OVR: 70  Age: 24   
+    #78  OT    Dalton Cooper              OVR: 70  Age: 25   
+    #83  WR    Savion Williams            OVR: 70  Age: 23   
+    #81  TE    Josh Whyle                 OVR: 69  Age: 26   
+    # 2  QB    Tyrod Taylor               OVR: 69  Age: 36   (FA)
+    #84  WR    Jakobie Keeney-James       OVR: 68  Age: 25   
+    #82  WR    Will Sheppard              OVR: 68  Age: 24   
+    #70  OT    Darian Kinnard             OVR: 68  Age: 25   
+    #49  TE    Drake Dabney               OVR: 68  Age: 23   
+    #43  TE    Messiah Swinson            OVR: 68  Age: 26   
+    #61  G     Karsen Barnhart            OVR: 68  Age: 25   
+    #18  QB    Desmond Ridder             OVR: 66  Age: 26   
+    #30  RB    Chris Brooks               OVR: 66  Age: 25   
+    #62  C     Jacob Monk                 OVR: 65  Age: 24   
+         C     Jager Burton               OVR: 65          [ROOKIE] (DRAFT)
+    #67  G     Donovan Jennings           OVR: 64  Age: 25   
+    #72  OT    Brant Banks                OVR: 64  Age: 25   
+    #79  OT    Travis Glover              OVR: 64  Age: 25   
+    #73  G     John Williams              OVR: 63  Age: 23   
+
+  [DEFENSE]
+    # 1  DE    Micah Parsons              OVR: 98  Age: 26   
+    #29  S     Xavier McKinney            OVR: 93  Age: 26   
+    #97  DT    Javon Hargrave             OVR: 80  Age: 32   (FA)
+    #44  LB    Zaire Franklin             OVR: 80  Age: 29   (TRADE)
+    #56  LB    Edgerrin Cooper            OVR: 79  Age: 23   
+    #95  DT    Devonte Wyatt              OVR: 78  Age: 27   
+    #25  CB    Keisean Nixon              OVR: 77  Age: 28   
+    #24  CB    Benjamin St-Juste          OVR: 77  Age: 27   
+    #24  CB    Carrington Valentine       OVR: 75  Age: 23   
+    #20  S     Javon Bullard              OVR: 75  Age: 22   
+    #90  DE    Lukas Van Ness             OVR: 74  Age: 24   
+    #58  LB    Isaiah McDuffie            OVR: 74  Age: 26   
+    #33  S     Evan Williams              OVR: 74  Age: 24   
+    #63  DT    Jaden Crumedy              OVR: 70  Age: 25   
+         CB    Brandon Cisse              OVR: 70          [ROOKIE] (DRAFT)
+    #94  DE    Karl Brooks                OVR: 70  Age: 25   
+    #45  DE    Collin Oliver              OVR: 70  Age: 22   
+    #99  DE    Barryn Sorrell             OVR: 70  Age: 22   
+    #16  CB    Bo Melton                  OVR: 68  Age: 26   
+    #69  DT    Dante Barnett              OVR: 68  Age: 23   
+    #60  DT    Anthony Campbell           OVR: 68  Age: 25   
+    #96  DT    James Ester                OVR: 68  Age: 24   
+    #41  S     Mark Perry                 OVR: 68  Age: 24   
+    #97  DT    Jordon Riley               OVR: 68  Age: 27   
+    #34  CB    Shemar Bartholomew         OVR: 67  Age: 25   
+    #36  CB    Kamal Hadden               OVR: 67  Age: 24   
+    #27  S     Kitan Oladapo              OVR: 67  Age: 24   
+         DT    Chris McClellan            OVR: 67          [ROOKIE] (DRAFT)
+    #57  DE    Brenton Cox Jr.            OVR: 66  Age: 25   
+    #91  DT    Warren Brinson             OVR: 66  Age: 23   
+    #93  DT    Nazir Stackhouse           OVR: 66  Age: 23   
+    #31  LB    Nick Niemann               OVR: 66  Age: 27   
+    #38  S     Jaylin Simpson             OVR: 66  Age: 26   
+    #59  LB    Ty'Ron Hopper              OVR: 66  Age: 24   
+         EDGE  Dani Dennis-Sutton         OVR: 65          [ROOKIE] (DRAFT)
+    #53  DE    Arron Mosby                OVR: 63  Age: 27   
+    #96  DT    Jonathan Ford              OVR: 63  Age: 26   
+    #54  LB    Kristian Welch             OVR: 63  Age: 27   
+    #37  S     Johnathan Baldwin          OVR: 63  Age: 23   
+         CB    Domani Jackson             OVR: 63          [ROOKIE] (DRAFT)
+
+  [SPECIAL]
+    #17  PK    Brandon McManus            OVR: 76  Age: 34   
+    #19  P     Daniel Whelan              OVR: 74  Age: 26   
+    #35  PK    Lucas Havrisik             OVR: 68  Age: 25   
+    #42  LS    Matt Orzech                OVR: 61  Age: 30   
+
+
+--------------------------------------------------------------------------------
+TEAM: Minnesota Vikings (MIN) - Cap Space: $-40,156,353
+--------------------------------------------------------------------------------
+  [OFFENSE]
+    #18  WR    Justin Jefferson           OVR: 99  Age: 26   
+    #71  OT    Christian Darrisaw         OVR: 90  Age: 26   
+    #75  OT    Brian O'Neill              OVR: 87  Age: 29   
+    #87  TE    T.J. Hockenson             OVR: 86  Age: 28   
+    # 3  WR    Jordan Addison             OVR: 84  Age: 23   
+    #33  RB    Aaron Jones Sr.            OVR: 82  Age: 30   
+    #27  RB    Jordan Mason               OVR: 82  Age: 26   
+    #76  G     Will Fries                 OVR: 79  Age: 27   
+    # 1  QB    Kyler Murray               OVR: 79  Age: 28   (FA)
+    #74  G     Donovan Jackson            OVR: 75  Age: 22   
+    # 9  QB    J.J. McCarthy              OVR: 73  Age: 22   
+    #84  TE    Josh Oliver                OVR: 73  Age: 28   
+    #64  G     Blake Brandel              OVR: 72  Age: 28   
+    #13  WR    Tai Felton                 OVR: 71  Age: 22   
+    #81  WR    Joaquin Davis              OVR: 70  Age: 23   
+    #19  WR    Dontae Fleming             OVR: 70  Age: 24   
+    #82  WR    Jeshaun Jones              OVR: 70  Age: 26   
+    #79  OT    Caleb Etienne              OVR: 70  Age: 24   
+    #36  RB    Zavier Scott               OVR: 70  Age: 26   
+    #83  TE    Bryson Nesbit              OVR: 68  Age: 23   
+    #85  TE    Ben Yurosek                OVR: 68  Age: 24   
+    #68  G     Henry Byrd                 OVR: 68  Age: 26   
+    #66  G     Vershon Lee                OVR: 68  Age: 24   
+         OT    Caleb Tiernan              OVR: 67          [ROOKIE] (DRAFT)
+    # 4  WR    Myles Price                OVR: 66  Age: 23   
+    #11  QB    Carson Wentz               OVR: 66  Age: 32   
+         FB    Max Bredeson               OVR: 65          [ROOKIE] (DRAFT)
+    #86  TE    Gavin Bartholomew          OVR: 64  Age: 22   
+    #74  OT    Ryan Van Demark            OVR: 64  Age: 27   
+    #73  OT    Walter Rouse               OVR: 63  Age: 24   
+         C     Gavin Gerhardt             OVR: 63          [ROOKIE] (DRAFT)
+         RB    Demond Claiborne           OVR: 63          [ROOKIE] (DRAFT)
+    #60  G     Joe Huber                  OVR: 62  Age: 23   
+    #65  C     Michael Jurgens            OVR: 61  Age: 25   
+    #12  QB    Max Brosmer                OVR: 60  Age: 24   
+
+  [DEFENSE]
+    #58  LB    Jonathan Greenard          OVR: 85  Age: 28   
+    # 7  CB    Byron Murphy Jr.           OVR: 85  Age: 27   
+    #43  LB    Andrew Van Ginkel          OVR: 83  Age: 30   
+    #51  LB    Blake Cashman              OVR: 81  Age: 29   
+    # 2  CB    Isaiah Rodgers             OVR: 80  Age: 27   
+    # 0  LB    Ivan Pace Jr.              OVR: 77  Age: 24   
+    #61  DT    Jalen Redmond              OVR: 75  Age: 26   
+    #55  LB    Eric Wilson                OVR: 74  Age: 30   
+    #15  LB    Dallas Turner              OVR: 73  Age: 22   
+    #42  CB    James Pierre               OVR: 73  Age: 28   
+         DT    Caleb Banks                OVR: 73  Age: 22  [ROOKIE] (DRAFT)
+    #37  S     Tavierre Thomas            OVR: 71  Age: 29   
+    #26  S     Theo Jackson               OVR: 70  Age: 26   
+         LB    Jake Golday                OVR: 70          [ROOKIE] (DRAFT)
+    #48  LB    Jacob Roberts              OVR: 70  Age: 24   
+    #52  LB    Josh Ross                  OVR: 70  Age: 26   
+    #34  CB    Zemaiah Vaughn             OVR: 70  Age: 24   
+    #98  LB    Bo Richter                 OVR: 69  Age: 25   
+    #24  S     Jay Ward                   OVR: 69  Age: 25   
+    #50  DT    Levi Drake Rodriguez       OVR: 68  Age: 25   
+    #94  DT    Taki Taimani               OVR: 68  Age: 26   
+    #44  S     Joshua Metellus            OVR: 68  Age: 28   
+         S     Jakobe Thomas              OVR: 67          [ROOKIE] (DRAFT)
+         DT    Domonique Orange           OVR: 67          [ROOKIE] (DRAFT)
+    #90  DE    Tyrion Ingram-Dawkins      OVR: 66  Age: 22   
+    # 6  CB    Dwight McGlothern          OVR: 66  Age: 23   
+    #57  LB    Chaz Chambliss             OVR: 65  Age: 22   
+         CB    Charles Demmings           OVR: 65          [ROOKIE] (DRAFT)
+    #96  LB    Tyler Batty                OVR: 63  Age: 26   
+    #99  DE    Elijah Williams            OVR: 62  Age: 22   
+    #20  CB    Kahlef Hailassie           OVR: 61  Age: 24   
+
+  [SPECIAL]
+    #42  LS    Andrew DePaola             OVR: 81  Age: 38   
+    #16  PK    Will Reichard              OVR: 79  Age: 24   
+    # 3  P     Johnny Hekker              OVR: 76  Age: 35   
+
+
+################################################################################
+DIVISION: NFC SOUTH
+################################################################################
+
+--------------------------------------------------------------------------------
+TEAM: Atlanta Falcons (ATL) - Cap Space: $26,462,519
+--------------------------------------------------------------------------------
+  [OFFENSE]
+    # 7  RB    Bijan Robinson             OVR: 94  Age: 23   
+    #63  G     Chris Lindstrom            OVR: 93  Age: 28   
+    # 5  WR    Drake London               OVR: 91  Age: 24   
+    #70  OT    Jake Matthews              OVR: 88  Age: 33   
+    # 3  RB    Brian Robinson Jr.         OVR: 79  Age: 26   
+    # 8  TE    Kyle Pitts Sr.             OVR: 78  Age: 24   
+    #74  OT    Jawaan Taylor              OVR: 75  Age: 27   
+    # 9  QB    Michael Penix Jr.          OVR: 75  Age: 25   
+    # 1  QB    Tua Tagovailoa             OVR: 75  Age: 27   (FA)
+    #65  G     Matthew Bergeron           OVR: 75  Age: 25   
+    # 2  WR    Jahan Dotson               OVR: 74  Age: 25   
+    #14  WR    Olamide Zaccheaus          OVR: 73  Age: 28   
+    #81  TE    Austin Hooper              OVR: 73  Age: 30   
+         QB    Trevor Siemian             OVR: 72  Age: 34   
+    #64  C     Ryan Neuzil                OVR: 72  Age: 28   
+    #38  RB    Nathan Carter              OVR: 70  Age: 23   
+    #26  RB    Carlos Washington Jr.      OVR: 70  Age: 27   
+    #19  WR    Chris Blair                OVR: 70  Age: 28   
+    #83  WR    Kristian Wilkerson         OVR: 70  Age: 29   (FA)
+    #31  RB    Tyler Goodson              OVR: 68  Age: 24   
+    #47  TE    Joshua Simon               OVR: 68  Age: 25   
+         WR    Zachariah Branch           OVR: 67          [ROOKIE] (DRAFT)
+    #81  WR    Dylan Drummond             OVR: 66  Age: 26   
+    #82  WR    Casey Washington           OVR: 66  Age: 24   
+    #83  WR    Deven Thompkins            OVR: 65  Age: 26   
+    #72  OT    Michael Jerrell            OVR: 65  Age: 26   
+    #89  TE    Charlie Woerner            OVR: 65  Age: 27   
+    #69  OT    Jack Nelson                OVR: 63  Age: 23   
+    #77  OT    Storm Norton               OVR: 63  Age: 31   
+         OT    Ethan Onianwa              OVR: 63          [ROOKIE] (DRAFT)
+    #62  G     Andrew Stueber             OVR: 63  Age: 26   
+    #62  G     Corey Levin                OVR: 63  Age: 31   
+    #68  G     Kyle Hinton                OVR: 60  Age: 27   
+
+  [DEFENSE]
+    # 3  S     Jessie Bates III           OVR: 94  Age: 28   
+    #24  CB    A.J. Terrell Jr.           OVR: 88  Age: 26   
+    # 0  LB    Divine Deablo              OVR: 80  Age: 27   
+    #11  LB    Jalon Walker               OVR: 79  Age: 21   
+    #52  DE    Samson Ebukam              OVR: 76  Age: 30   
+    #27  LB    James Pearce Jr.           OVR: 75  Age: 21   
+    #21  CB    Mike Hughes                OVR: 75  Age: 28   
+    #22  CB    Clark Phillips III         OVR: 75  Age: 23   
+    #31  S     Xavier Watts               OVR: 74  Age: 23   
+    #91  DT    Da'Shawn Hand              OVR: 74  Age: 29   
+    #28  CB    Mike Ford Jr.              OVR: 73  Age: 30   
+    #33  S     Billy Bowman Jr.           OVR: 73  Age: 22   
+    #13  LB    Azeez Ojulari              OVR: 73  Age: 25   
+    #96  DE    Zach Harrison              OVR: 72  Age: 24   
+    #30  CB    Darnay Holmes              OVR: 72  Age: 27   
+    #21  S     Sydney Brown               OVR: 72  Age: 25   (TRADE)
+    #44  LB    Troy Andersen              OVR: 71  Age: 26   
+    #54  DT    Brandon Dorlus             OVR: 71  Age: 24   
+    #48  LB    Christian Harris           OVR: 71  Age: 24   
+    #48  LB    Bralen Trice               OVR: 71  Age: 24   
+         CB    Avieon Terrell             OVR: 70          [ROOKIE] (DRAFT)
+    #99  DE    Cameron Thomas             OVR: 70  Age: 25   
+    #30  CB    A.J. Woods                 OVR: 70  Age: 25   
+    #39  CB    C.J. Henderson             OVR: 70  Age: 27   
+    #40  LB    JD Bertrand                OVR: 69  Age: 25   
+    #23  S     DeMarcco Hellams           OVR: 69  Age: 25   
+    #94  DT    Maason Smith               OVR: 69  Age: 22   (TRADE)
+    #47  LB    Channing Tindall           OVR: 68  Age: 26   
+    #95  DT    Ben Stille                 OVR: 68  Age: 28   
+    #41  S     Tysheem Johnson            OVR: 68  Age: 23   
+    #43  S     Malik Verdon               OVR: 68  Age: 23   
+    #35  S     Jammie Robinson            OVR: 68  Age: 24   
+    #91  DT    Elijah Garcia              OVR: 65  Age: 28   
+         LB    Kendal Daniels             OVR: 65          [ROOKIE] (DRAFT)
+    #37  CB    Cobee Bryant               OVR: 65  Age: 24   
+    #94  DE    LaCale London              OVR: 64  Age: 28   
+    #91  DT    Chris Williams             OVR: 64  Age: 27   
+         LB    Harold Perkins Jr.         OVR: 63          [ROOKIE] (DRAFT)
+         DT    Anterio Thompson           OVR: 63          [ROOKIE] (DRAFT)
+    #35  CB    Natrone Brooks             OVR: 63  Age: 25   
+    #51  LB    DeAngelo Malone            OVR: 62  Age: 26   
+
+  [SPECIAL]
+    # 6  PK    Nick Folk                  OVR: 82  Age: 40   
+    #16  P     Jake Bailey                OVR: 77  Age: 28   
+    #32  P     Trenton Gill               OVR: 65  Age: 27   
+    #49  LS    Liam McCullough            OVR: 64  Age: 28   
+
+
+--------------------------------------------------------------------------------
+TEAM: Carolina Panthers (CAR) - Cap Space: $14,437,004
+--------------------------------------------------------------------------------
+  [OFFENSE]
+    #72  OT    Taylor Moton               OVR: 86  Age: 31   
+    #30  RB    Chuba Hubbard              OVR: 84  Age: 26   
+    #68  G     Damien Lewis               OVR: 83  Age: 28   
+    #50  G     Robert Hunt                OVR: 82  Age: 29   
+    #79  OT    Ikem Ekwonu                OVR: 81  Age: 24   
+    # 4  WR    Tetairoa McMillan          OVR: 80  Age: 22   
+    #63  OT    Rasheed Walker             OVR: 79  Age: 25   
+    #29  RB    AJ Dillon                  OVR: 76  Age: 27   
+    #24  RB    Jonathon Brooks            OVR: 76  Age: 22   
+    # 9  QB    Bryce Young                OVR: 74  Age: 24   
+    #17  WR    Xavier Legette             OVR: 74  Age: 24   
+    #18  WR    Jalen Coker                OVR: 73  Age: 23   
+    #18  WR    John Metchie III           OVR: 73  Age: 25   
+         OT    Monroe Freeling            OVR: 73  Age: 22  [ROOKIE] (DRAFT)
+    #82  TE    Tommy Tremble              OVR: 72  Age: 25   
+    #23  RB    Trevor Etienne             OVR: 71  Age: 21   
+    #83  WR    David Moore                OVR: 71  Age: 30   
+    #37  RB    Montrell Johnson Jr.       OVR: 70  Age: 23   
+    #34  RB    Anthony Tyus III           OVR: 70  Age: 23   
+    #88  WR    Dan Chisena                OVR: 70  Age: 29   
+    #86  WR    Ja'seem Reed               OVR: 70  Age: 23   
+    #80  WR    Ainias Smith               OVR: 70  Age: 24   
+    # 0  TE    Ja'Tavion Sanders          OVR: 70  Age: 22   
+    #87  WR    Brycen Tremayne            OVR: 68  Age: 25   
+    #79  C     Luke Fortner               OVR: 68  Age: 27   
+    #65  G     Ja'Tyre Carter             OVR: 68  Age: 27   
+    #78  G     Saahdiq Charles            OVR: 68  Age: 26   
+         G     Joshua Gray                OVR: 68  Age: 26   
+    #84  TE    Mitchell Evans             OVR: 68  Age: 22   
+    #45  TE    Bryce Pierre               OVR: 68  Age: 25   
+         WR    Chris Brazzell II          OVR: 67          [ROOKIE] (DRAFT)
+    #15  WR    Jimmy Horn Jr.             OVR: 67  Age: 22   
+    #15  QB    Kenny Pickett              OVR: 67  Age: 27   (FA)
+         C     Sam Hecht                  OVR: 65          [ROOKIE] (DRAFT)
+    #85  TE    James Mitchell             OVR: 65  Age: 26   
+    #62  G     Chandler Zavala            OVR: 64  Age: 26   
+    #70  OT    Stone Forsythe             OVR: 63  Age: 27   
+    #60  C     Nick Samac                 OVR: 62  Age: 24   
+    #84  TE    Feleipe Franks             OVR: 54  Age: 27   
+
+  [DEFENSE]
+    #95  DT    Derrick Brown              OVR: 96  Age: 27   
+    # 8  CB    Jaycee Horn                OVR: 87  Age: 25   
+    # 0  LB    Devin Lloyd                OVR: 87  Age: 26   (FA)
+    #15  LB    Jaelan Phillips            OVR: 82  Age: 26   (FA)
+    # 7  S     Tre'von Moehrig            OVR: 81  Age: 26   
+    # 2  CB    Mike Jackson               OVR: 75  Age: 28   
+    #97  DT    Bobby Brown III            OVR: 74  Age: 25   
+    #99  DT    Tershawn Wharton           OVR: 74  Age: 27   
+    #11  LB    Nic Scourton               OVR: 74  Age: 21   
+    #27  LB    Isaiah Simmons             OVR: 74  Age: 27   
+    #32  LB    Trevin Wallace             OVR: 73  Age: 22   
+    #21  S     Nick Scott                 OVR: 73  Age: 30   
+    #52  LB    Trevis Gipson              OVR: 72  Age: 28   
+    #91  LB    Patrick Jones II           OVR: 72  Age: 26   
+    # 3  LB    Princely Umanmielen        OVR: 72  Age: 23   
+    #29  CB    Akayleb Evans              OVR: 71  Age: 26   
+    #26  CB    Chau Smith-Wade            OVR: 71  Age: 22   
+         DT    Lee Hunter                 OVR: 70          [ROOKIE] (DRAFT)
+    #92  DT    Cam Jackson                OVR: 70  Age: 23   
+         LB    Jared Bartlett             OVR: 70  Age: 25   
+    #49  LB    Jamil Muhammad             OVR: 70  Age: 25   
+    #58  LB    Mapalo Mwansa              OVR: 70  Age: 22   
+    #41  LB    Jacoby Windmon             OVR: 70  Age: 24   
+         CB    Tyrek Funderburk           OVR: 70  Age: 25   
+    #25  CB    Michael Reid               OVR: 70  Age: 23   
+    #33  CB    Robert Rochell             OVR: 69  Age: 27   
+    #22  S     Lathan Ransom              OVR: 69  Age: 23   
+    # 6  LB    Nick Hampton               OVR: 69  Age: 25   
+    #93  DE    LaBryan Ray                OVR: 67  Age: 27   
+    #48  LB    Thomas Incoom              OVR: 66  Age: 26   
+         CB    Will Lee III               OVR: 65          [ROOKIE] (DRAFT)
+         EDGE  Wasley Williams            OVR: 65          [ROOKIE] (DRAFT)
+    #36  S     Demani Richardson          OVR: 65  Age: 24   
+    #75  DE    Jared Harrison-Hunte       OVR: 64  Age: 25   
+         LB    Jackson Kuwatch            OVR: 63          [ROOKIE] (DRAFT)
+    #53  LB    Claudin Cherelus           OVR: 63  Age: 26   
+    #57  LB    Bam Martin-Scott           OVR: 63  Age: 25   
+    #31  CB    Corey Thornton             OVR: 63  Age: 24   
+    #55  LB    Maema Njongmeta            OVR: 62  Age: 24   
+
+  [SPECIAL]
+    #44  LS    JJ Jansen                  OVR: 78  Age: 40   
+    #10  PK    Ryan Fitzgerald            OVR: 76  Age: 25   
+    # 6  P     Sam Martin                 OVR: 74  Age: 35   
+
+
+--------------------------------------------------------------------------------
+TEAM: New Orleans Saints (NO) - Cap Space: $-6,037,060
+--------------------------------------------------------------------------------
+  [OFFENSE]
+    #78  C     Erik McCoy                 OVR: 90  Age: 28   
+    # 1  RB    Travis Etienne Jr.         OVR: 85  Age: 26   (FA)
+    #12  WR    Chris Olave                OVR: 85  Age: 25   
+    #41  RB    Alvin Kamara               OVR: 82  Age: 30   
+    #75  OT    Taliese Fuaga              OVR: 78  Age: 23   
+    #76  G     David Edwards              OVR: 77  Age: 28   
+    # 5  RB    Kendre Miller              OVR: 76  Age: 23   
+         WR    Jordyn Tyson               OVR: 76  Age: 22  [ROOKIE] (DRAFT)
+    #51  G     Cesar Ruiz                 OVR: 76  Age: 26   
+    #71  OT    Kelvin Banks Jr.           OVR: 76  Age: 21   
+    #83  TE    Juwan Johnson              OVR: 75  Age: 28   
+    #32  RB    Ty Chandler                OVR: 73  Age: 27   
+    #89  WR    Ja'Lynn Polk               OVR: 73  Age: 23   
+    #86  TE    Noah Fant                  OVR: 73  Age: 27   
+    #17  WR    Trey Palmer                OVR: 72  Age: 24   
+    #14  WR    Devaughn Vele              OVR: 72  Age: 27   
+    #77  G     Dillon Radunz              OVR: 72  Age: 27   
+    # 2  QB    Spencer Rattler            OVR: 71  Age: 24   
+    #24  RB    Devin Neal                 OVR: 71  Age: 22   
+    #30  RB    Audric Estime              OVR: 70  Age: 22   
+    #16  WR    Bub Means                  OVR: 70  Age: 25   
+    #15  WR    Mason Tipton               OVR: 70  Age: 24   
+    #85  WR    Damien Alford              OVR: 70  Age: 25   
+    #11  WR    Ronnie Bell                OVR: 70  Age: 26   
+    #86  WR    Elijah Cooks               OVR: 70  Age: 27   
+    #89  WR    Samori Toure               OVR: 70  Age: 28   
+    #73  OT    Easton Kilty               OVR: 70  Age: 23   
+    # 6  QB    Tyler Shough               OVR: 68  Age: 25   
+    #82  TE    Treyton Welch              OVR: 68  Age: 25   
+         TE    Oscar Delp                 OVR: 67          [ROOKIE] (DRAFT)
+    # 0  QB    Zach Wilson                OVR: 66  Age: 26   (FA)
+    #34  RB    Evan Hull                  OVR: 66  Age: 25   
+         WR    Bryce Lance                OVR: 65          [ROOKIE] (DRAFT)
+         OG    Jeremiah Wright            OVR: 65          [ROOKIE] (DRAFT)
+    #72  OT    Asim Richards              OVR: 64  Age: 24   
+         WR    Barion Brown               OVR: 63          [ROOKIE] (DRAFT)
+    #81  WR    Kevin Austin Jr.           OVR: 63  Age: 26   
+    #64  OT    Nick Saldiveri             OVR: 63  Age: 25   
+    #80  TE    Moliki Matavao             OVR: 62  Age: 23   
+    #68  G     Torricelli Simpkins III    OVR: 61  Age: 23   
+    #74  OT    Xavier Truss               OVR: 61  Age: 24   
+    #69  OT    Barry Wesley               OVR: 61  Age: 26   
+    #84  TE    Zaire Mitchell-Paden       OVR: 60  Age: 26   
+    #66  G     William Sherman            OVR: 59  Age: 26   
+
+  [DEFENSE]
+    #21  S     Justin Reid                OVR: 85  Age: 28   
+    #55  LB    Kaden Elliss               OVR: 82  Age: 30   (FA)
+    #99  DE    Chase Young                OVR: 80  Age: 26   
+    #23  S     Julian Blackmon            OVR: 79  Age: 27   
+    #96  DE    Carl Granderson            OVR: 79  Age: 28   
+    #92  DT    Davon Godchaux             OVR: 79  Age: 30   
+    # 4  CB    Kool-Aid McKinstry         OVR: 75  Age: 22   
+    #20  LB    Pete Werner                OVR: 75  Age: 27   
+    #33  S     Jonas Sanker               OVR: 74  Age: 22   
+    #90  DT    Bryan Bresee               OVR: 74  Age: 23   
+    #93  DT    Nathan Shepherd            OVR: 74  Age: 31   
+    #29  CB    Quincy Riley               OVR: 73  Age: 24   
+    #31  S     Jordan Howden              OVR: 73  Age: 25   
+    #27  CB    Isaac Yiadom               OVR: 72  Age: 29   
+    #26  S     Terrell Burgess            OVR: 71  Age: 26   
+         DT    Christen Miller            OVR: 70          [ROOKIE] (DRAFT)
+    #97  DT    Khristian Boyd             OVR: 70  Age: 25   
+    #28  LB    Danny Stutsman             OVR: 70  Age: 22   
+    #57  DE    Myles Cole                 OVR: 70  Age: 25   
+    #40  DE    Fadil Diggs                OVR: 70  Age: 24   
+    #37  CB    Dalys Beanum               OVR: 70  Age: 23   
+    #22  CB    Beanie Bishop              OVR: 70  Age: 26   
+    #38  CB    Jayden Price               OVR: 70  Age: 26   
+    #53  LB    Jaylan Ford                OVR: 69  Age: 23   
+    #91  DT    Vernon Broughton           OVR: 69  Age: 24   
+    #58  DE    Chris Rumph II             OVR: 68  Age: 26   
+    #59  DT    Coziah Izzard              OVR: 68  Age: 24   
+    #35  S     Elliott Davison            OVR: 68  Age: 24   
+    #95  DT    John Ridgeway III          OVR: 66  Age: 26   
+    #25  CB    Rejzohn Wright             OVR: 65  Age: 24   
+         S     Lorenzo Styles Jr.         OVR: 65          [ROOKIE] (DRAFT)
+         CB    TJ Hall                    OVR: 63          [ROOKIE] (DRAFT)
+    #44  LB    Isaiah Stalbird            OVR: 63  Age: 25   
+
+  [SPECIAL]
+    #49  LS    Zach Wood                  OVR: 79  Age: 33   
+    #39  PK    Charlie Smyth              OVR: 77  Age: 24   
+    #17  P     Ryan Wright                OVR: 75  Age: 25   
+
+
+--------------------------------------------------------------------------------
+TEAM: Tampa Bay Buccaneers (TB) - Cap Space: $23,828,710
+--------------------------------------------------------------------------------
+  [OFFENSE]
+    #78  OT    Tristan Wirfs              OVR: 96  Age: 26   
+    # 6  QB    Baker Mayfield             OVR: 88  Age: 30   
+    # 7  RB    Bucky Irving               OVR: 87  Age: 23   
+    #14  WR    Chris Godwin Jr.           OVR: 83  Age: 29   
+    #67  OT    Luke Goedeke               OVR: 82  Age: 26   
+    # 2  WR    Emeka Egbuka               OVR: 80  Age: 22   
+    #69  G     Cody Mauch                 OVR: 79  Age: 26   
+    #88  TE    Cade Otton                 OVR: 77  Age: 26   
+    #14  RB    Kenneth Gainwell           OVR: 77  Age: 26   
+    #11  WR    Jalen McMillan             OVR: 74  Age: 23   
+    #62  C     Graham Barton              OVR: 74  Age: 23   
+    #15  WR    Tez Johnson                OVR: 72  Age: 23   
+    #68  G     Ben Bredeson               OVR: 72  Age: 27   
+         RB    Michael Wiley              OVR: 70  Age: 24   
+    #85  WR    Garrett Greene             OVR: 70  Age: 24   
+    #89  WR    Dennis Houston             OVR: 70  Age: 26   
+         OT    Marshall Foerner           OVR: 70  Age: 25   
+    #65  G     Dan Feeney                 OVR: 69  Age: 31   
+    #79  G     Elijah Klein               OVR: 69  Age: 25   
+    #18  RB    Josh Williams              OVR: 68  Age: 24   
+    #49  RB    Owen Wright                OVR: 68  Age: 27   
+    # 6  QB    Jake Browning              OVR: 68  Age: 29   (FA)
+    #66  G     Ben Scott                  OVR: 68  Age: 25   
+         WR    Ted Hurst                  OVR: 67          [ROOKIE] (DRAFT)
+    #67  OT    Justin Skule               OVR: 67  Age: 28   
+    #44  RB    Sean Tucker                OVR: 66  Age: 23   
+         OG    Billy Schrauth             OVR: 65          [ROOKIE] (DRAFT)
+    #41  TE    Ko Kieft                   OVR: 65  Age: 27   
+    #87  WR    David Sills V              OVR: 65  Age: 29   
+    #19  WR    Kameron Johnson            OVR: 64  Age: 23   
+    #72  G     Luke Haggard               OVR: 64  Age: 25   
+         TE    Bauer Sharp                OVR: 63          [ROOKIE] (DRAFT)
+    #87  TE    Payne Durham               OVR: 63  Age: 25   
+    #82  TE    Devin Culp                 OVR: 62  Age: 25   
+    #70  OT    Benjamin Chukwuma          OVR: 60  Age: 24   
+    #16  QB    Connor Bazelak             OVR: 57  Age: 25   
+
+  [DEFENSE]
+    #50  DT    Vita Vea                   OVR: 93  Age: 30   
+    #31  S     Antoine Winfield Jr.       OVR: 92  Age: 27   
+    # 0  LB    Yaya Diaby                 OVR: 80  Age: 26   
+    #27  CB    Zyon McCollum              OVR: 80  Age: 26   
+    #34  LB    Alex Anzalone              OVR: 79  Age: 30   
+    #25  CB    Jacob Parrish              OVR: 78  Age: 21   
+    #23  S     Tykee Smith                OVR: 78  Age: 24   
+    #94  DT    Calijah Kancey             OVR: 76  Age: 24   
+         DE    Rueben Bain Jr.            OVR: 76  Age: 22  [ROOKIE] (DRAFT)
+    #21  CB    Benjamin Morrison          OVR: 75  Age: 21   
+    #94  DT    A'Shawn Robinson           OVR: 75  Age: 30   
+    #98  LB    Anthony Nelson             OVR: 74  Age: 28   
+    #96  LB    Al-Quadin Muhammad         OVR: 74  Age: 30   
+    #43  LB    Chris Braswell             OVR: 73  Age: 23   
+    #56  LB    Christian Rozeboom         OVR: 71  Age: 28   
+         LB    Josiah Trotter             OVR: 70          [ROOKIE] (DRAFT)
+    #93  DT    Rakeem Nunez-Roches        OVR: 70  Age: 32   
+    # 8  LB    SirVocea Dennis            OVR: 70  Age: 25   
+    #59  LB    Mohamed Kamara             OVR: 70  Age: 26   
+    #56  LB    Benton Whitley             OVR: 70  Age: 27   
+    #28  CB    Damarion Williams          OVR: 70  Age: 27   
+    #51  LB    David Walker               OVR: 69  Age: 25   
+    #32  CB    Josh Hayes                 OVR: 69  Age: 26   
+    #95  DE    Elijah Roberts             OVR: 69  Age: 23   
+    #64  DT    Nash Hutmacher             OVR: 68  Age: 24   
+    #93  DT    Jayson Jones               OVR: 68  Age: 24   
+         DT    Haggai Ndubuisi            OVR: 68  Age: 25   
+    #39  S     Marcus Banks               OVR: 68  Age: 25   
+    #92  DT    Elijah Simmons             OVR: 67  Age: 24   
+    #26  CB    Chase Lucas                OVR: 67  Age: 28   
+    #28  S     Miles Killebrew            OVR: 67  Age: 32   
+         CB    Keionte Scott              OVR: 65          [ROOKIE] (DRAFT)
+         DT    Demonte Capehart           OVR: 65          [ROOKIE] (DRAFT)
+    #36  S     JJ Roberts                 OVR: 64  Age: 23   
+    #38  S     Rashad Wisdom              OVR: 64  Age: 24   
+    #53  LB    Nick Jackson               OVR: 61  Age: 25   
+    #40  CB    Kemon Hall                 OVR: 61  Age: 28   
+
+  [SPECIAL]
+    # 4  PK    Chase McLaughlin           OVR: 80  Age: 29   
+    # 9  P     Riley Dixon                OVR: 76  Age: 32   
+    #86  LS    Evan Deckers               OVR: 60  Age: 26   
+
+
+################################################################################
+DIVISION: NFC WEST
+################################################################################
+
+--------------------------------------------------------------------------------
+TEAM: Arizona Cardinals (ARI) - Cap Space: $42,187,426
+--------------------------------------------------------------------------------
+  [OFFENSE]
+    #85  TE    Trey McBride               OVR: 94  Age: 25   
+    #70  OT    Paris Johnson Jr.          OVR: 85  Age: 24   
+    # 6  RB    James Conner               OVR: 84  Age: 30   
+    #72  C     Hjalte Froholdt            OVR: 83  Age: 29   
+    #25  RB    Tyler Allgeier             OVR: 81  Age: 25   
+    #73  G     Isaac Seumalo              OVR: 80  Age: 31   
+    #18  WR    Marvin Harrison Jr.        OVR: 79  Age: 23   
+    #84  WR    Kendrick Bourne            OVR: 78  Age: 30   
+    #14  WR    Michael Wilson             OVR: 78  Age: 25   
+         RB    Jeremiyah Love             OVR: 78  Age: 22  [ROOKIE] (DRAFT)
+    #33  RB    Trey Benson                OVR: 77  Age: 23   
+    #12  WR    Devin Duvernay             OVR: 75  Age: 27   
+    # 7  QB    Jacoby Brissett            OVR: 71  Age: 32   
+         OG    Chase Bisontis             OVR: 70          [ROOKIE] (DRAFT)
+    #17  QB    Gardner Minshew II         OVR: 70  Age: 29   
+    #20  RB    Bam Knight                 OVR: 70  Age: 24   
+    #39  WR    Bryson Green               OVR: 70  Age: 23   
+    #83  WR    Tejhaun Palmer             OVR: 70  Age: 25   
+    # 9  WR    Ihmir Smith-Marsette       OVR: 70  Age: 26   
+    #69  OT    Valentin Senn              OVR: 70  Age: 25   
+    #79  OT    Matt Pryor                 OVR: 70  Age: 30   
+    #74  G     Isaiah Adams               OVR: 68  Age: 25   
+    #71  OT    Elijah Wilkinson           OVR: 68  Age: 30   
+    #45  TE    Rivaldo Fairweather        OVR: 68  Age: 23   
+    #75  OT    Christian Jones            OVR: 67  Age: 25   
+         QB    Carson Beck                OVR: 67          [ROOKIE] (DRAFT)
+    #37  RB    Corey Kiner                OVR: 67  Age: 24   
+    #86  WR    Jalen Brooks               OVR: 67  Age: 25   
+    #80  WR    Simi Fehoko                OVR: 67  Age: 27   
+    #72  OT    Olisaemeka Udoh            OVR: 67  Age: 28   
+    #84  TE    Elijah Higgins             OVR: 67  Age: 24   
+    #89  WR    Xavier Weaver              OVR: 66  Age: 24   
+    #71  G     Jon Gaines II              OVR: 66  Age: 25   
+         WR    Reggie Virgil              OVR: 65          [ROOKIE] (DRAFT)
+    #87  TE    Tip Reiman                 OVR: 65  Age: 23   
+    #58  G     Hayden Conner              OVR: 65  Age: 23   
+    #66  OT    Demontrey Jacobs           OVR: 65  Age: 26   
+         OT    Jayden Williams            OVR: 63          [ROOKIE] (DRAFT)
+    #85  TE    Teagan Quitoriano          OVR: 63  Age: 25   
+    #78  OT    Josh Fryar                 OVR: 62  Age: 23   
+    #82  WR    Andre Baccellia            OVR: 61  Age: 29   
+    #19  QB    Kedon Slovis               OVR: 58  Age: 24   
+
+  [DEFENSE]
+    # 3  S     Budda Baker                OVR: 90  Age: 29   
+    #10  LB    Josh Sweat                 OVR: 84  Age: 28   
+    # 2  LB    Mack Wilson Sr.            OVR: 80  Age: 27   
+    #23  CB    Sean Murphy-Bunting        OVR: 79  Age: 28   
+    #21  CB    Garrett Williams           OVR: 79  Age: 24   
+    # 0  CB    Will Johnson               OVR: 78  Age: 22   
+    #97  DT    Walter Nolen III           OVR: 77  Age: 21   
+    #25  LB    Zaven Collins              OVR: 76  Age: 26   
+    #42  S     Andrew Wingard             OVR: 75  Age: 28   
+    # 5  LB    Baron Browning             OVR: 74  Age: 26   
+    #16  CB    Max Melton                 OVR: 74  Age: 23   
+    #13  CB    Kei'Trel Clark             OVR: 74  Age: 24   
+    #24  CB    Starling Thomas V          OVR: 73  Age: 25   
+    #97  DT    Andrew Billings            OVR: 73  Age: 30   
+    #52  LB    Jordan Burch               OVR: 73  Age: 23   
+    #51  DT    Roy Lopez                  OVR: 72  Age: 28   
+    #51  LB    Jack Gibbens               OVR: 72  Age: 26   
+    # 9  LB    BJ Ojulari                 OVR: 72  Age: 23   
+    #42  S     Dadrion Taylor-Demerson    OVR: 72  Age: 24   
+    #28  CB    Elijah Jones               OVR: 71  Age: 25   
+    #56  DE    Darius Robinson            OVR: 71  Age: 23   
+    #55  DT    Dante Stills               OVR: 70  Age: 25   
+    #29  CB    Denzel Burke               OVR: 70  Age: 22   
+    #41  LB    Elliott Brown              OVR: 70  Age: 28   
+    #54  LB    Eku Leota                  OVR: 70  Age: 26   
+    #39  CB    Jaden Davis                OVR: 70  Age: 25   
+    #50  LB    Cody Simon                 OVR: 70  Age: 23   
+    #91  DE    L.J. Collier               OVR: 69  Age: 29   
+    #54  DE    Jonah Williams             OVR: 69  Age: 30   
+    #90  DT    Zachary Carter             OVR: 68  Age: 27   
+    #44  LB    Owen Pappoe                OVR: 67  Age: 24   
+    #36  S     Kitan Crawford             OVR: 66  Age: 23   
+         DT    Kaleb Proctor              OVR: 65          [ROOKIE] (DRAFT)
+    #35  CB    Kalen King                 OVR: 65  Age: 23   
+    #32  S     Joey Blount                OVR: 64  Age: 26   
+         LB    Karson Sharar              OVR: 63          [ROOKIE] (DRAFT)
+    #56  LB    Austin Keys                OVR: 62  Age: 23   
+    #79  DT    PJ Mustipher               OVR: 58  Age: 26   
+
+  [SPECIAL]
+    #12  P     Blake Gillikin             OVR: 75  Age: 27   
+    #38  PK    Chad Ryland                OVR: 74  Age: 25   
+    #16  PK    Joshua Karty               OVR: 72  Age: 23   
+    #59  LS    Casey Kreiter              OVR: 70  Age: 35   
+
+
+--------------------------------------------------------------------------------
+TEAM: Los Angeles Rams (LAR) - Cap Space: $48,214,355
+--------------------------------------------------------------------------------
+  [OFFENSE]
+    #12  WR    Puka Nacua                 OVR: 94  Age: 24   
+    # 9  QB    Matthew Stafford           OVR: 92  Age: 37   
+    #17  WR    Davante Adams              OVR: 90  Age: 32   
+    #23  RB    Kyren Williams             OVR: 87  Age: 25   
+    #69  G     Kevin Dotson               OVR: 85  Age: 28   
+    #77  OT    Alaric Jackson             OVR: 79  Age: 27   
+    #73  G     Steve Avila                OVR: 76  Age: 25   
+         QB    Ty Simpson                 OVR: 76  Age: 22  [ROOKIE] (DRAFT)
+    #22  RB    Blake Corum                OVR: 75  Age: 24   
+    #89  TE    Tyler Higbee               OVR: 75  Age: 32   
+    #65  C     Coleman Shelton            OVR: 73  Age: 30   
+    #27  RB    Jarquez Hunter             OVR: 72  Age: 22   
+    #88  WR    Jordan Whittington         OVR: 72  Age: 24   
+    #84  TE    Colby Parkinson            OVR: 71  Age: 26   
+         TE    Max Klare                  OVR: 70          [ROOKIE] (DRAFT)
+    #50  C     Beaux Limmer               OVR: 70  Age: 24   
+    #36  RB    Jordan Waters              OVR: 70  Age: 25   
+    #82  WR    Tru Edwards                OVR: 70  Age: 24   
+    #81  WR    Brennan Presley            OVR: 70  Age: 24   
+    #86  WR    Tyler Scott                OVR: 70  Age: 24   
+    #86  WR    Mario Williams             OVR: 70  Age: 23   
+    #61  OT    AJ Arcuri                  OVR: 70  Age: 28   
+    #15  WR    Konata Mumpfield           OVR: 69  Age: 22   
+    #18  TE    Terrance Ferguson          OVR: 69  Age: 22   
+    #68  OT    David Quessenberry         OVR: 68  Age: 35   
+    #83  TE    Mark Redman                OVR: 68  Age: 24   
+    #63  C     Dylan McMahon              OVR: 68  Age: 25   
+    #60  G     Wyatt Bowles               OVR: 68  Age: 26   
+    #71  OT    Warren McClendon Jr.       OVR: 67  Age: 24   
+         OT    Keagen Trost               OVR: 67          [ROOKIE] (DRAFT)
+    #20  RB    Ronnie Rivers              OVR: 67  Age: 27   
+    #67  G     Justin Dedich              OVR: 67  Age: 25   
+    #87  TE    Davis Allen                OVR: 66  Age: 24   
+         WR    CJ Daniels                 OVR: 63          [ROOKIE] (DRAFT)
+    #13  QB    Stetson Bennett IV         OVR: 63  Age: 27   
+    #19  WR    Xavier Smith               OVR: 63  Age: 27   
+
+  [DEFENSE]
+    #95  DE    Myles Garrett              OVR: 99  Age: 29   (TRADE)
+    #22  CB    Trent McDuffie             OVR: 95  Age: 24   (TRADE)
+    #91  DE    Kobie Turner               OVR: 85  Age: 26   
+    #55  DE    Braden Fiske               OVR: 82  Age: 25   
+    # 0  LB    Byron Young                OVR: 82  Age: 27   
+    #95  DT    Poona Ford                 OVR: 81  Age: 29   
+    #37  S     Quentin Lake               OVR: 80  Age: 26   
+    #53  LB    Nate Landman               OVR: 79  Age: 26   
+    #26  S     Kamren Kinchens            OVR: 79  Age: 22   
+    #35  CB    Jaylen Watson              OVR: 79  Age: 26   (FA)
+    #48  LB    Omar Speights              OVR: 77  Age: 24   
+    #90  DE    Tyler Davis                OVR: 72  Age: 24   
+    #10  LB    Josaiah Stewart            OVR: 72  Age: 22   
+    # 1  CB    Emmanuel Forbes Jr.        OVR: 72  Age: 24   
+    #57  DT    Ty Hamilton                OVR: 71  Age: 23   
+    #24  LB    Elias Neal                 OVR: 70  Age: 24   
+         CB    Alex Johnson               OVR: 70  Age: 25   
+    #33  CB    Cam Lampkin                OVR: 70  Age: 24   
+    #56  LB    Shaun Dolac                OVR: 69  Age: 23   
+    #97  DT    Bill Norton                OVR: 68  Age: 25   
+    # 3  S     Kam Curl                   OVR: 68  Age: 27   
+    #34  S     Tanner Ingle               OVR: 68  Age: 26   
+    #43  S     Nate Valcarcel             OVR: 68  Age: 23   
+    #52  DE    Larrell Murchison          OVR: 67  Age: 28   
+    # 2  S     Jaylen McCollough          OVR: 67  Age: 24   
+    #30  CB    Josh Wallace               OVR: 66  Age: 25   
+    #15  LB    Grant Stuard               OVR: 64  Age: 26   
+         DT    Tim Keenan III             OVR: 63          [ROOKIE] (DRAFT)
+    #94  DE    Desjuan Johnson            OVR: 63  Age: 25   
+    #96  LB    Keir Thomas II             OVR: 62  Age: 27   
+
+  [SPECIAL]
+    #42  P     Ethan Evans                OVR: 76  Age: 24   
+    #92  PK    Harrison Mevis             OVR: 70  Age: 24   
+    #49  LS    Joe Cardona                OVR: 60  Age: 33   
+
+
+--------------------------------------------------------------------------------
+TEAM: San Francisco 49ers (SF) - Cap Space: $42,950,176
+--------------------------------------------------------------------------------
+  [OFFENSE]
+    #85  TE    George Kittle              OVR: 98  Age: 31   
+    #71  OT    Trent Williams             OVR: 97  Age: 37   (FA)
+    #13  WR    Mike Evans                 OVR: 92  Age: 32   (FA)
+    #23  RB    Christian McCaffrey        OVR: 91  Age: 29   
+    #44  FB    Kyle Juszczyk              OVR: 88  Age: 34   
+    #11  WR    Brandon Aiyuk              OVR: 86  Age: 27   
+    #77  G     Dominick Puni              OVR: 82  Age: 25   
+    #13  QB    Brock Purdy                OVR: 82  Age: 25   
+    # 1  WR    Ricky Pearsall             OVR: 81  Age: 24   
+    #68  OT    Colton McKivitz            OVR: 78  Age: 29   
+    #13  WR    Christian Kirk             OVR: 78  Age: 28   (FA)
+    # 5  WR    Demarcus Robinson          OVR: 75  Age: 30   
+    #64  C     Jake Brendel               OVR: 74  Age: 32   
+    #10  QB    Mac Jones                  OVR: 73  Age: 26   
+    #31  RB    Isaac Guerendo             OVR: 73  Age: 25   
+    #29  RB    Jordan James               OVR: 73  Age: 21   
+    #19  WR    Jacob Cowing               OVR: 71  Age: 24   
+         WR    De'Zhaun Stribling         OVR: 70          [ROOKIE] (DRAFT)
+    #88  TE    Jake Tonges                OVR: 70  Age: 26   
+    #65  G     Robert Jones               OVR: 70  Age: 26   
+    #86  WR    Junior Bergen              OVR: 70  Age: 23   
+         WR    Colton Dowell              OVR: 70  Age: 27   
+    #81  WR    Malik Turner               OVR: 70  Age: 30   
+    #67  OT    Isaac Alarcon              OVR: 70  Age: 27   
+    #60  OT    Brandon Parker             OVR: 70  Age: 30   
+         OT    Zach Thomas                OVR: 70  Age: 27   
+    #63  OT    Nick Zakelj                OVR: 70  Age: 26   
+    #17  WR    Jordan Watkins             OVR: 69  Age: 23   
+    #66  C     Drake Nugent               OVR: 68  Age: 25   
+         RB    Kaelon Black               OVR: 67          [ROOKIE] (DRAFT)
+    #59  OT    Vederian Lowe              OVR: 66  Age: 26   
+         OT    Carver Willis              OVR: 65          [ROOKIE] (DRAFT)
+    #62  OT    Austen Pleasants           OVR: 65  Age: 28   
+    #89  TE    Luke Farrell               OVR: 64  Age: 27   
+    #75  G     Connor Colby               OVR: 64  Age: 22   
+         OT    Enrique Cruz               OVR: 63          [ROOKIE] (DRAFT)
+    #82  TE    Brayden Willis             OVR: 63  Age: 26   
+    #64  C     Brett Toth                 OVR: 62  Age: 29   
+    # 4  QB    Kurtis Rourke              OVR: 62  Age: 24   
+    #83  TE    Hayden Rucci               OVR: 61  Age: 25   
+    #32  RB    Patrick Taylor Jr.         OVR: 61  Age: 27   
+    # 4  QB    Adrian Martinez            OVR: 60  Age: 25   
+
+  [DEFENSE]
+    #54  LB    Fred Warner                OVR: 97  Age: 28   
+    #97  DE    Nick Bosa                  OVR: 95  Age: 27   
+    #57  LB    Dre Greenlaw               OVR: 86  Age: 28   
+    # 2  CB    Deommodore Lenoir          OVR: 81  Age: 25   
+    #21  CB    Nate Hobbs                 OVR: 80  Age: 26   
+    #98  DE    Mykel Williams             OVR: 77  Age: 21   
+    #94  EDGE  Ogbonnia Okoronkwo         OVR: 77  Age: 31   (FA)
+    #97  DT    Osa Odighizuwa             OVR: 76  Age: 27   (TRADE)
+    #53  LB    Dee Winters                OVR: 76  Age: 24   
+    # 0  CB    Renardo Green              OVR: 76  Age: 24   
+    #23  CB    Jack Jones                 OVR: 76  Age: 27   
+    #56  DE    Keion White                OVR: 75  Age: 26   
+    #95  DT    Alfred Collins             OVR: 74  Age: 23   
+    #20  CB    Upton Stout                OVR: 74  Age: 23   
+    # 6  S     Malik Mustapha             OVR: 74  Age: 23   
+    #90  DT    Kevin Givens               OVR: 73  Age: 28   
+    #36  S     Marques Sigle              OVR: 72  Age: 23   
+    #27  S     Ji'Ayir Brown              OVR: 72  Age: 25   
+    #96  DE    Cameron Sample             OVR: 71  Age: 26   
+    #45  LB    Nick Martin                OVR: 71  Age: 22   
+    #69  DE    William Bradley-King       OVR: 70  Age: 28   
+         LB    Milo Eifler                OVR: 70  Age: 28   
+         LB    Andrew Farmer II           OVR: 70  Age: 26   
+    #41  LB    Jalen Graham               OVR: 70  Age: 25   
+    #30  CB    Eli Apple                  OVR: 70  Age: 30   
+    #40  CB    Derrick Canteen            OVR: 70  Age: 25   
+    #49  CB    Jakob Robinson             OVR: 70  Age: 25   
+    #35  CB    Tre Tomlinson              OVR: 70  Age: 26   
+    #48  LB    Tatum Bethune              OVR: 70  Age: 24   
+    #28  CB    Darrell Luter Jr.          OVR: 69  Age: 25   
+    #99  DT    C.J. West                  OVR: 68  Age: 23   
+    #58  DT    Evan Anderson              OVR: 68  Age: 24   
+    #55  DT    Sebastian Valdez           OVR: 68  Age: 23   
+    #22  S     Darrick Forrest            OVR: 68  Age: 26   
+    #91  DT    Sam Okuayinonu             OVR: 68  Age: 27   
+         EDGE  Romello Height             OVR: 67          [ROOKIE] (DRAFT)
+    #33  CB    Siran Neal                 OVR: 66  Age: 31   
+         LB    Jaden Dugger               OVR: 65          [ROOKIE] (DRAFT)
+         CB    Ephesians Prysock          OVR: 65          [ROOKIE] (DRAFT)
+         DT    Gracen Halton              OVR: 65          [ROOKIE] (DRAFT)
+    #57  LB    Luke Gifford               OVR: 64  Age: 30   
+    #50  LB    Garret Wallow              OVR: 62  Age: 26   
+
+  [SPECIAL]
+    #18  PK    Eddy Pineiro               OVR: 77  Age: 29   
+    # 3  P     Corliss Waitman            OVR: 75  Age: 30   
+    #46  LS    Jon Weeks                  OVR: 69  Age: 39   
+
+
+--------------------------------------------------------------------------------
+TEAM: Seattle Seahawks (SEA) - Cap Space: $73,284,461
+--------------------------------------------------------------------------------
+  [OFFENSE]
+    #11  WR    Jaxon Smith-Njigba         OVR: 91  Age: 23   (FA)
+    #10  WR    Cooper Kupp                OVR: 85  Age: 32   
+    #67  OT    Charles Cross              OVR: 83  Age: 24   
+    #14  QB    Sam Darnold                OVR: 82  Age: 28   
+    #22  WR    Rashid Shaheed             OVR: 80  Age: 27   (FA)
+    #26  RB    Zach Charbonnet            OVR: 78  Age: 24   
+    #72  OT    Abraham Lucas              OVR: 78  Age: 26   
+    #76  G     Grey Zabel                 OVR: 76  Age: 23   
+    #30  RB    Cam Akers                  OVR: 74  Age: 26   
+    #15  WR    Tory Horton                OVR: 74  Age: 22   
+         RB    Jadarian Price             OVR: 73  Age: 22  [ROOKIE] (DRAFT)
+    #40  FB    Robbie Ouzts               OVR: 73  Age: 22   
+    #64  G     Christian Haynes           OVR: 72  Age: 25   
+    #88  TE    AJ Barner                  OVR: 72  Age: 23   
+    #75  G     Anthony Bradford           OVR: 71  Age: 24   
+    #74  G     Josh Jones                 OVR: 71  Age: 28   
+    #18  TE    Elijah Arroyo              OVR: 70  Age: 22   
+    #31  RB    Jacardia Wright            OVR: 70  Age: 25   
+    #85  WR    Tyrone Broden              OVR: 70  Age: 25   
+    #87  WR    Montorie Foster Jr.        OVR: 70  Age: 24   
+    #86  WR    Ricky White III            OVR: 70  Age: 24   
+    #73  OT    Logan Brown                OVR: 70  Age: 25   
+    #19  WR    Jake Bobo                  OVR: 69  Age: 27   
+    #23  RB    Emanuel Wilson             OVR: 69  Age: 26   
+    #32  WR    Velus Jones Jr.            OVR: 68  Age: 28   
+    #62  C     Federico Maranges          OVR: 68  Age: 24   
+    #55  C     Olu Oluwatimi              OVR: 68  Age: 26   
+    #81  TE    Eric Saubert               OVR: 67  Age: 31   
+    #61  C     Jalen Sundell              OVR: 67  Age: 25   
+    # 2  QB    Drew Lock                  OVR: 66  Age: 28   
+    #77  G     Bryce Cabeldue             OVR: 66  Age: 23   
+         OG    Beau Stephens              OVR: 65          [ROOKIE] (DRAFT)
+    # 6  QB    Jalen Milroe               OVR: 65  Age: 22   
+    #36  RB    George Holani              OVR: 65  Age: 25   
+    #19  WR    Irvin Charles              OVR: 64  Age: 28   (TRADE)
+    #25  RB    Kenny McIntosh             OVR: 64  Age: 25   
+    #82  WR    Cody White                 OVR: 64  Age: 27   
+         WR    Emmanuel Henderson Jr.     OVR: 63          [ROOKIE] (DRAFT)
+    #78  G     Mason Richman              OVR: 63  Age: 23   
+    #38  FB    Brady Russell              OVR: 61  Age: 27   
+    #89  TE    Nick Kallerup              OVR: 60  Age: 24   
+    #79  OT    Amari Kight                OVR: 60  Age: 25   
+
+  [DEFENSE]
+    #21  CB    Devon Witherspoon          OVR: 88  Age: 24   
+    #99  DT    Leonard Williams           OVR: 87  Age: 31   
+    #20  S     Julian Love                OVR: 86  Age: 27   
+    # 0  DE    DeMarcus Lawrence          OVR: 85  Age: 33   
+    #13  LB    Ernest Jones IV            OVR: 80  Age: 25   
+    #91  DT    Byron Murphy II            OVR: 79  Age: 22   
+    #90  DT    Jarran Reed                OVR: 79  Age: 31   
+    # 7  LB    Uchenna Nwosu              OVR: 76  Age: 28   
+    #58  LB    Derick Hall                OVR: 76  Age: 24   
+    # 3  S     Nick Emmanwori             OVR: 76  Age: 21   
+    #49  LB    Chris Paul Jr.             OVR: 75  Age: 23   
+    #29  CB    Josh Jobe                  OVR: 74  Age: 27   
+    #48  LB    Tyrice Knight              OVR: 73  Age: 24   
+    # 6  CB    Noah Igbinoghene           OVR: 71  Age: 25   
+    #56  LB    Jalan Gaines               OVR: 70  Age: 25   
+    #50  LB    Jamie Sheriff              OVR: 70  Age: 25   
+    #34  CB    Shemar Jean-Charles        OVR: 70  Age: 27   
+    #25  S     Rodney Thomas II           OVR: 70  Age: 26   
+    #28  CB    Nehemiah Pritchett         OVR: 69  Age: 24   
+    #94  DE    Mike Morris                OVR: 68  Age: 24   
+    #98  DT    Rylie Mills                OVR: 68  Age: 24   
+    #70  DT    J.R. Singleton             OVR: 68  Age: 24   
+    #69  DT    Bubba Thomas               OVR: 68  Age: 25   
+    #43  S     Maxen Hook                 OVR: 68  Age: 24   
+         CB    Julian Neal                OVR: 67          [ROOKIE] (DRAFT)
+    #42  LB    Drake Thomas               OVR: 67  Age: 25   
+    #23  S     D'Anthony Bell             OVR: 67  Age: 28   
+    #39  S     Ty Okada                   OVR: 65  Age: 26   
+    #44  LB    Chazz Surratt              OVR: 64  Age: 28   
+    #57  LB    Connor O'Toole             OVR: 64  Age: 23   
+         CB    Michael Dansby             OVR: 63          [ROOKIE] (DRAFT)
+         CB    Andre Fuller               OVR: 63          [ROOKIE] (DRAFT)
+         DT    Deven Eastern              OVR: 63          [ROOKIE] (DRAFT)
+    #30  S     AJ Finley                  OVR: 63  Age: 23   
+    #95  DT    Brandon Pili               OVR: 62  Age: 26   
+    #54  LB    Ja'Markis Weston           OVR: 61  Age: 25   
+    #51  LB    Jared Ivey                 OVR: 59  Age: 23   
+    #52  LB    Patrick O'Connell          OVR: 57  Age: 27   
+
+  [SPECIAL]
+    # 4  P     Michael Dickson            OVR: 85  Age: 29   
+    # 5  PK    Jason Myers                OVR: 79  Age: 34   
+         K     Trey Smack                 OVR: 63          [ROOKIE] (DRAFT)
+    #41  LS    Chris Stoll                OVR: 62  Age: 27   
+
+

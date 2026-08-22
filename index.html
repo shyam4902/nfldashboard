@@ -46,7 +46,8 @@ body { font-family: 'Inter', sans-serif; background: #0a0e17; color: #e2e8f0; }
 /* Roster Modal */
 .roster-modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 100; overflow-y: auto; }
 .roster-modal-overlay.active { display: flex; align-items: flex-start; justify-content: center; padding: 2rem 1rem; }
-.roster-modal { background: #0f1729; border: 1px solid rgba(71,85,105,0.4); border-radius: 16px; width: 100%; max-width: 1100px; position: relative; overflow: hidden; }
+.roster-modal { background: #0f1729; border: 1px solid rgba(71,85,105,0.4); border-radius: 16px; width: 100%; max-width: 1240px; position: relative; overflow: hidden; max-height: 90vh; display: flex; flex-direction: column; }
+.roster-modal-content { overflow-y: auto; flex: 1; padding: 1.5rem; }
 .roster-close { position: absolute; top: 12px; right: 16px; background: rgba(255,255,255,0.1); border: none; color: white; width: 36px; height: 36px; border-radius: 50%; cursor: pointer; font-size: 18px; display: flex; align-items: center; justify-content: center; z-index: 10; }
 .roster-close:hover { background: rgba(255,255,255,0.2); }
 
@@ -65,11 +66,16 @@ body { font-family: 'Inter', sans-serif; background: #0a0e17; color: #e2e8f0; }
 .formation-row { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }
 .position-group-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: rgba(148,163,184,0.6); text-align: center; margin: 12px 0 6px; }
 .roster-tab { padding: 6px 16px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; border: 1px solid transparent; transition: all 0.15s; text-transform: uppercase; letter-spacing: 0.5px; }
+.roster-tab.active-proj { background: rgba(6,182,212,0.2); border-color: #06b6d4; color: #22d3ee; }
 .roster-tab.active-off { background: rgba(59,130,246,0.2); border-color: #3b82f6; color: #60a5fa; }
 .roster-tab.active-def { background: rgba(239,68,68,0.2); border-color: #ef4444; color: #f87171; }
 .roster-tab.active-st { background: rgba(245,158,11,0.2); border-color: #f59e0b; color: #fbbf24; }
-.roster-tab:not(.active-off):not(.active-def):not(.active-st) { background: rgba(30,41,59,0.5); color: #64748b; }
-.roster-tab:not(.active-off):not(.active-def):not(.active-st):hover { background: rgba(30,41,59,0.8); color: #94a3b8; }
+.roster-tab:not(.active-off):not(.active-def):not(.active-st):not(.active-proj) { background: rgba(30,41,59,0.5); color: #64748b; }
+.roster-tab:not(.active-off):not(.active-def):not(.active-st):not(.active-proj):hover { background: rgba(30,41,59,0.8); color: #94a3b8; }
+.proj-team-card { cursor: pointer; transition: transform 0.15s, border-color 0.2s, box-shadow 0.2s; }
+.proj-team-card:hover { transform: translateY(-2px); border-color: rgba(6,182,212,0.6) !important; box-shadow: 0 4px 20px rgba(6,182,212,0.15); }
+.proj-link-team { cursor: pointer; transition: color 0.15s; }
+.proj-link-team:hover { color: #38bdf8 !important; text-decoration: underline; }
 
 /* Compact roster list styles */
 .pos-group { margin-bottom: 12px; }
@@ -187,15 +193,16 @@ body { font-family: 'Inter', sans-serif; background: #0a0e17; color: #e2e8f0; }
   <div class="roster-modal">
     <button class="roster-close" onclick="closeRoster()">&times;</button>
     <div id="rosterHeader" class="p-1"></div>
-    <div class="p-6">
+    <div class="roster-modal-content">
       <div id="rosterTitle" class="text-xl font-black text-white mb-1"></div>
       <div id="rosterSubtitle" class="text-xs text-slate-500 mb-4"></div>
-      <div class="flex gap-2 mb-3">
-        <div class="roster-tab active-off" onclick="showRosterSide('offense',this)">Offense</div>
-        <div class="roster-tab" onclick="showRosterSide('defense',this)">Defense</div>
-        <div class="roster-tab" onclick="showRosterSide('special',this)">Special Teams</div>
+      <div class="flex flex-wrap gap-2 mb-3">
+        <div id="rosterTabProj" class="roster-tab" onclick="showRosterSide('projections',this)">Projections</div>
+        <div id="rosterTabOff" class="roster-tab active-off" onclick="showRosterSide('offense',this)">Offense</div>
+        <div id="rosterTabDef" class="roster-tab" onclick="showRosterSide('defense',this)">Defense</div>
+        <div id="rosterTabSt" class="roster-tab" onclick="showRosterSide('special',this)">Special Teams</div>
       </div>
-      <div class="flex gap-2 mb-3 items-center">
+      <div id="rosterFilterRow" class="flex gap-2 mb-3 items-center">
         <span class="text-[10px] text-slate-500 uppercase tracking-wider font-bold">Filter:</span>
         <button id="rookiesOnlyChip" onclick="toggleRookiesFilter()" class="filter-chip">Rookies only</button>
       </div>
@@ -639,9 +646,100 @@ async function loadAllData() {
     const mRes = await fetch('./madden_official_ratings.json');
     if (mRes.ok) {
       const maddenMap = await mRes.json();
-      function normName(n) { return (n||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[''.\-]/g,"").replace(/\b(jr|sr|ii|iii|iv|v)\b/gi,"").replace(/\s+/g," ").trim(); }
+      function normName(n) {
+        return (n||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/['’.\-]/g,"").replace(/\b(jr|sr|ii|iii|iv|v)\b/gi,"").replace(/\s+/g," ").trim();
+      }
+
+      function matchMadden(maddenMap, p) {
+        if (!p || !p.name) return null;
+        const norm = normName(p.name);
+        const rawNorm = (p.name || '').toLowerCase().replace(/['’.\-]/g, '').replace(/\s+/g, ' ').trim();
+        const maddenObj = maddenMap[norm] || maddenMap[rawNorm];
+        if (!maddenObj) return null;
+
+        const entries = Array.isArray(maddenObj) ? maddenObj : (maddenObj.entries || [maddenObj]);
+        if (!entries.length) return null;
+
+        const pUnit = (p.unit || '').toUpperCase();
+        const pPos = (p.pos || '').toUpperCase();
+        const isRookie = p.is_rookie === true || p.is_rookie === 'Yes';
+        const pJersey = p.jersey !== null && p.jersey !== undefined && p.jersey !== '' ? Number(p.jersey) : null;
+        const pAge = p.age ? Number(p.age) : null;
+        const pNameLower = p.name.toLowerCase();
+
+        const offensivePos = ['QB', 'RB', 'FB', 'HB', 'WR', 'TE', 'C', 'G', 'OG', 'OT', 'T', 'OL'];
+        const defensivePos = ['DE', 'EDGE', 'DT', 'NT', 'DL', 'LB', 'ILB', 'OLB', 'MLB', 'CB', 'DB', 'S', 'FS', 'SS'];
+        const specialPos = ['PK', 'K', 'P', 'LS'];
+
+        const scored = entries.map(cand => {
+          let score = 0;
+          const candUnit = (cand.inferred_unit || '').toUpperCase();
+          const candJersey = cand.jersey !== null && cand.jersey !== undefined ? Number(cand.jersey) : null;
+          const candAge = cand.age ? Number(cand.age) : null;
+          const candYears = cand.yearsPro !== null && cand.yearsPro !== undefined ? Number(cand.yearsPro) : null;
+          const candNameLower = (cand.name || '').toLowerCase();
+
+          // Unit compatibility check
+          let unitMismatch = false;
+          if (pUnit && candUnit) {
+            if (pUnit === 'DEFENSE' && candUnit === 'OFFENSE') unitMismatch = true;
+            if (pUnit === 'OFFENSE' && candUnit === 'DEFENSE') unitMismatch = true;
+          }
+          if (pPos) {
+            if (defensivePos.includes(pPos) && candUnit === 'OFFENSE') unitMismatch = true;
+            if (offensivePos.includes(pPos) && candUnit === 'DEFENSE') unitMismatch = true;
+            if (specialPos.includes(pPos) && candUnit !== 'SPECIAL' && cand.ovr > 70) unitMismatch = true;
+          }
+          if (unitMismatch) return { cand, score: -999 };
+
+          // Rookie vs veteran check
+          if (isRookie && candYears !== null && candYears >= 2) {
+            return { cand, score: -999 };
+          }
+
+          // Base unit match
+          if (pUnit && candUnit && pUnit === candUnit) {
+            score += 30;
+          }
+
+          // Exact Jersey match
+          if (pJersey !== null && candJersey !== null && pJersey === candJersey) {
+            score += 100;
+          } else if (pJersey !== null && candJersey !== null && pJersey !== candJersey && entries.length > 1) {
+            score -= 50;
+          }
+
+          // Suffix match
+          if (pNameLower.includes('jr') && candNameLower.includes('jr')) score += 50;
+          if ((pNameLower.includes('ii') || pNameLower.includes(' 2')) && (candNameLower.includes('ii') || candNameLower.includes(' 2'))) score += 50;
+
+          // Pos / Weight compatibility
+          if (cand.weight) {
+            if (['DT', 'NT', 'DL'].includes(pPos) && cand.weight >= 280) score += 40;
+            if (['EDGE', 'DE', 'LB', 'OLB', 'ILB'].includes(pPos) && cand.weight >= 225 && cand.weight <= 285) score += 40;
+            if (['CB', 'DB', 'S', 'FS', 'SS', 'WR'].includes(pPos) && cand.weight < 220) score += 40;
+            if (['OT', 'OG', 'C', 'G', 'T', 'OL'].includes(pPos) && cand.weight >= 280) score += 40;
+            if (['RB', 'HB'].includes(pPos) && cand.weight >= 190 && cand.weight <= 245) score += 40;
+          }
+
+          // Age proximity
+          if (pAge !== null && candAge !== null) {
+            const diff = Math.abs(pAge - candAge);
+            if (diff <= 1) score += 20;
+            else if (diff <= 2) score += 10;
+          }
+
+          return { cand, score };
+        });
+
+        scored.sort((a, b) => b.score - a.score);
+        const best = scored[0];
+        if (!best || best.score < 0) return null;
+        return best.cand;
+      }
+
       for (const p of DATA.players) {
-        const match = maddenMap[normName(p.name)];
+        const match = matchMadden(maddenMap, p);
         if (match && match.ovr) {
           p.ovr = match.ovr;
           p.ratings_source = 'madden_official';
@@ -683,7 +781,9 @@ async function loadAllData() {
     const teamName = teamById[p.team_id];
     if (!teamName) continue;
     if (!DATA.fullRosters[teamName]) DATA.fullRosters[teamName] = { offense: [], defense: [], special: [] };
-    DATA.fullRosters[teamName][p.unit].push({
+    const unitKey = (p.unit || 'offense').toLowerCase();
+    if (!DATA.fullRosters[teamName][unitKey]) DATA.fullRosters[teamName][unitKey] = [];
+    DATA.fullRosters[teamName][unitKey].push({
       num: p.jersey,
       name: p.name,
       pos: p.pos,
@@ -1328,11 +1428,55 @@ function renderDraft(){
 }
 
 // ═══════════════════════════════════════════════════════════
-// ROSTER MODAL (Madden-style)
+// ROSTER & TEAM PROJECTIONS MODAL
 // ═══════════════════════════════════════════════════════════
 let currentRosterTeam = null;
 let currentRosterSide = 'offense';
 let rookiesOnlyFilter = false;
+
+const ABBR_TO_TEAM = {
+  'ARZ': 'Arizona Cardinals', 'ARI': 'Arizona Cardinals',
+  'ATL': 'Atlanta Falcons',
+  'BAL': 'Baltimore Ravens',
+  'BUF': 'Buffalo Bills',
+  'CAR': 'Carolina Panthers',
+  'CHI': 'Chicago Bears',
+  'CIN': 'Cincinnati Bengals',
+  'CLE': 'Cleveland Browns',
+  'DAL': 'Dallas Cowboys',
+  'DEN': 'Denver Broncos',
+  'DET': 'Detroit Lions',
+  'GB': 'Green Bay Packers', 'GNB': 'Green Bay Packers',
+  'HOU': 'Houston Texans',
+  'IND': 'Indianapolis Colts',
+  'JAX': 'Jacksonville Jaguars', 'JAC': 'Jacksonville Jaguars',
+  'KC': 'Kansas City Chiefs', 'KAN': 'Kansas City Chiefs',
+  'LV': 'Las Vegas Raiders', 'LVR': 'Las Vegas Raiders',
+  'LAC': 'Los Angeles Chargers',
+  'LAR': 'Los Angeles Rams', 'LA': 'Los Angeles Rams',
+  'MIA': 'Miami Dolphins',
+  'MIN': 'Minnesota Vikings',
+  'NE': 'New England Patriots', 'NWE': 'New England Patriots',
+  'NO': 'New Orleans Saints', 'NOR': 'New Orleans Saints',
+  'NYG': 'New York Giants',
+  'NYJ': 'New York Jets',
+  'PHI': 'Philadelphia Eagles',
+  'PIT': 'Pittsburgh Steelers',
+  'SF': 'San Francisco 49ers', 'SFO': 'San Francisco 49ers',
+  'SEA': 'Seattle Seahawks',
+  'TB': 'Tampa Bay Buccaneers', 'TAM': 'Tampa Bay Buccaneers',
+  'TEN': 'Tennessee Titans',
+  'WAS': 'Washington Commanders', 'WSH': 'Washington Commanders'
+};
+
+function openRosterFromAbbr(abbr, side = 'projections') {
+  if (!abbr) return;
+  const clean = String(abbr).trim().toUpperCase();
+  const teamName = ABBR_TO_TEAM[clean] || (DATA?.teams?.find(t => t.abbr === clean || t.name.toLowerCase() === String(abbr).toLowerCase())?.name);
+  if (teamName) {
+    openRoster(teamName, side);
+  }
+}
 
 function toggleRookiesFilter() {
   rookiesOnlyFilter = !rookiesOnlyFilter;
@@ -1341,88 +1485,426 @@ function toggleRookiesFilter() {
   if (currentRosterTeam) renderRosterBody(currentRosterTeam, currentRosterSide);
 }
 
-function openRoster(team){
-  currentRosterTeam=team;currentRosterSide='offense';
+async function openRoster(team, defaultSide = 'offense') {
+  currentRosterTeam = team;
+  currentRosterSide = defaultSide;
   rookiesOnlyFilter = false;
   const chip = document.getElementById('rookiesOnlyChip');
   if (chip) chip.classList.remove('active');
-  const modal=document.getElementById('rosterModal');
-  const color=DATA.teamColors[team];
-  document.getElementById('rosterHeader').style.background=`linear-gradient(90deg,${color},transparent)`;
-  document.getElementById('rosterTitle').textContent=team;
-  const cap=DATA.capData[team];
-  document.getElementById('rosterSubtitle').innerHTML=`<span class="${getStatusColor(cap.status)} font-semibold">${cap.status}</span> &middot; Cap: <span class="${cap.space>=0?'cap-positive':'cap-negative'} font-bold">${formatCap(cap.space)}</span>`;
-  // Reset tabs
-  document.querySelectorAll('.roster-tab').forEach(t=>{t.className='roster-tab';});
-  document.querySelectorAll('.roster-tab')[0].classList.add('active-off');
-  renderRosterBody(team,'offense');
-  renderRosterChanges(team);
+  const modal = document.getElementById('rosterModal');
+  const color = (DATA.teamColors && DATA.teamColors[team]) || '#3b82f6';
+  const headerEl = document.getElementById('rosterHeader');
+  if (headerEl) headerEl.style.background = `linear-gradient(90deg,${color},transparent)`;
+  const titleEl = document.getElementById('rosterTitle');
+  if (titleEl) titleEl.textContent = team;
+  const cap = (DATA.capData && DATA.capData[team]) || { space: 0, status: '' };
+  const subEl = document.getElementById('rosterSubtitle');
+  if (subEl) {
+    subEl.innerHTML = `<span class="${getStatusColor(cap.status)} font-semibold">${cap.status || ''}</span> &middot; Cap: <span class="${cap.space >= 0 ? 'cap-positive' : 'cap-negative'} font-bold">${formatCap(cap.space || 0)}</span>`;
+  }
+
+  // Highlight tab
+  const tabProj = document.getElementById('rosterTabProj');
+  const tabOff = document.getElementById('rosterTabOff');
+  const tabDef = document.getElementById('rosterTabDef');
+  const tabSt = document.getElementById('rosterTabSt');
+
+  let activeEl = tabOff;
+  if (defaultSide === 'projections') activeEl = tabProj;
+  else if (defaultSide === 'defense') activeEl = tabDef;
+  else if (defaultSide === 'special') activeEl = tabSt;
+
+  await showRosterSide(defaultSide, activeEl);
   modal.classList.add('active');
-  document.body.style.overflow='hidden';
+  document.body.style.overflow = 'hidden';
 }
 
-function closeRoster(){
+function closeRoster() {
   document.getElementById('rosterModal').classList.remove('active');
-  document.body.style.overflow='';
+  document.body.style.overflow = '';
 }
 
-function showRosterSide(side,el){
-  currentRosterSide=side;
-  document.querySelectorAll('.roster-tab').forEach(t=>{t.className='roster-tab';});
-  const cls=side==='offense'?'active-off':side==='defense'?'active-def':'active-st';
-  el.classList.add(cls);
-  renderRosterBody(currentRosterTeam,side);
+async function showRosterSide(side, el) {
+  currentRosterSide = side;
+  document.querySelectorAll('.roster-tab').forEach(t => {
+    t.classList.remove('active-proj', 'active-off', 'active-def', 'active-st');
+  });
+  const cls = side === 'projections' ? 'active-proj' : side === 'defense' ? 'active-def' : side === 'special' ? 'active-st' : 'active-off';
+  if (el) el.classList.add(cls);
+
+  const filterRow = document.getElementById('rosterFilterRow');
+  const changesEl = document.getElementById('rosterChanges');
+
+  if (side === 'projections') {
+    if (filterRow) filterRow.style.display = 'none';
+    if (changesEl) changesEl.style.display = 'none';
+    await renderTeamProjectionsBody(currentRosterTeam);
+  } else {
+    if (filterRow) filterRow.style.display = 'flex';
+    if (changesEl) changesEl.style.display = 'block';
+    renderRosterBody(currentRosterTeam, side);
+    renderRosterChanges(currentRosterTeam);
+  }
+}
+
+async function renderTeamProjectionsBody(team) {
+  const c = document.getElementById('rosterBody');
+  if (!c) return;
+  if (!CLAY_DATA) await loadClayProjections();
+  if (!CLAY_DATA) {
+    c.innerHTML = '<div class="text-sm text-slate-500 py-8 text-center">Projections data is loading or unavailable.</div>';
+    return;
+  }
+
+  const tProj = CLAY_DATA.team_projections?.[team];
+  const unitGrade = CLAY_DATA.unit_grades?.[team];
+  const coaching = (CLAY_DATA.coaching_staffs || []).find(s => s.team === team);
+
+  let standing = null;
+  if (CLAY_DATA.standings && CLAY_DATA.standings.divisions) {
+    for (const [div, teams] of Object.entries(CLAY_DATA.standings.divisions)) {
+      const found = teams.find(t => t.name === team);
+      if (found) { standing = { ...found, division: div }; break; }
+    }
+  }
+
+  let starters = [];
+  if (CLAY_DATA.projected_starters) {
+    for (const [conf, teams] of Object.entries(CLAY_DATA.projected_starters)) {
+      if (teams[team]) { starters = teams[team]; break; }
+    }
+  }
+
+  const wins = tProj?.projected_wins ?? standing?.wins ?? '-';
+  const losses = typeof wins === 'number' ? (17 - wins).toFixed(1) : (standing?.losses ?? '-');
+  const winsColor = (typeof wins === 'number') ? (wins >= 10 ? 'text-emerald-400' : wins >= 7 ? 'text-cyan-300' : 'text-red-400') : 'text-cyan-300';
+  const diffVal = standing?.diff ?? 0;
+  const diffColor = diffVal > 0 ? 'text-emerald-400' : diffVal < 0 ? 'text-red-400' : 'text-slate-300';
+
+  let h = `<div class="space-y-4">`;
+
+  // 1. Forecast summary cards
+  h += `<div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
+    <div class="bg-slate-800/60 border border-slate-700/60 rounded-xl p-3">
+      <div class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Projected Record</div>
+      <div class="text-xl font-black ${winsColor} mt-0.5">${wins} - ${losses}</div>
+      <div class="text-[11px] text-slate-400 mt-1 flex items-center justify-between">
+        <span>Rank: <strong class="text-slate-200">#${tProj?.nfl_rank || '?'} NFL</strong></span>
+        <span>Favored: <strong class="text-slate-200">${standing?.favored_games ?? '-'} gms</strong></span>
+      </div>
+    </div>
+    <div class="bg-slate-800/60 border border-slate-700/60 rounded-xl p-3">
+      <div class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Points & Differential</div>
+      <div class="text-xl font-black text-slate-200 mt-0.5">${standing?.pf ?? '-'} <span class="text-xs font-normal text-slate-500">PF</span> / ${standing?.pa ?? '-'} <span class="text-xs font-normal text-slate-500">PA</span></div>
+      <div class="text-[11px] text-slate-400 mt-1">
+        Diff: <strong class="${diffColor} font-bold">${diffVal > 0 ? '+' : ''}${diffVal}</strong>
+      </div>
+    </div>
+    <div class="bg-slate-800/60 border border-slate-700/60 rounded-xl p-3">
+      <div class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Schedule & Division</div>
+      <div class="text-base font-bold text-cyan-300 mt-0.5 truncate">${standing?.division || 'NFL'}</div>
+      <div class="text-[11px] text-slate-400 mt-1">
+        Strength of Schedule: <strong class="text-slate-200">#${tProj?.sos_ranking || standing?.sos_rank || '?'}</strong>
+      </div>
+    </div>
+    <div class="bg-slate-800/60 border border-slate-700/60 rounded-xl p-3">
+      <div class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Unit Grades (Power Rk)</div>
+      <div class="text-lg font-black text-amber-400 mt-0.5">${unitGrade?.total_grade ?? '-'} <span class="text-xs font-normal text-slate-400">(#${unitGrade?.total_rank ?? '?'})</span></div>
+      <div class="text-[11px] text-slate-400 mt-1 flex justify-between">
+        <span>Off: <strong class="text-emerald-400">${unitGrade?.offense_grade ?? '-'} (#${unitGrade?.offense_rank ?? '?'})</strong></span>
+        <span>Def: <strong class="text-blue-400">${unitGrade?.defense_grade ?? '-'} (#${unitGrade?.defense_rank ?? '?'})</strong></span>
+      </div>
+    </div>
+  </div>`;
+
+  // 2. Coaching Staff Strip
+  if (coaching) {
+    h += `<div class="bg-slate-800/40 border border-slate-700/50 rounded-xl p-3">
+      <div class="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-2 flex items-center gap-1.5">
+        <span>📋</span> Coaching Staff & Leadership
+      </div>
+      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2 text-xs">
+        <div class="bg-slate-900/50 rounded-lg p-2 border border-slate-800">
+          <div class="text-[9px] text-slate-500 font-bold uppercase">Head Coach</div>
+          <div class="font-semibold text-slate-200 truncate mt-0.5">${coaching.head_coach}</div>
+        </div>
+        <div class="bg-slate-900/50 rounded-lg p-2 border border-slate-800">
+          <div class="text-[9px] text-slate-500 font-bold uppercase">Offensive Coord</div>
+          <div class="font-semibold text-slate-300 truncate mt-0.5">${coaching.offensive_coord}</div>
+        </div>
+        <div class="bg-slate-900/50 rounded-lg p-2 border border-slate-800">
+          <div class="text-[9px] text-slate-500 font-bold uppercase">Playcaller</div>
+          <div class="font-semibold text-cyan-300 truncate mt-0.5">${coaching.offensive_playcaller}</div>
+        </div>
+        <div class="bg-slate-900/50 rounded-lg p-2 border border-slate-800">
+          <div class="text-[9px] text-slate-500 font-bold uppercase">Defensive Coord</div>
+          <div class="font-semibold text-slate-300 truncate mt-0.5">${coaching.defensive_coord}</div>
+        </div>
+        <div class="bg-slate-900/50 rounded-lg p-2 border border-slate-800">
+          <div class="text-[9px] text-slate-500 font-bold uppercase">General Manager</div>
+          <div class="font-semibold text-slate-300 truncate mt-0.5">${coaching.gm}</div>
+        </div>
+      </div>
+    </div>`;
+  }
+
+  // 3. Unit Grades Breakdown
+  if (unitGrade) {
+    const units = [
+      { k: 'QB', l: 'QB' }, { k: 'RB', l: 'RB' }, { k: 'WR', l: 'WR' }, { k: 'TE', l: 'TE' }, { k: 'OL', l: 'OL' },
+      { k: 'DI', l: 'DI' }, { k: 'ED', l: 'ED' }, { k: 'LB', l: 'LB' }, { k: 'CB', l: 'CB' }, { k: 'S', l: 'S' }
+    ];
+    h += `<div class="bg-slate-800/40 border border-slate-700/50 rounded-xl p-3">
+      <div class="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-2 flex items-center justify-between">
+        <span class="flex items-center gap-1.5"><span>📊</span> Unit Grades (1–10 Scale)</span>
+        <span class="text-[10px] text-slate-500 font-normal">Offense: #${unitGrade.offense_rank} · Defense: #${unitGrade.defense_rank}</span>
+      </div>
+      <div class="grid grid-cols-5 sm:grid-cols-10 gap-1.5">`;
+    for (const u of units) {
+      const g = unitGrade[u.k] || 0;
+      const gc = g >= 9 ? 'bg-amber-500/20 border-amber-500/50 text-amber-300' :
+                 g >= 7 ? 'bg-emerald-500/20 border-emerald-500/50 text-emerald-300' :
+                 g >= 5 ? 'bg-slate-700/40 border-slate-600/50 text-slate-300' :
+                          'bg-red-500/20 border-red-500/50 text-red-300';
+      h += `<div class="text-center rounded-lg p-1.5 border ${gc}">
+        <div class="text-[9px] font-bold opacity-80">${u.l}</div>
+        <div class="text-sm font-black mt-0.5">${g}</div>
+      </div>`;
+    }
+    h += `</div></div>`;
+  }
+
+  // 4. 2026 Weekly Schedule Forecast
+  if (tProj?.weekly_projections && tProj.weekly_projections.length > 0) {
+    h += `<div class="bg-slate-800/40 border border-slate-700/50 rounded-xl p-3">
+      <div class="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-2.5 flex items-center justify-between">
+        <span class="flex items-center gap-1.5"><span>📅</span> 2026 Game-by-Game Forecast</span>
+        <span class="text-[10px] text-slate-500 font-normal">18 Weeks</span>
+      </div>
+      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 lg:grid-cols-9 gap-2">`;
+    for (const g of tProj.weekly_projections) {
+      const isBye = !g.opponent || g.opponent === '0' || g.opp_abbr === '0';
+      if (isBye) {
+        h += `<div class="bg-slate-900/40 border border-slate-800 rounded-lg p-2 text-center opacity-60">
+          <div class="text-[9px] text-slate-500 font-bold">WK ${g.week}</div>
+          <div class="text-xs font-bold text-slate-400 my-1">BYE</div>
+          <div class="text-[9px] text-slate-600">—</div>
+        </div>`;
+      } else {
+        const probNum = parseInt(g.win_probability) || 50;
+        const probColor = probNum >= 60 ? 'text-emerald-400 bg-emerald-500/10' :
+                          probNum >= 45 ? 'text-amber-300 bg-amber-500/10' :
+                          'text-red-400 bg-red-500/10';
+        const locPrefix = g.location === 'V' ? '@' : 'vs';
+        h += `<div class="bg-slate-900/60 border border-slate-800/80 hover:border-slate-700 rounded-lg p-2 text-center transition">
+          <div class="text-[9px] text-slate-500 font-bold">WK ${g.week}</div>
+          <div class="text-xs font-bold text-slate-200 my-0.5 truncate" title="${locPrefix} ${g.opponent}">${locPrefix} ${g.opp_abbr || g.opponent}</div>
+          <div class="text-[10px] text-slate-400 font-medium">${(Number(g.team_score)||0).toFixed(1)} - ${(Number(g.opp_score)||0).toFixed(1)}</div>
+          <div class="text-[9px] font-bold rounded mt-1 py-0.5 px-1 ${probColor}">${g.win_probability}</div>
+        </div>`;
+      }
+    }
+    h += `</div></div>`;
+  }
+
+  // 5. Projected Starters Depth Chart
+  if (starters.length > 0) {
+    const posOrder = {
+      'QB': 1, 'RB': 2, 'WR': 3, 'TE': 4,
+      'LT': 5, 'LG': 6, 'C': 7, 'RG': 8, 'RT': 9, 'OL': 10, 'OT': 10, 'G': 10, 'OG': 10,
+      'DI': 11, 'DT': 11, 'NT': 11, 'DL': 11,
+      'ED': 12, 'EDGE': 12, 'DE': 12,
+      'LB': 13, 'ILB': 13, 'OLB': 13, 'MLB': 13,
+      'CB': 14, 'DB': 14,
+      'S': 15, 'FS': 15, 'SS': 15,
+      'PK': 16, 'K': 16, 'P': 17, 'LS': 18
+    };
+    const sortedStarters = [...starters].sort((a, b) => {
+      const pA = posOrder[a.position] || 99;
+      const pB = posOrder[b.position] || 99;
+      if (pA !== pB) return pA - pB;
+      return (Number(a.depth) || 0) - (Number(b.depth) || 0);
+    });
+
+    h += `<div class="bg-slate-800/40 border border-slate-700/50 rounded-xl p-3">
+      <div class="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-2 flex items-center justify-between">
+        <span class="flex items-center gap-1.5"><span>⭐</span> Projected Starters & Clay Ratings</span>
+        <span class="text-[10px] text-slate-500 font-normal">${sortedStarters.length} Key Starters</span>
+      </div>
+      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2">`;
+    for (const s of sortedStarters) {
+      const tier = s.rating >= 9 ? 'text-amber-400 border-amber-500/40 bg-amber-500/10' :
+                   s.rating >= 7 ? 'text-emerald-400 border-emerald-500/40 bg-emerald-500/10' :
+                   s.rating >= 5 ? 'text-slate-300 border-slate-700 bg-slate-800/50' :
+                                   'text-red-400 border-red-500/40 bg-red-500/10';
+      h += `<div class="bg-slate-900/60 rounded-lg p-2 border border-slate-800/80 flex items-center justify-between gap-2">
+        <div class="min-w-0">
+          <div class="text-[9px] text-slate-500 font-bold uppercase">${s.position}${s.depth}</div>
+          <div class="text-xs font-semibold text-slate-200 truncate">${s.name}</div>
+        </div>
+        <div class="text-xs font-black px-1.5 py-0.5 rounded border shrink-0 ${tier}">${s.rating}</div>
+      </div>`;
+    }
+    h += `</div></div>`;
+  }
+
+  // 6. Offensive Player Projections
+  if (tProj?.offense && tProj.offense.length > 0) {
+    h += `<div class="bg-slate-800/40 border border-slate-700/50 rounded-xl p-3">
+      <div class="text-[10px] text-cyan-400 font-bold uppercase tracking-wider mb-2 flex items-center gap-1.5">
+        <span>🎯</span> Offensive Player Projections (Clay Model)
+      </div>
+      <div class="overflow-x-auto">
+        <table class="w-full text-xs">
+          <thead>
+            <tr class="text-slate-500 border-b border-slate-700/50">
+              <th class="text-left px-2 py-1.5 font-semibold">Pos</th>
+              <th class="text-left px-2 py-1.5 font-semibold">Player</th>
+              <th class="text-center px-1.5 py-1.5">G</th>
+              <th class="text-center px-1.5 py-1.5">Pass Att</th>
+              <th class="text-center px-1.5 py-1.5">Comp</th>
+              <th class="text-center px-1.5 py-1.5">Pass Yds</th>
+              <th class="text-center px-1.5 py-1.5">Pass TD</th>
+              <th class="text-center px-1.5 py-1.5">INT</th>
+              <th class="text-center px-1.5 py-1.5">Rush Att</th>
+              <th class="text-center px-1.5 py-1.5">Rush Yds</th>
+              <th class="text-center px-1.5 py-1.5">Rush TD</th>
+              <th class="text-center px-1.5 py-1.5">Tgt</th>
+              <th class="text-center px-1.5 py-1.5">Rec</th>
+              <th class="text-center px-1.5 py-1.5">Rec Yds</th>
+              <th class="text-center px-1.5 py-1.5">Rec TD</th>
+              <th class="text-right px-2 py-1.5 font-bold text-cyan-400">PPR Pts</th>
+              <th class="text-right px-2 py-1.5 text-slate-500">Rk</th>
+            </tr>
+          </thead>
+          <tbody>`;
+    for (const p of tProj.offense) {
+      const isTotal = p.name === 'Total';
+      const rowClass = isTotal ? 'border-t-2 border-slate-600 bg-slate-800/40 font-bold text-white' : 'border-b border-slate-800/40 hover:bg-slate-800/30 text-slate-300';
+      h += `<tr class="${rowClass}">
+        <td class="px-2 py-1.5 font-bold text-slate-400">${p.pos}</td>
+        <td class="px-2 py-1.5 font-semibold ${isTotal ? 'text-amber-400' : 'text-slate-100'}">${p.name}</td>
+        <td class="text-center px-1.5 py-1.5">${p.games ?? '-'}</td>
+        <td class="text-center px-1.5 py-1.5">${p.pass_att ?? '-'}</td>
+        <td class="text-center px-1.5 py-1.5">${p.pass_comp ?? '-'}</td>
+        <td class="text-center px-1.5 py-1.5">${p.pass_yds ?? '-'}</td>
+        <td class="text-center px-1.5 py-1.5 ${p.pass_td > 0 ? 'text-emerald-400' : ''}">${p.pass_td ?? '-'}</td>
+        <td class="text-center px-1.5 py-1.5 ${p.pass_int > 0 ? 'text-red-400' : ''}">${p.pass_int ?? '-'}</td>
+        <td class="text-center px-1.5 py-1.5">${p.rush_att ?? '-'}</td>
+        <td class="text-center px-1.5 py-1.5">${p.rush_yds ?? '-'}</td>
+        <td class="text-center px-1.5 py-1.5 ${p.rush_td > 0 ? 'text-emerald-400' : ''}">${p.rush_td ?? '-'}</td>
+        <td class="text-center px-1.5 py-1.5">${p.targets ?? '-'}</td>
+        <td class="text-center px-1.5 py-1.5">${p.rec ?? '-'}</td>
+        <td class="text-center px-1.5 py-1.5">${p.rec_yds ?? '-'}</td>
+        <td class="text-center px-1.5 py-1.5 ${p.rec_td > 0 ? 'text-emerald-400' : ''}">${p.rec_td ?? '-'}</td>
+        <td class="text-right px-2 py-1.5 font-bold text-cyan-300">${p.ppr_pts ?? '-'}</td>
+        <td class="text-right px-2 py-1.5 text-slate-500">${p.ppr_rank ? '#' + p.ppr_rank : '-'}</td>
+      </tr>`;
+    }
+    h += `</tbody></table></div></div>`;
+  }
+
+  // 7. Defensive Player Projections
+  if (tProj?.defense && tProj.defense.length > 0) {
+    h += `<div class="bg-slate-800/40 border border-slate-700/50 rounded-xl p-3">
+      <div class="text-[10px] text-blue-400 font-bold uppercase tracking-wider mb-2 flex items-center gap-1.5">
+        <span>🛡</span> Defensive Player Projections (Clay Model)
+      </div>
+      <div class="overflow-x-auto">
+        <table class="w-full text-xs">
+          <thead>
+            <tr class="text-slate-500 border-b border-slate-700/50">
+              <th class="text-left px-2 py-1.5 font-semibold">Pos</th>
+              <th class="text-left px-2 py-1.5 font-semibold">Player</th>
+              <th class="text-center px-2 py-1.5">Snaps</th>
+              <th class="text-center px-2 py-1.5">Tackles</th>
+              <th class="text-center px-2 py-1.5">Sacks</th>
+              <th class="text-center px-2 py-1.5">INT</th>
+              <th class="text-center px-2 py-1.5">FF</th>
+              <th class="text-right px-2 py-1.5 text-slate-500">Rk</th>
+            </tr>
+          </thead>
+          <tbody>`;
+    for (const p of tProj.defense) {
+      h += `<tr class="border-b border-slate-800/40 hover:bg-slate-800/30 text-slate-300">
+        <td class="px-2 py-1.5 font-bold text-slate-400">${p.pos}</td>
+        <td class="px-2 py-1.5 font-semibold text-slate-100">${p.name}</td>
+        <td class="text-center px-2 py-1.5">${p.snaps ?? '-'}</td>
+        <td class="text-center px-2 py-1.5">${p.tackles ?? '-'}</td>
+        <td class="text-center px-2 py-1.5 ${p.sacks > 0 ? 'text-amber-400 font-semibold' : ''}">${p.sacks ?? '-'}</td>
+        <td class="text-center px-2 py-1.5 ${p.interceptions > 0 ? 'text-blue-400 font-semibold' : ''}">${p.interceptions ?? '-'}</td>
+        <td class="text-center px-2 py-1.5 ${p.fumbles_forced > 0 ? 'text-emerald-400 font-semibold' : ''}">${p.fumbles_forced ?? '-'}</td>
+        <td class="text-right px-2 py-1.5 text-slate-500">${p.rank ? '#' + p.rank : '-'}</td>
+      </tr>`;
+    }
+    h += `</tbody></table></div></div>`;
+  }
+
+  // 8. Roster Navigation Hint
+  h += `<div class="bg-slate-800/30 border border-slate-700/60 rounded-xl p-3 text-center text-xs text-slate-400 flex flex-wrap items-center justify-center gap-2">
+    <span>View this team's complete 90-man roster with Madden 27 ratings and offseason moves:</span>
+    <button onclick="showRosterSide('offense', document.getElementById('rosterTabOff'))" class="text-blue-400 font-bold underline hover:text-blue-300">Offense</button>
+    <span class="text-slate-600">&bull;</span>
+    <button onclick="showRosterSide('defense', document.getElementById('rosterTabDef'))" class="text-red-400 font-bold underline hover:text-red-300">Defense</button>
+    <span class="text-slate-600">&bull;</span>
+    <button onclick="showRosterSide('special', document.getElementById('rosterTabSt'))" class="text-amber-400 font-bold underline hover:text-amber-300">Special Teams</button>
+  </div>`;
+
+  h += `</div>`;
+  c.innerHTML = h;
 }
 
 function renderRosterBody(team,side){
   const roster=DATA.fullRosters[team];
   if(!roster){document.getElementById('rosterBody').innerHTML='<div class="text-sm text-slate-500">No roster data available.</div>';return;}
-  let players=roster[side]||[];
+  const sideKey = (side || 'offense').toLowerCase();
+  let players = roster[sideKey] || [];
   if(rookiesOnlyFilter) players = players.filter(p => p.isRookie);
   if(!players.length){document.getElementById('rosterBody').innerHTML=`<div class="text-sm text-slate-500 py-8 text-center">${rookiesOnlyFilter ? 'No rookies on this unit' : 'No data for this unit'}</div>`;return;}
 
-  // Group by position type for depth-chart formation
+  const matched = new Set();
+  function getPlayersFor(posList) {
+    return players.filter(p => {
+      const pos = (p.pos || '').toUpperCase();
+      if (posList.includes(pos)) {
+        matched.add(p);
+        return true;
+      }
+      return false;
+    });
+  }
+
   let groups=[];
-  if(side==='offense'){
-    const qbs=players.filter(p=>p.pos==='QB');
-    const rbs=players.filter(p=>p.pos==='RB');
-    const fbs=players.filter(p=>p.pos==='FB');
-    const wrs=players.filter(p=>p.pos==='WR');
-    const tes=players.filter(p=>p.pos==='TE');
-    const cs=players.filter(p=>p.pos==='C');
-    const gs=players.filter(p=>p.pos==='G');
-    const ots=players.filter(p=>p.pos==='OT');
+  if(sideKey==='offense'){
     groups=[
-      {label:'Quarterbacks',players:qbs,color:'#3b82f6'},
-      {label:'Running Backs',players:[...rbs,...fbs],color:'#22c55e'},
-      {label:'Wide Receivers',players:wrs,color:'#f59e0b'},
-      {label:'Tight Ends',players:tes,color:'#8b5cf6'},
-      {label:'Centers',players:cs,color:'#64748b'},
-      {label:'Guards',players:gs,color:'#64748b'},
-      {label:'Offensive Tackles',players:ots,color:'#64748b'}
+      {label:'Quarterbacks',players:getPlayersFor(['QB']),color:'#3b82f6'},
+      {label:'Running Backs',players:getPlayersFor(['RB','FB','HB']),color:'#22c55e'},
+      {label:'Wide Receivers',players:getPlayersFor(['WR']),color:'#f59e0b'},
+      {label:'Tight Ends',players:getPlayersFor(['TE']),color:'#8b5cf6'},
+      {label:'Centers',players:getPlayersFor(['C']),color:'#64748b'},
+      {label:'Guards',players:getPlayersFor(['G','OG']),color:'#64748b'},
+      {label:'Offensive Tackles',players:getPlayersFor(['OT','T','OL']),color:'#64748b'}
     ];
-  } else if(side==='defense'){
-    const des=players.filter(p=>p.pos==='DE');
-    const dts=players.filter(p=>p.pos==='DT');
-    const lbs=players.filter(p=>p.pos==='LB');
-    const cbs=players.filter(p=>p.pos==='CB');
-    const ss=players.filter(p=>p.pos==='S');
+  } else if(sideKey==='defense'){
     groups=[
-      {label:'Defensive Ends',players:des,color:'#ef4444'},
-      {label:'Defensive Tackles',players:dts,color:'#f97316'},
-      {label:'Linebackers',players:lbs,color:'#eab308'},
-      {label:'Cornerbacks',players:cbs,color:'#06b6d4'},
-      {label:'Safeties',players:ss,color:'#8b5cf6'}
+      {label:'Defensive Ends / EDGE',players:getPlayersFor(['DE','EDGE']),color:'#ef4444'},
+      {label:'Defensive Tackles',players:getPlayersFor(['DT','NT','DL']),color:'#f97316'},
+      {label:'Linebackers',players:getPlayersFor(['LB','ILB','OLB','MLB']),color:'#eab308'},
+      {label:'Cornerbacks',players:getPlayersFor(['CB','DB']),color:'#06b6d4'},
+      {label:'Safeties',players:getPlayersFor(['S','FS','SS']),color:'#8b5cf6'}
     ];
   } else {
-    const ks=players.filter(p=>p.pos==='PK'||p.pos==='K');
-    const ps=players.filter(p=>p.pos==='P');
-    const ls=players.filter(p=>p.pos==='LS');
     groups=[
-      {label:'Kickers',players:ks,color:'#f59e0b'},
-      {label:'Punters',players:ps,color:'#f59e0b'},
-      {label:'Long Snappers',players:ls,color:'#f59e0b'}
+      {label:'Kickers',players:getPlayersFor(['PK','K']),color:'#f59e0b'},
+      {label:'Punters',players:getPlayersFor(['P']),color:'#f59e0b'},
+      {label:'Long Snappers',players:getPlayersFor(['LS']),color:'#f59e0b'}
     ];
+  }
+
+  // Fallback for any unrecognized position so no players are dropped
+  const otherPlayers = players.filter(p => !matched.has(p));
+  if (otherPlayers.length > 0) {
+    groups.push({label:'Other',players:otherPlayers,color:'#94a3b8'});
   }
 
   let h='';
@@ -1512,23 +1994,37 @@ function filterDashboard(q){
   txSearchQuery = q;
   // Re-render the transactions feed via the new pipeline
   if (typeof renderFeed === 'function') renderFeed();
-  // Filter team cards (DOM-level, since rendering is the same)
+
+  // Filter team tiles in #teamsContainer
   let teamVisible = 0;
-  document.querySelectorAll('#teamsContainer .team-card').forEach(el => {
-    const t = el.dataset.team || ''; const p = el.dataset.players || '';
-    const show = (!q || t.includes(q) || p.includes(q));
+  document.querySelectorAll('#teamsContainer .team-tile').forEach(el => {
+    const txt = el.textContent.toLowerCase();
+    const show = (!q || txt.includes(q));
     el.style.display = show ? '' : 'none';
     if (show) teamVisible++;
   });
+
+  // Update division headers and content containers
+  document.querySelectorAll('#teamsContainer .division-content').forEach(divContent => {
+    const tiles = divContent.querySelectorAll('.team-tile');
+    const hasVisible = Array.from(tiles).some(t => t.style.display !== 'none');
+    const header = divContent.previousElementSibling;
+    if (header && header.classList.contains('division-header')) {
+      header.style.display = hasVisible ? '' : 'none';
+    }
+    divContent.style.display = hasVisible ? '' : 'none';
+  });
+
   // Filter draft cards
   let draftVisible = 0;
   document.querySelectorAll('#draftContainer .team-card').forEach(el => {
-    const t = el.dataset.team || '';
+    const t = (el.dataset.team || el.textContent || '').toLowerCase();
     const show = (!q || t.includes(q));
     el.style.display = show ? '' : 'none';
     if (show) draftVisible++;
   });
-  // Empty-state for teams + draft (transactions handles its own empty state in renderFeed)
+
+  // Empty-state for teams + draft
   ['teamsEmpty','draftEmpty'].forEach(id=>{const el=document.getElementById(id);if(el)el.remove();});
   if (q) {
     if (teamVisible === 0) {
@@ -1599,6 +2095,11 @@ const PROJ_SUB_TABS = [
   { id: 'wr', label: 'WR', icon: '📡' },
   { id: 'te', label: 'TE', icon: '🤲' },
   { id: 'def', label: 'Defense', icon: '🛡' },
+  { id: 'idl', label: 'IDL', icon: '🛡' },
+  { id: 'edge', label: 'EDGE', icon: '🛡' },
+  { id: 'lb', label: 'LB', icon: '🛡' },
+  { id: 'cb', label: 'CB', icon: '🛡' },
+  { id: 's', label: 'S', icon: '🛡' },
   { id: 'unitgrades', label: 'Unit Grades', icon: '📊' },
   { id: 'starters', label: 'Starters', icon: '⭐' },
   { id: 'coaching', label: 'Coaching', icon: '📋' },
@@ -1648,6 +2149,11 @@ async function renderProjContent() {
     case 'wr': renderPosProj(c, data, 'WR'); break;
     case 'te': renderPosProj(c, data, 'TE'); break;
     case 'def': renderDefProj(c, data); break;
+    case 'idl': currentDefPos = 'IDL'; renderDefProj(c, data); break;
+    case 'edge': currentDefPos = 'EDGE'; renderDefProj(c, data); break;
+    case 'lb': currentDefPos = 'LB'; renderDefProj(c, data); break;
+    case 'cb': currentDefPos = 'CB'; renderDefProj(c, data); break;
+    case 's': currentDefPos = 'S'; renderDefProj(c, data); break;
     case 'unitgrades': renderUnitGrades(c, data); break;
     case 'starters': renderStarters(c, data); break;
     case 'coaching': renderCoaching(c, data); break;
@@ -1671,7 +2177,7 @@ function renderCategories(c, data) {
       h += `<tr class="border-b border-slate-800/30 hover:bg-slate-800/20">
         <td class="px-2 py-1 text-slate-500">${i+1}</td>
         <td class="px-2 py-1 ${tier}">${p.name}</td>
-        <td class="px-2 py-1 text-slate-400">${p.team}</td>
+        <td class="px-2 py-1 text-slate-400 proj-link-team" onclick="openRosterFromAbbr('${p.team}')" title="View team projections">${p.team}</td>
         <td class="px-2 py-1 text-right font-bold text-cyan-300">${p.value}</td>
       </tr>`;
     }
@@ -1691,9 +2197,10 @@ function renderSOS(c, data) {
   for (let w = 1; w <= 18; w++) h += `<th class="text-center px-1 py-2 font-semibold">${w}</th>`;
   h += '</tr></thead><tbody>';
   for (const [abbr, info] of teams) {
+    const teamEsc = info.team.replace(/'/g, "\\'");
     h += `<tr class="border-b border-slate-800/50 hover:bg-slate-800/30">
       <td class="text-center px-2 py-2 font-bold text-cyan-400">${info.rank}</td>
-      <td class="px-3 py-2 font-semibold text-slate-200">${info.team}</td>`;
+      <td class="px-3 py-2 font-semibold text-slate-200 proj-link-team" onclick="openRoster('${teamEsc}', 'projections')" title="View ${info.team} projections">${info.team}</td>`;
     for (let w = 0; w < 18; w++) {
       const opp = info.schedule[w] || '';
       const isBye = opp === '0';
@@ -1713,9 +2220,10 @@ function renderTeamProj(c, data) {
   let h = '<div class="grid grid-cols-1 md:grid-cols-2 gap-3">';
   for (const [name, t] of teams) {
     const winsClass = (t.projected_wins||0) >= 10 ? 'text-emerald-400' : (t.projected_wins||0) >= 7 ? 'text-slate-300' : 'text-red-400';
-    h += `<div class="glass rounded-lg p-3">
+    const nameEsc = name.replace(/'/g, "\\'");
+    h += `<div class="glass rounded-lg p-3 proj-team-card" onclick="openRoster('${nameEsc}', 'projections')" title="Click to expand ${name} projections and roster">
       <div class="flex items-center justify-between mb-2">
-        <div class="text-sm font-bold text-slate-200">${name}</div>
+        <div class="text-sm font-bold text-slate-200 flex items-center gap-1.5">${name} <span class="text-[10px] text-cyan-400 font-semibold opacity-70 hover:opacity-100">&rarr;</span></div>
         <div class="text-xs">
           <span class="font-bold ${winsClass}">${t.projected_wins || '-'} wins</span>
           <span class="text-slate-500 ml-1">#${t.nfl_rank || '?'}</span>
@@ -1737,7 +2245,10 @@ function renderTeamProj(c, data) {
     // Top offensive player
     if (t.offense.length > 0) {
       const top = t.offense[0];
-      h += `<div class="mt-2 text-[10px] text-slate-500">Top: <span class="text-slate-300">${top.name}</span> - ${top.ppr_pts} PPR</div>`;
+      h += `<div class="mt-2 text-[10px] text-slate-500 flex items-center justify-between">
+        <span>Top: <span class="text-slate-300">${top.name}</span> - ${top.ppr_pts} PPR</span>
+        <span class="text-cyan-400 text-[10px] font-semibold">Expand &rarr;</span>
+      </div>`;
     }
     h += '</div>';
   }
@@ -1765,8 +2276,9 @@ function renderStandingsProj(c, data) {
         <tbody>`;
     for (const t of teams.sort((a,b) => b.wins - a.wins)) {
       const diffClass = t.diff > 0 ? 'text-emerald-400' : t.diff < 0 ? 'text-red-400' : '';
+      const teamEsc = t.name.replace(/'/g, "\\'");
       h += `<tr class="border-b border-slate-800/50 hover:bg-slate-800/30">
-        <td class="px-3 py-2 font-semibold text-slate-200">${t.name}</td>
+        <td class="px-3 py-2 font-semibold text-slate-200 proj-link-team" onclick="openRoster('${teamEsc}', 'projections')" title="View ${t.name} projections">${t.name}</td>
         <td class="text-center px-2 py-2 font-bold text-emerald-400">${t.wins}</td>
         <td class="text-center px-2 py-2 font-bold text-red-400">${t.losses}</td>
         <td class="text-center px-2 py-2 text-slate-300">${t.pf}</td>
@@ -1807,10 +2319,11 @@ function renderPosProj(c, data, pos) {
   h += '</tr></thead><tbody>';
 
   for (const p of players) {
+    const tm = p.team_abbr || p.team;
     h += `<tr class="border-b border-slate-800/50 hover:bg-slate-800/30">
       <td class="px-3 py-2 text-slate-400 font-bold">${p.pos_rank}</td>
       <td class="px-3 py-2 font-semibold text-slate-200">${p.name}</td>
-      <td class="px-3 py-2 text-slate-400">${p.team_abbr || p.team}</td>
+      <td class="px-3 py-2 text-slate-400 proj-link-team" onclick="openRosterFromAbbr('${tm}')" title="View team projections">${tm}</td>
       <td class="text-center px-2 py-2 font-bold text-cyan-400">${p.ff_pts}</td>`;
     if (pos === 'QB') {
       h += `<td class="text-center px-2 py-2">${p.games}</td><td class="text-center px-2 py-2">${p.pass_att}</td><td class="text-center px-2 py-2">${p.pass_comp}</td><td class="text-center px-2 py-2">${p.pass_yds}</td><td class="text-center px-2 py-2 text-emerald-400">${p.pass_td}</td><td class="text-center px-2 py-2 text-red-400">${p.interceptions}</td><td class="text-center px-2 py-2">${p.rush_att}</td><td class="text-center px-2 py-2">${p.rush_yds}</td><td class="text-center px-2 py-2 text-emerald-400">${p.rush_td}</td>`;
@@ -1825,46 +2338,87 @@ function renderPosProj(c, data, pos) {
   c.innerHTML = h;
 }
 
+let currentDefPos = 'IDL';
+function switchDefPos(pos) {
+  currentDefPos = pos;
+  if (['idl', 'edge', 'lb', 'cb', 's'].includes(currentProjSubTab)) {
+    currentProjSubTab = pos.toLowerCase();
+    renderProjSubTabs();
+  }
+  const c = document.getElementById('projContent');
+  if (c && CLAY_DATA) {
+    renderDefProj(c, CLAY_DATA);
+  } else {
+    renderProjContent();
+  }
+}
+
 function renderDefProj(c, data) {
   const positions = ['IDL', 'EDGE', 'LB', 'CB', 'S'];
   let h = '<div class="flex flex-wrap gap-2 mb-3">';
   for (const pos of positions) {
-    const active = !c.dataset.defPos || c.dataset.defPos === pos;
-    h += `<button onclick="c.dataset.defPos='${pos}';renderDefProj(c,window._clayData||{})" class="px-3 py-1 rounded-lg text-xs font-bold ${c.dataset.defPos === pos || (!c.dataset.defPos && pos==='IDL') ? 'bg-red-600/30 text-red-300 border border-red-500/50' : 'bg-slate-800/80 text-slate-400 border border-transparent hover:bg-slate-700'}">${pos}</button>`;
+    const active = currentDefPos === pos;
+    h += `<button onclick="switchDefPos('${pos}')" class="px-3 py-1 rounded-lg text-xs font-bold ${active ? 'bg-red-600/30 text-red-300 border border-red-500/50' : 'bg-slate-800/80 text-slate-400 border border-transparent hover:bg-slate-700'}">${pos}</button>`;
   }
   h += '</div>';
-  const activePos = c.dataset.defPos || 'IDL';
-  const players = data.positional_projections?.[activePos] || [];
-  h += `<div class="overflow-x-auto"><table class="w-full text-xs">
+
+  const players = data.positional_projections?.[currentDefPos] || [];
+  if (!players.length) {
+    c.innerHTML = h + `<p class="text-slate-500 text-xs">No data for ${currentDefPos}</p>`;
+    return;
+  }
+
+  h += `<div class="mb-3 flex items-center gap-3">
+    <span class="text-sm font-bold text-slate-300">${players.length} players</span>
+    <input id="projSearch_${currentDefPos}" type="text" placeholder="Search..." class="bg-slate-800/80 border border-slate-600 rounded-lg px-3 py-1.5 text-xs w-48 focus:outline-none focus:border-cyan-500" oninput="filterProjTable('${currentDefPos}')">
+  </div>`;
+
+  h += `<div class="overflow-x-auto"><table id="projTable_${currentDefPos}" class="w-full text-xs">
     <thead><tr class="text-slate-500 border-b border-slate-700/50">
-      <th class="text-left px-3 py-2 font-semibold">#</th><th class="text-left px-3 py-2 font-semibold">Player</th><th class="text-left px-3 py-2 font-semibold">Team</th>
-      <th class="text-center px-2 py-2 font-semibold">FF Pts</th><th class="text-center px-2 py-2">Snaps</th><th class="text-center px-2 py-2">Tkl</th>
-      <th class="text-center px-2 py-2">Solo</th><th class="text-center px-2 py-2">TFL</th><th class="text-center px-2 py-2">Sack</th><th class="text-center px-2 py-2">INT</th><th class="text-center px-2 py-2">FF</th>
+      <th class="text-left px-3 py-2 font-semibold cursor-pointer" onclick="sortProjTable('${currentDefPos}','pos_rank')">#</th>
+      <th class="text-left px-3 py-2 font-semibold cursor-pointer" onclick="sortProjTable('${currentDefPos}','name')">Player</th>
+      <th class="text-left px-3 py-2 font-semibold cursor-pointer" onclick="sortProjTable('${currentDefPos}','team')">Team</th>
+      <th class="text-center px-2 py-2 font-semibold cursor-pointer" onclick="sortProjTable('${currentDefPos}','ff_pts')">FF Pts</th>
+      <th class="text-center px-2 py-2 cursor-pointer" onclick="sortProjTable('${currentDefPos}','snaps')">Snaps</th>
+      <th class="text-center px-2 py-2 cursor-pointer" onclick="sortProjTable('${currentDefPos}','total_tackles')">Tkl</th>
+      <th class="text-center px-2 py-2 cursor-pointer" onclick="sortProjTable('${currentDefPos}','solo_tackles')">Solo</th>
+      <th class="text-center px-2 py-2 cursor-pointer" onclick="sortProjTable('${currentDefPos}','tfl')">TFL</th>
+      <th class="text-center px-2 py-2 cursor-pointer" onclick="sortProjTable('${currentDefPos}','sacks')">Sack</th>
+      <th class="text-center px-2 py-2 cursor-pointer" onclick="sortProjTable('${currentDefPos}','interceptions')">INT</th>
+      <th class="text-center px-2 py-2 cursor-pointer" onclick="sortProjTable('${currentDefPos}','ff')">FF</th>
     </tr></thead><tbody>`;
+
   for (const p of players) {
+    const tm = p.team_abbr || p.team;
     h += `<tr class="border-b border-slate-800/50 hover:bg-slate-800/30">
-      <td class="px-3 py-2 text-slate-400 font-bold">${p.pos_rank}</td><td class="px-3 py-2 font-semibold text-slate-200">${p.name}</td>
-      <td class="px-3 py-2 text-slate-400">${p.team_abbr}</td><td class="text-center px-2 py-2 font-bold text-cyan-400">${p.ff_pts}</td>
-      <td class="text-center px-2 py-2">${p.snaps}</td><td class="text-center px-2 py-2">${p.total_tackles}</td>
-      <td class="text-center px-2 py-2">${p.solo_tackles}</td><td class="text-center px-2 py-2">${p.tfl}</td>
-      <td class="text-center px-2 py-2 text-amber-400">${p.sacks}</td><td class="text-center px-2 py-2 text-blue-400">${p.interceptions}</td>
+      <td class="px-3 py-2 text-slate-400 font-bold">${p.pos_rank}</td>
+      <td class="px-3 py-2 font-semibold text-slate-200">${p.name}</td>
+      <td class="px-3 py-2 text-slate-400 proj-link-team" onclick="openRosterFromAbbr('${tm}')" title="View team projections">${tm}</td>
+      <td class="text-center px-2 py-2 font-bold text-cyan-400">${p.ff_pts}</td>
+      <td class="text-center px-2 py-2">${p.snaps}</td>
+      <td class="text-center px-2 py-2">${p.total_tackles}</td>
+      <td class="text-center px-2 py-2">${p.solo_tackles}</td>
+      <td class="text-center px-2 py-2">${p.tfl}</td>
+      <td class="text-center px-2 py-2 text-amber-400">${p.sacks}</td>
+      <td class="text-center px-2 py-2 text-blue-400">${p.interceptions}</td>
       <td class="text-center px-2 py-2 text-emerald-400">${p.ff}</td>
     </tr>`;
   }
   h += '</tbody></table></div>';
   c.innerHTML = h;
-  window._clayData = data;
 }
 
 function renderUnitGrades(c, data) {
   if (!data.unit_grades) { c.innerHTML = '<p class="text-slate-500">No unit grades data</p>'; return; }
-  const teams = Object.entries(data.unit_grades).sort((a,b) => (b[1].offense_grade || 0) - (a[1].offense_grade || 0));
+  const teams = Object.entries(data.unit_grades).sort((a,b) => (b[1].total_grade || 0) - (a[1].total_grade || 0));
   let h = `<div class="overflow-x-auto"><table class="w-full text-xs">
     <thead><tr class="text-slate-500 border-b border-slate-700/50">
       <th class="text-left px-3 py-2 font-semibold">Team</th>
       <th class="text-center px-2 py-2 font-semibold">QB</th><th class="text-center px-2 py-2">RB</th><th class="text-center px-2 py-2">WR</th><th class="text-center px-2 py-2">TE</th><th class="text-center px-2 py-2">OL</th>
       <th class="text-center px-2 py-2 font-semibold">DI</th><th class="text-center px-2 py-2">ED</th><th class="text-center px-2 py-2">LB</th><th class="text-center px-2 py-2">CB</th><th class="text-center px-2 py-2">S</th>
-      <th class="text-center px-2 py-2 font-semibold">Off</th><th class="text-center px-2 py-2 font-semibold">Def</th>
+      <th class="text-center px-2 py-2 font-semibold">Total (Rk)</th>
+      <th class="text-center px-2 py-2 font-semibold">Off (Rk)</th>
+      <th class="text-center px-2 py-2 font-semibold">Def (Rk)</th>
     </tr></thead><tbody>`;
   for (const [name, g] of teams) {
     const gradeCell = (v) => {
@@ -1873,12 +2427,14 @@ function renderUnitGrades(c, data) {
       if (v >= 5) return `<td class="text-center px-2 py-2 font-bold text-slate-300">${v}</td>`;
       return `<td class="text-center px-2 py-2 font-bold text-red-400">${v}</td>`;
     };
+    const nameEsc = name.replace(/'/g, "\\'");
     h += `<tr class="border-b border-slate-800/50 hover:bg-slate-800/30">
-      <td class="px-3 py-2 font-semibold text-slate-200">${name}</td>
+      <td class="px-3 py-2 font-semibold text-slate-200 proj-link-team" onclick="openRoster('${nameEsc}', 'projections')" title="View ${name} projections">${name}</td>
       ${gradeCell(g.QB)}${gradeCell(g.RB)}${gradeCell(g.WR)}${gradeCell(g.TE)}${gradeCell(g.OL)}
       ${gradeCell(g.DI)}${gradeCell(g.ED)}${gradeCell(g.LB)}${gradeCell(g.CB)}${gradeCell(g.S)}
-      <td class="text-center px-2 py-2 font-bold text-cyan-400">${g.offense_grade}</td>
-      <td class="text-center px-2 py-2 font-bold text-red-400">${g.defense_grade}</td>
+      <td class="text-center px-2 py-2 font-bold text-cyan-400">${g.total_grade} <span class="text-amber-400 font-normal">(#${g.total_rank})</span></td>
+      <td class="text-center px-2 py-2 font-bold text-emerald-400">${g.offense_grade} <span class="text-slate-400 font-normal">(#${g.offense_rank})</span></td>
+      <td class="text-center px-2 py-2 font-bold text-red-400">${g.defense_grade} <span class="text-emerald-400 font-normal">(#${g.defense_rank})</span></td>
     </tr>`;
   }
   h += '</tbody></table></div>';
@@ -1887,15 +2443,34 @@ function renderUnitGrades(c, data) {
 
 function renderStarters(c, data) {
   if (!data.projected_starters) { c.innerHTML = '<p class="text-slate-500">No starters data</p>'; return; }
+  const posOrder = {
+    'QB': 1, 'RB': 2, 'WR': 3, 'TE': 4,
+    'LT': 5, 'LG': 6, 'C': 7, 'RG': 8, 'RT': 9, 'OL': 10, 'OT': 10, 'G': 10, 'OG': 10,
+    'DI': 11, 'DT': 11, 'NT': 11, 'DL': 11,
+    'ED': 12, 'EDGE': 12, 'DE': 12,
+    'LB': 13, 'ILB': 13, 'OLB': 13, 'MLB': 13,
+    'CB': 14, 'DB': 14,
+    'S': 15, 'FS': 15, 'SS': 15,
+    'PK': 16, 'K': 16, 'P': 17, 'LS': 18
+  };
+
   let h = '';
   for (const [conf, teams] of Object.entries(data.projected_starters)) {
     h += `<div class="mb-4">
       <div class="text-xs font-bold text-cyan-400 uppercase tracking-wider mb-2 division-header px-3 py-1.5 rounded">${conf}</div>`;
     for (const [team, starters] of Object.entries(teams)) {
+      const sortedStarters = [...starters].sort((a, b) => {
+        const pA = posOrder[a.position] || 99;
+        const pB = posOrder[b.position] || 99;
+        if (pA !== pB) return pA - pB;
+        return (Number(a.depth) || 0) - (Number(b.depth) || 0);
+      });
+
+      const teamEsc = team.replace(/'/g, "\\'");
       h += `<div class="mb-3 glass rounded-lg p-3">
-        <div class="text-sm font-bold text-slate-200 mb-2">${team}</div>
+        <div class="text-sm font-bold text-slate-200 mb-2 proj-link-team inline-flex items-center gap-1.5" onclick="openRoster('${teamEsc}', 'projections')" title="Click to view ${team} projections & roster">${team} <span class="text-[10px] text-cyan-400 font-normal">&rarr; View Team</span></div>
         <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2">`;
-      for (const s of starters) {
+      for (const s of sortedStarters) {
         const tier = s.rating >= 9 ? 'text-amber-400' : s.rating >= 7 ? 'text-emerald-400' : s.rating >= 5 ? 'text-slate-300' : 'text-red-400';
         h += `<div class="bg-slate-800/50 rounded-lg px-2 py-1.5 border border-slate-700/50">
           <div class="text-[10px] text-slate-500 font-bold uppercase">${s.position}${s.depth}</div>
@@ -1920,8 +2495,9 @@ function renderCoaching(c, data) {
       <th class="text-left px-3 py-2">DC</th><th class="text-left px-3 py-2">GM</th>
     </tr></thead><tbody>`;
   for (const s of data.coaching_staffs.sort((a,b) => a.team.localeCompare(b.team))) {
+    const teamEsc = s.team.replace(/'/g, "\\'");
     h += `<tr class="border-b border-slate-800/50 hover:bg-slate-800/30">
-      <td class="px-3 py-2 font-semibold text-slate-200">${s.team}</td>
+      <td class="px-3 py-2 font-semibold text-slate-200 proj-link-team" onclick="openRoster('${teamEsc}', 'projections')" title="View ${s.team} projections">${s.team}</td>
       <td class="px-3 py-2 text-slate-300">${s.head_coach}</td>
       <td class="px-3 py-2 text-slate-400">${s.offensive_coord}</td>
       <td class="px-3 py-2 text-slate-400">${s.offensive_playcaller}</td>
@@ -1939,16 +2515,27 @@ function filterProjTable(pos) {
   rows.forEach(r => { r.style.display = r.textContent.toLowerCase().includes(q) ? '' : 'none'; });
 }
 
-let projSortCol = {};
+const projSortState = {};
 function sortProjTable(pos, col) {
   if (!CLAY_DATA) return;
-  const arr = CLAY_DATA.positional_projections[pos] || [];
-  const dir = projSortCol[pos] === col ? -1 : 1;
-  projSortCol[pos] = col;
-  arr.sort((a,b) => {
+  const arr = CLAY_DATA.positional_projections?.[pos] || [];
+  if (!arr.length) return;
+
+  const current = projSortState[pos];
+  let dir = -1;
+  if (current && current.col === col) {
+    dir = current.dir === 1 ? -1 : 1;
+  } else {
+    dir = (col === 'pos_rank' || col === 'name' || col === 'team') ? 1 : -1;
+  }
+  projSortState[pos] = { col, dir };
+
+  arr.sort((a, b) => {
     let va = a[col], vb = b[col];
-    if (typeof va === 'string') return va.localeCompare(vb) * dir;
-    return ((va||0) - (vb||0)) * dir;
+    if (typeof va === 'string' || typeof vb === 'string') {
+      return String(va || '').localeCompare(String(vb || '')) * dir;
+    }
+    return ((Number(va) || 0) - (Number(vb) || 0)) * dir;
   });
   renderProjContent();
 }
