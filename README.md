@@ -1,9 +1,10 @@
 # NFL Dashboard Static App
 
-Standalone static copy of the NFL offseason dashboard that previously lived
-under the Too Much Yap public assets.
+Standalone static dashboard. The Props & Value tab reads the canonical board
+at `~/Library/Application Support/nfldashboard-props/nfldashboard/props-board.json`
+when served from the deployed runtime. Use `fantasyfootball/scripts/install-launchd.sh`
+to deploy this page and every local JSON asset it fetches together.
 
-Open `index.html` directly or deploy this folder to separate static hosting.
-Do not host it under the Too Much Yap app origin. Before sharing publicly,
-verify the Supabase tables it reads are protected with read-only policies that
-expose only the data intended for this dashboard.
+For a standalone source checkout preview, serve the deployed runtime directory
+rather than the Desktop checkout so the page and export always read the same
+live state.
