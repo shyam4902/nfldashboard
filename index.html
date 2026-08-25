@@ -650,7 +650,7 @@ body.theme-analyst .cmd-item.selected {
         <input id="searchBox" type="text" placeholder="Search player, team... (⌘K)" class="search-glow bg-slate-800/80 border border-slate-600 rounded-lg pl-3 pr-10 py-2 text-sm w-full focus:outline-none focus:border-blue-500 transition" oninput="filterDashboard(this.value)">
         <button onclick="openCommandPalette()" class="absolute right-2 top-2 text-[10px] bg-slate-700/80 text-slate-400 px-1.5 py-0.5 rounded font-mono hover:bg-slate-600 transition" title="Open command palette (Cmd+K / Ctrl+K)">⌘K</button>
       </div>
-      <div class="flex gap-1 shrink-0 flex-wrap items-center">
+      <div class="flex gap-1 flex-wrap items-center">
         <button onclick="showTab('home')" class="tab-btn active text-xs px-3 py-2 rounded-lg font-semibold transition" data-tab="home">Home</button>
         <button onclick="showTab('schedule')" class="tab-btn text-xs px-3 py-2 rounded-lg font-semibold bg-slate-800 text-slate-400 hover:bg-slate-700 transition" data-tab="schedule">Schedule</button>
         <button onclick="showTab('feed')" class="tab-btn text-xs px-3 py-2 rounded-lg font-semibold bg-slate-800 text-slate-400 hover:bg-slate-700 transition" data-tab="feed">Transactions</button>
@@ -1607,9 +1607,9 @@ const HOME_FEATURES = [
   { icon:'📅', title:'Schedule', tab:'schedule', accent:'#3b82f6', stat:'Week 1 · Sep 9–14', desc:'All 16 opening-week matchups with live spreads, totals, moneylines and model win probabilities. Click any game for a deeper analysis view.' },
   { icon:'📊', title:'Mike Clay Projections', tab:'projections', accent:'#06b6d4', stat:'12 sub-tabs', desc:'The complete 2026 guide: projected standings, category leaders, projected starters, coaching staffs, unit grades and Clay vs Market deltas.' },
   { icon:'💰', title:'Props & Value', tab:'props', accent:'#10b981', stat:'model edge · EV', desc:'Player props ranked by model edge across six sportsbooks — best lines, alerts and a full value board you can filter by source and side.' },
-  { icon:'🛡️', title:'Teams & Rosters', tab:'teams', accent:'#f59e0b', stat:DATA.teams.length + ' teams', desc:'Depth charts, Madden ratings and division navigation for every team, plus head-to-head player comparison.' },
-  { icon:'⚡', title:'Transactions', tab:'feed', accent:'#ef4444', stat:DATA.transactions.length + ' moves', desc:'Every offseason move since Super Bowl LX — trades, signings and draft pickups, with blockbuster moves flagged.' },
-  { icon:'📋', title:'Draft Tracker', tab:'draft', accent:'#8b5cf6', stat:DATA.draftPicks.length + ' picks', desc:'The 2026 NFL Draft with all 7 rounds of picks and grades, organized by team.' },
+  { icon:'🛡️', title:'Teams & Rosters', tab:'teams', accent:'#f59e0b', stat:() => DATA.teams.length + ' teams', desc:'Depth charts, Madden ratings and division navigation for every team, plus head-to-head player comparison.' },
+  { icon:'⚡', title:'Transactions', tab:'feed', accent:'#ef4444', stat:() => DATA.transactions.length + ' moves', desc:'Every offseason move since Super Bowl LX — trades, signings and draft pickups, with blockbuster moves flagged.' },
+  { icon:'📋', title:'Draft Tracker', tab:'draft', accent:'#8b5cf6', stat:() => DATA.draftPicks.length + ' picks', desc:'The 2026 NFL Draft with all 7 rounds of picks and grades, organized by team.' },
 ];
 
 const HOME_TOOLS = [
@@ -1622,7 +1622,7 @@ const HOME_TOOLS = [
 function homeShowcaseHtml(){
   const feats = HOME_FEATURES.map(f => `
     <div class="feature-card glass rounded-xl p-4 cursor-pointer" style="border-top:3px solid ${f.accent}" onclick="showTab('${f.tab}')" title="Open ${f.title}">
-      <div class="flex items-start justify-between gap-2"><div class="text-2xl">${f.icon}</div><span class="text-[9px] font-bold text-slate-400 uppercase tracking-wider bg-slate-800/60 border border-slate-700/50 rounded px-1.5 py-0.5">${f.stat}</span></div>
+      <div class="flex items-start justify-between gap-2"><div class="text-2xl">${f.icon}</div><span class="text-[9px] font-bold text-slate-400 uppercase tracking-wider bg-slate-800/60 border border-slate-700/50 rounded px-1.5 py-0.5">${typeof f.stat === 'function' ? f.stat() : f.stat}</span></div>
       <div class="text-sm font-bold text-white mt-2">${f.title} <span class="text-blue-400">→</span></div>
       <div class="text-[11px] text-slate-400 mt-1 leading-relaxed">${f.desc}</div>
     </div>`).join('');

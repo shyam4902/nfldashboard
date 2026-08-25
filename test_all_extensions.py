@@ -74,6 +74,21 @@ with sync_playwright() as p:
         failures.append("Feature card navigation broken")
     page.click('[data-tab="home"]')
     page.wait_for_timeout(400)
+    # Regression: dynamic feature-card stats must reflect loaded data (not 0)
+    feat_text = page.locator("#tab-home").inner_text()
+    if "0 TEAMS" in feat_text.upper() or "0 MOVES" in feat_text.upper() or "0 PICKS" in feat_text.upper():
+        failures.append("Feature-card stats baked at parse time (showing zeros)")
+    else:
+        successes.append("Feature-card stats reflect loaded data (no zero stubs)")
+    # Regression: no horizontal overflow at mobile width
+    page.set_viewport_size({"width": 390, "height": 844})
+    page.wait_for_timeout(400)
+    overflow = page.evaluate("document.documentElement.scrollWidth - document.documentElement.clientWidth")
+    if overflow > 0:
+        failures.append(f"Horizontal overflow at mobile viewport: {overflow}px")
+    else:
+        successes.append("No horizontal overflow at mobile viewport")
+    page.set_viewport_size({"width": 1600, "height": 950})
 
     # 1. Test All 5 Themes
     print("Testing Distinct Themes...")
