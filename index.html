@@ -3326,14 +3326,16 @@ function closeMatchupModal(){
   if (ov) ov.classList.remove('active');
 }
 
-function marketBlock(m){
+function marketBlock(m, awayName, homeName){
   const e = (s) => String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const awayAbbr = teamAbbrFor(awayName) || awayName;
+  const homeAbbr = teamAbbrFor(homeName) || homeName;
   if (!m) return '<div class="mt-3 border-t border-slate-700/50 pt-3"><div class="text-[10px] uppercase tracking-wider text-slate-500 font-bold mb-2">Game Lines <span class="normal-case font-normal text-slate-600">— none yet</span></div></div>';
   const cell = (label, val) =>
     '<div class="rounded-lg bg-slate-800/60 border border-slate-700/50 px-3 py-2 text-center"><div class="text-[9px] text-slate-500 uppercase tracking-wider">' + label + '</div><div class="text-sm font-bold text-slate-100">' + (val === null || val === undefined ? '<span class="text-slate-600">—</span>' : e(val)) + '</div></div>';
   const spread = m.spread === null ? null : ((m.spread > 0 ? '+' : '') + m.spread);
   const ml = (m.away_ml === null && m.home_ml === null) ? null :
-    'A ' + (m.away_ml === null ? '—' : m.away_ml) + '  ·  H ' + (m.home_ml === null ? '—' : m.home_ml);
+    e(awayAbbr) + ' ' + (m.away_ml === null ? '—' : m.away_ml) + '  ·  ' + e(homeAbbr) + ' ' + (m.home_ml === null ? '—' : m.home_ml);
   return '<div class="mt-3 border-t border-slate-700/50 pt-3"><div class="text-[10px] uppercase tracking-wider text-slate-500 font-bold mb-2">Game Lines <span class="normal-case font-normal text-slate-600">(nflverse)</span></div>' +
     '<div class="grid grid-cols-3 gap-2">' + cell('Spread', spread) + cell('Total', m.total) + cell('Moneyline', ml) + '</div></div>';
 }
@@ -3374,7 +3376,7 @@ function openMatchup(gameId){
     '<div class="text-xs text-slate-500">' + esc(game.venue || '') + ' · ' + (game.tv ? esc(game.tv) : 'TV TBD') + '</div></div>' +
     row(game.away_team, 'Away', awayStr, prob === null ? null : 1 - prob, homeStr) +
     row(game.home_team, 'Home', homeStr, prob, awayStr) +
-    marketBlock(game.market) +
+    marketBlock(game.market, game.away_team, game.home_team) +
     '<div class="border-t border-slate-700/50 pt-3"><div class="text-[10px] uppercase tracking-wider text-slate-500 font-bold mb-2">Model Win Probability</div>' +
     '<div class="flex text-center"><div class="w-1/2 text-xl font-black" style="color:' + (DATA.teamColors[game.home_team]||'#60a5fa') +'">' + (prob === null ? '—' : (prob*100).toFixed(1) + '%') + '</div>' +
     '<div class="w-1/2 text-xl font-black" style="color:' + (DATA.teamColors[game.away_team]||'#60a5fa') +'">' + (prob === null ? '—' : ((1-prob)*100).toFixed(1) + '%') + '</div></div>' +
