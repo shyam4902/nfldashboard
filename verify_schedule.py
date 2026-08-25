@@ -80,10 +80,13 @@ with sync_playwright() as p:
                 break
         page.wait_for_timeout(400)
     grid_low = page.inner_text("#scheduleGrid").lower()
-    if ok_market and "spread" in grid_low and "total" in grid_low and "moneyline" in grid_low and any(c.isdigit() for c in grid_low):
-        successes.append("Cards show real Spread / Total / Moneyline values")
+    opener = page.locator(".sch-card").first.inner_text()
+    # moneyline moved to each team row (e.g. +150 / -180); percentages live in the Win Prob cell
+    ml_on_team_rows = ("+150" in opener and "-180" in opener)
+    if ok_market and "spread" in grid_low and "total" in grid_low and "win prob" in grid_low and ml_on_team_rows and any(c.isdigit() for c in grid_low):
+        successes.append("Cards show Spread/Total/Win Prob in the line row and each team's moneyline on its row")
     else:
-        failures.append("Market line row missing or empty (spread/total/moneyline)")
+        failures.append("Card market layout wrong (expected Spread/Total/Win Prob row + per-team moneyline)")
 
     # 6. Command palette includes schedule
     page.keyboard.press("Meta+k")
