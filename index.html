@@ -619,6 +619,11 @@ body.theme-analyst .cmd-item.selected {
   font-size: 11px;
 }
 .sch-badge { font-size: 9px; font-weight: 800; color: #f59e0b; background: rgba(245,158,11,0.15); padding: 1px 6px; border-radius: 4px; letter-spacing: 0.4px; }
+/* Modal model win probability numbers — bright with a glow for contrast on dark bg */
+#matchupModal .mp-num {
+  text-shadow: 0 0 16px rgba(125, 211, 252, 0.5), 0 0 3px rgba(255, 255, 255, 0.45);
+  letter-spacing: 0.5px;
+}
 @media (max-width: 640px) {
   .sch-lines { grid-template-columns: repeat(3, 1fr); }
 }
@@ -3331,15 +3336,16 @@ function closeMatchupModal(){
 function marketBlock(m, awayName, homeName){
   const e = (s) => String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
   const awayAbbr = teamAbbrFor(awayName) || awayName;
-  const homeAbbr = teamAbbrFor(homeName) || homeName;
   if (!m) return '<div class="mt-3 border-t border-slate-700/50 pt-3"><div class="text-[10px] uppercase tracking-wider text-slate-500 font-bold mb-2">Game Lines <span class="normal-case font-normal text-slate-600">— none yet</span></div></div>';
   const cell = (label, val) =>
     '<div class="rounded-lg bg-slate-800/60 border border-slate-700/50 px-3 py-2 text-center"><div class="text-[9px] text-slate-500 uppercase tracking-wider">' + label + '</div><div class="text-sm font-bold text-slate-100">' + (val === null || val === undefined ? '<span class="text-slate-600">—</span>' : e(val)) + '</div></div>';
-  const spread = m.spread === null ? null : ((m.spread > 0 ? '+' : '') + m.spread);
-  const ml = (m.away_ml === null && m.home_ml === null) ? null :
-    e(awayAbbr) + ' ' + (m.away_ml === null ? '—' : m.away_ml) + '  ·  ' + e(homeAbbr) + ' ' + (m.home_ml === null ? '—' : m.home_ml);
+  // Spread keeps its displayed number and gains the team it belongs to in parens.
+  // nflverse's spread_line as displayed is the away team's spread (e.g. NE +3.5).
+  const spreadNum = m.spread === null ? null : ((m.spread > 0 ? '+' : '') + m.spread);
+  const spread = spreadNum === null ? null
+    : (m.spread === 0 ? 'PK' : '(' + e(awayAbbr) + ') ' + spreadNum);
   return '<div class="mt-3 border-t border-slate-700/50 pt-3"><div class="text-[10px] uppercase tracking-wider text-slate-500 font-bold mb-2">Game Lines <span class="normal-case font-normal text-slate-600">(nflverse)</span></div>' +
-    '<div class="grid grid-cols-3 gap-2">' + cell('Spread', spread) + cell('Total', m.total) + cell('Moneyline', ml) + '</div></div>';
+    '<div class="grid grid-cols-2 gap-2">' + cell('Spread', spread) + cell('Total', m.total) + '</div></div>';
 }
 
 function openMatchup(gameId){
@@ -3379,9 +3385,9 @@ function openMatchup(gameId){
     row(game.away_team, 'Away', awayStr, prob === null ? null : 1 - prob, homeStr) +
     row(game.home_team, 'Home', homeStr, prob, awayStr) +
     marketBlock(game.market, game.away_team, game.home_team) +
-    '<div class="border-t border-slate-700/50 pt-3"><div class="text-[10px] uppercase tracking-wider text-slate-500 font-bold mb-2">Model Win Probability</div>' +
-    '<div class="flex text-center"><div class="w-1/2 text-xl font-black" style="color:' + (DATA.teamColors[game.home_team]||'#60a5fa') +'">' + (prob === null ? '—' : (prob*100).toFixed(1) + '%') + '</div>' +
-    '<div class="w-1/2 text-xl font-black" style="color:' + (DATA.teamColors[game.away_team]||'#60a5fa') +'">' + (prob === null ? '—' : ((1-prob)*100).toFixed(1) + '%') + '</div></div>' +
+    '<div class="border-t border-slate-700/50 pt-3"><div class="text-[10px] uppercase tracking-wider text-slate-400 font-bold mb-2">Model Win Probability</div>' +
+    '<div class="flex text-center"><div class="w-1/2 text-2xl font-black mp-num" style="color:' + (DATA.teamColors[game.home_team]||'#7dd3fc') +'">' + (prob === null ? '—' : (prob*100).toFixed(1) + '%') + '</div>' +
+    '<div class="w-1/2 text-2xl font-black mp-num" style="color:' + (DATA.teamColors[game.away_team]||'#7dd3fc') +'">' + (prob === null ? '—' : ((1-prob)*100).toFixed(1) + '%') + '</div></div>' +
     '<div class="flex text-[10px] text-slate-500 mt-1"><div class="w-1/2 text-left">' + esc(game.home_team) + '</div><div class="w-1/2 text-right">' + esc(game.away_team) + '</div></div>' +
     '<p class="text-[10px] text-slate-600 mt-2">Percentages are derived from the dashboard\'s Madden-based power ratings via a log5 model with home-field edge. Spread/total/moneyline are live market lines (source: nflverse).</p></div>' +
     '<div class="grid grid-cols-2 gap-2 mt-4">' +

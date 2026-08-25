@@ -59,13 +59,12 @@ with sync_playwright() as p:
     page.locator(".sch-card").first.click()
     page.wait_for_selector("#matchupModal.active", timeout=5000)
     modal_low = page.inner_text("#matchupModal").lower()
-    # moneyline must render cleanly — a prior regression escaped &nbsp; into literal text
-    ml_bad = ("&nbsp;" in modal_low)
-    ml_ok = ("moneyline" in modal_low) and not ml_bad
-    if "win probability" in modal_low and "view roster" in modal_low and "week 1 matchup" in modal_low and ml_ok:
-        successes.append("Matchup detail modal shows Week 1 label, win probability, clean game lines (incl. moneyline), roster actions")
+    # Game Lines box keeps Spread (with team in parens, e.g. (NE) +3.5) + Total, no moneyline cell
+    gl_ok = ("(ne) +3.5" in modal_low) and ("&nbsp;" not in modal_low)
+    if "win probability" in modal_low and "view roster" in modal_low and "week 1 matchup" in modal_low and gl_ok:
+        successes.append("Matchup detail modal shows Week 1 label, win probability, Spread(team)+Total lines, roster actions")
     else:
-        failures.append("Matchup detail modal incomplete or moneyline malformed (&nbsp;)")
+        failures.append("Matchup detail modal incomplete or Game Lines box wrong (expected Spread with (team) + Total)")
     page.screenshot(path="screenshots_expansion/11_schedule_week1.png")
     page.locator("#matchupModal .roster-close").click()
 
