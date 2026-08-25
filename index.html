@@ -3285,9 +3285,10 @@ async function renderSchedule(){
   const lineRow = (game) => {
     const m = game.market;
     if (!m) return '<div class="sch-lines">' + schLine('Spread','',null) + schLine('Total','',null) + schLine('Moneyline','',null) + '</div>';
-    // spread is from home-team perspective; show it on the home side
+    const aAbbr = teamAbbrFor(game.away_team) || game.away_team;
+    const hAbbr = teamAbbrFor(game.home_team) || game.home_team;
     const ml = (m.away_ml !== null || m.home_ml !== null)
-      ? ((m.away_ml !== null ? 'A ' + m.away_ml : '') + (m.away_ml !== null && m.home_ml !== null ? ' · ' : '') + (m.home_ml !== null ? 'H ' + m.home_ml : '')).trim()
+      ? ((m.away_ml !== null ? aAbbr + ' ' + m.away_ml : '') + (m.away_ml !== null && m.home_ml !== null ? ' · ' : '') + (m.home_ml !== null ? hAbbr + ' ' + m.home_ml : '')).trim()
       : null;
     return '<div class="sch-lines">' +
       schLine('Spread', m.spread, v => (v > 0 ? '+' : '') + v) +
