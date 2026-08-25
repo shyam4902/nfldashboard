@@ -46,6 +46,35 @@ with sync_playwright() as p:
     page.screenshot(path=f"{SCREENSHOT_DIR}/01_home_default.png")
     successes.append("Home page loaded")
 
+    # 0. Test the new Home showcase page (hero, feature grid, live spotlights)
+    print("Testing Home showcase...")
+    home_text = page.inner_text("#tab-home")
+    if "League Command Center" in home_text and "What's Inside" in home_text:
+        successes.append("Home hero + showcase section rendered")
+    else:
+        failures.append("Home hero/showcase missing")
+    feat_cards = page.locator(".feature-card").count()
+    if feat_cards >= 10:
+        successes.append(f"Feature grid rendered with {feat_cards} clickable cards")
+    else:
+        failures.append(f"Feature grid incomplete: {feat_cards} cards")
+    page.wait_for_timeout(1500)
+    spots = page.inner_text("#homeSpotlights")
+    for sec in ["2026 Projected Power", "Week 1 Marquee", "Top Value Plays", "Biggest Offseason Moves"]:
+        if sec in spots:
+            successes.append(f"Home spotlight '{sec}' rendered")
+        else:
+            failures.append(f"Home spotlight '{sec}' missing")
+    # Feature card navigation: click a card and verify it switches tabs
+    page.locator(".feature-card", has_text="Mike Clay Projections").click()
+    page.wait_for_timeout(500)
+    if page.locator("#tab-projections").is_visible():
+        successes.append("Feature card navigates to its tab")
+    else:
+        failures.append("Feature card navigation broken")
+    page.click('[data-tab="home"]')
+    page.wait_for_timeout(400)
+
     # 1. Test All 5 Themes
     print("Testing Distinct Themes...")
     for theme in ['stadium', 'espn', 'retro', 'analyst', 'default']:
