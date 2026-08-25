@@ -494,6 +494,135 @@ body.theme-analyst .cmd-item.selected {
   background: rgba(59, 130, 246, 0.15);
 }
 
+/* ── Schedule matchup cards ── */
+.sch-card {
+  background: rgba(15, 23, 42, 0.8);
+  border: 1px solid rgba(71, 85, 105, 0.35);
+  border-radius: 12px;
+  padding: 14px 16px;
+  cursor: pointer;
+  transition: transform 0.15s, border-color 0.2s, box-shadow 0.2s;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.sch-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(59, 130, 246, 0.6);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+}
+.sch-card:focus-visible {
+  outline: 2px solid rgba(59, 130, 246, 0.7);
+  outline-offset: 2px;
+}
+.sch-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 11px;
+  color: #94a3b8;
+  border-bottom: 1px solid rgba(71, 85, 105, 0.25);
+  padding-bottom: 8px;
+}
+.sch-head strong {
+  color: #60a5fa;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+.sch-team {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.sch-team .sch-abbr {
+  width: 42px;
+  height: 34px;
+  flex-shrink: 0;
+  border-radius: 8px;
+  background: rgba(30, 41, 59, 0.8);
+  border: 1px solid rgba(71, 85, 105, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 800;
+  color: #e2e8f0;
+}
+.sch-team .sch-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+.sch-team .sch-info .sch-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: #e2e8f0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.sch-team .sch-info small {
+  font-size: 10px;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+.sch-team .sch-prob {
+  font-size: 13px;
+  font-weight: 800;
+  color: #6ee7b7;
+  flex-shrink: 0;
+}
+.sch-team .sch-prob .muted {
+  color: #475569;
+  font-weight: 600;
+}
+.sch-lines {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+}
+.sch-line {
+  background: rgba(30, 41, 59, 0.5);
+  border: 1px solid rgba(71, 85, 105, 0.25);
+  border-radius: 8px;
+  padding: 5px 6px;
+  text-align: center;
+}
+.sch-line span {
+  display: block;
+  font-size: 9px;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.sch-line b {
+  font-size: 12px;
+  color: #e2e8f0;
+}
+.sch-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 10px;
+  color: #64748b;
+  border-top: 1px solid rgba(71, 85, 105, 0.25);
+  padding-top: 8px;
+}
+.sch-foot .sch-cta {
+  color: #60a5fa;
+  font-weight: 700;
+  font-size: 11px;
+}
+.sch-badge { font-size: 9px; font-weight: 800; color: #f59e0b; background: rgba(245,158,11,0.15); padding: 1px 6px; border-radius: 4px; letter-spacing: 0.4px; }
+@media (max-width: 640px) {
+  .sch-lines { grid-template-columns: repeat(3, 1fr); }
+}
+
 </style>
 </head>
 <body class="min-h-screen">
@@ -515,6 +644,7 @@ body.theme-analyst .cmd-item.selected {
       </div>
       <div class="flex gap-1 shrink-0 flex-wrap items-center">
         <button onclick="showTab('home')" class="tab-btn active text-xs px-3 py-2 rounded-lg font-semibold transition" data-tab="home">Home</button>
+        <button onclick="showTab('schedule')" class="tab-btn text-xs px-3 py-2 rounded-lg font-semibold bg-slate-800 text-slate-400 hover:bg-slate-700 transition" data-tab="schedule">Schedule</button>
         <button onclick="showTab('feed')" class="tab-btn text-xs px-3 py-2 rounded-lg font-semibold bg-slate-800 text-slate-400 hover:bg-slate-700 transition" data-tab="feed">Transactions</button>
         <button onclick="showTab('teams')" class="tab-btn text-xs px-3 py-2 rounded-lg font-semibold bg-slate-800 text-slate-400 hover:bg-slate-700 transition" data-tab="teams">Teams</button>
         <button onclick="showTab('draft')" class="tab-btn text-xs px-3 py-2 rounded-lg font-semibold bg-slate-800 text-slate-400 hover:bg-slate-700 transition" data-tab="draft">Draft</button>
@@ -618,6 +748,17 @@ body.theme-analyst .cmd-item.selected {
     <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
       <div id="capStrip" class="glass rounded-xl p-3"></div>
       <div id="miniFeed" class="glass rounded-xl p-3"></div>
+    </div>
+  </div>
+  <div id="tab-schedule" class="hidden">
+    <h2 class="text-xl font-bold mb-1 flex items-center gap-2">
+      <svg class="w-5 h-5 text-blue-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/></svg>
+      Week 1 Matchups
+      <span class="text-xs text-slate-500 font-normal ml-1">2026 Regular Season · Click a matchup for analysis</span>
+    </h2>
+    <p class="text-xs text-slate-500 mb-4">Scan the opening-week slate. Model win probability is derived from this dashboard's Madden-based power ratings; odds fields surface where data is available.</p>
+    <div id="scheduleGrid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+      <p class="text-xs text-slate-500">Loading schedule…</p>
     </div>
   </div>
   <div id="tab-feed" class="hidden">
@@ -2407,6 +2548,9 @@ function showTab(tab){
   if (tab === 'props') {
     renderPropsBoard();
   }
+  if (tab === 'schedule') {
+    loadSchedule().then(renderSchedule);
+  }
 }
 
 function filterDashboard(q){
@@ -2972,6 +3116,157 @@ function sortProjTable(pos, col) {
 // PROPS BOARD LOADER & RENDERING
 // ═══════════════════════════════════════════════════════════
 let PROPS_BOARD = null;
+
+// ═══════════════════════════════════════════════════════════
+// SCHEDULE TAB
+// ═══════════════════════════════════════════════════════════
+let SCHEDULE_DATA = null;
+
+async function loadSchedule(){
+  if (SCHEDULE_DATA) return SCHEDULE_DATA;
+  try {
+    const res = await fetch('./schedule.json', { cache: 'no-store' });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    SCHEDULE_DATA = await res.json();
+  } catch (err) {
+    const el = document.getElementById('scheduleGrid');
+    if (el) el.innerHTML = '<p class="text-xs text-red-400">Could not load schedule data: ' + err.message + '</p>';
+    SCHEDULE_DATA = { games: [] };
+  }
+  return SCHEDULE_DATA;
+}
+
+// Derive an 0-100 overall strength per team from this dashboard's own
+// Madden-based unit ratings (the macros already computed into DATA.rankings).
+function computeTeamOverall(teamName){
+  const r = DATA.rankings?.[teamName];
+  if (!r) return null;
+  const parts = ['Pass Off','Run Off','Pass Def','Run Def','Pass Rush','Coverage']
+    .map(k => (r[k] && typeof r[k].rating === 'number') ? r[k].rating : null)
+    .filter(v => v !== null);
+  if (!parts.length) return null;
+  // offense = weighted pass/run split, defense likewise, then 50/50 team blend
+  const off = weighted([r['Pass Off'], r['Run Off']], [0.6, 0.4]);
+  const def = weighted([r['Pass Def'], r['Run Def']], [0.55, 0.45]);
+  return off === null && def === null ? null : Math.round(((off ?? 50) + (def ?? 50)) / 2);
+  function weighted(vals, ws){
+    let t = 0, c = 0;
+    for (let i = 0; i < vals.length; i++) if (typeof vals[i]?.rating === 'number') { t += vals[i].rating * ws[i]; c += ws[i]; }
+    return c ? t / c : null;
+  }
+}
+
+// Log5-style model win probability from two team strengths (0-100).
+function winProb(homeStr, awayStr){
+  if (homeStr === null || awayStr === null || homeStr === undefined || awayStr === undefined) return null;
+  const diff = (homeStr - awayStr) / 100;   // strength advantage, in prob units
+  const home = 0.5 + diff * 0.5 + 0.025;    // +2.5pt home-field edge
+  return Math.min(0.97, Math.max(0.03, home));
+}
+
+function scheduleTeamG(teamName, homeStr, awayStr, role){
+  const prob = winProb(homeStr, awayStr);
+  const shown = role === 'home' ? prob : (prob === null ? null : 1 - prob);
+  const abbr = DATA.teamAbbr[teamName] || ABBR_TO_TEAM[teamName] || teamName;
+  const esc = (s) => String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  return '<div class="sch-team"><div class="sch-abbr" style="background:' + (DATA.teamColors[teamName] || '#1e293b') + '22;border-color:' + (DATA.teamColors[teamName] || '#3b4261') + '">' + esc(abbr) + '</div>' +
+    '<div class="sch-info"><span class="sch-name">' + esc(teamName) + '</span><small>' + role + '</small></div>' +
+    '<div class="sch-prob">' + (shown === null ? '<span class="muted">—</span>' : (shown * 100).toFixed(1) + '%') + '</div></div>';
+}
+
+function renderSchedule(){
+  const c = document.getElementById('scheduleGrid');
+  if (!c) return;
+  const data = SCHEDULE_DATA;
+  if (!data || !data.games || !data.games.length) {
+    c.innerHTML = '<p class="text-xs text-slate-500">No schedule data.</p>';
+    return;
+  }
+  const esc = (s) => String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const fmt = (game) => {
+    const d = new Date(game.kickoff_utc);
+    return isNaN(d.getTime()) ? 'Kickoff TBD' : d.toLocaleString([], { weekday:'short', month:'short', day:'numeric', hour:'numeric', minute:'2-digit' });
+  };
+  const sorted = data.games.slice().sort((a,b)=>String(a.kickoff_utc||'').localeCompare(String(b.kickoff_utc||'')));
+  c.innerHTML = sorted.map(game => {
+    const homeStr = computeTeamOverall(game.home_team);
+    const awayStr = computeTeamOverall(game.away_team);
+    const homeAbbr = DATA.teamAbbr[game.home_team] || ABBR_TO_TEAM[game.home_team] || game.home_team;
+    const awayAbbr = DATA.teamAbbr[game.away_team] || ABBR_TO_TEAM[game.away_team] || game.away_team;
+    const tv = game.tv ? '<strong class="sch-badge">' + esc(game.tv) + '</strong>' : '';
+    return '<article class="sch-card" tabindex="0" role="button" ' +
+      'aria-label="View analysis for ' + esc(game.away_team) + ' at ' + esc(game.home_team) + '" ' +
+      'data-game="' + esc(game.game_id) + '">' +
+      '<div class="sch-head"><span>' + esc(fmt(game)) + '</span> ' + tv + '</div>' +
+      scheduleTeamG(game.away_team, homeStr, awayStr, 'Away') +
+      scheduleTeamG(game.home_team, homeStr, awayStr, 'Home') +
+      '<div class="sch-lines">' +
+        '<div class="sch-line"><span>Model Edge</span><b>' + (homeStr !== null && awayStr !== null ? esc(((homeStr - awayStr) >= 0 ? '+' : '') + (homeStr - awayStr).toFixed(1)) : '—') + '</b></div>' +
+        '<div class="sch-line"><span>Home Rating</span><b>' + (homeStr === null ? '—' : esc(String(homeStr))) + '</b></div>' +
+        '<div class="sch-line"><span>Away Rating</span><b>' + (awayStr === null ? '—' : esc(String(awayStr))) + '</b></div>' +
+      '</div>' +
+      '<div class="sch-foot"><span>' + esc(game.venue || '') + '</span><span class="sch-cta">View matchup →</span></div>' +
+      '</article>';
+  }).join('');
+  c.querySelectorAll('.sch-card').forEach(card => {
+    const open = () => openMatchup(card.getAttribute('data-game'));
+    card.addEventListener('click', open);
+    card.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); } });
+  });
+}
+
+function closeMatchupModal(){
+  const ov = document.getElementById('matchupModal');
+  if (ov) ov.classList.remove('active');
+}
+
+function openMatchup(gameId){
+  if (!SCHEDULE_DATA) return;
+  const game = SCHEDULE_DATA.games.find(g => g.game_id === gameId);
+  if (!game) return;
+  let ov = document.getElementById('matchupModal');
+  if (!ov) {
+    ov = document.createElement('div');
+    ov.id = 'matchupModal';
+    ov.className = 'roster-modal-overlay';
+    ov.innerHTML = '<div class="roster-modal" style="max-width:640px">' +
+      '<button class="roster-close" onclick="closeMatchupModal()">&times;</button>' +
+      '<div id="matchupBody" class="roster-modal-content"></div></div>';
+    ov.addEventListener('click', e => { if (e.target === ov) closeMatchupModal(); });
+    document.body.appendChild(ov);
+  }
+  const homeStr = computeTeamOverall(game.home_team);
+  const awayStr = computeTeamOverall(game.away_team);
+  const prob = winProb(homeStr, awayStr);
+  const esc = (s) => String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const d = new Date(game.kickoff_utc);
+  const when = isNaN(d.getTime()) ? 'Kickoff TBD' : d.toLocaleString([], { weekday:'long', month:'long', day:'numeric', hour:'numeric', minute:'2-digit' });
+  const row = (name, role, str, probVal, otherStr) => {
+    const abbr = DATA.teamAbbr[name] || ABBR_TO_TEAM[name] || name;
+    const pct = probVal === null ? '—' : (probVal * 100).toFixed(1) + '%';
+    const color = DATA.teamColors[name] || '#3b4261';
+    return '<div class="sch-team" style="margin-bottom:14px">' +
+      '<div class="sch-abbr" style="background:' + color + '22;border-color:' + color +'">' + esc(abbr) + '</div>' +
+      '<div class="sch-info"><span class="sch-name" style="font-size:15px">' + esc(name) + '</span><small>' + role + '</small></div>' +
+      '<div class="sch-prob">' + pct + '</div></div>';
+  };
+  document.getElementById('matchupBody').innerHTML =
+    '<div class="text-center mb-4"><div class="text-[10px] text-slate-500 uppercase tracking-wider mb-1">Week ' + (SCHEDULE_DATA.week || 1) + ' Matchup</div>' +
+    '<div class="text-lg font-black text-white">' + esc(when) + '</div>' +
+    '<div class="text-xs text-slate-500">' + esc(game.venue || '') + ' · ' + (game.tv ? esc(game.tv) : 'TV TBD') + '</div></div>' +
+    row(game.away_team, 'Away', awayStr, prob === null ? null : 1 - prob, homeStr) +
+    row(game.home_team, 'Home', homeStr, prob, awayStr) +
+    '<div class="border-t border-slate-700/50 pt-3"><div class="text-[10px] uppercase tracking-wider text-slate-500 font-bold mb-2">Model Win Probability</div>' +
+    '<div class="flex text-center"><div class="w-1/2 text-xl font-black" style="color:' + (DATA.teamColors[game.home_team]||'#60a5fa') +'">' + (prob === null ? '—' : (prob*100).toFixed(1) + '%') + '</div>' +
+    '<div class="w-1/2 text-xl font-black" style="color:' + (DATA.teamColors[game.away_team]||'#60a5fa') +'">' + (prob === null ? '—' : ((1-prob)*100).toFixed(1) + '%') + '</div></div>' +
+    '<div class="flex text-[10px] text-slate-500 mt-1"><div class="w-1/2 text-left">' + esc(game.home_team) + '</div><div class="w-1/2 text-right">' + esc(game.away_team) + '</div></div>' +
+    '<p class="text-[10px] text-slate-600 mt-2">Derived from this dashboard\'s Madden-based power ratings via a log5 model with home-field edge.</p></div>' +
+    '<div class="grid grid-cols-2 gap-2 mt-4">' +
+    '<button class="text-xs font-bold px-3 py-2 rounded-lg border border-slate-600 bg-slate-800 text-slate-300 hover:bg-slate-700 transition" onclick="openRoster(\'' + esc(game.away_team).replace(/'/g,"\\'") + '\');closeMatchupModal()">' + esc(DATA.teamAbbr[game.away_team]||ABBR_TO_TEAM[game.away_team]||game.away_team) + ' — View Roster</button>' +
+    '<button class="text-xs font-bold px-3 py-2 rounded-lg border border-slate-600 bg-slate-800 text-slate-300 hover:bg-slate-700 transition" onclick="openRoster(\'' + esc(game.home_team).replace(/'/g,"\\'") + '\');closeMatchupModal()">' + esc(DATA.teamAbbr[game.home_team]||ABBR_TO_TEAM[game.home_team]||game.home_team) + ' — View Roster</button>' +
+    '</div>';
+  ov.classList.add('active');
+}
 
 async function loadPropsBoard(){
   if (PROPS_BOARD) return PROPS_BOARD;
@@ -3857,6 +4152,7 @@ function handleCommandSearch(q) {
 
   const tabs = [
     { label: 'Home Dashboard', type: 'Tab', icon: '🏠', action: () => { showTab('home'); closeCommandPalette(); } },
+    { label: 'Week 1 Schedule', type: 'Tab', icon: '📅', action: () => { showTab('schedule'); closeCommandPalette(); } },
     { label: 'Transactions Feed', type: 'Tab', icon: '⚡', action: () => { showTab('feed'); closeCommandPalette(); } },
     { label: 'Teams & Rosters', type: 'Tab', icon: '🛡', action: () => { showTab('teams'); closeCommandPalette(); } },
     { label: '2026 Draft Tracker', type: 'Tab', icon: '📋', action: () => { showTab('draft'); closeCommandPalette(); } },
