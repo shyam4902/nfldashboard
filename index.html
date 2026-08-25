@@ -3136,6 +3136,103 @@ async function loadSchedule(){
   return SCHEDULE_DATA;
 }
 
+// ── Live game lines (spread / total / moneyline) from nflverse's public
+//    games.csv — the same free, keyless source the analytics server used.
+const NFLVERSE_GAMES_URL = 'https://raw.githubusercontent.com/nflverse/nfldata/master/data/games.csv';
+let MARKET_LINES = null;                 // map 'AWY|HOM' -> {spread,total,away_ml,home_ml}
+let MARKET_LINES_ERR = null;
+
+function csvParse(text){
+  const out = [];
+  const lines = String(text || '').split(/\r?\n/).filter(l => l.trim());
+  if (lines.length < 2) return out;
+  const split = (line) => {
+    const vals = []; let cur = ''; let inQ = false;
+    for (let i = 0; i < line.length; i++){
+      const ch = line[i];
+      if (ch === '"'){ if (inQ && line[i+1] === '"'){ cur += '"'; i++; } else inQ = !inQ; }
+      else if (ch === ',' && !inQ){ vals.push(cur.trim()); cur = ''; }
+      else cur += ch;
+    }
+    vals.push(cur.trim());
+    return vals;
+  };
+  const headers = split(lines[0]);
+  for (let i = 1; i < lines.length; i++){
+    const v = split(lines[i]);
+    const row = {};
+    headers.forEach((h, idx) => row[h] = v[idx] !== undefined ? v[idx] : '');
+    out.push(row);
+  }
+  return out;
+}
+
+function num(v){ return (v === '' || v === undefined || v === null || Number.isNaN(Number(v))) ? null : Number(v); }
+
+async function loadGameLines(){
+  if (MARKET_LINES) return MARKET_LINES;
+  if (MARKET_LINES_ERR) return {};
+  try {
+    const res = await fetch(NFLVERSE_GAMES_URL, { signal: AbortSignal.timeout(20000) });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const text = await res.text();
+    const map = {};
+    for (const r of csvParse(text)){
+      if (String(r.season) !== '2026' || String(r.week) !== '1' || String(r.game_type) !== 'REG') continue;
+      if (!r.away_team || !r.home_team) continue;
+      map[(r.away_team + '|' + r.home_team).toUpperCase()] = {
+        spread: num(r.spread_line),          // from the home team's perspective
+        total: num(r.total_line),
+        away_ml: num(r.away_moneyline),
+        home_ml: num(r.home_moneyline),
+        source: 'nflverse'
+      };
+    }
+    MARKET_LINES = map;
+  } catch (err) {
+    MARKET_LINES_ERR = err.message;
+    MARKET_LINES = {};
+  }
+  return MARKET_LINES || {};
+}
+
+// Resolve real market lines for a game (matched by team abbreviation pair).
+// Abbreviation resolves from the loaded team table first, then from the
+// built-in ABBR_TO_TEAM map (so lines still render even before Supabase rows load).
+let TEAM_TO_ABBR = null;
+// Canonical nflverse game.csv abbreviations; maps the app's alternate spellings
+// (e.g. ARZ/ARI, LAR/LA, JAC/JAX, KAN/KC, GNB/GB, NWE/NE, TAM/TB, WSH/WAS, SFO/SF, LVR/LV)
+// onto the single form that nflverse uses so market lookups always match.
+const CANON_ABBR = { ARZ:'ARI', ARI:'ARI', ARIZ:'ARI',
+  LAR:'LA', LVR:'LV', KAN:'KC', GNB:'GB', NWE:'NE', NOS:'NO',
+  TAM:'TB', WSH:'WAS', SFO:'SF', JAC:'JAX', OAK:'LV', SD:'LAC', STL:'LA' };
+function canonicalAbbr(abbr){
+  const up = String(abbr || '').toUpperCase();
+  if (up === 'LA') return 'LA';
+  return CANON_ABBR[up] || up;
+}
+function teamAbbrFor(name){
+  const fromData = DATA.teamAbbr?.[name];
+  if (fromData) return canonicalAbbr(fromData);
+  if (!TEAM_TO_ABBR){
+    TEAM_TO_ABBR = {};
+    for (const [abbr, full] of Object.entries(ABBR_TO_TEAM)) TEAM_TO_ABBR[full] = TEAM_TO_ABBR[full] || abbr;
+  }
+  return canonicalAbbr(TEAM_TO_ABBR[name] || '');
+}
+function gameMarketLines(game){
+  const line = MARKET_LINES || {};
+  const a = teamAbbrFor(game.away_team);
+  const h = teamAbbrFor(game.home_team);
+  return (a && h) ? (line[a + '|' + h] || null) : null;
+}
+
+function schLine(label, value, fmt){
+  const esc2 = (s) => String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const shown = (value === null || value === undefined) ? '<span class="muted">—</span>' : '<b>' + esc2(fmt ? fmt(value) : value) + '</b>';
+  return '<div class="sch-line"><span>' + label + '</span>' + shown + '</div>';
+}
+
 // Derive an 0-100 overall strength per team from this dashboard's own
 // Madden-based unit ratings (the macros already computed into DATA.rankings).
 function computeTeamOverall(teamName){
@@ -3174,37 +3271,46 @@ function scheduleTeamG(teamName, homeStr, awayStr, role){
     '<div class="sch-prob">' + (shown === null ? '<span class="muted">—</span>' : (shown * 100).toFixed(1) + '%') + '</div></div>';
 }
 
-function renderSchedule(){
+async function renderSchedule(){
   const c = document.getElementById('scheduleGrid');
   if (!c) return;
+  await loadGameLines();
   const data = SCHEDULE_DATA;
   if (!data || !data.games || !data.games.length) {
     c.innerHTML = '<p class="text-xs text-slate-500">No schedule data.</p>';
     return;
   }
   const esc = (s) => String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const tv = (game) => game.tv ? '<strong class="sch-badge">' + esc(game.tv) + '</strong>' : '';
+  const lineRow = (game) => {
+    const m = game.market;
+    if (!m) return '<div class="sch-lines">' + schLine('Spread','',null) + schLine('Total','',null) + schLine('Moneyline','',null) + '</div>';
+    // spread is from home-team perspective; show it on the home side
+    const ml = (m.away_ml !== null || m.home_ml !== null)
+      ? ((m.away_ml !== null ? 'A ' + m.away_ml : '') + (m.away_ml !== null && m.home_ml !== null ? ' · ' : '') + (m.home_ml !== null ? 'H ' + m.home_ml : '')).trim()
+      : null;
+    return '<div class="sch-lines">' +
+      schLine('Spread', m.spread, v => (v > 0 ? '+' : '') + v) +
+      schLine('Total', m.total, v => String(v)) +
+      schLine('Moneyline', ml, null) +
+      '</div>';
+  };
   const fmt = (game) => {
     const d = new Date(game.kickoff_utc);
     return isNaN(d.getTime()) ? 'Kickoff TBD' : d.toLocaleString([], { weekday:'short', month:'short', day:'numeric', hour:'numeric', minute:'2-digit' });
   };
   const sorted = data.games.slice().sort((a,b)=>String(a.kickoff_utc||'').localeCompare(String(b.kickoff_utc||'')));
   c.innerHTML = sorted.map(game => {
+    game.market = gameMarketLines(game);
     const homeStr = computeTeamOverall(game.home_team);
     const awayStr = computeTeamOverall(game.away_team);
-    const homeAbbr = DATA.teamAbbr[game.home_team] || ABBR_TO_TEAM[game.home_team] || game.home_team;
-    const awayAbbr = DATA.teamAbbr[game.away_team] || ABBR_TO_TEAM[game.away_team] || game.away_team;
-    const tv = game.tv ? '<strong class="sch-badge">' + esc(game.tv) + '</strong>' : '';
     return '<article class="sch-card" tabindex="0" role="button" ' +
       'aria-label="View analysis for ' + esc(game.away_team) + ' at ' + esc(game.home_team) + '" ' +
       'data-game="' + esc(game.game_id) + '">' +
-      '<div class="sch-head"><span>' + esc(fmt(game)) + '</span> ' + tv + '</div>' +
+      '<div class="sch-head"><span>' + esc(fmt(game)) + '</span> ' + tv(game) + '</div>' +
       scheduleTeamG(game.away_team, homeStr, awayStr, 'Away') +
       scheduleTeamG(game.home_team, homeStr, awayStr, 'Home') +
-      '<div class="sch-lines">' +
-        '<div class="sch-line"><span>Model Edge</span><b>' + (homeStr !== null && awayStr !== null ? esc(((homeStr - awayStr) >= 0 ? '+' : '') + (homeStr - awayStr).toFixed(1)) : '—') + '</b></div>' +
-        '<div class="sch-line"><span>Home Rating</span><b>' + (homeStr === null ? '—' : esc(String(homeStr))) + '</b></div>' +
-        '<div class="sch-line"><span>Away Rating</span><b>' + (awayStr === null ? '—' : esc(String(awayStr))) + '</b></div>' +
-      '</div>' +
+      lineRow(game) +
       '<div class="sch-foot"><span>' + esc(game.venue || '') + '</span><span class="sch-cta">View matchup →</span></div>' +
       '</article>';
   }).join('');
@@ -3218,6 +3324,18 @@ function renderSchedule(){
 function closeMatchupModal(){
   const ov = document.getElementById('matchupModal');
   if (ov) ov.classList.remove('active');
+}
+
+function marketBlock(m){
+  const e = (s) => String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  if (!m) return '<div class="mt-3 border-t border-slate-700/50 pt-3"><div class="text-[10px] uppercase tracking-wider text-slate-500 font-bold mb-2">Game Lines <span class="normal-case font-normal text-slate-600">— none yet</span></div></div>';
+  const cell = (label, val) =>
+    '<div class="rounded-lg bg-slate-800/60 border border-slate-700/50 px-3 py-2 text-center"><div class="text-[9px] text-slate-500 uppercase tracking-wider">' + label + '</div><div class="text-sm font-bold text-slate-100">' + (val === null || val === undefined ? '<span class="text-slate-600">—</span>' : e(val)) + '</div></div>';
+  const spread = m.spread === null ? null : ((m.spread > 0 ? '+' : '') + m.spread);
+  const ml = (m.away_ml === null && m.home_ml === null) ? null :
+    'A ' + (m.away_ml === null ? '—' : m.away_ml) + ' &nbsp;·&nbsp; H ' + (m.home_ml === null ? '—' : m.home_ml);
+  return '<div class="mt-3 border-t border-slate-700/50 pt-3"><div class="text-[10px] uppercase tracking-wider text-slate-500 font-bold mb-2">Game Lines <span class="normal-case font-normal text-slate-600">(nflverse)</span></div>' +
+    '<div class="grid grid-cols-3 gap-2">' + cell('Spread', spread) + cell('Total', m.total) + cell('Moneyline', ml) + '</div></div>';
 }
 
 function openMatchup(gameId){
@@ -3256,11 +3374,12 @@ function openMatchup(gameId){
     '<div class="text-xs text-slate-500">' + esc(game.venue || '') + ' · ' + (game.tv ? esc(game.tv) : 'TV TBD') + '</div></div>' +
     row(game.away_team, 'Away', awayStr, prob === null ? null : 1 - prob, homeStr) +
     row(game.home_team, 'Home', homeStr, prob, awayStr) +
+    marketBlock(game.market) +
     '<div class="border-t border-slate-700/50 pt-3"><div class="text-[10px] uppercase tracking-wider text-slate-500 font-bold mb-2">Model Win Probability</div>' +
     '<div class="flex text-center"><div class="w-1/2 text-xl font-black" style="color:' + (DATA.teamColors[game.home_team]||'#60a5fa') +'">' + (prob === null ? '—' : (prob*100).toFixed(1) + '%') + '</div>' +
     '<div class="w-1/2 text-xl font-black" style="color:' + (DATA.teamColors[game.away_team]||'#60a5fa') +'">' + (prob === null ? '—' : ((1-prob)*100).toFixed(1) + '%') + '</div></div>' +
     '<div class="flex text-[10px] text-slate-500 mt-1"><div class="w-1/2 text-left">' + esc(game.home_team) + '</div><div class="w-1/2 text-right">' + esc(game.away_team) + '</div></div>' +
-    '<p class="text-[10px] text-slate-600 mt-2">Derived from this dashboard\'s Madden-based power ratings via a log5 model with home-field edge.</p></div>' +
+    '<p class="text-[10px] text-slate-600 mt-2">Percentages are derived from the dashboard\'s Madden-based power ratings via a log5 model with home-field edge. Spread/total/moneyline are live market lines (source: nflverse).</p></div>' +
     '<div class="grid grid-cols-2 gap-2 mt-4">' +
     '<button class="text-xs font-bold px-3 py-2 rounded-lg border border-slate-600 bg-slate-800 text-slate-300 hover:bg-slate-700 transition" onclick="openRoster(\'' + esc(game.away_team).replace(/'/g,"\\'") + '\');closeMatchupModal()">' + esc(DATA.teamAbbr[game.away_team]||ABBR_TO_TEAM[game.away_team]||game.away_team) + ' — View Roster</button>' +
     '<button class="text-xs font-bold px-3 py-2 rounded-lg border border-slate-600 bg-slate-800 text-slate-300 hover:bg-slate-700 transition" onclick="openRoster(\'' + esc(game.home_team).replace(/'/g,"\\'") + '\');closeMatchupModal()">' + esc(DATA.teamAbbr[game.home_team]||ABBR_TO_TEAM[game.home_team]||game.home_team) + ' — View Roster</button>' +

@@ -66,7 +66,23 @@ with sync_playwright() as p:
     page.screenshot(path="screenshots_expansion/11_schedule_week1.png")
     page.locator("#matchupModal .roster-close").click()
 
-    # 5. Command palette includes schedule
+    # 5. Real market lines render (nflverse spread/total/moneyline)
+    # nflverse games.csv is ~2MB; poll until the first card's lines resolve
+    page.wait_for_timeout(800)
+    ok_market = False
+    for _ in range(40):
+        if page.locator(".sch-card .sch-line b").count() > 0:
+            if page.evaluate("() => (MARKET_LINES && Object.keys(MARKET_LINES).length > 0)"):
+                ok_market = True
+                break
+        page.wait_for_timeout(400)
+    grid_low = page.inner_text("#scheduleGrid").lower()
+    if ok_market and "spread" in grid_low and "total" in grid_low and "moneyline" in grid_low and any(c.isdigit() for c in grid_low):
+        successes.append("Cards show real Spread / Total / Moneyline values")
+    else:
+        failures.append("Market line row missing or empty (spread/total/moneyline)")
+
+    # 6. Command palette includes schedule
     page.keyboard.press("Meta+k")
     page.wait_for_selector("#cmdPaletteInput", timeout=5000)
     page.fill("#cmdPaletteInput", "Schedule")
