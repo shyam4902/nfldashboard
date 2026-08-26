@@ -5,24 +5,28 @@
 - repo: https://github.com/shyam4902/nfldashboard · single-file app in `index.html` + Supabase + static JSON
 
 ## Shipped recently
-- Draft tab removed (2026 draft has passed); roster modal gained a **Draft Capital** tab with
-  2027/2028 pick holdings (`draft-capital.json`, regenerate via `scripts/build_draft_capital.py`).
-- Transactions relocated to **Teams → Moves** dense date-grouped newswire with detail drawer;
-  legacy `feed` routes redirect. Commit `d60840c`.
-- Home page overhauled into a feature showcase (hero, feature grid, spotlights, tools).
-- Schedule tab (Week 1 cards with model win probs vs market lines from nflverse) + game-lines
-  drawer polish; team defense projections rebuilt from clean positional data.
-- Obsolete mockup artifacts removed (`32bf9fd`).
+- Roster modal redesign: player chips ~40% bigger with bold typography, fill every grid row
+  (no dead right space); new summary strip (projected record, cap space, draft capital, top
+  player); Madden ratings demoted to muted right-aligned badges (hover for value).
+- Teams UI: sub-tabs are now large pill buttons with icons + live Moves count; division nav
+  rebuilt as card-style buttons with conference color stripes and press feedback.
+- Full-season schedule (weeks 1-18, 272 games) with week-chip selector defaulting to the
+  current week; week-keyed live nflverse lines; home marquee follows current week.
+- Draft capital extended to 2027/2028/2029 (incl. Wallace pick swap); comp-pick schema
+  reserved; per-year pick counts on team tiles. Wallace trade added to Moves feed (373 moves).
+- Earlier: Teams → Moves newswire, home showcase, Week 1 schedule, defense rebuild, STATE.md.
 
 ## In flight
-- Nothing — working tree clean, all suites green (`test_all_extensions.py`,
-  `test_schedule_data.py`, `test_projections.py`).
+- Nothing — working tree clean aside from test-runner screenshot regenerations.
 
 ## Next
-- Known data caveat: draft capital excludes compensatory picks and any trades not itemized
-  in transaction details; extend `scripts/build_draft_capital.py` ledger as new trades land.
-- Candidate work: schedule tab for weeks 2+ (data pipeline exists), draft-capital chips on
-  team tiles, in-season weekly actuals vs Clay projections.
+- **Formation view (user's idea):** Madden ratings move off the main pages into a football
+  formation graphic (X's and O's) with each player + rating placed by position — for offense
+  and defense. The killer use case: open two tabs, one team's offense vs the other's defense,
+  for next week's matchup, to see where the advantage is. This is the intended long-term home
+  for ratings.
+- Add comp picks to draft capital when a reliable 2027+ source exists.
+- In-season: weekly actuals vs Clay projections once games are played.
 
 ## Blockers
 - None.
