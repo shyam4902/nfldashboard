@@ -85,28 +85,33 @@ body { font-family: 'Inter', sans-serif; background: #0a0e17; color: #e2e8f0; }
 
 /* Compact roster list styles */
 .pos-group { margin-bottom: 12px; }
-.pos-group-header { display: flex; align-items: center; gap: 6px; cursor: pointer; padding: 6px 10px; border-radius: 8px; background: rgba(30,41,59,0.5); border: 1px solid rgba(71,85,105,0.3); margin-bottom: 4px; user-select: none; }
+.pos-group-header { display: flex; align-items: center; gap: 8px; cursor: pointer; padding: 9px 12px; border-radius: 8px; background: rgba(30,41,59,0.5); border: 1px solid rgba(71,85,105,0.3); margin-bottom: 6px; user-select: none; }
 .pos-group-header:hover { background: rgba(30,41,59,0.8); }
-.pos-group-header .pg-label { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
-.pos-group-header .pg-count { font-size: 11px; color: #64748b; margin-left: auto; }
-.pos-group-header .pg-chevron { transition: transform 0.2s; font-size: 11px; color: #64748b; }
+.pos-group-header .pg-label { font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.8px; }
+.pos-group-header .pg-count { font-size: 12px; font-weight: 700; color: #94a3b8; margin-left: auto; }
+.pos-group-header .pg-chevron { transition: transform 0.2s; font-size: 12px; color: #94a3b8; }
 .pos-group-header.collapsed .pg-chevron { transform: rotate(-90deg); }
-.pos-group-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 3px; }
+.pos-group-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 6px; }
 .pos-group-header.collapsed + .pos-group-list { display: none; }
-.compact-player { display: flex; align-items: center; gap: 6px; padding: 4px 8px; border-radius: 6px; background: rgba(30,41,59,0.4); border: 1px solid rgba(71,85,105,0.2); font-size: 11px; transition: background 0.1s; }
-.compact-player:hover { background: rgba(30,41,59,0.8); }
+.compact-player { display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-radius: 8px; background: rgba(30,41,59,0.4); border: 1px solid rgba(71,85,105,0.2); font-size: 12px; min-height: 42px; transition: background 0.12s, border-color 0.12s, transform 0.12s; cursor: pointer; }
+.compact-player:hover { background: rgba(30,41,59,0.9); border-color: rgba(148,163,184,0.45); transform: translateX(2px); }
 .compact-player.is-new { border-color: rgba(16,185,129,0.5); background: rgba(16,185,129,0.05); }
-.compact-player .cp-num { color: #64748b; font-weight: 600; min-width: 22px; text-align: right; font-size: 10px; }
-.compact-player .cp-name { color: #e2e8f0; font-weight: 600; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.compact-player .cp-pos { color: #94a3b8; font-size: 11px; min-width: 24px; }
-.compact-player .cp-age { color: #64748b; font-size: 11px; }
+.compact-player .cp-num { color: #64748b; font-weight: 700; min-width: 24px; text-align: right; font-size: 11px; }
+.compact-player .cp-name { color: #f1f5f9; font-weight: 800; font-size: 14px; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; letter-spacing: -0.2px; }
+.compact-player .cp-pos { color: #cbd5e1; font-size: 12px; font-weight: 700; min-width: 30px; }
+.compact-player .cp-age { color: #64748b; font-size: 12px; }
 .compact-player .cp-new { font-size: 9px; font-weight: 800; color: #10b981; background: rgba(16,185,129,0.15); padding: 1px 4px; border-radius: 3px; white-space: nowrap; }
 
 /* Phase 3: rookie/new badges + sort tweaks */
 .badge-rook { background: linear-gradient(135deg, #10b981, #059669); color: white; font-size: 9px; font-weight: 800; padding: 1px 5px; border-radius: 3px; letter-spacing: 0.5px; margin-left: auto; flex-shrink: 0; }
 .badge-new { background: linear-gradient(135deg, #3b82f6, #2563eb); color: white; font-size: 9px; font-weight: 800; padding: 1px 5px; border-radius: 3px; letter-spacing: 0.5px; margin-left: auto; flex-shrink: 0; }
 .compact-player.is-rookie { border-color: rgba(16,185,129,0.45); background: rgba(16,185,129,0.06); }
-.compact-player .rating-badge { margin: 0 4px 0 0; flex-shrink: 0; }
+.compact-player .rating-badge { margin: 0 0 0 auto; flex-shrink: 0; width: 30px !important; height: 24px !important; font-size: 12px !important; border-radius: 6px !important; opacity: 0.92; }
+.roster-summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px; margin-bottom: 16px; }
+.roster-summary .rs-card { background: rgba(30,41,59,0.6); border: 1px solid rgba(71,85,105,0.4); border-radius: 12px; padding: 10px 14px; }
+.roster-summary .rs-label { font-size: 9px; text-transform: uppercase; letter-spacing: 1.2px; color: #64748b; font-weight: 800; }
+.roster-summary .rs-value { font-size: 19px; font-weight: 900; color: #f1f5f9; margin-top: 3px; letter-spacing: -0.4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.roster-summary .rs-sub { font-size: 10px; color: #94a3b8; margin-top: 1px; }
 .filter-chip { font-size: 11px; padding: 4px 12px; border-radius: 999px; background: rgba(30,41,59,0.6); color: #94a3b8; border: 1px solid rgba(71,85,105,0.6); cursor: pointer; user-select: none; transition: all 0.15s; }
 .filter-chip:hover { background: rgba(30,41,59,1); color: #cbd5e1; }
 .filter-chip.active { background: rgba(16,185,129,0.2); color: #6ee7b7; border-color: rgba(16,185,129,0.6); }
@@ -847,6 +852,7 @@ body.theme-analyst .cmd-item.selected {
     <div class="roster-modal-content">
       <div id="rosterTitle" class="text-xl font-black text-white mb-1"></div>
       <div id="rosterSubtitle" class="text-xs text-slate-500 mb-4"></div>
+      <div id="rosterSummary" class="roster-summary"></div>
       <div class="flex flex-wrap gap-2 mb-3">
         <div id="rosterTabProj" class="roster-tab" onclick="showRosterSide('projections',this)">Projections</div>
         <div id="rosterTabOff" class="roster-tab active-off" onclick="showRosterSide('offense',this)">Offense</div>
@@ -2522,6 +2528,7 @@ async function openRoster(team, defaultSide = 'offense') {
   if (headerEl) headerEl.style.background = `linear-gradient(90deg,${color},transparent)`;
   const titleEl = document.getElementById('rosterTitle');
   if (titleEl) titleEl.textContent = team;
+  renderRosterSummary(team);
   const cap = (DATA.capData && DATA.capData[team]) || { space: 0, status: '' };
   const subEl = document.getElementById('rosterSubtitle');
   if (subEl) {
@@ -2885,6 +2892,53 @@ async function renderTeamProjectionsBody(team) {
   c.innerHTML = h;
 }
 
+async function renderRosterSummary(team){
+  const el = document.getElementById('rosterSummary');
+  if (!el) return;
+  const cap = (DATA.capData && DATA.capData[team]) || { space: 0, status: '' };
+
+  // Projected record from the Clay model (loaded lazily; strip renders without it on failure)
+  let record = null;
+  try {
+    if (!CLAY_DATA) await loadClayProjections();
+    const tProj = CLAY_DATA && CLAY_DATA.team_projections && CLAY_DATA.team_projections[team];
+    if (tProj && tProj.projected_wins != null) {
+      const w = Math.round(Number(tProj.projected_wins));
+      record = `${w}\u2013${17 - w}`;
+    }
+  } catch {}
+
+  // Top-rated player on the roster
+  let top = null;
+  const roster = DATA.fullRosters && DATA.fullRosters[team];
+  if (roster) {
+    for (const unit of Object.keys(roster)) {
+      for (const p of (roster[unit] || [])) {
+        if (p.ovr != null && (!top || p.ovr > top.ovr)) top = p;
+      }
+    }
+  }
+
+  // Future draft capital per year
+  const dc = DATA.draftCapital && DATA.draftCapital.capital && DATA.draftCapital.capital[team];
+  let dcVal = null, dcSub = null;
+  if (dc) {
+    dcVal = DATA.draftCapital.years.map(y => (dc[String(y)] || []).length).join(' \u00b7 ');
+    dcSub = DATA.draftCapital.years.join(' \u00b7 ') + ' picks';
+  }
+
+  const card = (label, value, sub, valCls) =>
+    `<div class="rs-card"><div class="rs-label">${label}</div>` +
+    `<div class="rs-value ${valCls || ''}">${value}</div>` +
+    (sub ? `<div class="rs-sub">${sub}</div>` : '') + `</div>`;
+
+  el.innerHTML =
+    card('Projected Record', record || '\u2014', record ? 'Mike Clay model' : 'Clay data unavailable', 'text-cyan-300') +
+    card('Cap Space', formatCap(cap.space || 0), cap.status || '', (cap.space >= 0 ? 'cap-positive' : 'cap-negative')) +
+    card('Draft Capital', dcVal || '\u2014', dcSub || '', 'text-violet-300') +
+    card('Top Player', top ? top.name : '\u2014', top ? `Highest rated \u00b7 ${top.pos}` : '', 'text-amber-300');
+}
+
 function renderRosterBody(team,side){
   const roster=DATA.fullRosters[team];
   if(!roster){document.getElementById('rosterBody').innerHTML='<div class="text-sm text-slate-500">No roster data available.</div>';return;}
@@ -2958,12 +3012,12 @@ function renderRosterBody(team,side){
       else if (p.acquisitionType === 'fa' || p.acquisitionType === 'trade') badge = `<span class="badge-new">NEW</span>`;
       const rowCls = p.isRookie ? 'is-rookie' : (p.isNew ? 'is-new' : '');
       h+=`<div class="compact-player ${rowCls}">
-        <span class="rating-badge ${tier}" style="width:26px;height:26px;font-size:11px">${ovrDisplay}</span>
         <span class="cp-num">${p.num||'-'}</span>
         <span class="cp-name" title="${p.name}">${p.name}</span>
         <span class="cp-pos">${p.pos}</span>
         <span class="cp-age">${p.age||''}</span>
         ${badge}
+        <span class="rating-badge ${tier}" title="Madden rating: ${ovrDisplay}">${ovrDisplay}</span>
       </div>`;
     });
     h+=`</div></div>`;
