@@ -109,12 +109,41 @@ with sync_playwright() as p:
         failures.append("Draft Capital tab missing from roster modal")
     page.evaluate("openRoster('Cleveland Browns', 'draftcap')")
     page.wait_for_timeout(600)
-    if page.locator('.dc-year-block').count() == 2 and page.locator('.dc-pick.gained').count() >= 2:
-        successes.append("Draft Capital renders 2027/2028 blocks with acquired picks")
+    if page.locator('.dc-year-block').count() == 3 and page.locator('.dc-pick.gained').count() >= 2:
+        successes.append("Draft Capital renders 2027/2028/2029 blocks with acquired picks")
     else:
         failures.append("Draft Capital view incomplete")
-    page.keyboard.press('Escape')
     page.evaluate("closeRoster()")
+    page.wait_for_timeout(300)
+    tile_txt = page.locator('.team-tile').first.inner_text()
+    if '2027:' in tile_txt and '2028:' in tile_txt and '2029:' in tile_txt:
+        successes.append("Team tiles show draft capital pick counts")
+    else:
+        failures.append("Team tiles missing draft capital summary")
+    page.click('[data-tab="teams"]')
+    page.wait_for_timeout(500)
+
+    # 1c. Full-season schedule with week selector
+    print("Testing schedule week selector...")
+    page.click('[data-tab="schedule"]')
+    page.wait_for_timeout(1500)
+    chips = page.locator('#scheduleWeekChips button')
+    if chips.count() == 18 and page.locator('.sch-card').count() == 16:
+        successes.append("Schedule shows 18 week chips and 16 Week 1 cards")
+    else:
+        failures.append(f"Schedule selector wrong ({chips.count()} chips, {page.locator('.sch-card').count()} cards)")
+    page.locator('#scheduleWeekChips button', has_text='WK 2').click()
+    page.wait_for_timeout(1200)
+    wk2_cards = page.locator('.sch-card').count()
+    wk2_head = page.inner_text('#scheduleWeekNum')
+    if wk2_cards == 16 and wk2_head == '2':
+        successes.append("Week 2 slate renders with dynamic heading")
+    else:
+        failures.append(f"Week 2 render wrong ({wk2_cards} cards, heading {wk2_head})")
+    if page.locator('.sch-card .sch-lines b').count() > 0:
+        successes.append("Week 2 cards carry live market lines")
+    else:
+        failures.append("Week 2 cards missing market lines")
     page.click('[data-tab="teams"]')
     page.wait_for_timeout(500)
     move_tabs = page.locator('#teamsSubTabs .teams-subtab')

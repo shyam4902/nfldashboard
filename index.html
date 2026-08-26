@@ -901,10 +901,11 @@ body.theme-analyst .cmd-item.selected {
   <div id="tab-schedule" class="hidden">
     <h2 class="text-xl font-bold mb-1 flex items-center gap-2">
       <svg class="w-5 h-5 text-blue-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/></svg>
-      Week 1 Matchups
+      Week <span id="scheduleWeekNum">1</span> Matchups
       <span class="text-xs text-slate-500 font-normal ml-1">2026 Regular Season · Click a matchup for analysis</span>
     </h2>
-    <p class="text-xs text-slate-500 mb-4">Scan the opening-week slate. Team win probability is this dashboard's model (Madden-based power ratings, log5, home-field edge); spread, total, and moneyline are live market lines (source: nflverse), refreshed each time you open this tab. Select a matchup for a deeper view.</p>
+    <p class="text-xs text-slate-500 mb-4">Scan the full 2026 slate week by week. Team win probability is this dashboard's model (Madden-based power ratings, log5, home-field edge); spread, total, and moneyline are live market lines (source: nflverse), refreshed each time you open this tab. Select a matchup for a deeper view.</p>
+    <div id="scheduleWeekChips" class="flex flex-wrap gap-1.5 mb-4"></div>
     <div id="scheduleGrid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
       <p class="text-xs text-slate-500">Loading schedule…</p>
     </div>
@@ -1254,6 +1255,18 @@ function applySummer2026Updates(data) {
       detail: "2-year contract extension",
       date_str: "May 02, 2026",
       sort_date: "2026-05-02"
+    },
+    {
+      id: "tx-2026-08-10-1",
+      type: "trade",
+      blockbuster: false,
+      player_name: "Caedan Wallace",
+      pos: "OT",
+      from_team: "New England Patriots",
+      to_team: "Miami Dolphins",
+      detail: "Traded to Miami with a 2029 7th-round pick for a 2028 6th-round pick",
+      date_str: "Aug 10, 2026",
+      sort_date: "2026-08-10"
     }
   ];
 
@@ -1953,7 +1966,10 @@ function marqueeGameHtml(g){
 
 function marqueeHtml(){
   if (!SCHEDULE_DATA || !SCHEDULE_DATA.games || !SCHEDULE_DATA.games.length) return null;
-  const sorted = SCHEDULE_DATA.games.slice().sort((a, b) => String(a.kickoff_utc || '').localeCompare(String(b.kickoff_utc || '')));
+  const marqueeWeek = SCHEDULE_DATA.week || 1;
+  const sorted = SCHEDULE_DATA.games
+    .filter(g => (g.week || 1) === marqueeWeek)
+    .sort((a, b) => String(a.kickoff_utc || '').localeCompare(String(b.kickoff_utc || '')));
   const pick = (g) => {
     const d = new Date(g.kickoff_utc);
     return isNaN(d.getTime()) ? '' : d.toLocaleString([], { weekday:'short' });
@@ -1965,7 +1981,7 @@ function marqueeHtml(){
     <div>
       <div class="flex items-center justify-between mb-3 pb-2 border-b border-slate-700/50">
         <div class="text-xs font-extrabold text-white flex items-center gap-2">
-          <span>📅</span> Week 1 Marquee <span class="text-slate-400 font-normal text-[11px]">(live lines)</span>
+          <span>📅</span> Week ${marqueeWeek} Marquee <span class="text-slate-400 font-normal text-[11px]">(live lines)</span>
         </div>
         <a href="javascript:showTab('schedule')" class="text-blue-400 hover:text-blue-300 text-[11px] font-bold">full schedule →</a>
       </div>
@@ -1973,7 +1989,7 @@ function marqueeHtml(){
     </div>
     <div class="mt-3 pt-2 border-t border-slate-800/80 text-[10px] text-slate-500 flex justify-between">
       <span>Odds source: nflverse / sportsbooks</span>
-      <span class="text-slate-400">16 Games Scheduled</span>
+      <span class="text-slate-400">${sorted.length} Games Scheduled</span>
     </div>
   </div>`;
 }
@@ -2362,7 +2378,16 @@ function renderTeams(){
     navC.innerHTML=navH;
   }
 
-  const renderTile=(team)=>{
+  function draftCapitalSummary(team){
+  const dc = DATA.draftCapital;
+  if (!dc || !dc.capital || !dc.capital[team]) return '';
+  return dc.years.map(y => {
+    const n = (dc.capital[team][String(y)] || []).length;
+    return `<span title="${y} draft: ${n} pick${n === 1 ? '' : 's'}">${y}: ${n}</span>`;
+  }).join(' · ');
+}
+
+const renderTile=(team)=>{
     const abbr=DATA.teamAbbr[team];
     const color=DATA.teamColors[team];
     const cap=DATA.capData[team];
@@ -2371,6 +2396,7 @@ function renderTeams(){
       <div style="font-size:17px;font-weight:900;color:#e2e8f0;letter-spacing:-0.5px">${abbr}</div>
       <div style="font-size:9px;color:#64748b;margin-top:2px;line-height:1.2">${team}</div>
       <div style="font-size:8px;font-weight:700;margin-top:3px" class="${getStatusColor(cap.status)}">${cap.status}</div>
+      <div style="font-size:8px;color:#a78bfa;margin-top:3px;font-weight:700" title="Future draft capital — open the team and click Draft Capital for detail">${draftCapitalSummary(team)}</div>
     </div>`;
   };
 
@@ -2960,6 +2986,10 @@ function renderDraftCapital(team){
           ? `<span class="dc-pick gained" title="Acquired from ${gg.via} in the ${gg.player} trade">R${r} <span style="font-weight:600;opacity:.75">via ${abbrOf(gg.via)}</span></span>`
           : `<span class="dc-pick own" title="Original ${year} round ${r} pick">R${r}</span>`;
       }
+    }
+    const comps = (dc.comp_picks && dc.comp_picks[team] && dc.comp_picks[team][ys]) || [];
+    for (const cp of comps) {
+      chips += `<span class="dc-pick" style="background:rgba(139,92,246,0.15);color:#a78bfa;border:1px solid rgba(139,92,246,0.4)" title="Compensatory pick${cp.note ? ' — ' + cp.note : ''}">R${cp.round} comp</span>`;
     }
 
     h += `<div class="dc-year-block">
@@ -3591,6 +3621,7 @@ let PROPS_BOARD = null;
 // SCHEDULE TAB
 // ═══════════════════════════════════════════════════════════
 let SCHEDULE_DATA = null;
+let currentScheduleWeek = 1;
 
 async function loadSchedule(){
   if (SCHEDULE_DATA) return SCHEDULE_DATA;
@@ -3603,7 +3634,31 @@ async function loadSchedule(){
     if (el) el.innerHTML = '<p class="text-xs text-red-400">Could not load schedule data: ' + err.message + '</p>';
     SCHEDULE_DATA = { games: [] };
   }
+  currentScheduleWeek = SCHEDULE_DATA.week || 1;
   return SCHEDULE_DATA;
+}
+
+function scheduleWeeks(){
+  return [...new Set((SCHEDULE_DATA?.games || []).map(g => g.week || 1))].sort((a,b) => a - b);
+}
+
+function setScheduleWeek(wk){
+  currentScheduleWeek = wk;
+  renderScheduleWeekChips();
+  renderSchedule();
+}
+
+function renderScheduleWeekChips(){
+  const c = document.getElementById('scheduleWeekChips');
+  if (!c) return;
+  const weeks = scheduleWeeks();
+  c.innerHTML = weeks.map(wk =>
+    '<button onclick="setScheduleWeek(' + wk + ')" class="text-[11px] font-bold px-2.5 py-1 rounded-lg border transition ' +
+    (wk === currentScheduleWeek
+      ? 'bg-blue-600 text-white border-blue-500'
+      : 'bg-slate-800/80 text-slate-400 border-slate-700 hover:bg-slate-700 hover:text-slate-200') +
+    '">WK ' + wk + '</button>'
+  ).join('');
 }
 
 // ── Live game lines (spread / total / moneyline) from nflverse's public
@@ -3648,9 +3703,9 @@ async function loadGameLines(){
     const text = await res.text();
     const map = {};
     for (const r of csvParse(text)){
-      if (String(r.season) !== '2026' || String(r.week) !== '1' || String(r.game_type) !== 'REG') continue;
+      if (String(r.season) !== '2026' || String(r.game_type) !== 'REG') continue;
       if (!r.away_team || !r.home_team) continue;
-      map[(r.away_team + '|' + r.home_team).toUpperCase()] = {
+      map[r.week + '|' + (r.away_team + '|' + r.home_team).toUpperCase()] = {
         spread: num(r.spread_line),          // from the home team's perspective
         total: num(r.total_line),
         away_ml: num(r.away_moneyline),
@@ -3694,7 +3749,8 @@ function gameMarketLines(game){
   const line = MARKET_LINES || {};
   const a = teamAbbrFor(game.away_team);
   const h = teamAbbrFor(game.home_team);
-  return (a && h) ? (line[a + '|' + h] || null) : null;
+  const key = (game.week || 1) + '|' + a + '|' + h;
+  return (a && h) ? (line[key] || null) : null;
 }
 
 function schLine(label, value, fmt){
@@ -3749,6 +3805,9 @@ async function renderSchedule(){
     c.innerHTML = '<p class="text-xs text-slate-500">No schedule data.</p>';
     return;
   }
+  renderScheduleWeekChips();
+  const weekNumEl = document.getElementById('scheduleWeekNum');
+  if (weekNumEl) weekNumEl.textContent = currentScheduleWeek;
   const esc = (s) => String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
   const tv = (game) => game.tv ? '<strong class="sch-badge">' + esc(game.tv) + '</strong>' : '';
   const lineRow = (game, homeStr, awayStr) => {
@@ -3771,7 +3830,8 @@ async function renderSchedule(){
     const d = new Date(game.kickoff_utc);
     return isNaN(d.getTime()) ? 'Kickoff TBD' : d.toLocaleString([], { weekday:'short', month:'short', day:'numeric', hour:'numeric', minute:'2-digit' });
   };
-  const sorted = data.games.slice().sort((a,b)=>String(a.kickoff_utc||'').localeCompare(String(b.kickoff_utc||'')));
+  const weekGames = data.games.filter(g => (g.week || 1) === currentScheduleWeek);
+  const sorted = weekGames.slice().sort((a,b)=>String(a.kickoff_utc||'').localeCompare(String(b.kickoff_utc||'')));
   c.innerHTML = sorted.map(game => {
     game.market = gameMarketLines(game);
     const homeStr = computeTeamOverall(game.home_team);
@@ -3844,7 +3904,7 @@ function openMatchup(gameId){
       '<div class="sch-prob">' + pct + '</div></div>';
   };
   document.getElementById('matchupBody').innerHTML =
-    '<div class="text-center mb-4"><div class="text-[10px] text-slate-500 uppercase tracking-wider mb-1">Week ' + (SCHEDULE_DATA.week || 1) + ' Matchup</div>' +
+    '<div class="text-center mb-4"><div class="text-[10px] text-slate-500 uppercase tracking-wider mb-1">Week ' + (game.week || 1) + ' Matchup</div>' +
     '<div class="text-lg font-black text-white">' + esc(when) + '</div>' +
     '<div class="text-xs text-slate-500">' + esc(game.venue || '') + ' · ' + (game.tv ? esc(game.tv) : 'TV TBD') + '</div></div>' +
     row(game.away_team, 'Away', awayStr, prob === null ? null : 1 - prob, homeStr) +

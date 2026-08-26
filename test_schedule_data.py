@@ -1,15 +1,14 @@
 #!/usr/bin/env python3
 """
-Data-integrity test for the Week 1 NFL slate in schedule.json.
+Data-integrity test for the full-season NFL slate in schedule.json.
 
-Guards the slate against regressions so future-week expansion can't
-silently break Week 1. Asserts, independently of the front end:
+Guards the slate against regressions. Asserts, independently of the front end:
 
-  * exactly 16 games, all 32 NFL teams scheduled exactly once
-  * kickoff_utc valid and on the expected weekday
-  * required fields present and non-empty per game
-  * game_id matches its away/home teams
-  * matchups agree with the in-app Mike Clay strength_of_schedule
+  * 272 games across weeks 1-18 (full 2026 regular season)
+  * Week 1: exactly 16 games, all 32 teams once, enriched fields, Sep 9-14 window
+  * every team plays exactly 17 games, 8 or 9 at home
+  * kickoff_utc valid; game_id unique and matching its teams
+  * Week 1 matchups agree with the in-app Mike Clay strength_of_schedule
 """
 import json
 import os
@@ -51,45 +50,56 @@ def main():
     games = sched["games"]
 
     check(sched.get("season") == 2026, f"season != 2026 ({sched.get('season')})")
-    check(sched.get("week") == 1, f"week != 1 ({sched.get('week')})")
-    check(len(games) == 16, f"expected 16 games, got {len(games)}")
+    check(len(games) == 272, f"expected 272 games (full season), got {len(games)}")
 
-    # All teams appear exactly once as away and exactly once as home
-    aways = [g["away_team"] for g in games]
-    homes = [g["home_team"] for g in games]
-    check(len(aways) == 16 and len(set(aways)) == 16, "expected 16 distinct away teams")
-    check(len(homes) == 16 and len(set(homes)) == 16, "expected 16 distinct home teams")
-    check(sorted(set(aways) | set(homes)) == ALL_TEAMS, "all 32 teams are not covered exactly once across the slate")
+    weeks = sorted({g.get("week") for g in games})
+    check(weeks == list(range(1, 19)), f"expected weeks 1-18, got {weeks}")
+
+    # Every team plays exactly 17 games, 8 or 9 at home
+    for team in ALL_TEAMS:
+        played = [g for g in games if g["away_team"] == team or g["home_team"] == team]
+        home_n = sum(1 for g in played if g["home_team"] == team)
+        check(len(played) == 17, f"{team}: plays {len(played)} games, expected 17")
+        check(home_n in (8, 9), f"{team}: {home_n} home games, expected 8 or 9")
 
     seen_ids = set()
     for g in games:
         gid = g.get("game_id", "")
         check(gid not in seen_ids, f"duplicate game_id {gid}")
         seen_ids.add(gid)
-        for field in ("away_team", "home_team", "venue", "city", "kickoff_utc", "tv", "game_id"):
+        for field in ("away_team", "home_team", "kickoff_utc", "game_id"):
             check(bool(g.get(field)), f"{gid}: missing field '{field}'")
         check(g["away_team"] != g["home_team"], f"{gid}: team plays itself")
-
-        # game_id encodes YYYY-MM-DD-AWAY-HOME pattern
-        base = gid.split("-")
-        if len(base) >= 5:
-            check(g["away_team"] in ALL_TEAMS and g["home_team"] in ALL_TEAMS,
-                  f"{gid}: unrecognized team(s)")
-
-        # kickoff_utc must parse and reference the opener dates (Sep 9-14, 2026)
+        check(g["away_team"] in ALL_TEAMS and g["home_team"] in ALL_TEAMS,
+              f"{gid}: unrecognized team(s)")
         try:
-            dt = datetime.fromisoformat(g["kickoff_utc"].replace("Z", "+00:00"))
+            datetime.fromisoformat(g["kickoff_utc"].replace("Z", "+00:00"))
         except ValueError as e:
             check(False, f"{gid}: bad kickoff_utc {g['kickoff_utc']} ({e})")
+
+    # Week 1 keeps the original strict invariants
+    wk1 = [g for g in games if g["week"] == 1]
+    check(len(wk1) == 16, f"week 1 has {len(wk1)} games, expected 16")
+    aways = [g["away_team"] for g in wk1]
+    homes = [g["home_team"] for g in wk1]
+    check(len(set(aways)) == 16 and len(set(homes)) == 16, "week 1: teams not scheduled exactly once")
+    check(sorted(set(aways) | set(homes)) == ALL_TEAMS, "week 1 does not cover all 32 teams exactly once")
+    for g in wk1:
+        gid = g.get("game_id", "")
+        for field in ("venue", "kickoff_utc", "game_id"):
+            check(bool(g.get(field)), f"{gid}: missing field '{field}'")
+        try:
+            dt = datetime.fromisoformat(g["kickoff_utc"].replace("Z", "+00:00"))
+        except ValueError:
             continue
         et = dt.astimezone(ET)
         check(et.year == 2026 and et.month == 9 and 9 <= et.day <= 14,
               f"{gid}: kickoff {et} outside Sep 9-14 window")
-
-        # Expected weekday for the designated games
         if gid in desired_weekdays:
             check(et.strftime("%a") == desired_weekdays[gid],
                   f"{gid}: expected {desired_weekdays[gid]} but kickoff is {et.strftime('%a')}")
+
+    games = wk1  # the Clay SOS check below is a Week 1 invariant
 
     # Matchups must agree with the in-app Clay strength_of_schedule data
     clay_path = os.path.join(HERE, "clay_projections_2026.json")

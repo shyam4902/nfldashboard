@@ -10,15 +10,16 @@ Conventions:
   picks (the April draft had not happened yet), so they don't affect future
   capital and are ignored here.
 - Only explicitly-labeled 2027/2028 picks are applied.
-- The Aug 2026 Wallace trade also swapped a 2029 7th; 2029 is out of scope
-  and recorded as a note only.
+- Compensatory picks are not yet tracked (no reliable source for 2027+ comps);
+  the schema reserves a `comp_picks` section so they can be added without
+  touching the UI.
 
 Usage: python3 scripts/build_draft_capital.py   (run from repo root)
 """
 import json
 from pathlib import Path
 
-YEARS = [2027, 2028]
+YEARS = [2027, 2028, 2029]
 TEAMS = [
     "Arizona Cardinals", "Atlanta Falcons", "Baltimore Ravens", "Buffalo Bills",
     "Carolina Panthers", "Chicago Bears", "Cincinnati Bengals", "Cleveland Browns",
@@ -49,8 +50,9 @@ PICK_TRADES = [
      "Texans also sent OL Juice Scruggs + 2026 4th"),
     (2027, 7, "Philadelphia Eagles", "Carolina Panthers", "Andy Dalton", "2026-03-01", ""),
     (2028, 6, "Houston Texans", "New Orleans Saints", "Kai Kroeger", "2026-03-01", ""),
-    (2028, 6, "Miami Dolphins", "New England Patriots", "Caedan Wallace", "2026-08-10",
-     "Patriots also sent a 2029 7th to Miami (out of scope)"),
+    (2028, 6, "Miami Dolphins", "New England Patriots", "Caedan Wallace", "2026-08-10", ""),
+    (2029, 7, "New England Patriots", "Miami Dolphins", "Caedan Wallace", "2026-08-10",
+     "Other half of the same trade: Miami's 2028 6th went to New England"),
 ]
 
 NOTES = [
@@ -87,6 +89,9 @@ def main():
         ],
         "capital": capital,
         "acquired": acquired,
+        # Reserved for future compensatory-pick data (2027+ comps not yet awarded/sourced).
+        # Shape: { team: { year: [ {round, note} ] } }
+        "comp_picks": {},
     }
 
     path = Path(__file__).resolve().parent.parent / "draft-capital.json"
