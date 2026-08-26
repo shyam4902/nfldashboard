@@ -54,7 +54,7 @@ with sync_playwright() as p:
     else:
         failures.append("Home hero/showcase missing")
     feat_cards = page.locator(".feature-card").count()
-    if feat_cards >= 10:
+    if feat_cards >= 9:
         successes.append(f"Feature grid rendered with {feat_cards} clickable cards")
     else:
         failures.append(f"Feature grid incomplete: {feat_cards} cards")
@@ -96,6 +96,25 @@ with sync_playwright() as p:
         successes.append("Top-level Transactions tab removed")
     else:
         failures.append("Top-level Transactions tab still present")
+
+    # 1b. Draft tab removed; Draft Capital lives in the roster modal
+    print("Testing Draft Capital in roster modal...")
+    if page.locator('[data-tab="draft"]').count() == 0 and page.locator('#tab-draft').count() == 0:
+        successes.append("Top-level Draft tab removed")
+    else:
+        failures.append("Top-level Draft tab still present")
+    if page.locator('#rosterTabDc').count() == 1:
+        successes.append("Draft Capital tab present in roster modal")
+    else:
+        failures.append("Draft Capital tab missing from roster modal")
+    page.evaluate("openRoster('Cleveland Browns', 'draftcap')")
+    page.wait_for_timeout(600)
+    if page.locator('.dc-year-block').count() == 2 and page.locator('.dc-pick.gained').count() >= 2:
+        successes.append("Draft Capital renders 2027/2028 blocks with acquired picks")
+    else:
+        failures.append("Draft Capital view incomplete")
+    page.keyboard.press('Escape')
+    page.evaluate("closeRoster()")
     page.click('[data-tab="teams"]')
     page.wait_for_timeout(500)
     move_tabs = page.locator('#teamsSubTabs .teams-subtab')

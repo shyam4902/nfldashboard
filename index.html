@@ -70,8 +70,14 @@ body { font-family: 'Inter', sans-serif; background: #0a0e17; color: #e2e8f0; }
 .roster-tab.active-off { background: rgba(59,130,246,0.2); border-color: #3b82f6; color: #60a5fa; }
 .roster-tab.active-def { background: rgba(239,68,68,0.2); border-color: #ef4444; color: #f87171; }
 .roster-tab.active-st { background: rgba(245,158,11,0.2); border-color: #f59e0b; color: #fbbf24; }
-.roster-tab:not(.active-off):not(.active-def):not(.active-st):not(.active-proj) { background: rgba(30,41,59,0.5); color: #64748b; }
-.roster-tab:not(.active-off):not(.active-def):not(.active-st):not(.active-proj):hover { background: rgba(30,41,59,0.8); color: #94a3b8; }
+.roster-tab.active-dc { background: rgba(139,92,246,0.2); border-color: #8b5cf6; color: #a78bfa; }
+.roster-tab:not(.active-off):not(.active-def):not(.active-st):not(.active-proj):not(.active-dc) { background: rgba(30,41,59,0.5); color: #64748b; }
+.roster-tab:not(.active-off):not(.active-def):not(.active-st):not(.active-proj):not(.active-dc):hover { background: rgba(30,41,59,0.8); color: #94a3b8; }
+.dc-year-block { background: rgba(30,41,59,0.5); border: 1px solid rgba(71,85,105,0.4); border-radius: 12px; padding: 12px 14px; }
+.dc-pick { display: inline-flex; align-items: center; gap: 4px; padding: 3px 9px; border-radius: 7px; font-size: 11px; font-weight: 700; margin: 2px; }
+.dc-pick.own { background: rgba(30,41,59,0.8); color: #cbd5e1; border: 1px solid rgba(71,85,105,0.5); }
+.dc-pick.gained { background: rgba(16,185,129,0.15); color: #34d399; border: 1px solid rgba(16,185,129,0.4); }
+.dc-pick.missing { background: rgba(239,68,68,0.08); color: #64748b; border: 1px dashed rgba(100,116,139,0.35); text-decoration: line-through; }
 .proj-team-card { cursor: pointer; transition: transform 0.15s, border-color 0.2s, box-shadow 0.2s; }
 .proj-team-card:hover { transform: translateY(-2px); border-color: rgba(6,182,212,0.6) !important; box-shadow: 0 4px 20px rgba(6,182,212,0.15); }
 .proj-link-team { cursor: pointer; transition: color 0.15s; }
@@ -797,7 +803,6 @@ body.theme-analyst .cmd-item.selected {
         <button onclick="showTab('home')" class="tab-btn active text-xs px-3 py-2 rounded-lg font-semibold transition" data-tab="home">Home</button>
         <button onclick="showTab('schedule')" class="tab-btn text-xs px-3 py-2 rounded-lg font-semibold bg-slate-800 text-slate-400 hover:bg-slate-700 transition" data-tab="schedule">Schedule</button>
         <button onclick="showTab('teams')" class="tab-btn text-xs px-3 py-2 rounded-lg font-semibold bg-slate-800 text-slate-400 hover:bg-slate-700 transition" data-tab="teams">Teams</button>
-        <button onclick="showTab('draft')" class="tab-btn text-xs px-3 py-2 rounded-lg font-semibold bg-slate-800 text-slate-400 hover:bg-slate-700 transition" data-tab="draft">Draft</button>
         <button onclick="showTab('projections')" class="tab-btn text-xs px-3 py-2 rounded-lg font-semibold bg-slate-800 text-slate-400 hover:bg-slate-700 transition" data-tab="projections">Projections</button>
         <button onclick="showTab('props')" class="tab-btn text-xs px-3 py-2 rounded-lg font-semibold bg-slate-800 text-slate-400 hover:bg-slate-700 transition" data-tab="props">Props & Value</button>
         <button onclick="openPlayerCompareModal()" class="text-xs px-2.5 py-2 rounded-lg font-semibold bg-indigo-600/20 text-indigo-300 border border-indigo-500/40 hover:bg-indigo-500/30 transition flex items-center gap-1 shrink-0" title="Compare any two players side-by-side">
@@ -832,6 +837,7 @@ body.theme-analyst .cmd-item.selected {
         <div id="rosterTabOff" class="roster-tab active-off" onclick="showRosterSide('offense',this)">Offense</div>
         <div id="rosterTabDef" class="roster-tab" onclick="showRosterSide('defense',this)">Defense</div>
         <div id="rosterTabSt" class="roster-tab" onclick="showRosterSide('special',this)">Special Teams</div>
+        <div id="rosterTabDc" class="roster-tab" onclick="showRosterSide('draftcap',this)">Draft Capital</div>
       </div>
       <div id="rosterFilterRow" class="flex gap-2 mb-3 items-center">
         <span class="text-[10px] text-slate-500 uppercase tracking-wider font-bold">Filter:</span>
@@ -927,13 +933,6 @@ body.theme-analyst .cmd-item.selected {
       <div id="heatmapContainer" class="glass rounded-xl p-3 overflow-x-auto"></div>
     </div>
   </div>
-  <div id="tab-draft" class="hidden">
-    <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
-      <svg class="w-5 h-5 text-violet-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/></svg>
-      2026 Draft Asset Tracker <span class="text-xs text-slate-500 font-normal ml-1">Pittsburgh, PA — Rounds 1-7</span>
-    </h2>
-    <div id="draftContainer" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4"></div>
-  </div>
   <div id="tab-projections" class="hidden">
     <h2 class="text-xl font-bold mb-3 flex items-center gap-2">
       <svg class="w-5 h-5 text-cyan-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"/><path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clip-rule="evenodd"/></svg>
@@ -999,7 +998,7 @@ const SUPABASE_ANON_KEY = "sb_publishable_cQOHCiQh2kZQQUn5sEEfIA_t9NScNZz";
 const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 // Loaded asynchronously from Supabase. Render functions read from DATA.* fields.
-let DATA = { teams: [], players: [], transactions: [], draftPicks: [], draftGrades: [] };
+let DATA = { teams: [], players: [], transactions: [] };
 
 async function fetchAllPlayers() {
   const PAGE = 1000;
@@ -1327,21 +1326,21 @@ function applySummer2026Updates(data) {
 }
 
 async function loadAllData() {
-  const [teams, players, transactions, picks, grades] = await Promise.all([
+  const [teams, players, transactions] = await Promise.all([
     sb.from('nfl_teams').select('*'),
     fetchAllPlayers(),
-    sb.from('nfl_transactions').select('*').order('sort_date', { ascending: false }),
-    sb.from('nfl_draft_picks').select('*').order('pick_number'),
-    sb.from('nfl_draft_grades').select('*')
+    sb.from('nfl_transactions').select('*').order('sort_date', { ascending: false })
   ]);
-  for (const r of [teams, transactions, picks, grades]) {
+  for (const r of [teams, transactions]) {
     if (r.error) throw new Error(r.error.message);
   }
   DATA.teams = teams.data;
   DATA.players = players;
   DATA.transactions = transactions.data;
-  DATA.draftPicks = picks.data;
-  DATA.draftGrades = grades.data;
+  try {
+    const capRes = await fetch('draft-capital.json');
+    DATA.draftCapital = capRes.ok ? await capRes.json() : null;
+  } catch { DATA.draftCapital = null; }
 
   // Apply summer 2026 transactions & roster updates (May 1 - Aug 7, 2026)
   applySummer2026Updates(DATA);
@@ -1472,14 +1471,7 @@ async function loadAllData() {
   DATA.divisions = Object.fromEntries(divOrder.filter(d => divMap[d]).map(d => [d, divMap[d]]));
 
   const teamById = Object.fromEntries(DATA.teams.map(t => [t.id, t.name]));
-  DATA.draftPicksByTeam = {};
-  for (const p of DATA.draftPicks) {
-    const teamName = teamById[p.team_id];
-    if (!teamName) continue;
-    if (!DATA.draftPicksByTeam[teamName]) DATA.draftPicksByTeam[teamName] = [];
-    DATA.draftPicksByTeam[teamName].push(p.pick_number);
-  }
-  for (const t of Object.keys(DATA.draftPicksByTeam)) DATA.draftPicksByTeam[t].sort((a,b)=>a-b);
+  DATA.teamById = teamById;
 
   DATA.fullRosters = {};
   for (const p of DATA.players) {
@@ -1730,7 +1722,6 @@ function homeStatCards(){
     { label: '32 Teams', sub: 'rosters & ratings', icon: '🛡️', color: '#3b82f6', action: "showTab('teams')" },
     { label: `${(DATA.players || []).length} Players`, sub: `${rated} rated by Madden 27`, icon: '🏈', color: '#06b6d4', action: "openCommandPalette()" },
     { label: `${(DATA.transactions || []).length} Moves`, sub: 'since Super Bowl LX', icon: '⚡', color: '#ef4444', action: "showMovesTab()" },
-    { label: `${(DATA.draftPicks || []).length} Picks`, sub: '2026 draft tracker', icon: '📋', color: '#8b5cf6', action: "showTab('draft')" },
     { label: '16 Week 1 Games', sub: 'odds & win probabilities', icon: '📅', color: '#10b981', action: "showTab('schedule')" },
     { label: '6 Sportsbooks', sub: 'Kalshi · DK · MGM · FD · Poly · Caesars', icon: '💰', color: '#f59e0b', action: "showTab('props')" },
   ];
@@ -1799,7 +1790,6 @@ const HOME_FEATURES = [
   { icon:'💰', title:'Props & Value', tab:'props', accent:'#10b981', stat:'model edge · EV', desc:'Player props ranked by model edge across six sportsbooks — best lines, alerts and a full value board you can filter by source and side.' },
   { icon:'🛡️', title:'Teams & Rosters', tab:'teams', accent:'#f59e0b', stat:() => DATA.teams.length + ' teams', desc:'Depth charts, Madden ratings and division navigation for every team, plus head-to-head player comparison.' },
   { icon:'⚡', title:'Transactions', tab:'feed', accent:'#ef4444', stat:() => DATA.transactions.length + ' moves', desc:'Every offseason move since Super Bowl LX — trades, signings and draft pickups, with blockbuster moves flagged.' },
-  { icon:'📋', title:'Draft Tracker', tab:'draft', accent:'#8b5cf6', stat:() => DATA.draftPicks.length + ' picks', desc:'The 2026 NFL Draft with all 7 rounds of picks and grades, organized by team.' },
 ];
 
 const HOME_TOOLS = [
@@ -2410,31 +2400,6 @@ function renderTeams(){
   </div>`;
 }
 
-function renderDraft(){
-  const c=document.getElementById('draftContainer');let h='';
-  const sorted=Object.entries(DATA.draftPicksByTeam).sort((a,b)=>(a[1][0]||999)-(b[1][0]||999));
-  sorted.forEach(([team,picks])=>{
-    const color=DATA.teamColors[team];
-    const r1=picks.filter(p=>p<=32),r2=picks.filter(p=>p>32&&p<=64),r3=picks.filter(p=>p>64&&p<=100),later=picks.filter(p=>p>100);
-    h+=`<div class="glass rounded-xl overflow-hidden team-card" data-team="${team.toLowerCase()}">
-      <div class="h-1" style="background:linear-gradient(90deg,${color},transparent)"></div>
-      <div class="p-4">
-        <div class="flex items-center justify-between mb-2">
-          <span class="font-bold text-white text-sm">${team}</span>
-          <span class="text-xs text-slate-500">${picks.length} picks</span>
-        </div>
-        <div class="space-y-1">
-          ${r1.length?`<div class="text-[11px] text-violet-400 font-bold">RD 1: ${r1.map(p=>`<span class="draft-pick r1">#${p}</span>`).join('')}</div>`:''}
-          ${r2.length?`<div class="text-[11px] text-blue-400 font-bold">RD 2: ${r2.map(p=>`<span class="draft-pick r2">#${p}</span>`).join('')}</div>`:''}
-          ${r3.length?`<div class="text-[11px] text-cyan-400 font-bold">RD 3: ${r3.map(p=>`<span class="draft-pick r3">#${p}</span>`).join('')}</div>`:''}
-          ${later.length?`<div class="text-[11px] text-slate-400 font-bold">RD 4-7: ${later.map(p=>`<span class="draft-pick r${getPickRound(p)}">#${p}</span>`).join('')}</div>`:''}
-        </div>
-      </div>
-    </div>`;
-  });
-  c.innerHTML=h;
-}
-
 // ═══════════════════════════════════════════════════════════
 // ROSTER & TEAM PROJECTIONS MODAL
 // ═══════════════════════════════════════════════════════════
@@ -2516,11 +2481,13 @@ async function openRoster(team, defaultSide = 'offense') {
   const tabOff = document.getElementById('rosterTabOff');
   const tabDef = document.getElementById('rosterTabDef');
   const tabSt = document.getElementById('rosterTabSt');
+  const tabDc = document.getElementById('rosterTabDc');
 
   let activeEl = tabOff;
   if (defaultSide === 'projections') activeEl = tabProj;
   else if (defaultSide === 'defense') activeEl = tabDef;
   else if (defaultSide === 'special') activeEl = tabSt;
+  else if (defaultSide === 'draftcap') activeEl = tabDc;
 
   await showRosterSide(defaultSide, activeEl);
   modal.classList.add('active');
@@ -2535,9 +2502,9 @@ function closeRoster() {
 async function showRosterSide(side, el) {
   currentRosterSide = side;
   document.querySelectorAll('.roster-tab').forEach(t => {
-    t.classList.remove('active-proj', 'active-off', 'active-def', 'active-st');
+    t.classList.remove('active-proj', 'active-off', 'active-def', 'active-st', 'active-dc');
   });
-  const cls = side === 'projections' ? 'active-proj' : side === 'defense' ? 'active-def' : side === 'special' ? 'active-st' : 'active-off';
+  const cls = side === 'projections' ? 'active-proj' : side === 'defense' ? 'active-def' : side === 'special' ? 'active-st' : side === 'draftcap' ? 'active-dc' : 'active-off';
   if (el) el.classList.add(cls);
 
   const filterRow = document.getElementById('rosterFilterRow');
@@ -2547,6 +2514,10 @@ async function showRosterSide(side, el) {
     if (filterRow) filterRow.style.display = 'none';
     if (changesEl) changesEl.style.display = 'none';
     await renderTeamProjectionsBody(currentRosterTeam);
+  } else if (side === 'draftcap') {
+    if (filterRow) filterRow.style.display = 'none';
+    if (changesEl) changesEl.style.display = 'none';
+    renderDraftCapital(currentRosterTeam);
   } else {
     if (filterRow) filterRow.style.display = 'flex';
     if (changesEl) changesEl.style.display = 'block';
@@ -2948,6 +2919,62 @@ function renderRosterBody(team,side){
   document.getElementById('rosterBody').innerHTML=h;
 }
 
+function renderDraftCapital(team){
+  const c = document.getElementById('rosterBody');
+  if (!c) return;
+  const dc = DATA.draftCapital;
+  if (!dc || !dc.capital || !dc.capital[team]) {
+    c.innerHTML = '<div class="text-sm text-slate-500 py-8 text-center">Draft capital data is unavailable.</div>';
+    return;
+  }
+  const abbrOf = (name) => (DATA.teams.find(t => t.name === name) || {}).abbr || name;
+
+  let h = `<div class="space-y-3">
+    <div class="text-[11px] text-slate-500 leading-relaxed">
+      Standard 7-round capital per draft, adjusted for every pick trade in the transaction log through Aug 2026.
+      <span class="text-emerald-400 font-bold">Green</span> = acquired via trade &middot;
+      <span class="text-slate-500 line-through">struck</span> = traded away.
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">`;
+
+  for (const year of dc.years) {
+    const ys = String(year);
+    const rounds = dc.capital[team][ys] || [];
+    const gained = (dc.acquired && dc.acquired[team] && dc.acquired[team][ys]) || [];
+    const counts = {};
+    rounds.forEach(r => counts[r] = (counts[r] || 0) + 1);
+    const gainedByRound = {};
+    gained.forEach(g => { (gainedByRound[g.round] = gainedByRound[g.round] || []).push(g); });
+
+    let chips = '';
+    for (let r = 1; r <= 7; r++) {
+      const n = counts[r] || 0;
+      if (n === 0) {
+        chips += `<span class="dc-pick missing" title="${year} round ${r} traded away">R${r}</span>`;
+        continue;
+      }
+      const g = gainedByRound[r] || [];
+      for (let i = 0; i < n; i++) {
+        const gg = g[i];
+        chips += gg
+          ? `<span class="dc-pick gained" title="Acquired from ${gg.via} in the ${gg.player} trade">R${r} <span style="font-weight:600;opacity:.75">via ${abbrOf(gg.via)}</span></span>`
+          : `<span class="dc-pick own" title="Original ${year} round ${r} pick">R${r}</span>`;
+      }
+    }
+
+    h += `<div class="dc-year-block">
+      <div class="flex items-center justify-between mb-1.5">
+        <span class="text-xs font-black text-violet-300 tracking-wider">${year} DRAFT</span>
+        <span class="text-[11px] text-slate-500">${rounds.length} pick${rounds.length === 1 ? '' : 's'}</span>
+      </div>
+      <div>${chips}</div>
+    </div>`;
+  }
+
+  h += `</div></div>`;
+  c.innerHTML = h;
+}
+
 function renderRosterChanges(team){
   const gains=getTeamGains(team);const losses=getTeamLosses(team);
   let h='<div class="grid grid-cols-1 md:grid-cols-2 gap-4">';
@@ -3037,29 +3064,14 @@ function filterDashboard(q){
     divContent.style.display = hasVisible ? '' : 'none';
   });
 
-  // Filter draft cards
-  let draftVisible = 0;
-  document.querySelectorAll('#draftContainer .team-card').forEach(el => {
-    const t = (el.dataset.team || el.textContent || '').toLowerCase();
-    const show = (!q || t.includes(q));
-    el.style.display = show ? '' : 'none';
-    if (show) draftVisible++;
-  });
-
-  // Empty-state for teams + draft
-  ['teamsEmpty','draftEmpty'].forEach(id=>{const el=document.getElementById(id);if(el)el.remove();});
+  // Empty-state for teams
+  ['teamsEmpty'].forEach(id=>{const el=document.getElementById(id);if(el)el.remove();});
   if (q) {
     if (teamVisible === 0) {
       const el = document.createElement('div'); el.id = 'teamsEmpty';
       el.className = 'text-center py-12 text-slate-500';
       el.innerHTML = '<div class="text-4xl mb-2">&#128269;</div><div class="text-sm">No teams match "<span class="text-slate-300">'+q+'</span>"</div>';
       document.getElementById('teamsContainer').appendChild(el);
-    }
-    if (draftVisible === 0) {
-      const el = document.createElement('div'); el.id = 'draftEmpty';
-      el.className = 'text-center py-12 text-slate-500';
-      el.innerHTML = '<div class="text-4xl mb-2">&#128269;</div><div class="text-sm">No draft cards match "<span class="text-slate-300">'+q+'</span>"</div>';
-      document.getElementById('draftContainer').appendChild(el);
     }
   }
 }
@@ -3088,7 +3100,6 @@ loadAllData().then(() => {
     teams: DATA.teams.length,
     players: DATA.players.length,
     transactions: DATA.transactions.length,
-    draftPicks: DATA.draftPicks.length,
     rookies: DATA.players.filter(p => p.is_rookie).length,
     rated: DATA.players.filter(p => p.ovr !== null).length
   });
@@ -3097,7 +3108,6 @@ loadAllData().then(() => {
   renderTeams();
   renderTeamsSubTabs();
   setTeamsSubTab(currentTeamsSubTab);
-  renderDraft();
 }).catch(e => {
   document.body.innerHTML = '<div style="padding:40px;color:#ef4444;font-family:monospace">Failed to load data from Supabase: ' + e.message + '</div>';
   console.error('[loadAllData failed]', e);
@@ -4739,7 +4749,6 @@ function handleCommandSearch(q) {
     { label: 'Week 1 Schedule', type: 'Tab', icon: '📅', action: () => { showTab('schedule'); closeCommandPalette(); } },
     { label: 'Transactions / Moves', type: 'Tab', icon: '⚡', action: () => { showMovesTab(); closeCommandPalette(); } },
     { label: 'Teams & Rosters', type: 'Tab', icon: '🛡', action: () => { showTab('teams'); closeCommandPalette(); } },
-    { label: '2026 Draft Tracker', type: 'Tab', icon: '📋', action: () => { showTab('draft'); closeCommandPalette(); } },
     { label: 'Mike Clay Projections', type: 'Tab', icon: '📊', action: () => { showTab('projections'); closeCommandPalette(); } },
     { label: 'Props & Value Board', type: 'Tab', icon: '💰', action: () => { showTab('props'); closeCommandPalette(); } },
     { label: 'Clay vs Market Delta', type: 'Feature', icon: '⚡', action: () => { showTab('projections'); switchProjSubTab('clay_delta'); closeCommandPalette(); } },

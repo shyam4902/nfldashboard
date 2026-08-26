@@ -1,0 +1,969 @@
+{
+  "generated": "2026-08-26",
+  "years": [
+    2027,
+    2028
+  ],
+  "source": "Derived from nfl_transactions (Supabase), the summer 2026 transaction log, and the processed in-season sync log. See scripts/build_draft_capital.py.",
+  "notes": [
+    "Future capital reflects a standard 7-round draft adjusted by every pick trade in the dashboard's transaction log through Aug 2026. Compensatory picks and pick swaps not itemized in transaction details are not tracked."
+  ],
+  "trades": [
+    {
+      "year": 2027,
+      "round": 1,
+      "from_team": "Los Angeles Rams",
+      "to_team": "Cleveland Browns",
+      "player": "Myles Garrett",
+      "date": "2026-07-24",
+      "note": "Blockbuster: Garrett to LAR for Verse + picks"
+    },
+    {
+      "year": 2028,
+      "round": 2,
+      "from_team": "Los Angeles Rams",
+      "to_team": "Cleveland Browns",
+      "player": "Myles Garrett",
+      "date": "2026-07-24"
+    },
+    {
+      "year": 2027,
+      "round": 1,
+      "from_team": "New England Patriots",
+      "to_team": "Philadelphia Eagles",
+      "player": "A.J. Brown",
+      "date": "2026-07-20",
+      "note": "Brown to NE for two 2027 picks"
+    },
+    {
+      "year": 2027,
+      "round": 3,
+      "from_team": "New England Patriots",
+      "to_team": "Philadelphia Eagles",
+      "player": "A.J. Brown",
+      "date": "2026-07-20"
+    },
+    {
+      "year": 2027,
+      "round": 3,
+      "from_team": "Los Angeles Rams",
+      "to_team": "Kansas City Chiefs",
+      "player": "Trent McDuffie",
+      "date": "2026-03-01"
+    },
+    {
+      "year": 2027,
+      "round": 4,
+      "from_team": "Dallas Cowboys",
+      "to_team": "Green Bay Packers",
+      "player": "Rashan Gary",
+      "date": "2026-03-01"
+    },
+    {
+      "year": 2027,
+      "round": 5,
+      "from_team": "Chicago Bears",
+      "to_team": "New England Patriots",
+      "player": "Garrett Bradbury",
+      "date": "2026-03-01"
+    },
+    {
+      "year": 2027,
+      "round": 6,
+      "from_team": "Kansas City Chiefs",
+      "to_team": "New York Jets",
+      "player": "Justin Fields",
+      "date": "2026-03-01"
+    },
+    {
+      "year": 2027,
+      "round": 6,
+      "from_team": "Seattle Seahawks",
+      "to_team": "New York Jets",
+      "player": "Irvin Charles",
+      "date": "2026-05-28"
+    },
+    {
+      "year": 2027,
+      "round": 7,
+      "from_team": "Houston Texans",
+      "to_team": "Detroit Lions",
+      "player": "David Montgomery",
+      "date": "2026-03-01",
+      "note": "Texans also sent OL Juice Scruggs + 2026 4th"
+    },
+    {
+      "year": 2027,
+      "round": 7,
+      "from_team": "Philadelphia Eagles",
+      "to_team": "Carolina Panthers",
+      "player": "Andy Dalton",
+      "date": "2026-03-01"
+    },
+    {
+      "year": 2028,
+      "round": 6,
+      "from_team": "Houston Texans",
+      "to_team": "New Orleans Saints",
+      "player": "Kai Kroeger",
+      "date": "2026-03-01"
+    },
+    {
+      "year": 2028,
+      "round": 6,
+      "from_team": "Miami Dolphins",
+      "to_team": "New England Patriots",
+      "player": "Caedan Wallace",
+      "date": "2026-08-10",
+      "note": "Patriots also sent a 2029 7th to Miami (out of scope)"
+    }
+  ],
+  "capital": {
+    "Arizona Cardinals": {
+      "2027": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "2028": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    "Atlanta Falcons": {
+      "2027": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "2028": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    "Baltimore Ravens": {
+      "2027": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "2028": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    "Buffalo Bills": {
+      "2027": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "2028": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    "Carolina Panthers": {
+      "2027": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        7
+      ],
+      "2028": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    "Chicago Bears": {
+      "2027": [
+        1,
+        2,
+        3,
+        4,
+        6,
+        7
+      ],
+      "2028": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    "Cincinnati Bengals": {
+      "2027": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "2028": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    "Cleveland Browns": {
+      "2027": [
+        1,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "2028": [
+        1,
+        2,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    "Dallas Cowboys": {
+      "2027": [
+        1,
+        2,
+        3,
+        5,
+        6,
+        7
+      ],
+      "2028": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    "Denver Broncos": {
+      "2027": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "2028": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    "Detroit Lions": {
+      "2027": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        7
+      ],
+      "2028": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    "Green Bay Packers": {
+      "2027": [
+        1,
+        2,
+        3,
+        4,
+        4,
+        5,
+        6,
+        7
+      ],
+      "2028": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    "Houston Texans": {
+      "2027": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "2028": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        7
+      ]
+    },
+    "Indianapolis Colts": {
+      "2027": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "2028": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    "Jacksonville Jaguars": {
+      "2027": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "2028": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    "Kansas City Chiefs": {
+      "2027": [
+        1,
+        2,
+        3,
+        3,
+        4,
+        5,
+        7
+      ],
+      "2028": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    "Las Vegas Raiders": {
+      "2027": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "2028": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    "Los Angeles Chargers": {
+      "2027": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "2028": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    "Los Angeles Rams": {
+      "2027": [
+        2,
+        4,
+        5,
+        6,
+        7
+      ],
+      "2028": [
+        1,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    "Miami Dolphins": {
+      "2027": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "2028": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        7
+      ]
+    },
+    "Minnesota Vikings": {
+      "2027": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "2028": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    "New England Patriots": {
+      "2027": [
+        2,
+        4,
+        5,
+        5,
+        6,
+        7
+      ],
+      "2028": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        6,
+        7
+      ]
+    },
+    "New Orleans Saints": {
+      "2027": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "2028": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        6,
+        7
+      ]
+    },
+    "New York Giants": {
+      "2027": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "2028": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    "New York Jets": {
+      "2027": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        6,
+        6,
+        7
+      ],
+      "2028": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    "Philadelphia Eagles": {
+      "2027": [
+        1,
+        1,
+        2,
+        3,
+        3,
+        4,
+        5,
+        6
+      ],
+      "2028": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    "Pittsburgh Steelers": {
+      "2027": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "2028": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    "San Francisco 49ers": {
+      "2027": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "2028": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    "Seattle Seahawks": {
+      "2027": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        7
+      ],
+      "2028": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    "Tampa Bay Buccaneers": {
+      "2027": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "2028": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    "Tennessee Titans": {
+      "2027": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "2028": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    "Washington Commanders": {
+      "2027": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "2028": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    }
+  },
+  "acquired": {
+    "Arizona Cardinals": {
+      "2027": [],
+      "2028": []
+    },
+    "Atlanta Falcons": {
+      "2027": [],
+      "2028": []
+    },
+    "Baltimore Ravens": {
+      "2027": [],
+      "2028": []
+    },
+    "Buffalo Bills": {
+      "2027": [],
+      "2028": []
+    },
+    "Carolina Panthers": {
+      "2027": [
+        {
+          "round": 7,
+          "via": "Philadelphia Eagles",
+          "player": "Andy Dalton"
+        }
+      ],
+      "2028": []
+    },
+    "Chicago Bears": {
+      "2027": [],
+      "2028": []
+    },
+    "Cincinnati Bengals": {
+      "2027": [],
+      "2028": []
+    },
+    "Cleveland Browns": {
+      "2027": [
+        {
+          "round": 1,
+          "via": "Los Angeles Rams",
+          "player": "Myles Garrett"
+        }
+      ],
+      "2028": [
+        {
+          "round": 2,
+          "via": "Los Angeles Rams",
+          "player": "Myles Garrett"
+        }
+      ]
+    },
+    "Dallas Cowboys": {
+      "2027": [],
+      "2028": []
+    },
+    "Denver Broncos": {
+      "2027": [],
+      "2028": []
+    },
+    "Detroit Lions": {
+      "2027": [
+        {
+          "round": 7,
+          "via": "Houston Texans",
+          "player": "David Montgomery"
+        }
+      ],
+      "2028": []
+    },
+    "Green Bay Packers": {
+      "2027": [
+        {
+          "round": 4,
+          "via": "Dallas Cowboys",
+          "player": "Rashan Gary"
+        }
+      ],
+      "2028": []
+    },
+    "Houston Texans": {
+      "2027": [],
+      "2028": []
+    },
+    "Indianapolis Colts": {
+      "2027": [],
+      "2028": []
+    },
+    "Jacksonville Jaguars": {
+      "2027": [],
+      "2028": []
+    },
+    "Kansas City Chiefs": {
+      "2027": [
+        {
+          "round": 3,
+          "via": "Los Angeles Rams",
+          "player": "Trent McDuffie"
+        }
+      ],
+      "2028": []
+    },
+    "Las Vegas Raiders": {
+      "2027": [],
+      "2028": []
+    },
+    "Los Angeles Chargers": {
+      "2027": [],
+      "2028": []
+    },
+    "Los Angeles Rams": {
+      "2027": [],
+      "2028": []
+    },
+    "Miami Dolphins": {
+      "2027": [],
+      "2028": []
+    },
+    "Minnesota Vikings": {
+      "2027": [],
+      "2028": []
+    },
+    "New England Patriots": {
+      "2027": [
+        {
+          "round": 5,
+          "via": "Chicago Bears",
+          "player": "Garrett Bradbury"
+        }
+      ],
+      "2028": [
+        {
+          "round": 6,
+          "via": "Miami Dolphins",
+          "player": "Caedan Wallace"
+        }
+      ]
+    },
+    "New Orleans Saints": {
+      "2027": [],
+      "2028": [
+        {
+          "round": 6,
+          "via": "Houston Texans",
+          "player": "Kai Kroeger"
+        }
+      ]
+    },
+    "New York Giants": {
+      "2027": [],
+      "2028": []
+    },
+    "New York Jets": {
+      "2027": [
+        {
+          "round": 6,
+          "via": "Kansas City Chiefs",
+          "player": "Justin Fields"
+        },
+        {
+          "round": 6,
+          "via": "Seattle Seahawks",
+          "player": "Irvin Charles"
+        }
+      ],
+      "2028": []
+    },
+    "Philadelphia Eagles": {
+      "2027": [
+        {
+          "round": 1,
+          "via": "New England Patriots",
+          "player": "A.J. Brown"
+        },
+        {
+          "round": 3,
+          "via": "New England Patriots",
+          "player": "A.J. Brown"
+        }
+      ],
+      "2028": []
+    },
+    "Pittsburgh Steelers": {
+      "2027": [],
+      "2028": []
+    },
+    "San Francisco 49ers": {
+      "2027": [],
+      "2028": []
+    },
+    "Seattle Seahawks": {
+      "2027": [],
+      "2028": []
+    },
+    "Tampa Bay Buccaneers": {
+      "2027": [],
+      "2028": []
+    },
+    "Tennessee Titans": {
+      "2027": [],
+      "2028": []
+    },
+    "Washington Commanders": {
+      "2027": [],
+      "2028": []
+    }
+  }
+}
