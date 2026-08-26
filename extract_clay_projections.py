@@ -529,6 +529,55 @@ def main():
 
     pdf.close()
 
+    # Rebuild team defense from positional projections (PDF text merges columns,
+    # so the raw defense parse is unreliable). The positional pages parse cleanly.
+    print("\n8. Rebuilding team defense from positional projections...")
+    pos_lookup = {}
+    pos_map = {'IDL': 'DI', 'EDGE': 'ED', 'LB': 'LB', 'CB': 'CB', 'S': 'S'}
+    for pos_group in ['IDL', 'EDGE', 'LB', 'CB', 'S']:
+        for p in positional.get(pos_group, []):
+            key = p.get('team_abbr', '')
+            if key not in pos_lookup:
+                pos_lookup[key] = []
+            pos_lookup[key].append(p)
+
+    for team_name, td in team_projections.items():
+        abbr = td.get('abbr', '')
+        if not abbr or abbr not in pos_lookup:
+            continue
+        team_def = []
+        for pos_group in ['IDL', 'EDGE', 'LB', 'CB', 'S']:
+            for p in pos_lookup.get(abbr, []):
+                if p.get('pos') == pos_group:
+                    team_def.append({
+                        'pos': pos_map.get(pos_group, pos_group),
+                        'name': p['name'],
+                        'snaps': p['snaps'],
+                        'tackles': p['total_tackles'],
+                        'sacks': p['sacks'],
+                        'interceptions': p['interceptions'],
+                        'fumbles_forced': p['ff'],
+                        'rank': p['pos_rank'],
+                    })
+        team_def.sort(key=lambda x: x['rank'])
+        # Add position-group totals
+        final_def = []
+        for pos_group in ['DI', 'ED', 'LB', 'CB', 'S']:
+            group = [p for p in team_def if p['pos'] == pos_group]
+            if group:
+                final_def.extend(group)
+                final_def.append({
+                    'pos': 'Total', 'name': f'{pos_group} Total',
+                    'snaps': sum(p['snaps'] for p in group),
+                    'tackles': sum(p['tackles'] for p in group),
+                    'sacks': round(sum(p['sacks'] for p in group), 1),
+                    'interceptions': round(sum(p['interceptions'] for p in group), 1),
+                    'fumbles_forced': round(sum(p['fumbles_forced'] for p in group), 1),
+                    'rank': 0,
+                })
+        td['defense'] = final_def
+    print(f"   Rebuilt defense for {len(team_projections)} teams")
+
     all_data = {
         'team_projections': team_projections,
         'positional_projections': positional,
