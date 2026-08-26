@@ -137,10 +137,25 @@ body { font-family: 'Inter', sans-serif; background: #0a0e17; color: #e2e8f0; }
 .macro-chip .score { color:#34d399; font-size:11px; margin-left:4px; }
 
 /* ── Phase 4: Transactions table + chips ── */
-.teams-subtabs { display:flex; gap:4px; border-bottom:1px solid rgba(71,85,105,0.35); overflow-x:auto; }
-.teams-subtab { border:0; border-bottom:2px solid transparent; background:transparent; color:#94a3b8; padding:8px 12px; font-size:11px; font-weight:800; cursor:pointer; white-space:nowrap; transition:color .15s, border-color .15s, background .15s; }
-.teams-subtab:hover { color:#e2e8f0; background:rgba(59,130,246,0.08); }
-.teams-subtab.active { color:#f8fafc; border-bottom-color:#38bdf8; background:rgba(59,130,246,0.1); }
+.teams-subtabs { display:flex; gap:8px; overflow-x:auto; padding:2px; }
+.teams-subtab { display:inline-flex; align-items:center; gap:8px; border:1px solid rgba(71,85,105,0.5); background:rgba(30,41,59,0.7); color:#94a3b8; padding:10px 20px; font-size:13px; font-weight:800; border-radius:12px; cursor:pointer; white-space:nowrap; transition:transform .15s, border-color .2s, box-shadow .2s, background .15s, color .15s; }
+.teams-subtab:hover { color:#e2e8f0; border-color:rgba(148,163,184,0.6); transform:translateY(-2px); box-shadow:0 5px 14px rgba(0,0,0,0.35); }
+.teams-subtab:active { transform:translateY(0) scale(.97); }
+.teams-subtab.active { color:#f8fafc; background:rgba(59,130,246,0.18); border-color:#3b82f6; box-shadow:0 0 0 1px rgba(59,130,246,0.45), 0 0 20px rgba(59,130,246,0.22); }
+.teams-subtab .subtab-icon { font-size:15px; line-height:1; }
+.teams-subtab .subtab-badge { font-size:10px; font-weight:800; padding:1px 7px; border-radius:999px; background:rgba(148,163,184,0.15); color:#cbd5e1; }
+.teams-subtab.active .subtab-badge { background:rgba(59,130,246,0.3); color:#dbeafe; }
+.div-nav-btn { display:inline-flex; flex-direction:column; align-items:center; gap:1px; border:1px solid rgba(71,85,105,0.4); border-top-width:3px; border-radius:10px; background:rgba(15,23,42,0.8); padding:7px 16px; cursor:pointer; transition:transform .15s, border-color .2s, box-shadow .2s, background .15s; text-align:center; }
+.div-nav-btn:hover { transform:translateY(-2px); box-shadow:0 6px 16px rgba(0,0,0,0.4); background:rgba(30,41,59,0.9); }
+.div-nav-btn:active { transform:translateY(0) scale(.95); box-shadow:0 2px 6px rgba(0,0,0,0.3); }
+.div-nav-btn .dv-short { font-size:14px; font-weight:900; letter-spacing:-0.3px; color:#e2e8f0; line-height:1.1; }
+.div-nav-btn .dv-conf { font-size:8px; font-weight:800; text-transform:uppercase; letter-spacing:1px; }
+.div-nav-btn.afc { border-top-color:#b91c1c; }
+.div-nav-btn.afc .dv-conf { color:#f87171; }
+.div-nav-btn.afc:hover { border-color:rgba(239,68,68,0.55); border-top-color:#ef4444; }
+.div-nav-btn.nfc { border-top-color:#1d4ed8; }
+.div-nav-btn.nfc .dv-conf { color:#60a5fa; }
+.div-nav-btn.nfc:hover { border-color:rgba(59,130,246,0.55); border-top-color:#3b82f6; }
 .moves-summary { display:flex; align-items:center; flex-wrap:wrap; gap:6px; margin-bottom:10px; font-size:11px; color:#94a3b8; }
 .moves-summary strong { color:#e2e8f0; font-weight:800; }
 .moves-summary .summary-accent { color:#fbbf24; }
@@ -2232,8 +2247,18 @@ function showMovesTab() { showTab('teams'); setTeamsSubTab('moves'); }
 function renderTeamsSubTabs() {
   const c = document.getElementById('teamsSubTabs');
   if (!c) return;
-  const tabs = [['overview', 'Overview'], ['moves', 'Moves'], ['power', 'Power Index']];
-  c.innerHTML = tabs.map(([key, label]) => `<button class="teams-subtab ${currentTeamsSubTab === key ? 'active' : ''}" onclick="setTeamsSubTab('${key}')">${label}</button>`).join('');
+  const movesCount = (DATA.transactions || []).length;
+  const tabs = [
+    ['overview', 'Overview', '🏈', null],
+    ['moves', 'Moves', '⚡', movesCount ? movesCount.toLocaleString() : null],
+    ['power', 'Power Index', '🏆', null]
+  ];
+  c.innerHTML = tabs.map(([key, label, icon, badge]) =>
+    `<button class="teams-subtab ${currentTeamsSubTab === key ? 'active' : ''}" onclick="setTeamsSubTab('${key}')" title="${label}">` +
+    `<span class="subtab-icon">${icon}</span>${label}` +
+    (badge ? `<span class="subtab-badge">${badge}</span>` : '') +
+    `</button>`
+  ).join('');
 }
 
 function setTeamsSubTab(tab) {
@@ -2368,12 +2393,13 @@ function renderTeams(){
 
   if(navC){
     let navH='';
-    for(const[divs,prefix,cls] of [[afcDivs,'A','border-red-800/50 text-red-400 hover:bg-red-900/30'],[nfcDivs,'N','border-blue-800/50 text-blue-400 hover:bg-blue-900/30']]){
+    for(const[divs,conf] of [[afcDivs,'afc'],[nfcDivs,'nfc']]){
       for(const[divName] of divs){
         const short=divName.replace(/AFC |NFC /,'');
-        navH+=`<button onclick="scrollToDiv('${divName}')" class="text-[10px] font-bold px-2 py-0.5 rounded border transition bg-slate-800/60 ${cls}">${prefix}: ${short}</button>`;
+        navH+=`<button onclick="scrollToDiv('${divName}')" class="div-nav-btn ${conf}" title="Jump to ${divName}">` +
+          `<span class="dv-short">${short}</span><span class="dv-conf">${conf === 'afc' ? 'AFC' : 'NFC'}</span></button>`;
       }
-      navH+='<div class="w-px h-4 bg-slate-700 mx-0.5 self-center"></div>';
+      navH+='<div class="w-px h-8 bg-slate-700 mx-1 self-center"></div>';
     }
     navC.innerHTML=navH;
   }
