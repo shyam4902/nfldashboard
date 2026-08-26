@@ -131,6 +131,61 @@ body { font-family: 'Inter', sans-serif; background: #0a0e17; color: #e2e8f0; }
 .macro-chip .score { color:#34d399; font-size:11px; margin-left:4px; }
 
 /* ── Phase 4: Transactions table + chips ── */
+.teams-subtabs { display:flex; gap:4px; border-bottom:1px solid rgba(71,85,105,0.35); overflow-x:auto; }
+.teams-subtab { border:0; border-bottom:2px solid transparent; background:transparent; color:#94a3b8; padding:8px 12px; font-size:11px; font-weight:800; cursor:pointer; white-space:nowrap; transition:color .15s, border-color .15s, background .15s; }
+.teams-subtab:hover { color:#e2e8f0; background:rgba(59,130,246,0.08); }
+.teams-subtab.active { color:#f8fafc; border-bottom-color:#38bdf8; background:rgba(59,130,246,0.1); }
+.moves-summary { display:flex; align-items:center; flex-wrap:wrap; gap:6px; margin-bottom:10px; font-size:11px; color:#94a3b8; }
+.moves-summary strong { color:#e2e8f0; font-weight:800; }
+.moves-summary .summary-accent { color:#fbbf24; }
+.moves-toolbar { display:flex; align-items:center; gap:6px; flex-wrap:wrap; margin-bottom:10px; }
+.moves-toolbar input, .moves-toolbar select { min-height:30px; background:rgba(15,23,42,0.72); color:#cbd5e1; border:1px solid rgba(71,85,105,0.6); border-radius:6px; padding:5px 8px; font-size:11px; }
+.moves-toolbar input { flex:1 1 220px; min-width:180px; }
+.moves-toolbar select { min-width:112px; }
+.moves-filter { border:1px solid rgba(71,85,105,0.6); background:rgba(30,41,59,0.55); color:#94a3b8; border-radius:5px; padding:6px 9px; font-size:10px; font-weight:800; cursor:pointer; }
+.moves-filter:hover { color:#e2e8f0; background:rgba(59,130,246,0.12); }
+.moves-filter.active { color:#f8fafc; background:rgba(14,165,233,0.2); border-color:rgba(56,189,248,0.75); }
+.moves-check { display:flex; align-items:center; gap:5px; color:#94a3b8; font-size:10px; font-weight:700; white-space:nowrap; }
+.moves-check input { accent-color:#f59e0b; }
+.moves-wire { border:1px solid rgba(71,85,105,0.35); border-radius:8px; overflow:hidden; background:rgba(15,23,42,0.38); }
+.moves-date-group + .moves-date-group { border-top:1px solid rgba(71,85,105,0.35); }
+.moves-date-heading { display:flex; align-items:baseline; gap:9px; padding:7px 10px 5px; background:rgba(30,41,59,0.55); color:#e2e8f0; font-size:11px; font-weight:900; letter-spacing:.04em; }
+.moves-date-heading span { color:#64748b; font-size:9px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; }
+.move-row { position:relative; display:grid; grid-template-columns:68px minmax(132px,1.25fr) 42px minmax(105px,.8fr) minmax(0,2fr); align-items:center; gap:8px; padding:8px 10px; border-top:1px solid rgba(71,85,105,0.16); cursor:pointer; transition:background .12s; }
+.move-row:first-of-type { border-top:0; }
+.move-row:hover { background:rgba(56,189,248,0.07); }
+.move-row.blockbuster { box-shadow:inset 3px 0 #f59e0b; background:rgba(245,158,11,0.045); }
+.move-type { color:#94a3b8; font-size:9px; font-weight:900; letter-spacing:.07em; text-transform:uppercase; }
+.move-type.trade { color:#60a5fa; }
+.move-type.signing { color:#34d399; }
+.move-type.draft { color:#c4b5fd; }
+.move-player { color:#f8fafc; font-size:11px; font-weight:800; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.move-pos { color:#64748b; font-size:10px; font-weight:800; }
+.move-route { color:#cbd5e1; font-size:10px; font-weight:800; white-space:nowrap; }
+.move-route .move-arrow { color:#fbbf24; padding:0 3px; }
+.move-detail { color:#94a3b8; font-size:10px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.move-bb { color:#f59e0b; font-size:10px; margin-right:3px; }
+.move-drawer-overlay { position:fixed; inset:0; z-index:80; display:flex; justify-content:flex-end; background:rgba(2,6,23,.58); opacity:0; pointer-events:none; transition:opacity .18s ease; }
+.move-drawer-overlay.active { opacity:1; pointer-events:auto; }
+.move-drawer { width:min(430px,100%); height:100%; overflow-y:auto; position:relative; background:#0f1729; border-left:1px solid rgba(71,85,105,.55); padding:22px 20px; transform:translateX(100%); transition:transform .2s ease; }
+.move-drawer-overlay.active .move-drawer { transform:translateX(0); }
+.move-drawer-close { position:absolute; top:12px; right:14px; width:30px; height:30px; border:0; border-radius:6px; background:rgba(71,85,105,.35); color:#cbd5e1; font-size:22px; line-height:1; cursor:pointer; }
+.move-drawer-close:hover { background:rgba(71,85,105,.65); color:#fff; }
+.move-drawer-kicker { color:#38bdf8; font-size:10px; font-weight:900; letter-spacing:.12em; text-transform:uppercase; }
+.move-drawer-title { color:#f8fafc; font-size:24px; font-weight:900; line-height:1.1; margin:7px 38px 3px 0; }
+.move-drawer-meta { color:#94a3b8; font-size:11px; }
+.move-drawer-route { display:flex; align-items:center; gap:8px; margin:20px 0; }
+.move-drawer-team { flex:1; padding:12px 10px; background:rgba(30,41,59,.62); border:1px solid rgba(71,85,105,.5); border-radius:7px; text-align:center; color:#f8fafc; font-size:12px; font-weight:900; }
+.move-drawer-arrow { color:#fbbf24; font-size:18px; }
+.move-drawer-detail { padding:12px; border-left:3px solid #f59e0b; background:rgba(245,158,11,.07); color:#cbd5e1; font-size:12px; line-height:1.55; }
+.move-drawer-actions { display:flex; gap:7px; flex-wrap:wrap; margin-top:18px; }
+.move-drawer-actions button { border:1px solid rgba(71,85,105,.6); background:rgba(30,41,59,.65); color:#cbd5e1; border-radius:6px; padding:7px 9px; font-size:10px; font-weight:800; cursor:pointer; }
+.move-drawer-actions button:hover { border-color:#38bdf8; color:#f8fafc; }
+@media(max-width:700px){
+  .move-row { grid-template-columns:54px minmax(110px,1fr) 34px minmax(90px,.75fr); }
+  .move-detail { grid-column:2 / -1; white-space:normal; line-height:1.35; margin-top:-2px; }
+}
+
 .tx-tbl { display:grid; grid-template-columns: 80px 70px 1.5fr 50px 1fr 1.6fr; gap:0; background:rgba(15,23,42,0.5); border-radius:8px; overflow:hidden; border:1px solid rgba(71,85,105,0.3); }
 .tx-th-cell { font-size:10px; color:#94a3b8; text-transform:uppercase; padding:8px 10px; letter-spacing:0.5px; background:rgba(30,41,59,0.6); cursor:pointer; user-select:none; font-weight:700; border-bottom:1px solid rgba(71,85,105,0.3); }
 .tx-th-cell:hover { background:rgba(59,130,246,0.15); color:#93c5fd; }
@@ -741,7 +796,6 @@ body.theme-analyst .cmd-item.selected {
       <div class="flex gap-1 flex-wrap items-center">
         <button onclick="showTab('home')" class="tab-btn active text-xs px-3 py-2 rounded-lg font-semibold transition" data-tab="home">Home</button>
         <button onclick="showTab('schedule')" class="tab-btn text-xs px-3 py-2 rounded-lg font-semibold bg-slate-800 text-slate-400 hover:bg-slate-700 transition" data-tab="schedule">Schedule</button>
-        <button onclick="showTab('feed')" class="tab-btn text-xs px-3 py-2 rounded-lg font-semibold bg-slate-800 text-slate-400 hover:bg-slate-700 transition" data-tab="feed">Transactions</button>
         <button onclick="showTab('teams')" class="tab-btn text-xs px-3 py-2 rounded-lg font-semibold bg-slate-800 text-slate-400 hover:bg-slate-700 transition" data-tab="teams">Teams</button>
         <button onclick="showTab('draft')" class="tab-btn text-xs px-3 py-2 rounded-lg font-semibold bg-slate-800 text-slate-400 hover:bg-slate-700 transition" data-tab="draft">Draft</button>
         <button onclick="showTab('projections')" class="tab-btn text-xs px-3 py-2 rounded-lg font-semibold bg-slate-800 text-slate-400 hover:bg-slate-700 transition" data-tab="projections">Projections</button>
@@ -849,21 +903,6 @@ body.theme-analyst .cmd-item.selected {
       <p class="text-xs text-slate-500">Loading schedule…</p>
     </div>
   </div>
-  <div id="tab-feed" class="hidden">
-    <h2 class="text-xl font-bold mb-3 flex items-center gap-2">
-      <svg class="w-5 h-5 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1.323l3.954 1.582 1.599-.8a1 1 0 01.894 1.79l-1.233.616 1.738 5.42a1 1 0 01-.285 1.05A3.989 3.989 0 0115 15a3.989 3.989 0 01-2.667-1.019 1 1 0 01-.285-1.05l1.715-5.349L11 6.477V16h2a1 1 0 110 2H7a1 1 0 110-2h2V6.477L6.237 7.582l1.715 5.349a1 1 0 01-.285 1.05A3.989 3.989 0 015 15a3.989 3.989 0 01-2.667-1.019 1 1 0 01-.285-1.05l1.738-5.42-1.233-.617a1 1 0 01.894-1.789l1.599.799L9 4.323V3a1 1 0 011-1z"/></svg>
-      Transactions
-      <span class="text-xs text-slate-500 font-normal ml-1">Since Super Bowl 60</span>
-    </h2>
-    <div class="mb-4">
-      <div class="text-[10px] uppercase tracking-wider text-amber-400 font-bold mb-2 flex items-center gap-2">
-        <span>⚡</span> Biggest Moves
-      </div>
-      <div id="biggestMoves" class="flex gap-3 overflow-x-auto pb-2"></div>
-    </div>
-    <div id="txFilterChips" class="flex flex-wrap gap-2 mb-3 items-center"></div>
-    <div id="feedContainer"></div>
-  </div>
   <div id="tab-teams" class="hidden">
     <div class="flex items-center justify-between flex-wrap gap-3 mb-4">
       <div class="flex items-center gap-3">
@@ -872,8 +911,14 @@ body.theme-analyst .cmd-item.selected {
       </div>
       <div id="divNavBtns" class="flex items-center flex-wrap gap-1.5"></div>
     </div>
-    <div id="teamsContainer"></div>
-    <div class="mt-8">
+    <div id="teamsSubTabs" class="teams-subtabs mb-4"></div>
+    <div id="teamsOverviewPanel">
+      <div id="teamsContainer"></div>
+    </div>
+    <div id="teamsMovesPanel" class="hidden">
+      <div id="movesContainer"></div>
+    </div>
+    <div id="teamsPowerPanel" class="hidden">
       <div class="text-xs font-bold text-slate-300 mb-2 flex items-center gap-2">
         <span>🏆</span> Power Rankings
         <span class="text-slate-500 font-normal">Madden 27 unit ratings — click a column to sort</span>
@@ -930,7 +975,13 @@ body.theme-analyst .cmd-item.selected {
     </div>
   </div>
 
-</main>
+</main>  <!-- MOVE DETAIL DRAWER -->
+<div id="moveDetailDrawer" class="move-drawer-overlay" onclick="if(event.target===this)closeMoveDetail()">
+  <aside class="move-drawer" role="dialog" aria-modal="true" aria-labelledby="moveDetailTitle">
+    <button class="move-drawer-close" onclick="closeMoveDetail()" title="Close move details">&times;</button>
+    <div id="moveDetailContent"></div>
+  </aside>
+</div>
 
 <footer class="text-center text-xs text-slate-600 py-8 border-t border-slate-800">
   Data sourced from NFL.com, ESPN, PFF · Player ratings via Madden 27 · Last updated Aug 7, 2026
@@ -1678,7 +1729,7 @@ function homeStatCards(){
   const cards = [
     { label: '32 Teams', sub: 'rosters & ratings', icon: '🛡️', color: '#3b82f6', action: "showTab('teams')" },
     { label: `${(DATA.players || []).length} Players`, sub: `${rated} rated by Madden 27`, icon: '🏈', color: '#06b6d4', action: "openCommandPalette()" },
-    { label: `${(DATA.transactions || []).length} Moves`, sub: 'since Super Bowl LX', icon: '⚡', color: '#ef4444', action: "showTab('feed')" },
+    { label: `${(DATA.transactions || []).length} Moves`, sub: 'since Super Bowl LX', icon: '⚡', color: '#ef4444', action: "showMovesTab()" },
     { label: `${(DATA.draftPicks || []).length} Picks`, sub: '2026 draft tracker', icon: '📋', color: '#8b5cf6', action: "showTab('draft')" },
     { label: '16 Week 1 Games', sub: 'odds & win probabilities', icon: '📅', color: '#10b981', action: "showTab('schedule')" },
     { label: '6 Sportsbooks', sub: 'Kalshi · DK · MGM · FD · Poly · Caesars', icon: '💰', color: '#f59e0b', action: "showTab('props')" },
@@ -1988,7 +2039,7 @@ function biggestMovesHtml(){
     const typeColor = isTrade ? 'bg-blue-500/20 text-blue-300 border-blue-500/40' : 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40';
     const fromAbbr = DATA.teamAbbr[t.from_team] || (t.from_team || '').split(' ').pop();
     const toAbbr = DATA.teamAbbr[t.to_team] || (t.to_team || '').split(' ').pop();
-    h += `<div class="spotlight-row" onclick="showTab('feed')" title="Open transactions feed">
+    h += `<div class="spotlight-row" onclick="showMovesTab()" title="Open transactions feed">
       <span class="text-[9px] font-black uppercase px-2 py-0.5 rounded border ${typeColor} shrink-0">${homeEsc(t.type)}</span>
       <div class="min-w-0 flex-1">
         <div class="text-xs font-bold text-white truncate flex items-center gap-1.5">
@@ -2008,7 +2059,7 @@ function biggestMovesHtml(){
         <div class="text-xs font-extrabold text-white flex items-center gap-2">
           <span>⚡</span> Biggest Offseason Moves
         </div>
-        <a href="javascript:showTab('feed')" class="text-blue-400 hover:text-blue-300 text-[11px] font-bold">full feed →</a>
+        <a href="javascript:showMovesTab()" class="text-blue-400 hover:text-blue-300 text-[11px] font-bold">full feed →</a>
       </div>
       <div class="flex flex-col gap-1">${h}</div>
     </div>
@@ -2075,169 +2126,139 @@ let txSortDir = 'desc';
 let txTypeFilter = 'all';   // 'all' | 'trade' | 'signing' | 'draft' | 'blockbuster'
 let txTeamFilter = '';
 let txSearchQuery = '';
+let txBlockbusterOnly = false;
+let currentTeamsSubTab = 'overview';
+let moveDetailScrollY = 0;
 
-function getFilteredSortedTransactions() {
+function movesJs(value) {
+  return String(value == null ? '' : value).replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+}
+
+function moveAbbr(team) {
+  return DATA.teamAbbr?.[team] || (team || '').split(' ').map(x => x[0]).join('').slice(0, 3).toUpperCase();
+}
+
+function moveDateKey(t) {
+  return t.sort_date || t.date_str || '';
+}
+
+function getMovesTransactions() {
   let list = DATA.transactions.slice();
-  if (txTypeFilter === 'blockbuster') list = list.filter(t => t.blockbuster);
-  else if (txTypeFilter !== 'all') list = list.filter(t => t.type === txTypeFilter);
+  if (txTypeFilter !== 'all' && txTypeFilter !== 'blockbuster') list = list.filter(t => t.type === txTypeFilter);
+  if (txBlockbusterOnly || txTypeFilter === 'blockbuster') list = list.filter(t => t.blockbuster);
   if (txTeamFilter) list = list.filter(t => t.from_team === txTeamFilter || t.to_team === txTeamFilter);
-  if (txSearchQuery) {
-    list = list.filter(t =>
-      (t.player_name || '').toLowerCase().includes(txSearchQuery) ||
-      (t.from_team || '').toLowerCase().includes(txSearchQuery) ||
-      (t.to_team || '').toLowerCase().includes(txSearchQuery) ||
-      (t.pos || '').toLowerCase().includes(txSearchQuery)
-    );
-  }
+  const q = (txSearchQuery || '').toLowerCase().trim();
+  if (q) list = list.filter(t => [t.player_name, t.from_team, t.to_team, t.pos, t.detail].some(v => String(v || '').toLowerCase().includes(q)));
   list.sort((a, b) => {
-    let av = a[txSortKey], bv = b[txSortKey];
-    if (av === null || av === undefined) av = '';
-    if (bv === null || bv === undefined) bv = '';
-    const cmp = (av < bv) ? -1 : (av > bv) ? 1 : 0;
-    return txSortDir === 'asc' ? cmp : -cmp;
+    const av = moveDateKey(a), bv = moveDateKey(b);
+    return txSortDir === 'asc' ? av.localeCompare(bv) : bv.localeCompare(av);
   });
   return list;
 }
 
-function getDraftRoundFromDetail(d){const m=(d||'').match(/Round\s+(\d)/i);return m?+m[1]:7;}
-function getPickNumFromDetail(d){const m=(d||'').match(/Pick\s+#?(\d+)/i);return m?+m[1]:null;}
+function moveSummaryHtml() {
+  const all = DATA.transactions || [];
+  const trades = all.filter(t => t.type === 'trade').length;
+  const blockbusters = all.filter(t => t.blockbuster).length;
+  const latest = all.slice().sort((a,b) => moveDateKey(b).localeCompare(moveDateKey(a)))[0];
+  return `<div class="moves-summary"><strong>${all.length}</strong> moves <span>·</span> <strong>${trades}</strong> trades <span>·</span> <strong class="summary-accent">${blockbusters}</strong> blockbusters <span>·</span> updated <strong>${homeEsc(latest?.date_str || '—')}</strong></div>`;
+}
 
-function renderFeed(){
-  const c = document.getElementById('feedContainer');
+function renderMovesFilters() {
+  const teams = DATA.teams.slice().sort((a,b) => a.abbr.localeCompare(b.abbr));
+  const typeButton = (key, label) => `<button class="moves-filter ${txTypeFilter === key ? 'active' : ''}" onclick="setMovesType('${key}')">${label}</button>`;
+  return `<div class="moves-toolbar">
+    <input id="movesSearch" value="${homeEsc(txSearchQuery)}" oninput="setMovesSearch(this.value)" placeholder="Search player, team, position, detail..." aria-label="Search transactions">
+    ${typeButton('all', 'All')} ${typeButton('trade', 'Trades')} ${typeButton('signing', 'Signings')} ${typeButton('draft', 'Draft')}
+    <select id="movesTeamFilter" onchange="setMovesTeam(this.value)" aria-label="Filter transactions by team"><option value="">All teams</option>${teams.map(t => `<option value="${homeEsc(t.name)}" ${txTeamFilter === t.name ? 'selected' : ''}>${homeEsc(t.abbr)} — ${homeEsc(t.name)}</option>`).join('')}</select>
+    <label class="moves-check"><input type="checkbox" ${txBlockbusterOnly ? 'checked' : ''} onchange="setMovesBlockbusters(this.checked)"> Blockbusters</label>
+    <select onchange="setMovesSort(this.value)" aria-label="Sort transactions"><option value="desc" ${txSortDir === 'desc' ? 'selected' : ''}>Newest first</option><option value="asc" ${txSortDir === 'asc' ? 'selected' : ''}>Oldest first</option></select>
+  </div>`;
+}
+
+function renderMovesNewswire() {
+  const c = document.getElementById('movesNewswire');
   if (!c) return;
-  const list = getFilteredSortedTransactions();
-  const arrow = (key) => key === txSortKey ? (txSortDir === 'asc' ? ' ↑' : ' ↓') : '';
-  let h = `<div class="tx-tbl">
-    <div class="tx-th-cell ${txSortKey==='sort_date'?'sorted':''}" onclick="sortTx('sort_date')">Date${arrow('sort_date')}</div>
-    <div class="tx-th-cell ${txSortKey==='type'?'sorted':''}" onclick="sortTx('type')">Type${arrow('type')}</div>
-    <div class="tx-th-cell ${txSortKey==='player_name'?'sorted':''}" onclick="sortTx('player_name')">Player${arrow('player_name')}</div>
-    <div class="tx-th-cell ${txSortKey==='pos'?'sorted':''}" onclick="sortTx('pos')">Pos${arrow('pos')}</div>
-    <div class="tx-th-cell ${txSortKey==='to_team'?'sorted':''}" onclick="sortTx('to_team')">Move${arrow('to_team')}</div>
-    <div class="tx-th-cell no-sort">Detail</div>`;
-  const draftTxs = list.filter(t => t.type === 'draft');
-  const otherTxs  = list.filter(t => t.type !== 'draft');
-
-  for (const t of otherTxs) {
-    const bbCls = t.blockbuster ? 'bb' : '';
-    const fromAbbr = DATA.teamAbbr[t.from_team] || (t.from_team || '').split(' ').pop();
-    const toAbbr = DATA.teamAbbr[t.to_team] || (t.to_team || '').split(' ').pop();
-    const moveText = t.from_team === t.to_team ? `re-signed ${toAbbr}` : `${fromAbbr} → ${toAbbr}`;
-    h += `<div class="tx-td-cell ${bbCls}">${t.date_str || ''}</div>
-      <div class="tx-td-cell ${bbCls}"><span class="tx-pill ${t.type}">${t.type}</span></div>
-      <div class="tx-td-cell ${bbCls}">${t.blockbuster ? '<span class="tx-row-bb-marker">⚡</span>' : ''}<span class="text-white font-semibold">${t.player_name}</span></div>
-      <div class="tx-td-cell ${bbCls} text-slate-400">${t.pos}</div>
-      <div class="tx-td-cell ${bbCls}">${moveText}</div>
-      <div class="tx-td-cell ${bbCls} text-slate-500" title="${(t.detail || '').replace(/"/g,'&quot;')}">${t.detail || ''}</div>`;
-  }
-
-  if (draftTxs.length > 0) {
-    const byRound = {};
-    for (const t of draftTxs) {
-      const r = getDraftRoundFromDetail(t.detail);
-      if (!byRound[r]) byRound[r] = [];
-      byRound[r].push(t);
-    }
-    const rounds = Object.keys(byRound).map(Number).sort((a,b) => a - b);
-    for (const r of rounds) {
-      const picks = byRound[r].slice().sort((a,b) => (getPickNumFromDetail(a.detail)||999) - (getPickNumFromDetail(b.detail)||999));
-      const pips = picks.map(t => {
-        const abbr = DATA.teamAbbr[t.to_team] || (t.to_team||'').split(' ').pop();
-        const num = getPickNumFromDetail(t.detail);
-        return `<div class="tx-dp"><span class="dp-num">#${num||'?'}</span><span class="dp-team">${abbr}</span><span class="dp-name">${t.player_name}</span><span class="dp-pos">${t.pos}</span></div>`;
-      }).join('');
-      h += `<div class="tx-draft-group">
-        <div class="tx-draft-rnd-hdr">
-          <span class="tx-pill draft">DRAFT</span>
-          <span style="font-size:12px;font-weight:700;color:#e2e8f0">Round ${r}</span>
-          <span style="font-size:10px;color:#64748b">${picks.length} picks</span>
-        </div>
-        <div class="tx-draft-picks-wrap">${pips}</div>
+  const list = getMovesTransactions();
+  if (!list.length) { c.innerHTML = '<div class="moves-wire"><div class="text-center py-8 text-slate-500 text-xs">No transactions match the current filters.</div></div>'; return; }
+  const groups = [];
+  const byDate = new Map();
+  list.forEach((t, index) => {
+    const key = moveDateKey(t) || 'unknown';
+    if (!byDate.has(key)) { byDate.set(key, { key, items: [] }); groups.push(byDate.get(key)); }
+    byDate.get(key).items.push({ t, index });
+  });
+  let h = '<div class="moves-wire">';
+  for (const group of groups) {
+    const label = group.items[0].t.date_str || group.key || 'Undated';
+    h += `<section class="moves-date-group"><div class="moves-date-heading">${homeEsc(label)} <span>${group.items.length} move${group.items.length === 1 ? '' : 's'}</span></div>`;
+    for (const { t, index } of group.items) {
+      const from = moveAbbr(t.from_team), to = moveAbbr(t.to_team);
+      const route = t.from_team === t.to_team ? `${homeEsc(to)} <span class="move-arrow">↻</span> ${homeEsc(to)}` : `${homeEsc(from)} <span class="move-arrow">→</span> ${homeEsc(to)}`;
+      h += `<div class="move-row ${t.blockbuster ? 'blockbuster' : ''}" onclick="openMoveDetail(${index})" role="button" tabindex="0" onkeydown="if(event.key==='Enter')openMoveDetail(${index})">
+        <div class="move-type ${homeEsc(t.type)}">${t.blockbuster ? '<span class="move-bb">⚡</span>' : ''}${homeEsc(t.type || 'move')}</div>
+        <div class="move-player">${homeEsc(t.player_name || 'Unknown player')}</div>
+        <div class="move-pos">${homeEsc(t.pos || '—')}</div>
+        <div class="move-route">${route}</div>
+        <div class="move-detail">${homeEsc(t.detail || '')}</div>
       </div>`;
     }
+    h += '</section>';
   }
-
-  h += '</div>';
-  if (list.length === 0) h += '<div class="text-center py-12 text-slate-500"><div class="text-3xl mb-2">🔍</div><div class="text-sm">No transactions match the current filters.</div></div>';
-  c.innerHTML = h;
+  c.innerHTML = h + '</div>';
 }
 
-function sortTx(key) {
-  if (txSortKey === key) {
-    txSortDir = txSortDir === 'asc' ? 'desc' : 'asc';
-  } else {
-    txSortKey = key;
-    txSortDir = key === 'sort_date' ? 'desc' : 'asc';
-  }
-  renderFeed();
-}
-
-function setTxTypeFilter(key) {
-  txTypeFilter = key;
-  renderTxFilterChips();
-  renderFeed();
-}
-
-function setTxTeamFilter(name) {
-  txTeamFilter = name;
-  renderFeed();
-}
-
-function renderBiggestMoves() {
-  const c = document.getElementById('biggestMoves');
+function renderMovesView() {
+  const c = document.getElementById('movesContainer');
   if (!c) return;
-  const moves = DATA.transactions.filter(t => t.blockbuster).slice(0, 8);
-  let h = '';
-  for (const t of moves) {
-    const fromAbbr = DATA.teamAbbr[t.from_team] || (t.from_team || '').split(' ').pop();
-    const toAbbr = DATA.teamAbbr[t.to_team] || (t.to_team || '').split(' ').pop();
-    const fromColor = DATA.teamColors[t.from_team] || '#64748b';
-    const toColor = DATA.teamColors[t.to_team] || '#64748b';
-    const typeBg = t.type === 'trade' ? 'bg-blue-900/40 text-blue-300' : 'bg-emerald-900/40 text-emerald-300';
-    h += `<div class="glass rounded-xl p-3 shrink-0 w-64 blockbuster relative" style="border-left-color:#f59e0b">
-      <div class="flex items-center gap-2 mb-2">
-        <span class="text-[9px] font-black bg-amber-500/20 text-amber-400 px-2 py-0.5 rounded-full">⚡ BLOCKBUSTER</span>
-        <span class="text-[9px] font-bold ${typeBg} px-2 py-0.5 rounded-full uppercase">${t.type}</span>
-      </div>
-      <div class="font-bold text-white text-base mb-1">${t.player_name}</div>
-      <div class="flex items-center gap-2 text-xs mb-2 flex-wrap">
-        <span class="text-slate-400">${t.pos}</span>
-        <span class="text-slate-600">·</span>
-        <span class="px-1.5 py-0.5 rounded text-[10px] font-bold" style="background:${fromColor}40;color:${fromColor};">${fromAbbr}</span>
-        <span class="text-slate-500">→</span>
-        <span class="px-1.5 py-0.5 rounded text-[10px] font-bold" style="background:${toColor}40;color:${toColor};">${toAbbr}</span>
-      </div>
-      <div class="text-[10px] text-slate-500" style="display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">${t.detail || ''}</div>
-    </div>`;
-  }
-  c.innerHTML = h || '<div class="text-xs text-slate-500 px-2 py-4">No blockbusters yet.</div>';
+  c.innerHTML = `<div class="flex items-baseline justify-between gap-3 flex-wrap mb-1"><div><div class="text-[10px] uppercase tracking-wider text-amber-400 font-bold">League activity wire</div><h3 class="text-lg font-black text-white">Moves</h3></div><span class="text-[10px] text-slate-500">Click a row for full transaction detail</span></div>${moveSummaryHtml()}${renderMovesFilters()}<div id="movesNewswire"></div>`;
+  renderMovesNewswire();
 }
 
-function renderTxFilterChips() {
-  const c = document.getElementById('txFilterChips');
+function setMovesType(key) { txTypeFilter = key; renderMovesView(); }
+function setMovesSearch(value) { txSearchQuery = (value || '').toLowerCase(); renderMovesNewswire(); }
+function setMovesTeam(value) { txTeamFilter = value; renderMovesView(); }
+function setMovesBlockbusters(value) { txBlockbusterOnly = !!value; renderMovesView(); }
+function setMovesSort(value) { txSortDir = value === 'asc' ? 'asc' : 'desc'; renderMovesView(); }
+
+function showMovesTab() { showTab('teams'); setTeamsSubTab('moves'); }
+
+function renderTeamsSubTabs() {
+  const c = document.getElementById('teamsSubTabs');
   if (!c) return;
-  const types = [
-    { key: 'all',         label: 'All',          color: '71,85,105' },
-    { key: 'trade',       label: 'Trades',       color: '59,130,246' },
-    { key: 'signing',     label: 'Signings',     color: '16,185,129' },
-    { key: 'draft',       label: 'Draft',        color: '124,58,237' },
-    { key: 'blockbuster', label: '⚡ Blockbusters', color: '245,158,11' }
-  ];
-  let h = '';
-  for (const t of types) {
-    const active = txTypeFilter === t.key;
-    const styleAttr = active
-      ? `background:rgba(${t.color},0.3);color:#fff;border:1px solid rgba(${t.color},0.85);`
-      : `background:rgba(30,41,59,0.6);color:#94a3b8;border:1px solid rgba(71,85,105,0.6);`;
-    h += `<button onclick="setTxTypeFilter('${t.key}')" class="text-[11px] px-3 py-1 rounded-full transition font-semibold" style="${styleAttr}">${t.label}</button>`;
-  }
-  h += `<select onchange="setTxTeamFilter(this.value)" class="bg-slate-800 text-slate-300 text-[11px] px-3 py-1 rounded-full border border-slate-600 ml-2 focus:outline-none focus:border-blue-500">
-    <option value="">All Teams</option>`;
-  for (const team of DATA.teams.slice().sort((a,b)=>a.abbr.localeCompare(b.abbr))) {
-    const sel = txTeamFilter === team.name ? 'selected' : '';
-    h += `<option value="${team.name}" ${sel}>${team.abbr} — ${team.name}</option>`;
-  }
-  h += `</select>`;
-  c.innerHTML = h;
+  const tabs = [['overview', 'Overview'], ['moves', 'Moves'], ['power', 'Power Index']];
+  c.innerHTML = tabs.map(([key, label]) => `<button class="teams-subtab ${currentTeamsSubTab === key ? 'active' : ''}" onclick="setTeamsSubTab('${key}')">${label}</button>`).join('');
+}
+
+function setTeamsSubTab(tab) {
+  currentTeamsSubTab = ['overview', 'moves', 'power'].includes(tab) ? tab : 'overview';
+  renderTeamsSubTabs();
+  const panels = { overview: 'teamsOverviewPanel', moves: 'teamsMovesPanel', power: 'teamsPowerPanel' };
+  Object.entries(panels).forEach(([key, id]) => document.getElementById(id)?.classList.toggle('hidden', key !== currentTeamsSubTab));
+  if (currentTeamsSubTab === 'moves') renderMovesView();
+  if (currentTeamsSubTab === 'power') { renderMacroRow(); renderHeatmap(); }
+}
+
+function openMoveDetail(index) {
+  const list = getMovesTransactions();
+  const t = list[index];
+  const c = document.getElementById('moveDetailContent');
+  if (!t || !c) return;
+  moveDetailScrollY = window.scrollY;
+  const from = moveAbbr(t.from_team), to = moveAbbr(t.to_team);
+  const fromTeam = t.from_team || 'Free agency';
+  const toTeam = t.to_team || 'Unassigned';
+  const teamButton = (team, abbr) => team && team !== 'Free Agent' ? `<button onclick="openRosterFromAbbr('${movesJs(abbr)}')">Open ${homeEsc(abbr)} team</button>` : '';
+  const playerAction = t.player_name ? `<button onclick="openPlayerModal('${movesJs(t.player_name)}','${movesJs(toTeam)}')">Open player profile</button>` : '';
+  c.innerHTML = `<div class="move-drawer-kicker">${homeEsc(t.type || 'Move')}${t.blockbuster ? ' · BLOCKBUSTER' : ''}</div><div id="moveDetailTitle" class="move-drawer-title">${homeEsc(t.player_name || 'Unknown player')}</div><div class="move-drawer-meta">${homeEsc(t.pos || 'Position unknown')} · ${homeEsc(t.date_str || t.sort_date || 'Undated')}</div><div class="move-drawer-route"><div class="move-drawer-team">${homeEsc(from)}<small>${homeEsc(fromTeam)}</small></div><div class="move-drawer-arrow">${from === to ? '↻' : '→'}</div><div class="move-drawer-team">${homeEsc(to)}<small>${homeEsc(toTeam)}</small></div></div><div class="move-drawer-detail">${homeEsc(t.detail || 'No additional detail was provided.')}</div><div class="move-drawer-actions">${teamButton(fromTeam, from)}${teamButton(toTeam, to)}${playerAction}</div>`;
+  document.getElementById('moveDetailDrawer')?.classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeMoveDetail() {
+  document.getElementById('moveDetailDrawer')?.classList.remove('active');
+  document.body.style.overflow = '';
+  window.scrollTo(0, moveDetailScrollY);
 }
 
 function scrollToDiv(divName){
@@ -2963,19 +2984,27 @@ function renderRosterChanges(team){
 // INTERACTIONS
 // ═══════════════════════════════════════════════════════════
 function showTab(tab){
+  if (tab === 'feed') { showMovesTab(); return; }
   document.querySelectorAll('[id^="tab-"]').forEach(el=>{
     if(el.id==='tab-'+tab){el.classList.remove('hidden');el.style.animation='fadeIn 0.25s ease';}
     else{el.classList.add('hidden');el.style.animation='';}
   });
   document.querySelectorAll('.tab-btn').forEach(btn=>{btn.classList.remove('active');btn.classList.add('bg-slate-800','text-slate-400');});
-  document.querySelector(`[data-tab="${tab}"]`).classList.add('active');
-  document.querySelector(`[data-tab="${tab}"]`).classList.remove('bg-slate-800','text-slate-400');
+  const activeTab = document.querySelector(`[data-tab="${tab}"]`);
+  if (activeTab) {
+    activeTab.classList.add('active');
+    activeTab.classList.remove('bg-slate-800','text-slate-400');
+  }
   if (tab === 'projections') {
     renderProjSubTabs();
     renderProjContent();
   }
   if (tab === 'props') {
     renderPropsBoard();
+  }
+  if (tab === 'teams') {
+    renderTeamsSubTabs();
+    setTeamsSubTab(currentTeamsSubTab);
   }
   if (tab === 'schedule') {
     loadSchedule().then(renderSchedule);
@@ -2986,7 +3015,7 @@ function filterDashboard(q){
   q = (q || '').toLowerCase().trim();
   txSearchQuery = q;
   // Re-render the transactions feed via the new pipeline
-  if (typeof renderFeed === 'function') renderFeed();
+  if (currentTeamsSubTab === 'moves') renderMovesNewswire();
 
   // Filter team tiles in #teamsContainer
   let teamVisible = 0;
@@ -3065,9 +3094,10 @@ loadAllData().then(() => {
   });
   DATA.rankings = computeAllRankings();
   renderHome();                 // first-run showcase (hero, features, spotlights)
-  renderHeatmap(); renderMacroRow();  // power rankings now live on the Teams tab
-  renderBiggestMoves(); renderTxFilterChips(); renderFeed();
-  renderTeams(); renderDraft();
+  renderTeams();
+  renderTeamsSubTabs();
+  setTeamsSubTab(currentTeamsSubTab);
+  renderDraft();
 }).catch(e => {
   document.body.innerHTML = '<div style="padding:40px;color:#ef4444;font-family:monospace">Failed to load data from Supabase: ' + e.message + '</div>';
   console.error('[loadAllData failed]', e);
@@ -4707,7 +4737,7 @@ function handleCommandSearch(q) {
   const tabs = [
     { label: 'Home Dashboard', type: 'Tab', icon: '🏠', action: () => { showTab('home'); closeCommandPalette(); } },
     { label: 'Week 1 Schedule', type: 'Tab', icon: '📅', action: () => { showTab('schedule'); closeCommandPalette(); } },
-    { label: 'Transactions Feed', type: 'Tab', icon: '⚡', action: () => { showTab('feed'); closeCommandPalette(); } },
+    { label: 'Transactions / Moves', type: 'Tab', icon: '⚡', action: () => { showMovesTab(); closeCommandPalette(); } },
     { label: 'Teams & Rosters', type: 'Tab', icon: '🛡', action: () => { showTab('teams'); closeCommandPalette(); } },
     { label: '2026 Draft Tracker', type: 'Tab', icon: '📋', action: () => { showTab('draft'); closeCommandPalette(); } },
     { label: 'Mike Clay Projections', type: 'Tab', icon: '📊', action: () => { showTab('projections'); closeCommandPalette(); } },

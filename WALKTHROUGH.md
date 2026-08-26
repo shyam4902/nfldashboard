@@ -113,8 +113,10 @@ Two-team layout per page. The parser:
 ### Tab Structure
 
 ```
-Header: Home | Transactions | Teams | Draft | Projections
-                                              ↓
+Header: Home | Schedule | Teams | Draft | Projections | Props & Value
+                                      ↓
+Teams sub-tabs: Overview | Moves | Power Index
+
 Projections sub-tabs:
   🏈 Standings | 🏆 Leaders | 📅 Schedule | 🏟 Teams |
   🎯 QB | 🏃 RB | 📡 WR | 🤲 TE | 🛡 Defense |
@@ -125,6 +127,7 @@ Projections sub-tabs:
 
 | Function | Sub-tab | Description |
 |----------|---------|-------------|
+| `renderMovesView()` | Teams -> Moves | Compact date-grouped transaction newswire with filters and selected-move drawer |
 | `renderStandingsProj()` | Standings | Division tables with color-coded W-L, Diff, Fav, SOS |
 | `renderCategories()` | Leaders | Grid of leaderboard cards (top 10 per category) |
 | `renderSOS()` | Schedule | Full 18-week grid with BYE week detection, home/away styling |

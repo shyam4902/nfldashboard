@@ -90,7 +90,65 @@ with sync_playwright() as p:
         successes.append("No horizontal overflow at mobile viewport")
     page.set_viewport_size({"width": 1600, "height": 950})
 
-    # 1. Test All 5 Themes
+    # 1. Test Teams -> Moves newswire
+    print("Testing Teams Moves newswire...")
+    if page.locator('[data-tab="feed"]').count() == 0:
+        successes.append("Top-level Transactions tab removed")
+    else:
+        failures.append("Top-level Transactions tab still present")
+    page.click('[data-tab="teams"]')
+    page.wait_for_timeout(500)
+    move_tabs = page.locator('#teamsSubTabs .teams-subtab')
+    if move_tabs.count() == 3 and page.locator('#teamsSubTabs', has_text='Moves').count():
+        successes.append("Teams sub-tabs expose Overview, Moves, and Power Index")
+    else:
+        failures.append("Teams sub-tabs incomplete")
+    page.locator('#teamsSubTabs .teams-subtab', has_text='Moves').click()
+    page.wait_for_timeout(400)
+    moves_text = page.inner_text('#movesContainer')
+    if 'league activity wire' in moves_text.lower() and 'moves' in moves_text.lower() and page.locator('#movesNewswire .move-row').count() > 0:
+        successes.append("Moves date-grouped newswire rendered with live transactions")
+    else:
+        failures.append("Moves newswire missing or empty")
+    if page.locator('#movesNewswire .moves-date-group').count() > 1:
+        successes.append("Moves feed grouped by transaction date")
+    else:
+        failures.append("Moves feed date grouping missing")
+    original_rows = page.locator('#movesNewswire .move-row').count()
+    page.locator('#movesSearch').fill('Myles Garrett')
+    page.wait_for_timeout(200)
+    filtered_rows = page.locator('#movesNewswire .move-row').count()
+    if filtered_rows > 0 and filtered_rows < original_rows:
+        successes.append("Moves search filter narrows the wire")
+    else:
+        failures.append("Moves search filter did not narrow the wire")
+    page.locator('#movesNewswire .move-row').first.click()
+    page.wait_for_timeout(200)
+    if page.locator('#moveDetailDrawer.active').count() == 1 and page.locator('#moveDetailContent').inner_text():
+        successes.append("Move detail drawer opens from a wire row")
+    else:
+        failures.append("Move detail drawer failed to open")
+    page.locator('.move-drawer-close').click()
+    page.locator('#movesSearch').fill('')
+    page.wait_for_timeout(150)
+    page.set_viewport_size({"width": 390, "height": 844})
+    page.wait_for_timeout(250)
+    moves_overflow = page.evaluate("document.documentElement.scrollWidth - document.documentElement.clientWidth")
+    if moves_overflow <= 0:
+        successes.append("Moves view has no mobile horizontal overflow")
+    else:
+        failures.append(f"Moves view horizontal overflow: {moves_overflow}px")
+    page.set_viewport_size({"width": 1600, "height": 950})
+
+    # Legacy route compatibility
+    page.evaluate("showTab('feed')")
+    page.wait_for_timeout(250)
+    if page.locator('#tab-teams').is_visible() and page.locator('#teamsMovesPanel').is_visible():
+        successes.append("Legacy feed route redirects to Teams Moves")
+    else:
+        failures.append("Legacy feed route redirect broken")
+
+    # 2. Test All 5 Themes
     print("Testing Distinct Themes...")
     for theme in ['stadium', 'espn', 'retro', 'analyst', 'default']:
         page.select_option("#themeSelector", theme)
