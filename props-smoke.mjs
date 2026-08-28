@@ -1,5 +1,6 @@
 // Smoke-test: load the dashboard in headless Chromium, switch to the Props tab,
 // and verify the board renders with real rows and no fatal page errors.
+// Also checks the Home "Mejores Apuestas de Hoy" landing card (Part 3).
 import { createRequire } from 'node:module';
 const require = createRequire(import.meta.url);
 const { chromium } = require('/Users/shyampatel/.hermes/hermes-agent/node_modules/playwright');
@@ -39,12 +40,15 @@ const summary = await page.locator('#propsSummary').innerHTML().catch(() => 'MIS
 const bestLines = await page.locator('#propsBestLines').innerHTML().catch(() => 'MISSING');
 const boardTable = await page.locator('#propsBoard table').count().catch(() => 0);
 const rowCount = await page.locator('#propsBoard tbody tr').count().catch(() => 0);
+const homeCard = await page.locator('.spotlight-card', { hasText: 'Mejores Apuestas' }).count().catch(() => 0);
+const homeCardRows = await page.locator('.spotlight-card .spotlight-row').count().catch(() => 0);
 const meta = await page.locator('#propsMeta').textContent().catch(() => '');
 
 console.log('--- propsSummary (first 500 chars):');
 console.log(String(summary).slice(0, 500));
 console.log('--- propsBestLines contains Over/Under:', /Over:/.test(String(bestLines)), '| contains age badge:', /\d+[mhd] ago|just now/.test(String(bestLines)));
 console.log('--- board table count:', boardTable, '| rows:', rowCount);
+console.log('--- home landing card present:', homeCard > 0, '| spotlight rows:', homeCardRows);
 console.log('--- propsMeta:', String(meta).slice(0, 300));
 console.log('--- page errors:', errors.length ? errors.slice(0, 5) : 'none');
 
