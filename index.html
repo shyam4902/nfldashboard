@@ -4021,6 +4021,38 @@ const propsMarketLabels = {
   total_tds: 'Total TDs', fantasy_points: 'Fantasy Pts',
 };
 
+function statChip(label, value, colorClass) {
+  return `<div class="glass rounded-lg px-3 py-2 min-w-[110px]">
+    <div class="text-[10px] uppercase tracking-wider text-slate-500 font-bold">${label}</div>
+    <div class="text-lg font-black ${colorClass}">${value}</div>
+  </div>`;
+}
+
+// Human-readable age for a quote timestamp: null-safe, never invents a time.
+// "just now" < 5m, then minutes/hours/days; beyond 7d it stops counting.
+function quoteAge(recordedAt, nowMs) {
+  if (!recordedAt) return null;
+  const then = Date.parse(recordedAt);
+  if (!Number.isFinite(then)) return null;
+  const reference = Number.isFinite(nowMs) ? nowMs : Date.now();
+  const minutes = Math.max(0, Math.round((reference - then) / 60000));
+  if (minutes < 5) return 'just now';
+  if (minutes < 60) return `${minutes}m ago`;
+  const hours = Math.round(minutes / 60);
+  if (hours < 48) return `${hours}h ago`;
+  const days = Math.round(hours / 24);
+  if (days <= 7) return `${days}d ago`;
+  return null;
+}
+
+function venueAgeBadge(venue, recordedAt, nowMs) {
+  const age = quoteAge(recordedAt, nowMs);
+  if (!age) return '';
+  const stale = /d ago$/.test(age);
+  const color = stale ? 'text-amber-400 border-amber-500/40 bg-amber-500/10' : 'text-slate-400 border-slate-600/60 bg-slate-800/60';
+  return `<span class="text-[9px] font-bold px-1 py-0.5 rounded border ${color}" title="${venue} quotes last read ${age}">${age}</span>`;
+}
+
 async function renderPropsBoard(){
   const board = await loadPropsBoard();
   const metaEl = document.getElementById('propsBoardMeta');
@@ -4032,7 +4064,15 @@ async function renderPropsBoard(){
     return;
   }
   const gen = board.generated_at ? new Date(board.generated_at).toLocaleString() : '';
-  if (metaEl) metaEl.textContent = `Updated ${gen} · ${board.summary.plays} priced plays · ${board.summary.lines} lines · ${board.summary.venues ? Object.keys(board.summary.venues).length : 0} sources`;
+  const nowMs = board.generated_at ? Date.parse(board.generated_at) : Date.now();
+  const venueAges = board.summary.venue_recorded_at || {};
+  const ageSummary = Object.keys(venueAges).length
+    ? ' · ' + Object.entries(venueAges).map(([v, t]) => {
+        const age = quoteAge(t, nowMs);
+        return age ? `${v} ${age}` : null;
+      }).filter(Boolean).join(' · ')
+    : '';
+  if (metaEl) metaEl.textContent = `Updated ${gen} · ${board.summary.plays} priced plays · ${board.summary.lines} lines · ${board.summary.venues ? Object.keys(board.summary.venues).length : 0} sources${ageSummary}`;
 
   const venues = Object.keys(board.summary.venues || { Kalshi: 0, Polymarket: 0, DraftKings: 0, BetMGM: 0, FanDuel: 0, Caesars: 0 });
   const venueSel = document.getElementById('propsVenueFilter');
@@ -4088,8 +4128,8 @@ async function renderPropsBoard(){
             <span class="text-[10px] text-slate-400 uppercase font-semibold">${propsMarketLabels[g.market] || g.market}</span>
           </div>
           <div class="flex justify-between text-[11px] text-slate-300">
-            <div>Over: <span class="font-bold text-emerald-400">${g.over ? `${g.over.line} (${g.over.venue} ${g.over.odds})` : '—'}</span></div>
-            <div>Under: <span class="font-bold text-cyan-400">${g.under ? `${g.under.line} (${g.under.venue} ${g.under.odds})` : '—'}</span></div>
+            <div>Over: <span class="font-bold text-emerald-400">${g.over ? `${g.over.line} (${g.over.venue} ${g.over.odds})` : '—'}</span>${g.over ? ' ' + venueAgeBadge(g.over.venue, g.over.recorded_at, nowMs) : ''}</div>
+            <div>Under: <span class="font-bold text-cyan-400">${g.under ? `${g.under.line} (${g.under.venue} ${g.under.odds})` : '—'}</span>${g.under ? ' ' + venueAgeBadge(g.under.venue, g.under.recorded_at, nowMs) : ''}</div>
           </div>
         </div>
       `;
@@ -4125,6 +4165,7 @@ async function renderPropsBoard(){
             <th class="py-2 px-2 text-center">Odds</th>
             <th class="py-2 px-2 text-center">Edge</th>
             <th class="py-2 px-2 text-center">EV%</th>
+            <th class="py-2 px-2 text-center" title="When this quote was last read from the source — missing means the source did not report a time">Age</th>
           </tr>
         </thead>
         <tbody>
@@ -4138,6 +4179,7 @@ async function renderPropsBoard(){
               <td class="py-1.5 px-2 text-center text-slate-300">${p.odds || '—'}</td>
               <td class="py-1.5 px-2 text-center font-bold text-cyan-400">${p.edge_pct ? p.edge_pct.toFixed(1)+'pp' : '—'}</td>
               <td class="py-1.5 px-2 text-center font-bold ${p.ev_pct>0?'text-emerald-400':'text-slate-400'}">${p.ev_pct ? (p.ev_pct>0?'+':'')+p.ev_pct.toFixed(1)+'%' : '—'}</td>
+              <td class="py-1.5 px-2 text-center">${venueAgeBadge(p.venue, p.recorded_at, nowMs) || '<span class="text-slate-600">—</span>'}</td>
             </tr>
           `).join('')}
         </tbody>
