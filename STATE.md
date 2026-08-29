@@ -1,10 +1,32 @@
 # NFL Dashboard — State
 
-- updated: 2026-08-28
+- updated: 2026-08-29
 - live: https://nfldashboard.pages.dev/ (Cloudflare Pages, auto-deploys on push to main)
 - repo: https://github.com/shyam4902/nfldashboard · single-file app in `index.html` + Supabase + static JSON
 
-## Shipped this session (2026-08-28)
+## Shipped this session (2026-08-29) — BettingPros-style insights UI
+- **2024 Form column** on the value board: each play shows the producer's
+  insights block — 2024 season total, per-game equivalent of the season line
+  (line ÷ 17), weekly over rate, L10 rate, streak — rendered only when the
+  producer supplies it (rookies/untracked markets honestly show "—").
+- **Trending Props strip**: 12 chips of the most-active player/market pairs,
+  ranked by venue count + line spread (producer `trending` list).
+- **Stars column** on the value board: 1–5 stars from per-market
+  discrimination trust (same thresholds as the landing card); 50/50 rows
+  render in headless Chromium.
+- **All Odds expander (Feature 4)**: per-row button reveals every venue
+  quoting that player+market+side, sorted best-line-first with a BEST tag,
+  per-venue edge/EV and quote age. The player modal's props table deep-links
+  into it for the exact prop.
+- **Player modal 2024 Form section (Feature 5)**: under the season-props
+  table — season total, per-game avg, weekly/L10 over rates, streak, and an
+  honest verdict on whether the current season line would have hit in 2024.
+- Verified in headless Chromium (smoke + interactive probe): zero page errors.
+- **Positioning (user direction)**: give away what BettingPros paywalls
+  (cover probability, stars, splits) — our freshness/calibration/exchange
+  data stays the differentiator.
+
+## Shipped 2026-08-28
 - **Props tab was silently dead in the browser**: `renderPropsBoard()` called an
   undefined `statChip()` and threw before rendering anything. Helper defined;
   the tab now renders (verified in headless Chromium).
