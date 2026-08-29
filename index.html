@@ -922,10 +922,14 @@ body.theme-analyst .cmd-item.selected {
   <div id="tab-schedule" class="hidden">
     <h2 class="text-xl font-bold mb-1 flex items-center gap-2">
       <svg class="w-5 h-5 text-blue-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/></svg>
-      Week <span id="scheduleWeekNum">1</span> Matchups
-      <span class="text-xs text-slate-500 font-normal ml-1">2026 Regular Season · Click a matchup for analysis</span>
+      <span id="scheduleTitle">Week <span id="scheduleWeekNum">1</span> Matchups</span>
+      <span id="scheduleHint" class="text-xs text-slate-500 font-normal ml-1">2026 Regular Season · Click a matchup for analysis</span>
+      <span class="ml-auto flex gap-1.5">
+        <button id="schViewCards" onclick="setScheduleView('cards')" class="text-[11px] font-bold px-2.5 py-1 rounded-lg border transition bg-blue-600 text-white border-blue-500">Cards</button>
+        <button id="schViewGrid" onclick="setScheduleView('grid')" class="text-[11px] font-bold px-2.5 py-1 rounded-lg border transition bg-slate-800/80 text-slate-400 border-slate-700 hover:bg-slate-700">Grid</button>
+      </span>
     </h2>
-    <p class="text-xs text-slate-500 mb-4">Scan the full 2026 slate week by week. Team win probability is this dashboard's model (Madden-based power ratings, log5, home-field edge); spread, total, and moneyline are live market lines (source: nflverse), refreshed each time you open this tab. Select a matchup for a deeper view.</p>
+    <p id="scheduleBlurb" class="text-xs text-slate-500 mb-4">Scan the full 2026 slate week by week. Team win probability is this dashboard's model (Madden-based power ratings, log5, home-field edge); spread, total, and moneyline are live market lines (source: nflverse), refreshed each time you open this tab. Select a matchup for a deeper view.</p>
     <div id="scheduleWeekChips" class="flex flex-wrap gap-1.5 mb-4"></div>
     <div id="scheduleGrid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
       <p class="text-xs text-slate-500">Loading schedule…</p>
@@ -3917,6 +3921,80 @@ function setScheduleWeek(wk){
   renderSchedule();
 }
 
+// Cards ⇄ Grid toggle for the Schedule tab. The grid is the classic
+// full-season matrix (32 teams × 18 weeks, BYE cells, home/away tint,
+// clickable matchups) — the view that used to be the only Schedule view.
+let scheduleView = 'cards';
+function setScheduleView(v){
+  scheduleView = v;
+  const setBtn = (id, on) => {
+    const b = document.getElementById(id);
+    if (b) b.className = 'text-[11px] font-bold px-2.5 py-1 rounded-lg border transition ' +
+      (on ? 'bg-blue-600 text-white border-blue-500' : 'bg-slate-800/80 text-slate-400 border-slate-700 hover:bg-slate-700');
+  };
+  setBtn('schViewCards', v === 'cards');
+  setBtn('schViewGrid', v === 'grid');
+  const chips = document.getElementById('scheduleWeekChips');
+  const blurb = document.getElementById('scheduleBlurb');
+  const hint = document.getElementById('scheduleHint');
+  const title = document.getElementById('scheduleTitle');
+  if (chips) chips.style.display = v === 'cards' ? '' : 'none';
+  if (blurb) blurb.style.display = v === 'cards' ? '' : 'none';
+  if (hint) hint.style.display = v === 'cards' ? '' : 'none';
+  if (title){
+    if (v === 'grid') title.textContent = '2026 Full-Season Grid';
+    else title.innerHTML = 'Week <span id="scheduleWeekNum">' + currentScheduleWeek + '</span> Matchups';
+  }
+  if (v === 'grid') renderScheduleGrid(); else renderSchedule();
+}
+
+// Full-season 32×18 matrix built from schedule.json's 272 games. Each cell
+// is the opponent's abbreviation (home games tinted), BYE cells are blank,
+// and every non-bye cell deep-links to the matchup modal.
+function renderScheduleGrid(){
+  const c = document.getElementById('scheduleGrid');
+  if (!c) return;
+  const data = SCHEDULE_DATA;
+  if (!data || !data.games || !data.games.length){
+    c.innerHTML = '<p class="text-xs text-slate-500">No schedule data.</p>';
+    return;
+  }
+  const esc = (s) => String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const teams = new Set();
+  const matrix = {};
+  for (const g of data.games){
+    teams.add(g.away_team); teams.add(g.home_team);
+    const wk = g.week || 1;
+    (matrix[g.away_team] = matrix[g.away_team] || {})[wk] = { opp: g.home_team, home: false, gid: g.game_id };
+    (matrix[g.home_team] = matrix[g.home_team] || {})[wk] = { opp: g.away_team, home: true, gid: g.game_id };
+  }
+  const weeks = scheduleWeeks();
+  const teamList = [...teams].sort();
+  let h = '<div class="overflow-x-auto"><table class="w-full text-xs">' +
+    '<thead><tr class="text-slate-500 border-b border-slate-700/50">' +
+      '<th class="text-left px-2 py-2 font-semibold sticky left-0 bg-slate-900">Team</th>';
+  for (const w of weeks) h += '<th class="text-center px-1.5 py-2 font-semibold">WK ' + w + '</th>';
+  h += '</tr></thead><tbody>';
+  for (const name of teamList){
+    const abbr = esc(teamAbbrFor(name) || name);
+    h += '<tr class="border-b border-slate-800/50 hover:bg-slate-800/30">' +
+      '<td class="px-2 py-1.5 font-semibold text-slate-200 whitespace-nowrap sticky left-0 bg-slate-900">' + esc(name) + ' <span class="text-slate-500 text-[10px]">' + abbr + '</span></td>';
+    for (const w of weeks){
+      const cell = matrix[name] && matrix[name][w];
+      if (!cell){
+        h += '<td class="text-center px-1.5 py-1.5 text-slate-700 text-[10px]">BYE</td>';
+      } else {
+        const opp = esc(teamAbbrFor(cell.opp) || cell.opp);
+        const cls = cell.home ? 'text-slate-100 bg-slate-800/50 hover:bg-blue-900/40' : 'text-slate-500 hover:bg-blue-900/40';
+        h += '<td class="text-center px-1.5 py-1.5 text-[10px] cursor-pointer ' + cls + '" onclick="openMatchup(\'' + esc(cell.gid) + '\')" title="WK ' + w + ': ' + (cell.home ? 'vs' : 'at') + ' ' + esc(cell.opp) + ' — click for analysis">' + opp + '</td>';
+      }
+    }
+    h += '</tr>';
+  }
+  h += '</tbody></table></div>';
+  c.innerHTML = h;
+}
+
 function renderScheduleWeekChips(){
   const c = document.getElementById('scheduleWeekChips');
   if (!c) return;
@@ -4066,6 +4144,7 @@ function scheduleTeamG(teamName, homeStr, awayStr, role, ml){
 }
 
 async function renderSchedule(){
+  if (scheduleView === 'grid') return renderScheduleGrid();
   const c = document.getElementById('scheduleGrid');
   if (!c) return;
   await loadGameLines();
