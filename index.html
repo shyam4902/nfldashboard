@@ -990,6 +990,10 @@ body.theme-analyst .cmd-item.selected {
         <div id="propsAlerts"><p class="text-xs text-slate-500">Loading…</p></div>
       </div>
     </div>
+    <div class="glass rounded-xl p-4 mt-4">
+      <div class="text-[10px] uppercase tracking-wider text-violet-400 font-bold mb-2">📈 Trending Props <span class="text-slate-500 normal-case font-normal">— where the market is most active today (venues quoting + line spread)</span></div>
+      <div id="propsTrending"><p class="text-xs text-slate-500">Loading…</p></div>
+    </div>
     <div class="glass rounded-xl p-4 mt-4 overflow-x-auto">
       <div class="text-[10px] uppercase tracking-wider text-cyan-400 font-bold mb-2">Value Board <span class="text-slate-500 normal-case font-normal">— model probability vs market, ranked by EV · <span id="propsBoardCount"></span></span></div>
       <div id="propsBoard"><p class="text-xs text-slate-500">Loading…</p></div>
@@ -4199,6 +4203,22 @@ function venueAgeBadge(venue, recordedAt, nowMs) {
   return `<span class="text-[9px] font-bold px-1 py-0.5 rounded border ${color}" title="${venue} quotes last read ${age}">${age}</span>`;
 }
 
+// 2024 historical-form badge for a play (Feature 1/3): season-total verdict,
+// per-game over rate and streak. Renders nothing when data is absent —
+// rookies and untracked markets get no invented numbers.
+function insightsBadge(ins) {
+  if (!ins) return '<span class="text-slate-600">—</span>';
+  const verdict = ins.season_line_would_have === 'over'
+    ? '<span class="text-emerald-400 font-bold">beat</span>'
+    : ins.season_line_would_have === 'under'
+      ? '<span class="text-rose-400 font-bold">missed</span>'
+      : 'pushed';
+  const streak = ins.streak && ins.streak.count > 1
+    ? ` · <span class="text-amber-300">${ins.streak.type}×${ins.streak.count}</span>`
+    : '';
+  return `<span class="text-[10px] text-slate-300" title="2024: totalled ${ins.season_total_2024} across ${ins.games_2024} games; weekly over rate at per-game equivalent (${ins.per_game_equivalent}) was ${ins.weekly_over_rate}%">${ins.season_total_2024} in ${ins.games_2024} — would have ${verdict} · ${ins.weekly_over_rate}% over${streak}</span>`;
+}
+
 async function renderPropsBoard(){
   const board = await loadPropsBoard();
   const metaEl = document.getElementById('propsBoardMeta');
@@ -4295,6 +4315,16 @@ async function renderPropsBoard(){
     `).join('') : '<p class="text-xs text-slate-500">No active alerts</p>';
   }
 
+  // Trending props strip (Feature 6): market activity = venues quoting + line spread.
+  const trendingEl = document.getElementById('propsTrending');
+  if (trendingEl) {
+    const trending = board.trending || [];
+    trendingEl.innerHTML = trending.length ? `<div class="flex flex-wrap gap-1.5">${trending.slice(0, 12).map(t => `
+      <span class="text-[11px] px-2 py-1 rounded-full border border-violet-500/30 bg-violet-500/10 text-violet-200" title="${t.venues} venues quoting · lines spread ${t.spread_pct}%">
+        ${playerLinkHtml(t.player)} · ${propsMarketLabels[t.market] || t.market} · <b>${t.venues} venues</b>
+      </span>`).join('')}</div>` : '<p class="text-xs text-slate-500">No trending props</p>';
+  }
+
   const boardEl = document.getElementById('propsBoard');
   const countEl = document.getElementById('propsBoardCount');
   if (countEl) countEl.textContent = `${plays.length} matching plays`;
@@ -4311,6 +4341,7 @@ async function renderPropsBoard(){
             <th class="py-2 px-2 text-center">Odds</th>
             <th class="py-2 px-2 text-center">Edge</th>
             <th class="py-2 px-2 text-center">EV%</th>
+            <th class="py-2 px-2 text-center" title="2024 per-game form: season line ÷ 17 vs actual weekly output last season">2024 Form</th>
             <th class="py-2 px-2 text-center" title="When this quote was last read from the source — missing means the source did not report a time">Age</th>
           </tr>
         </thead>
@@ -4325,6 +4356,7 @@ async function renderPropsBoard(){
               <td class="py-1.5 px-2 text-center text-slate-300">${p.odds || '—'}</td>
               <td class="py-1.5 px-2 text-center font-bold text-cyan-400">${p.edge_pct ? p.edge_pct.toFixed(1)+'pp' : '—'}</td>
               <td class="py-1.5 px-2 text-center font-bold ${p.ev_pct>0?'text-emerald-400':'text-slate-400'}">${p.ev_pct ? (p.ev_pct>0?'+':'')+p.ev_pct.toFixed(1)+'%' : '—'}</td>
+              <td class="py-1.5 px-2 text-center">${insightsBadge(p.insights)}</td>
               <td class="py-1.5 px-2 text-center">${venueAgeBadge(p.venue, p.recorded_at, nowMs) || '<span class="text-slate-600">—</span>'}</td>
             </tr>
           `).join('')}

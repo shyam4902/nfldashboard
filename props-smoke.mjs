@@ -38,8 +38,10 @@ await page.waitForTimeout(1500);
 
 const summary = await page.locator('#propsSummary').innerHTML().catch(() => 'MISSING');
 const bestLines = await page.locator('#propsBestLines').innerHTML().catch(() => 'MISSING');
+const trending = await page.locator('#propsTrending').innerHTML().catch(() => 'MISSING');
 const boardTable = await page.locator('#propsBoard table').count().catch(() => 0);
 const rowCount = await page.locator('#propsBoard tbody tr').count().catch(() => 0);
+const formCells = await page.locator('#propsBoard tbody tr td:nth-child(9)').allTextContents().catch(() => []);
 const homeCard = await page.locator('.spotlight-card', { hasText: 'Mejores Apuestas' }).count().catch(() => 0);
 const homeCardRows = await page.locator('.spotlight-card .spotlight-row').count().catch(() => 0);
 const meta = await page.locator('#propsMeta').textContent().catch(() => '');
@@ -47,6 +49,8 @@ const meta = await page.locator('#propsMeta').textContent().catch(() => '');
 console.log('--- propsSummary (first 500 chars):');
 console.log(String(summary).slice(0, 500));
 console.log('--- propsBestLines contains Over/Under:', /Over:/.test(String(bestLines)), '| contains age badge:', /\d+[mhd] ago|just now/.test(String(bestLines)));
+console.log('--- trending strip chips:', (String(trending).match(/rounded-full/g) || []).length, '| has player link:', /player-link/.test(String(trending)));
+console.log('--- 2024 Form column populated:', formCells.filter(t => t && !t.startsWith('—')).length, '/', formCells.length);
 console.log('--- board table count:', boardTable, '| rows:', rowCount);
 console.log('--- home landing card present:', homeCard > 0, '| spotlight rows:', homeCardRows);
 console.log('--- propsMeta:', String(meta).slice(0, 300));
@@ -54,5 +58,5 @@ console.log('--- page errors:', errors.length ? errors.slice(0, 5) : 'none');
 
 await browser.close();
 server.close();
-if (errors.length || !rowCount) { console.log('SMOKE TEST FAILED'); process.exit(1); }
+if (errors.length || !rowCount || !(String(trending).match(/rounded-full/g) || []).length) { console.log('SMOKE TEST FAILED'); process.exit(1); }
 console.log('SMOKE TEST PASSED');
