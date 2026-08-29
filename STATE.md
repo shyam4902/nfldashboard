@@ -58,13 +58,17 @@
 - Earlier: Teams → Moves newswire, home showcase, Week 1 schedule, defense rebuild, STATE.md.
 
 ## In flight
-- Nothing — working tree clean aside from test-runner screenshot regenerations.
+- Nothing — working tree clean aside from test-runner screenshot regenerations
+  (`8a69e26` on main, 9 commits ahead of origin, not pushed).
+
 ## Next
 - **Formation view (user's idea):** Madden ratings move off the main pages into a football
   formation graphic (X's and O's) with each player + rating placed by position — for offense
   and defense. The killer use case: open two tabs, one team's offense vs the other's defense,
   for next week's matchup, to see where the advantage is. This is the intended long-term home
   for ratings.
+- Profile modal full game-log table (per-week rows with opponent) — data already
+  flows from the producer's `buildPlayerProfile().log`; only UI remains.
 - Wire the games array from props-board.json into the Schedule tab (real nflverse
   kickoffs/spreads already exported; the tab still reads its own source).
 - Add comp picks to draft capital when a reliable 2027+ source exists.
