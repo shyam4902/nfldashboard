@@ -54,9 +54,29 @@ console.log('--- 2024 Form column populated:', formCells.filter(t => t && !t.sta
 console.log('--- board table count:', boardTable, '| rows:', rowCount);
 console.log('--- home landing card present:', homeCard > 0, '| spotlight rows:', homeCardRows);
 console.log('--- propsMeta:', String(meta).slice(0, 300));
+
+// Open the first player in the value board → verify the modal's 2024 Form
+// section renders the game-log table + opponent splits (Feature 5).
+let modalStatus = 'skipped';
+let modalRows = -1;
+if (rowCount > 0) {
+  const playerLink = page.locator('#propsBoard .player-link').first();
+  if (await playerLink.count()) {
+    await playerLink.click();
+    await page.waitForTimeout(1500);
+    const modalText = await page.locator('#playerModalContent').textContent().catch(() => '');
+    const hasForm = /2024 Form/.test(modalText);
+    const hasLog = /Weekly game log/.test(modalText);
+    const hasOpp = /Best matchups/.test(modalText);
+    modalRows = hasLog ? await page.locator('#playerModalContent tbody tr').count().catch(() => -1) : -1;
+    modalStatus = `form=${hasForm} log=${hasLog} opp=${hasOpp}`;
+    console.log('--- player modal (2024 Form/game log/splits):', modalStatus, '| game-log rows:', modalRows);
+  }
+}
 console.log('--- page errors:', errors.length ? errors.slice(0, 5) : 'none');
 
 await browser.close();
 server.close();
-if (errors.length || !rowCount || !(String(trending).match(/rounded-full/g) || []).length) { console.log('SMOKE TEST FAILED'); process.exit(1); }
+const modalOk = modalStatus === 'skipped' || (/log=true/.test(modalStatus) && modalRows > 0);
+if (errors.length || !rowCount || !(String(trending).match(/rounded-full/g) || []).length || !modalOk) { console.log('SMOKE TEST FAILED'); process.exit(1); }
 console.log('SMOKE TEST PASSED');

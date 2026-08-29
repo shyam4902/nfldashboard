@@ -4807,7 +4807,8 @@ async function openPlayerModal(name, teamHint = '') {
       </div>
     `;
 
-    // 2024 Game Log & Splits (Feature 5) — from the producer's insights block.
+    // 2024 Game Log & Splits (Feature 5) — from the producer's insights block
+    // + player_history game logs.
     const withLog = data.playerProps.find(pr => pr.insights && pr.insights.games_2024);
     if (withLog) {
       const ins = withLog.insights;
@@ -4816,6 +4817,50 @@ async function openPlayerModal(name, teamHint = '') {
         : ins.season_line_would_have === 'under'
           ? '<span class="text-rose-400 font-bold">went under</span>'
           : 'pushed';
+      const hist = PROPS_BOARD && PROPS_BOARD.player_history
+        ? PROPS_BOARD.player_history[`${withLog.player_id}|${withLog.market}`]
+        : null;
+      let gameLogTable = '';
+      if (hist && hist.log && hist.log.length) {
+        const pg = ins.per_game_equivalent;
+        gameLogTable = `
+          <div class="mt-3">
+            <div class="text-[10px] uppercase tracking-wider text-slate-500 font-bold mb-1.5">Weekly game log (vs per-game equivalent of today's line)</div>
+            <div class="overflow-x-auto">
+              <table class="w-full text-[11px]">
+                <thead><tr class="text-slate-500 border-b border-slate-700/50">
+                  <th class="py-1 px-2 text-left">Wk</th>
+                  <th class="py-1 px-2 text-left">Opp</th>
+                  <th class="py-1 px-2 text-right">Actual</th>
+                  <th class="py-1 px-2 text-center">vs ${pg}</th>
+                </tr></thead>
+                <tbody>
+                  ${hist.log.map(g => {
+                    const dir = g.metric > pg ? 'over' : (g.metric < pg ? 'under' : 'push');
+                    const cls = dir === 'over' ? 'text-emerald-400 font-bold' : dir === 'under' ? 'text-rose-400 font-bold' : 'text-slate-500';
+                    const tag = dir === 'over' ? 'O' : dir === 'under' ? 'U' : '—';
+                    return `<tr class="border-b border-slate-800/40">
+                      <td class="py-1 px-2 text-slate-400">${g.week}</td>
+                      <td class="py-1 px-2 text-slate-300">${g.opponent || '—'}${g.home ? '' : ' @'}</td>
+                      <td class="py-1 px-2 text-right font-bold text-white">${g.metric}</td>
+                      <td class="py-1 px-2 text-center ${cls}">${tag}</td>
+                    </tr>`;
+                  }).join('')}
+                </tbody>
+              </table>
+            </div>
+          </div>`;
+      }
+      let oppSplits = '';
+      if (hist && hist.opponents && hist.opponents.length) {
+        oppSplits = `
+          <div class="mt-3">
+            <div class="text-[10px] uppercase tracking-wider text-slate-500 font-bold mb-1.5">Best matchups (2024, by avg)</div>
+            <div class="flex flex-wrap gap-1.5">
+              ${hist.opponents.slice(0, 6).map(o => `<span class="text-[10px] px-1.5 py-0.5 rounded border border-slate-700/50 bg-slate-800/40 text-slate-300" title="${o.games} game(s)">vs ${o.opponent} · <b class="text-white">${o.avg}</b></span>`).join('')}
+            </div>
+          </div>`;
+      }
       html += `
       <div class="mb-5 glass rounded-xl p-4">
         <div class="text-xs font-bold uppercase tracking-wider text-cyan-400 mb-3 flex items-center gap-2">
@@ -4828,6 +4873,8 @@ async function openPlayerModal(name, teamHint = '') {
           <div class="bg-slate-800/60 p-2 rounded border border-slate-700/50 text-center"><div class="text-[9px] text-slate-400">Last-10 over rate</div><div class="text-sm font-bold text-amber-400">${ins.weekly_over_rate_l10 != null ? ins.weekly_over_rate_l10 + '%' : '—'}</div></div>
         </div>
         <div class="text-[11px] text-slate-400">Current ${propsMarketLabels[withLog.market] || withLog.market} line: <b class="text-white">${withLog.line}</b> — in 2024 this player totalled ${ins.season_total_2024}, so the season line would have ${verdict}. Per-game equivalent of the line: <b class="text-slate-200">${ins.per_game_equivalent}</b>${ins.streak && ins.streak.count > 1 ? ` · finished 2024 on a ${ins.streak.count}-game ${ins.streak.type} streak` : ''}.</div>
+        ${gameLogTable}
+        ${oppSplits}
       </div>
       `;
     }
