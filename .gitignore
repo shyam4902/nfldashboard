@@ -6,6 +6,9 @@ venv/
 
 # Node
 node_modules/
+.env
+.env.*
+!.env.example
 
 # IDE
 .idea/

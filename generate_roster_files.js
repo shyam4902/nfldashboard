@@ -2,7 +2,8 @@ const fs = require('fs');
 const path = require('path');
 
 const SUPABASE_URL = "https://nedyoydylpbjvihaoexy.supabase.co/rest/v1/";
-const SUPABASE_ANON_KEY = "sb_publishable_cQOHCiQh2kZQQUn5sEEfIA_t9NScNZz";
+const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY;
+if (!SUPABASE_ANON_KEY) throw new Error('SUPABASE_ANON_KEY is required');
 
 const headers = {
   "apikey": SUPABASE_ANON_KEY,

@@ -21,6 +21,36 @@ body { font-family: 'Inter', sans-serif; background: #0a0e17; color: #e2e8f0; }
 .team-card { transition: transform 0.2s, box-shadow 0.2s; }
 .team-card:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0,0,0,0.4); }
 .tab-btn.active { background: linear-gradient(135deg, #1e40af, #3b82f6); color: white; }
+
+/* Matchup Lab */
+.formation-field { position: relative; background: linear-gradient(180deg, rgba(23,37,56,0.7), rgba(15,23,42,0.9)); border: 1px solid rgba(71,85,105,0.4); border-radius: 14px; overflow: hidden; }
+.formation-field::before { content: ""; position: absolute; inset: 12px; border: 1px solid rgba(148,163,184,0.18); border-radius: 10px; pointer-events: none; }
+.formation-field::after { content: ""; position: absolute; inset: 12px; background: repeating-linear-gradient(90deg, transparent 0 76px, rgba(148,163,184,0.09) 76px 77px); pointer-events: none; }
+.formation-midline { position: absolute; left: 50%; top: 12px; bottom: 12px; width: 1px; background: rgba(148,163,184,0.18); pointer-events: none; }
+.formation-player { display: flex; flex-direction: column; align-items: center; gap: 3px; cursor: pointer; transition: transform 0.15s; z-index: 1; position: relative; }
+.formation-player:hover { transform: translateY(-2px); }
+.formation-player .fp-circle { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 800; letter-spacing: 0.02em; position: relative; }
+.formation-player .fp-circle.fp-x { background: rgba(244,63,94,0.16); border: 1.5px solid rgba(244,63,94,0.55); color: #fda4af; }
+.formation-player .fp-circle.fp-o { background: rgba(59,130,246,0.16); border: 1.5px solid rgba(59,130,246,0.55); color: #93c5fd; }
+.formation-player .fp-rating { position: absolute; top: -7px; right: -7px; font-size: 9px; font-weight: 800; padding: 1px 5px; border-radius: 99px; }
+.formation-player .fp-name { font-size: 10px; font-weight: 600; color: #e2e8f0; text-align: center; line-height: 1.15; max-width: 84px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.formation-player .fp-slot { font-size: 8.5px; color: #64748b; font-weight: 700; letter-spacing: 0.08em; }
+.formation-lockup { display: flex; flex-direction: column; gap: 16px; min-height: 420px; }
+.formation-row { display: flex; justify-content: center; gap: 22px; }
+.formation-row.row-lb { gap: 30px; }
+.formation-row.row-skill { gap: 26px; }
+.unit-match-row { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 7px 0; }
+.unit-match-row .um-label { font-size: 10px; font-weight: 800; letter-spacing: 0.08em; color: #94a3b8; text-align: center; grid-column: 1 / -1; }
+.unit-bar { height: 8px; border-radius: 99px; background: rgba(71,85,105,0.35); overflow: hidden; }
+.unit-bar > div { height: 100%; border-radius: 99px; }
+.unit-adv { font-size: 11px; font-weight: 800; padding: 1px 8px; border-radius: 99px; }
+.unit-adv.adv-a { background: rgba(244,63,94,0.15); color: #fda4af; }
+.unit-adv.adv-b { background: rgba(59,130,246,0.15); color: #93c5fd; }
+.unit-adv.adv-even { background: rgba(148,163,184,0.12); color: #94a3b8; }
+.verdict-pill { padding: 4px 12px; border-radius: 99px; font-weight: 800; white-space: nowrap; }
+.verdict-pill.a { background: rgba(244,63,94,0.15); color: #fda4af; }
+.verdict-pill.b { background: rgba(59,130,246,0.15); color: #93c5fd; }
+.verdict-pill.even { background: rgba(148,163,184,0.12); color: #cbd5e1; }
 .cap-positive { color: #10b981; }
 .cap-negative { color: #ef4444; }
 .cap-bar { height: 6px; border-radius: 3px; background: #1e293b; overflow: hidden; }
@@ -61,6 +91,9 @@ body { font-family: 'Inter', sans-serif; background: #0a0e17; color: #e2e8f0; }
 .rating-star { background: linear-gradient(135deg, #22c55e, #16a34a); color: #000; }
 .rating-solid { background: linear-gradient(135deg, #3b82f6, #2563eb); color: white; }
 .rating-dev { background: linear-gradient(135deg, #64748b, #475569); color: white; }
+/* Madden ratings demoted: hidden on all main pages, kept only in the Matchup Lab */
+.rating-badge { display: none; }
+.formation-player .rating-badge { display: flex; }
 
 /* Roster formation layout */
 .formation-row { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }
@@ -822,12 +855,17 @@ body.theme-analyst .cmd-item.selected {
       <div class="flex gap-1 flex-wrap items-center">
         <button onclick="showTab('home')" class="tab-btn active text-xs px-3 py-2 rounded-lg font-semibold transition" data-tab="home">Home</button>
         <button onclick="showTab('schedule')" class="tab-btn text-xs px-3 py-2 rounded-lg font-semibold bg-slate-800 text-slate-400 hover:bg-slate-700 transition" data-tab="schedule">Schedule</button>
+        <button onclick="showTab('matchup')" class="tab-btn text-xs px-3 py-2 rounded-lg font-semibold bg-slate-800 text-slate-400 hover:bg-slate-700 transition" data-tab="matchup">Matchup</button>
         <button onclick="showTab('teams')" class="tab-btn text-xs px-3 py-2 rounded-lg font-semibold bg-slate-800 text-slate-400 hover:bg-slate-700 transition" data-tab="teams">Teams</button>
         <button onclick="showTab('projections')" class="tab-btn text-xs px-3 py-2 rounded-lg font-semibold bg-slate-800 text-slate-400 hover:bg-slate-700 transition" data-tab="projections">Projections</button>
         <button onclick="showTab('props')" class="tab-btn text-xs px-3 py-2 rounded-lg font-semibold bg-slate-800 text-slate-400 hover:bg-slate-700 transition" data-tab="props">Props & Value</button>
+        <button onclick="showTab('wintotals')" class="tab-btn text-xs px-3 py-2 rounded-lg font-semibold bg-slate-800 text-slate-400 hover:bg-slate-700 transition" data-tab="wintotals">Win Totals</button>
         <button onclick="openPlayerCompareModal()" class="text-xs px-2.5 py-2 rounded-lg font-semibold bg-indigo-600/20 text-indigo-300 border border-indigo-500/40 hover:bg-indigo-500/30 transition flex items-center gap-1 shrink-0" title="Compare any two players side-by-side">
           <span>⚖</span> Player Compare
         </button>
+        <a href="https://edgeplay-analytics.pages.dev" target="_blank" rel="noopener" class="text-xs px-2.5 py-2 rounded-lg font-semibold bg-fuchsia-600/20 text-fuchsia-300 border border-fuchsia-500/40 hover:bg-fuchsia-500/30 transition flex items-center gap-1 shrink-0" title="Open the Edge Analytics app (value analysis)">
+          <span>🎯</span> Edge Analytics
+        </a>
         <select id="themeSelector" onchange="changeTheme(this.value)" class="text-xs px-2 py-2 rounded-lg font-semibold bg-slate-800/90 text-slate-300 border border-slate-700 focus:outline-none focus:border-blue-500 cursor-pointer" title="Switch visual theme">
           <option value="default">🎨 Default Dark</option>
           <option value="stadium">🏟 Stadium Lights</option>
@@ -929,12 +967,42 @@ body.theme-analyst .cmd-item.selected {
         <button id="schViewGrid" onclick="setScheduleView('grid')" class="text-[11px] font-bold px-2.5 py-1 rounded-lg border transition bg-slate-800/80 text-slate-400 border-slate-700 hover:bg-slate-700">Grid</button>
       </span>
     </h2>
-    <p id="scheduleBlurb" class="text-xs text-slate-500 mb-4">Scan the full 2026 slate week by week. Team win probability is this dashboard's model (Madden-based power ratings, log5, home-field edge); spread, total, and moneyline are live market lines (source: nflverse), refreshed each time you open this tab. Select a matchup for a deeper view.</p>
+    <p id="scheduleBlurb" class="text-xs text-slate-500 mb-4">Scan the full 2026 slate week by week. Team win probability is this dashboard's model (composite power ratings, log5, home-field edge); spread, total, and moneyline are live market lines (source: nflverse), refreshed each time you open this tab. Select a matchup for a deeper view.</p>
     <div id="scheduleWeekChips" class="flex flex-wrap gap-1.5 mb-4"></div>
     <div id="scheduleGrid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
       <p class="text-xs text-slate-500">Loading schedule…</p>
     </div>
   </div>
+  <div id="tab-matchup" class="hidden">
+    <h2 class="text-xl font-bold mb-1 flex items-center gap-2">
+      <svg class="w-5 h-5 text-rose-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M2 5a3 3 0 013-3h1a3 3 0 013 3v10a3 3 0 01-3 3H5a3 3 0 01-3-3V5zm8-1a1 1 0 011-1h1a3 3 0 013 3v10a3 3 0 01-3 3h-1a1 1 0 110-2h1a1 1 0 001-1V7a1 1 0 00-1-1h-1a1 1 0 01-1-1z" clip-rule="evenodd"/></svg>
+      Matchup Lab
+      <span class="text-xs text-slate-500 font-normal ml-1">Formation-by-formation preview: offense vs defense, spot the advantage before kickoff</span>
+    </h2>
+    <div id="matchupControls" class="glass rounded-xl p-3 mb-4">
+      <div class="flex flex-wrap items-end gap-3">
+        <div class="w-full flex items-end gap-2">
+          <label class="flex flex-col gap-1 flex-1 min-w-0"><span class="text-[10px] uppercase tracking-wider text-slate-500 font-bold">Schedule game (all 18 weeks, from the dashboard calendar)</span><select id="matchupGame" onchange="matchupGameChanged()" class="w-full text-xs px-3 py-1.5 rounded-lg border border-slate-600 bg-slate-800 text-slate-300 focus:outline-none focus:border-slate-500"></select></label>
+        </div>
+        <div class="flex items-end gap-2">
+          <label class="flex flex-col gap-1"><span class="text-[10px] uppercase tracking-wider text-rose-400 font-bold">Offense</span><select id="matchupTeamA" onchange="renderMatchup()" class="text-xs px-3 py-1.5 rounded-lg border border-slate-600 bg-slate-800 text-slate-300 focus:outline-none focus:border-rose-500"></select></label>
+          <label class="flex flex-col gap-1"><span class="text-[10px] uppercase tracking-wider text-slate-500 font-bold">Personnel</span><select id="matchupPersonnel" onchange="renderMatchup()" class="text-xs px-3 py-1.5 rounded-lg border border-slate-600 bg-slate-800 text-slate-300 focus:outline-none focus:border-rose-500"><option value="12">12 · 2 TE</option><option value="11">11 · 3 WR</option><option value="10">10 · 4 WR</option></select></label>
+        </div>
+        <div class="text-2xl text-slate-600 font-black px-1 pb-1">vs</div>
+        <div class="flex items-end gap-2">
+          <label class="flex flex-col gap-1"><span class="text-[10px] uppercase tracking-wider text-blue-400 font-bold">Defense</span><select id="matchupTeamB" onchange="renderMatchup()" class="text-xs px-3 py-1.5 rounded-lg border border-slate-600 bg-slate-800 text-slate-300 focus:outline-none focus:border-blue-500"></select></label>
+          <label class="flex flex-col gap-1"><span class="text-[10px] uppercase tracking-wider text-slate-500 font-bold">Front</span><select id="matchupFront" onchange="renderMatchup()" class="text-xs px-3 py-1.5 rounded-lg border border-slate-600 bg-slate-800 text-slate-300 focus:outline-none focus:border-blue-500"><option value="43">4-3 Base</option><option value="34">3-4 Base</option><option value="nickel">Nickel</option></select></label>
+        </div>
+        <div id="matchupVerdict" class="ml-auto text-xs font-bold"></div>
+      </div>
+    </div>
+    <div id="matchupUnitStrip" class="glass rounded-xl p-4 mb-4"></div>
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <div id="matchupOffense" class="glass rounded-xl p-4"></div>
+      <div id="matchupDefense" class="glass rounded-xl p-4"></div>
+    </div>
+  </div>
+
   <div id="tab-teams" class="hidden">
     <div class="flex items-center justify-between flex-wrap gap-3 mb-4">
       <div class="flex items-center gap-3">
@@ -953,7 +1021,7 @@ body.theme-analyst .cmd-item.selected {
     <div id="teamsPowerPanel" class="hidden">
       <div class="text-xs font-bold text-slate-300 mb-2 flex items-center gap-2">
         <span>🏆</span> Power Rankings
-        <span class="text-slate-500 font-normal">Madden 27 unit ratings — click a column to sort</span>
+        <span class="text-slate-500 font-normal">Unit power ratings — click a column to sort</span>
       </div>
       <div id="macroRow" class="flex gap-2 mb-3 overflow-x-auto pb-1"></div>
       <div id="heatmapContainer" class="glass rounded-xl p-3 overflow-x-auto"></div>
@@ -974,6 +1042,7 @@ body.theme-analyst .cmd-item.selected {
       <svg class="w-5 h-5 text-emerald-400" fill="currentColor" viewBox="0 0 20 20"><path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zm0 5a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V9zm0 5a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1v-2z"/></svg>
       Props & Value
       <span class="text-xs text-slate-500 font-normal ml-1" id="propsBoardMeta"></span>
+      <span id="propsFreshnessBadge"></span>
     </h2>
     <div id="propsSummary" class="flex flex-wrap gap-2 mb-4"></div>
     <div id="propsControls" class="flex flex-wrap gap-2 mb-3 items-center">
@@ -1003,6 +1072,18 @@ body.theme-analyst .cmd-item.selected {
       <div id="propsBoard"><p class="text-xs text-slate-500">Loading…</p></div>
     </div>
   </div>
+  <div id="tab-wintotals" class="hidden">
+    <h2 class="text-xl font-bold mb-3 flex items-center gap-2">
+      <svg class="w-5 h-5 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3 3a1 1 0 01-1.414 0l-2-2a1 1 0 111.414-1.414L10 10.586l2.293-2.293a1 1 0 011.414 1.414z" clip-rule="evenodd"/></svg>
+      2026 Win Totals
+      <span class="text-xs text-slate-500 font-normal ml-1" id="winTotalsMeta"></span>
+    </h2>
+    <div id="winTotalsSummary" class="flex flex-wrap gap-2 mb-4"></div>
+    <div class="glass rounded-xl p-4 overflow-x-auto">
+      <div class="text-[10px] uppercase tracking-wider text-amber-400 font-bold mb-2">Team Over/Under — model projection vs market line <span class="text-slate-500 normal-case font-normal">· picks auto-score live as games land</span></div>
+      <div id="winTotalsBoard"><p class="text-xs text-slate-500">Loading…</p></div>
+    </div>
+  </div>
 
 </main>  <!-- MOVE DETAIL DRAWER -->
 <div id="moveDetailDrawer" class="move-drawer-overlay" onclick="if(event.target===this)closeMoveDetail()">
@@ -1013,7 +1094,7 @@ body.theme-analyst .cmd-item.selected {
 </div>
 
 <footer class="text-center text-xs text-slate-600 py-8 border-t border-slate-800">
-  Data sourced from NFL.com, ESPN, PFF · Player ratings via Madden 27 · Last updated Aug 7, 2026
+  Data sourced from NFL.com, ESPN, PFF · Composite player ratings · Last updated Aug 7, 2026
 </footer>
 
 <!-- Back to Top Button -->
@@ -1024,7 +1105,7 @@ body.theme-analyst .cmd-item.selected {
 // SUPABASE CLIENT
 // ═══════════════════════════════════════════════════════════
 const SUPABASE_URL = "https://nedyoydylpbjvihaoexy.supabase.co";
-const SUPABASE_ANON_KEY = "sb_publishable_cQOHCiQh2kZQQUn5sEEfIA_t9NScNZz";
+const SUPABASE_ANON_KEY = ""; // Public dashboard data is loaded without embedded credentials.
 const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 // Loaded asynchronously from Supabase. Render functions read from DATA.* fields.
@@ -1759,10 +1840,9 @@ function quickTeamPillsHtml(){
 }
 
 function homeStatCards(){
-  const rated = DATA.players ? DATA.players.filter(p => p.ovr !== null).length : 0;
   const cards = [
-    { label: '32 Teams', sub: 'rosters & ratings', icon: '🛡️', color: '#3b82f6', action: "showTab('teams')" },
-    { label: `${(DATA.players || []).length} Players`, sub: `${rated} rated by Madden 27`, icon: '🏈', color: '#06b6d4', action: "openCommandPalette()" },
+    { label: '32 Teams', sub: 'rosters & depth charts', icon: '🛡️', color: '#3b82f6', action: "showTab('teams')" },
+    { label: `${(DATA.players || []).length} Players`, sub: 'full 2026 rosters', icon: '🏈', color: '#06b6d4', action: "openCommandPalette()" },
     { label: `${(DATA.transactions || []).length} Moves`, sub: 'since Super Bowl LX', icon: '⚡', color: '#ef4444', action: "showMovesTab()" },
     { label: '16 Week 1 Games', sub: 'odds & win probabilities', icon: '📅', color: '#10b981', action: "showTab('schedule')" },
     { label: '6 Sportsbooks', sub: 'Kalshi · DK · MGM · FD · Poly · Caesars', icon: '💰', color: '#f59e0b', action: "showTab('props')" },
@@ -1791,13 +1871,13 @@ function homeHeroHtml(){
           <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
             <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> LIVE INTELLIGENCE
           </span>
-          <span class="text-[11px] text-slate-400 font-medium">Mike Clay Model · Madden 27 · Consensus Power · Live Odds</span>
+          <span class="text-[11px] text-slate-400 font-medium">Mike Clay Model · Composite Power · Live Odds</span>
         </div>
         <h1 class="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-white flex items-center gap-3">
           <span>League Command Center</span>
         </h1>
         <p class="text-sm text-slate-300 mt-2.5 max-w-3xl leading-relaxed">
-          The complete 2026 NFL season intelligence terminal. Explore the Week 1 slate with live sportsbook odds and log5 win probabilities, Mike Clay's full 2026 projection model, Madden-based power rankings, depth charts, draft analysis, and +EV prop market edges.
+          The complete 2026 NFL season intelligence terminal. Explore the Week 1 slate with live sportsbook odds and log5 win probabilities, Mike Clay's full 2026 projection model, composite power rankings, depth charts, draft analysis, and +EV prop market edges.
         </p>
         <div class="flex items-center gap-1.5 mt-4 overflow-x-auto pb-1 max-w-full text-xs">
           <span class="text-[10px] uppercase font-bold text-slate-400 tracking-wider shrink-0 mr-1">Teams:</span>
@@ -1828,9 +1908,10 @@ function homeHeroHtml(){
 
 const HOME_FEATURES = [
   { icon:'📅', title:'Schedule', tab:'schedule', accent:'#3b82f6', stat:'Week 1 · Sep 9–14', desc:'All 16 opening-week matchups with live spreads, totals, moneylines and model win probabilities. Click any game for deep matchup analytics.' },
+  { icon:'⚔️', title:'Matchup Lab', tab:'matchup', accent:'#f43f5e', stat:'offense vs defense', desc:"X's and O's formation preview for any matchup. Pick personnel and defensive front, scan Clay unit-grade advantages, click a player for their full profile." },
   { icon:'📊', title:'Mike Clay Projections', tab:'projections', accent:'#06b6d4', stat:'12 sub-tabs', desc:'The complete 2026 guide: projected standings, category leaders, projected starters, coaching staffs, unit grades and Clay vs Market deltas.' },
   { icon:'💰', title:'Props & Value', tab:'props', accent:'#10b981', stat:'model edge · EV', desc:'Player props ranked by model edge across six sportsbooks — best lines, alerts and a full value board you can filter by source and side.' },
-  { icon:'🛡️', title:'Teams & Rosters', tab:'teams', accent:'#f59e0b', stat:() => DATA.teams.length + ' teams', desc:'Depth charts, Madden ratings and division navigation for every team, plus head-to-head player comparison.' },
+  { icon:'🛡️', title:'Teams & Rosters', tab:'teams', accent:'#f59e0b', stat:() => DATA.teams.length + ' teams', desc:'Depth charts, rosters and division navigation for every team, plus head-to-head player comparison.' },
   { icon:'⚡', title:'Transactions', tab:'feed', accent:'#ef4444', stat:() => DATA.transactions.length + ' moves', desc:'Every offseason move since Super Bowl LX — trades, signings and draft pickups, with blockbuster moves flagged.' },
 ];
 
@@ -3073,7 +3154,7 @@ async function renderTeamProjectionsBody(team) {
 
   // 8. Roster Navigation Hint
   h += `<div class="bg-slate-800/30 border border-slate-700/60 rounded-xl p-3 text-center text-xs text-slate-400 flex flex-wrap items-center justify-center gap-2">
-    <span>View this team's complete 90-man roster with Madden 27 ratings and offseason moves:</span>
+    <span>View this team's complete 90-man roster, depth chart and offseason moves:</span>
     <button onclick="showRosterSide('offense', document.getElementById('rosterTabOff'))" class="text-blue-400 font-bold underline hover:text-blue-300">Offense</button>
     <span class="text-slate-600">&bull;</span>
     <button onclick="showRosterSide('defense', document.getElementById('rosterTabDef'))" class="text-red-400 font-bold underline hover:text-red-300">Defense</button>
@@ -3210,7 +3291,7 @@ function renderRosterBody(team,side){
         <span class="cp-pos">${p.pos}</span>
         <span class="cp-age">${p.age||''}</span>
         ${badge}
-        <span class="rating-badge ${tier}" title="Madden rating: ${ovrDisplay}">${ovrDisplay}</span>
+        <span class="rating-badge ${tier}" title="Player rating: ${ovrDisplay}">${ovrDisplay}</span>
       </div>`;
     });
     h+=`</div></div>`;
@@ -3311,6 +3392,268 @@ function renderRosterChanges(team){
 }
 
 // ═══════════════════════════════════════════════════════════
+// MATCHUP LAB
+const MATCHUP_STATE = { teamA: 'Kansas City Chiefs', teamB: 'Philadelphia Eagles', personnel: '12', front: '43' };
+
+const MATCHUP_OL_SLOTS = [
+  { slot: 'LT', pos: ['OT'] }, { slot: 'LG', pos: ['G', 'OG'] }, { slot: 'C', pos: ['C'] },
+  { slot: 'RG', pos: ['G', 'OG'] }, { slot: 'RT', pos: ['OT'] },
+];
+const MATCHUP_OFFENSE = {
+  '12': [
+    { slot: 'WR', pos: ['WR'] }, { slot: 'TE', pos: ['TE'] }, { slot: 'WR', pos: ['WR'] }, { slot: 'TE', pos: ['TE'] },
+  ],
+  '11': [
+    { slot: 'WR', pos: ['WR'] }, { slot: 'TE', pos: ['TE'] }, { slot: 'WR', pos: ['WR'] }, { slot: 'WR', pos: ['WR'] },
+  ],
+  '10': [
+    { slot: 'WR', pos: ['WR'] }, { slot: 'WR', pos: ['WR'] }, { slot: 'WR', pos: ['WR'] }, { slot: 'WR', pos: ['WR'] },
+  ],
+};
+const MATCHUP_DEFENSE = {
+  '43': [
+    { slot: 'DE', pos: ['EDGE', 'DE'] }, { slot: 'DT', pos: ['DT'] }, { slot: 'DT', pos: ['DT'] }, { slot: 'DE', pos: ['EDGE', 'DE'] },
+    { slot: 'LB', pos: ['LB'] }, { slot: 'LB', pos: ['LB'] }, { slot: 'LB', pos: ['LB'] },
+    { slot: 'CB', pos: ['CB'] }, { slot: 'S', pos: ['S'] }, { slot: 'S', pos: ['S'] }, { slot: 'CB', pos: ['CB'] },
+  ],
+  '34': [
+    { slot: 'DE', pos: ['EDGE', 'DE'] }, { slot: 'NT', pos: ['DT'] }, { slot: 'DE', pos: ['EDGE', 'DE'] },
+    { slot: 'LB', pos: ['LB'] }, { slot: 'LB', pos: ['LB'] }, { slot: 'LB', pos: ['LB'] }, { slot: 'LB', pos: ['LB'] },
+    { slot: 'CB', pos: ['CB'] }, { slot: 'S', pos: ['S'] }, { slot: 'S', pos: ['S'] }, { slot: 'CB', pos: ['CB'] },
+  ],
+  'nickel': [
+    { slot: 'DE', pos: ['EDGE', 'DE'] }, { slot: 'DT', pos: ['DT'] }, { slot: 'DT', pos: ['DT'] }, { slot: 'DE', pos: ['EDGE', 'DE'] },
+    { slot: 'LB', pos: ['LB'] }, { slot: 'LB', pos: ['LB'] },
+    { slot: 'CB', pos: ['CB'] }, { slot: 'CB', pos: ['CB'] }, { slot: 'S', pos: ['S'] }, { slot: 'S', pos: ['S'] }, { slot: 'CB', pos: ['CB'] },
+  ],
+};
+const MATCHUP_UNITS = [
+  { label: 'QB', a: ['QB'], b: ['S', 'CB'], blabel: 'Secondary' },
+  { label: 'OL', a: ['OL'], b: ['DI', 'ED'], blabel: 'Pass rush' },
+  { label: 'RB', a: ['RB'], b: ['LB'], blabel: 'LB corps' },
+  { label: 'WR', a: ['WR'], b: ['CB'], blabel: 'CBs' },
+  { label: 'TE', a: ['TE'], b: ['S'], blabel: 'Safeties' },
+];
+
+function matchupTeamList() {
+  const seen = {};
+  const teams = [];
+  for (const p of (DATA.players || [])) {
+    const t = p.team_name || p.team || (DATA.teamById && p.team_id ? DATA.teamById[p.team_id] : null);
+    if (!t || seen[t]) continue;
+    seen[t] = 1;
+    teams.push(t);
+  }
+  return teams.sort();
+}
+
+function teamNameOf(p) {
+  if (!p) return null;
+  return p.team_name || p.team || (DATA.teamById && p.team_id ? DATA.teamById[p.team_id] : null) || (p.team_id || '');
+}
+
+function attrEsc(s) { return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;'); }
+
+function pickStarter(team, posCands, used) {
+  let best = null;
+  for (const p of DATA.players || []) {
+    if (used[p.name]) continue;
+    if (teamNameOf(p) !== team) continue;
+    if (!posCands.includes(p.pos)) continue;
+    if (!best || (Number(p.ovr) || 0) > (Number(best.ovr) || 0)) best = p;
+  }
+  if (best) used[best.name] = 1;
+  return best;
+}
+
+function matchupGrade(team, unit) {
+  if (typeof CLAY_DATA === 'undefined' || !CLAY_DATA || !CLAY_DATA.unit_grades) return null;
+  const ug = CLAY_DATA.unit_grades[team];
+  if (!ug) return null;
+  const parts = Array.isArray(unit) ? unit : [unit];
+  const vals = parts.map(u => Number(ug[u])).filter(v => !isNaN(v));
+  if (!vals.length) return null;
+  return vals.reduce((s, v) => s + v, 0) / vals.length;
+}
+
+function matchupRowHtml(label, gradeA, gradeB) {
+  const ga = gradeA == null ? null : Math.max(0, Math.min(10, gradeA));
+  const gb = gradeB == null ? null : Math.max(0, Math.min(10, gradeB));
+  const adv = (ga == null || gb == null) ? 'even' : (ga - gb >= 0.4 ? 'adv-a' : (gb - ga >= 0.4 ? 'adv-b' : 'even'));
+  const diff = (ga != null && gb != null) ? Math.abs(ga - gb).toFixed(1) : '';
+  const badge = ga == null || gb == null ? '' : (adv === 'even' ? `<span class="unit-adv adv-even">EVEN</span>` : `<span class="unit-adv ${adv}">+${diff}</span>`);
+  return `<div class="unit-match-row">
+    <div class="um-label">${label}</div>
+    <div class="flex items-center gap-2 w-full">
+      <div class="unit-bar flex-1"><div style="width:${(ga == null ? 50 : ga * 10)}%;background:linear-gradient(90deg,#f43f5e,#fb7185)"></div></div>
+      <div class="text-[11px] font-black text-rose-300 w-8 text-center">${ga == null ? '—' : ga.toFixed(1)}</div>
+      ${badge}
+      <div class="text-[11px] font-black text-blue-300 w-8 text-center">${gb == null ? '—' : gb.toFixed(1)}</div>
+      <div class="unit-bar flex-1"><div style="width:${(gb == null ? 50 : gb * 10)}%;background:linear-gradient(90deg,#3b82f6,#60a5fa)"></div></div>
+    </div>
+  </div>`;
+}
+
+function formationPlayerHtml(p, isOffense, slot) {
+  if (!p) {
+    return `<div class="formation-player"><div class="fp-circle ${isOffense ? 'fp-o' : 'fp-x'}" style="opacity:.35">?</div><div class="fp-slot">${slot}</div></div>`;
+  }
+  const tier = (Number(p.ovr) || 0) >= 90 ? 'rating-elite' : (Number(p.ovr) || 0) >= 80 ? 'rating-star' : (Number(p.ovr) || 0) >= 70 ? 'rating-solid' : 'rating-dev';
+  const escName = attrEsc(p.name);
+  const escTeam = attrEsc(teamNameOf(p));
+  return `<div class="formation-player" onclick="openPlayerModal('${escName.replace(/'/g, "\\'")}','${escTeam.replace(/'/g, "\\'")}')" title="${escName} · ${p.pos} · OVR ${p.ovr || '—'}">
+    <div class="fp-circle ${isOffense ? 'fp-o' : 'fp-x'}">${p.pos}<span class="fp-rating rating-badge ${tier}">${p.ovr || '—'}</span></div>
+    <div class="fp-name">${escName}</div>
+    <div class="fp-slot">${slot || p.pos}</div>
+  </div>`;
+}
+
+function formationFieldHtml(team, slots, isOffense) {
+  const used = {};
+  const rows = [];
+  if (isOffense) {
+    const skill = MATCHUP_OFFENSE[MATCHUP_STATE.personnel] || MATCHUP_OFFENSE['12'];
+    const skillPicks = skill.map(s => pickStarter(team, s.pos, used));
+    const olPicks = MATCHUP_OL_SLOTS.map(s => pickStarter(team, s.pos, used));
+    const qb = pickStarter(team, ['QB'], used);
+    const rb = pickStarter(team, ['RB'], used);
+    rows.push({ cls: 'row-skill', picks: skillPicks.map((p, i) => formationPlayerHtml(p, true, skill[i].slot)) });
+    rows.push({ cls: '', picks: olPicks.map((p, i) => formationPlayerHtml(p, true, MATCHUP_OL_SLOTS[i].slot)) });
+    rows.push({ cls: '', picks: [formationPlayerHtml(qb, true, 'QB'), formationPlayerHtml(rb, true, 'RB')] });
+  } else {
+    const def = MATCHUP_DEFENSE[MATCHUP_STATE.front] || MATCHUP_DEFENSE['43'];
+    const defPicks = def.map(s => pickStarter(team, s.pos, used));
+    const back = [], lbs = [], dls = [];
+    defPicks.forEach((p, i) => {
+      const slot = def[i].slot;
+      if (slot === 'CB' || slot === 'S') back.push(formationPlayerHtml(p, false, slot));
+      else if (slot === 'LB') lbs.push(formationPlayerHtml(p, false, slot));
+      else dls.push(formationPlayerHtml(p, false, slot));
+    });
+    rows.push({ cls: 'row-skill', picks: back });
+    rows.push({ cls: 'row-lb', picks: lbs });
+    rows.push({ cls: '', picks: dls });
+  }
+  return `<div class="formation-lockup">` + rows.map(r => `<div class="formation-row ${r.cls}">${r.picks.join('')}</div>`).join('') + `</div>`;
+}
+
+function matchupGameChanged() {
+  const v = document.getElementById('matchupGame')?.value || '';
+  if (v.includes('__')) {
+    const [a, h] = v.split('__');
+    MATCHUP_STATE.teamA = a;
+    MATCHUP_STATE.teamB = h;
+    const selA = document.getElementById('matchupTeamA');
+    const selB = document.getElementById('matchupTeamB');
+    if (selA) selA.value = a;
+    if (selB) selB.value = h;
+  }
+  renderMatchup();
+}
+
+async function renderMatchup() {
+  const ctrl = document.getElementById('matchupControls');
+  if (!ctrl) return;
+  // Ensure team selects are populated
+  const selA = document.getElementById('matchupTeamA');
+  const selB = document.getElementById('matchupTeamB');
+  if (!selA.options.length || !selB.options.length) {
+    const teams = matchupTeamList();
+    for (const t of teams) {
+      selA.add(new Option(t, t));
+      selB.add(new Option(t, t));
+    }
+    if (teams.includes(MATCHUP_STATE.teamA)) selA.value = MATCHUP_STATE.teamA;
+    if (teams.includes(MATCHUP_STATE.teamB)) selB.value = MATCHUP_STATE.teamB;
+    if (!selA.value && teams.length) selA.value = teams[0];
+    if (!selB.value && teams.length) selB.value = teams[Math.min(1, teams.length - 1)];
+  }
+
+  // Populate the game picker from the dashboard schedule (all weeks).
+  // If the current offense/defense pair is not a real scheduled game, default
+  // to the first game of the current week (offense = away, defense = home).
+  const selGame = document.getElementById('matchupGame');
+  if (selGame && !selGame.options.length) {
+    if (typeof loadSchedule === 'function') { try { await loadSchedule(); } catch (e) {} }
+    const games = (SCHEDULE_DATA && SCHEDULE_DATA.games) || [];
+    if (games.length) {
+      const sorted = games.slice().sort((a, b) => String(a.kickoff_utc || '').localeCompare(String(b.kickoff_utc || '')));
+      for (const g of sorted) {
+        const d = new Date(g.kickoff_utc);
+        const when = isNaN(d.getTime()) ? '' : d.toLocaleDateString([], { month: 'short', day: 'numeric' });
+        selGame.add(new Option(`Wk ${g.week}: ${g.away_team} @ ${g.home_team}${when ? ' · ' + when : ''}`, `${g.away_team}__${g.home_team}`));
+      }
+      const matchesGame = sorted.find(g => g.away_team === MATCHUP_STATE.teamA && g.home_team === MATCHUP_STATE.teamB);
+      if (matchesGame) {
+        selGame.value = `${matchesGame.away_team}__${matchesGame.home_team}`;
+      } else {
+        const fallback = sorted.find(g => g.week === (SCHEDULE_DATA.week || 1)) || sorted[0];
+        if (fallback) {
+          MATCHUP_STATE.teamA = fallback.away_team;
+          MATCHUP_STATE.teamB = fallback.home_team;
+          selGame.value = `${fallback.away_team}__${fallback.home_team}`;
+          selA.value = fallback.away_team;
+          selB.value = fallback.home_team;
+        }
+      }
+    }
+  }
+  MATCHUP_STATE.teamA = selA.value;
+  MATCHUP_STATE.teamB = selB.value;
+  // If the team pair no longer matches the selected game (manual override), drop the game selection.
+  if (selGame && selGame.options.length) {
+    const want = `${MATCHUP_STATE.teamA}__${MATCHUP_STATE.teamB}`;
+    if (selGame.value !== want) selGame.value = '';
+  }
+  MATCHUP_STATE.personnel = document.getElementById('matchupPersonnel').value;
+  MATCHUP_STATE.front = document.getElementById('matchupFront').value;
+  const clayReady = !!CLAY_DATA;
+  if (!clayReady && typeof loadClayProjections === 'function') {
+    try { await loadClayProjections(); } catch (e) {}
+  }
+  const gradeSource = (CLAY_DATA && CLAY_DATA.unit_grades) ? CLAY_DATA : null;
+
+  const off = document.getElementById('matchupOffense');
+  const def = document.getElementById('matchupDefense');
+  const strip = document.getElementById('matchupUnitStrip');
+  const verdict = document.getElementById('matchupVerdict');
+
+  // Unit matchup strip
+  let stripHtml = '<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-x-6">';
+  for (const u of MATCHUP_UNITS) {
+    const ga = matchupGrade(MATCHUP_STATE.teamA, u.a);
+    const gb = matchupGrade(MATCHUP_STATE.teamB, u.b);
+    stripHtml += matchupRowHtml(`${u.label} vs ${u.blabel}`, ga, gb);
+  }
+  stripHtml += '</div>';
+  strip.innerHTML = stripHtml;
+
+  // Verdict
+  const offGrade = [['QB'], ['RB'], ['WR'], ['TE'], ['OL']].map(u => matchupGrade(MATCHUP_STATE.teamA, u)).filter(v => v != null);
+  const defGrade = [['DI'], ['ED'], ['LB'], ['CB'], ['S']].map(u => matchupGrade(MATCHUP_STATE.teamB, u)).filter(v => v != null);
+  const og = offGrade.length ? offGrade.reduce((s, v) => s + v, 0) / offGrade.length : null;
+  const dg = defGrade.length ? defGrade.reduce((s, v) => s + v, 0) / defGrade.length : null;
+  if (og != null && dg != null) {
+    const diff = og - dg;
+    const cls = diff >= 0.4 ? 'a' : (diff <= -0.4 ? 'b' : 'even');
+    const txt = cls === 'even' ? `${MATCHUP_STATE.teamA} offense ≈ ${MATCHUP_STATE.teamB} defense` : (cls === 'a' ? `${MATCHUP_STATE.teamA} O over ${MATCHUP_STATE.teamB} D` : `${MATCHUP_STATE.teamB} D over ${MATCHUP_STATE.teamA} O`);
+    verdict.innerHTML = `<span class="verdict-pill ${cls}">${attrEsc(txt)} · ${Math.abs(diff).toFixed(1)} grade pts</span>`;
+  } else {
+    verdict.innerHTML = '<span class="text-slate-600">Unit grades unavailable</span>';
+  }
+
+  // Formation fields
+  off.innerHTML = `<div class="flex items-center justify-between mb-3">
+    <div class="flex items-center gap-2"><span class="text-xs font-black text-rose-300">${attrEsc(MATCHUP_STATE.teamA)}</span><span class="text-[10px] text-slate-500">${attrEsc(MATCHUP_STATE.personnel)} personnel · Clay O ${og == null ? '—' : og.toFixed(1)}</span></div>
+    <span class="fp-circle fp-o" style="width:24px;height:24px;font-size:10px">O</span>
+  </div><div class="formation-field"><div class="formation-midline"></div>${formationFieldHtml(MATCHUP_STATE.teamA, null, true)}</div>`;
+  def.innerHTML = `<div class="flex items-center justify-between mb-3">
+    <div class="flex items-center gap-2"><span class="text-xs font-black text-blue-300">${attrEsc(MATCHUP_STATE.teamB)}</span><span class="text-[10px] text-slate-500">${attrEsc(MATCHUP_STATE.front === 'nickel' ? 'Nickel' : MATCHUP_STATE.front + ' front')} · Clay D ${dg == null ? '—' : dg.toFixed(1)}</span></div>
+    <span class="fp-circle fp-x" style="width:24px;height:24px;font-size:10px">X</span>
+  </div><div class="formation-field"><div class="formation-midline"></div>${formationFieldHtml(MATCHUP_STATE.teamB, null, false)}</div>`;
+}
+
+// ═══════════════════════════════════════════════════════════
 // INTERACTIONS
 // ═══════════════════════════════════════════════════════════
 function showTab(tab){
@@ -3332,12 +3675,18 @@ function showTab(tab){
   if (tab === 'props') {
     renderPropsBoard();
   }
+  if (tab === 'wintotals') {
+    renderWinTotals();
+  }
   if (tab === 'teams') {
     renderTeamsSubTabs();
     setTeamsSubTab(currentTeamsSubTab);
   }
   if (tab === 'schedule') {
     loadSchedule().then(renderSchedule);
+  }
+  if (tab === 'matchup') {
+    renderMatchup();
   }
 }
 
@@ -3407,6 +3756,7 @@ loadAllData().then(() => {
     rated: DATA.players.filter(p => p.ovr !== null).length
   });
   DATA.rankings = computeAllRankings();
+  loadFreshness();             // ticket 01: freshness manifest for data-age stamps
   renderHome();                 // first-run showcase (hero, features, spotlights)
   renderTeams();
   renderTeamsSubTabs();
@@ -4262,7 +4612,7 @@ function openMatchup(gameId){
     '<div class="flex text-center"><div class="w-1/2 text-2xl font-black mp-num" style="color:' + (DATA.teamColors[game.home_team]||'#7dd3fc') +'">' + (prob === null ? '—' : (prob*100).toFixed(1) + '%') + '</div>' +
     '<div class="w-1/2 text-2xl font-black mp-num" style="color:' + (DATA.teamColors[game.away_team]||'#7dd3fc') +'">' + (prob === null ? '—' : ((1-prob)*100).toFixed(1) + '%') + '</div></div>' +
     '<div class="flex text-[10px] text-slate-500 mt-1"><div class="w-1/2 text-left">' + esc(game.home_team) + '</div><div class="w-1/2 text-right">' + esc(game.away_team) + '</div></div>' +
-    '<p class="text-[10px] text-slate-600 mt-2">Percentages are derived from the dashboard\'s Madden-based power ratings via a log5 model with home-field edge. Spread/total/moneyline are live market lines (source: nflverse).</p></div>' +
+    '<p class="text-[10px] text-slate-600 mt-2">Percentages are derived from the dashboard\'s composite power ratings via a log5 model with home-field edge. Spread/total/moneyline are live market lines (source: nflverse).</p></div>' +
     '<div class="grid grid-cols-2 gap-2 mt-4">' +
     '<button class="text-xs font-bold px-3 py-2 rounded-lg border border-slate-600 bg-slate-800 text-slate-300 hover:bg-slate-700 transition" onclick="openRoster(\'' + esc(game.away_team).replace(/'/g,"\\'") + '\');closeMatchupModal()">' + esc(DATA.teamAbbr[game.away_team]||ABBR_TO_TEAM[game.away_team]||game.away_team) + ' — View Roster</button>' +
     '<button class="text-xs font-bold px-3 py-2 rounded-lg border border-slate-600 bg-slate-800 text-slate-300 hover:bg-slate-700 transition" onclick="openRoster(\'' + esc(game.home_team).replace(/'/g,"\\'") + '\');closeMatchupModal()">' + esc(DATA.teamAbbr[game.home_team]||ABBR_TO_TEAM[game.home_team]||game.home_team) + ' — View Roster</button>' +
@@ -4272,14 +4622,41 @@ function openMatchup(gameId){
 
 async function loadPropsBoard(){
   if (PROPS_BOARD) return PROPS_BOARD;
-  try {
-    const res = await fetch('./props-board.json', { cache: 'no-store' });
-    if (!res.ok) throw new Error('HTTP ' + res.status);
-    PROPS_BOARD = await res.json();
-  } catch (err) {
-    PROPS_BOARD = { error: err.message, summary: {}, plays: [], best_lines: [], alerts: [] };
+  // Ticket 01: read from the unified shared-data layer first (data/shared/),
+  // fall back to the legacy hand-copied path so the deploy never breaks.
+  for (const url of ['./data/shared/props-board.json', './props-board.json']) {
+    try {
+      const res = await fetch(url, { cache: 'no-store' });
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      PROPS_BOARD = await res.json();
+      PROPS_BOARD.__source = url;
+      return PROPS_BOARD;
+    } catch (err) { /* try next path */ }
   }
+  PROPS_BOARD = { error: 'props board unavailable', summary: {}, plays: [], best_lines: [], alerts: [] };
   return PROPS_BOARD;
+}
+
+// Ticket 01/02: freshness manifest from the unified data layer.
+let FRESHNESS = null;
+async function loadFreshness(){
+  if (FRESHNESS) return FRESHNESS;
+  try {
+    const res = await fetch('./data/shared/freshness.json', { cache: 'no-store' });
+    if (res.ok) FRESHNESS = await res.json();
+  } catch (err) { /* absent manifest = no stamps, never block rendering */ }
+  return FRESHNESS;
+}
+
+// Human-readable "data from Xh ago" for a panel, or '' when unknown.
+function dataAgeBadge(sourceKey){
+  if (!FRESHNESS || !FRESHNESS.sources || !FRESHNESS.sources[sourceKey]) return '';
+  const asOf = Date.parse(FRESHNESS.sources[sourceKey].as_of);
+  if (!Number.isFinite(asOf)) return '';
+  const hours = Math.floor((Date.now() - asOf) / 3600000);
+  const label = hours < 1 ? '<1h' : hours < 48 ? hours + 'h' : Math.round(hours / 24) + 'd';
+  const stale = hours >= 24;
+  return `<span class="text-[9px] uppercase tracking-wider font-bold px-1.5 py-0.5 rounded border ${stale ? 'text-amber-400 border-amber-500/40 bg-amber-500/10' : 'text-slate-500 border-slate-700/60 bg-slate-800/40'}" title="data as of ${FRESHNESS.sources[sourceKey].as_of}">data ${label} ago</span>`;
 }
 
 const propsMarketLabels = {
@@ -4357,6 +4734,8 @@ async function renderPropsBoard(){
       }).filter(Boolean).join(' · ')
     : '';
   if (metaEl) metaEl.textContent = `Updated ${gen} · ${board.summary.plays} priced plays · ${board.summary.lines} lines · ${board.summary.venues ? Object.keys(board.summary.venues).length : 0} sources${ageSummary}`;
+  const freshBadge = document.getElementById('propsFreshnessBadge');
+  if (freshBadge) freshBadge.innerHTML = dataAgeBadge('props_board');
 
   const venues = Object.keys(board.summary.venues || { Kalshi: 0, Polymarket: 0, DraftKings: 0, BetMGM: 0, FanDuel: 0, Caesars: 0 });
   const venueSel = document.getElementById('propsVenueFilter');
@@ -4567,6 +4946,96 @@ function toggleOddsCompare(key, rowIndex) {
   row.classList.remove('hidden');
 }
 
+// ── WIN TOTALS TAB ──────────────────────────────────────────────
+// Renders the model's 2026 team win-total projection vs the Kalshi line,
+// reconciled live against in-season results (board.win_totals). Each row shows
+// the pick, the market expectation, and a live scoring badge (pending / live /
+// won / lost) that advances automatically as games land in the DB and the board
+// is re-exported.
+async function renderWinTotals(){
+  const board = await loadPropsBoard();
+  const metaEl = document.getElementById('winTotalsMeta');
+  const boardEl = document.getElementById('winTotalsBoard');
+  const sumEl = document.getElementById('winTotalsSummary');
+  const rows = board && board.win_totals;
+  if (!rows) {
+    if (metaEl) metaEl.textContent = '— no win-total projection in this board —';
+    if (boardEl) boardEl.innerHTML = '<p class="text-xs text-slate-500">The props board has no <code>win_totals</code> section yet (rebuild/export the board with the projection assets present).</p>';
+    if (sumEl) sumEl.innerHTML = '';
+    return;
+  }
+
+  const gen = board.generated_at ? new Date(board.generated_at).toLocaleString() : '';
+  if (metaEl) metaEl.textContent = `Updated ${gen} · ${rows.length} teams`;
+
+  const played = rows.filter(r => r.record && r.record.played > 0).length;
+  const decided = rows.filter(r => r.scoring && (r.scoring.state === 'won' || r.scoring.state === 'lost')).length;
+  const overs = rows.filter(r => r.pick === 'over').length;
+  const unders = rows.filter(r => r.pick === 'under').length;
+  if (sumEl) {
+    sumEl.innerHTML = [
+      statChip('Teams', rows.length, 'text-slate-200'),
+      statChip('Model picks', `${overs} over / ${unders} under`, 'text-amber-400'),
+      statChip('Games played', played, 'text-cyan-400'),
+      statChip('Decided', decided, 'text-emerald-400'),
+    ].join('');
+  }
+
+  // Sort: decided-first is least useful; instead show live/decided regardless of
+  // current status, ordered by model projection (best teams first), then alphas.
+  const sorted = [...rows].sort((a, b) =>
+    (Number(b.proj_wins) || 0) - (Number(a.proj_wins) || 0) || a.team.localeCompare(b.team));
+
+  const stateBadge = (r) => {
+    const s = r.scoring && r.scoring.state ? r.scoring.state : 'pending';
+    const map = {
+      pending: ['Pending', 'text-slate-400 border-slate-600/60 bg-slate-800/60'],
+      live:    ['Live',    'text-cyan-300 border-cyan-500/40 bg-cyan-500/10'],
+      won:     ['Won',     'text-emerald-300 border-emerald-500/40 bg-emerald-500/10'],
+      lost:    ['Lost',    'text-rose-300 border-rose-500/40 bg-rose-500/10'],
+    };
+    const [label, cls] = map[s] || map.pending;
+    const rem = r.scoring && r.scoring.remaining_games != null ? ` · ${r.scoring.remaining_games} left` : '';
+    return `<span class="text-[10px] font-bold px-2 py-0.5 rounded-full border uppercase tracking-wide ${cls}" title="${s === 'won' ? 'Mathematically cashed vs the line' : s === 'lost' ? 'Mathematically dead vs the line' : s === 'live' ? 'Still in play with games remaining' : 'No games played yet'}">${label}${rem}</span>`;
+  };
+
+  const fmtPct = (n) => Number.isFinite(Number(n)) ? (Number(n) * 100).toFixed(1) + '%' : '—';
+  const fmtNum = (n) => Number.isFinite(Number(n)) ? Number(n) : '—';
+  const pickCls = (pick) => pick === 'over'
+    ? 'text-emerald-400'
+    : pick === 'under' ? 'text-cyan-400' : 'text-slate-400';
+
+  boardEl.innerHTML = `
+    <table class="w-full text-xs">
+      <thead>
+        <tr class="text-slate-400 border-b border-slate-700/60 bg-slate-800/50">
+          <th class="py-2 px-3 text-left">Team</th>
+          <th class="py-2 px-2 text-center">Pick</th>
+          <th class="py-2 px-2 text-center">Model proj</th>
+          <th class="py-2 px-2 text-center">Mkt line</th>
+          <th class="py-2 px-2 text-center">Mkt EW</th>
+          <th class="py-2 px-2 text-center" title="Model projection minus the over/under line">Edge vs line</th>
+          <th class="py-2 px-2 text-center">Record</th>
+          <th class="py-2 px-2 text-center">Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${sorted.map((r) => `
+          <tr class="border-b border-slate-800/40 hover:bg-slate-800/30">
+            <td class="py-1.5 px-3 font-bold text-slate-100">${homeEsc(r.team)}</td>
+            <td class="py-1.5 px-2 text-center"><span class="uppercase font-bold text-[10px] ${pickCls(r.pick)}">${r.pick || '—'}</span></td>
+            <td class="py-1.5 px-2 text-center font-bold text-white">${fmtNum(r.proj_wins)}</td>
+            <td class="py-1.5 px-2 text-center text-slate-300">${r.market && r.market.line != null ? r.market.line : '—'}</td>
+            <td class="py-1.5 px-2 text-center text-slate-400">${r.market && r.market.expected_wins != null ? r.market.expected_wins : '—'}</td>
+            <td class="py-1.5 px-2 text-center font-bold ${Number(r.edge_vs_line) >= 0 ? 'text-emerald-400' : 'text-rose-400'}">${Number.isFinite(Number(r.edge_vs_line)) ? (Number(r.edge_vs_line)>=0?'+':'')+Number(r.edge_vs_line).toFixed(1) : '—'}</td>
+            <td class="py-1.5 px-2 text-center text-slate-300">${r.record ? r.record.wins + '–' + r.record.losses : '—'}</td>
+            <td class="py-1.5 px-2 text-center">${stateBadge(r)}</td>
+          </tr>`).join('')}
+      </tbody>
+    </table>
+  `;
+}
+
 // ═══════════════════════════════════════════════════════════
 // EXTENSIONS: THEMES, DUAL RADAR, PLAYER MODAL, COMPARE, 
 // COMMAND PALETTE, CLAY VS MARKET DELTA, MATCHUP MATRIX, CONSENSUS POWER
@@ -4761,7 +5230,7 @@ async function openPlayerModal(name, teamHint = '') {
         </div>
       </div>
       <div class="flex items-center gap-2">
-        ${ovr ? `<div class="text-right"><div class="text-[9px] uppercase tracking-wider text-slate-500 font-bold">Madden 27</div><div class="rating-badge ${ratingBadgeClass} mx-auto">${ovr}</div></div>` : ''}
+
         <button onclick="openPlayerCompareModal('${name.replace(/'/g,"\\'")}')" class="text-xs px-2.5 py-1.5 rounded-lg bg-indigo-600/20 text-indigo-300 border border-indigo-500/40 hover:bg-indigo-500/30 transition flex items-center gap-1">
           <span>⚖</span> Compare
         </button>
@@ -5049,12 +5518,13 @@ function renderPlayerCompare() {
   const team1 = p1.team_id ? (DATA.teams?.find(t=>t.id===p1.team_id)?.name || p1.team_id) : (cp1.team_abbr || d1.starterInfo?.teamName || 'NFL');
   const team2 = p2.team_id ? (DATA.teams?.find(t=>t.id===p2.team_id)?.name || p2.team_id) : (cp2.team_abbr || d2.starterInfo?.teamName || 'NFL');
 
-  let radarLabels = ['Volume', 'Efficiency', 'Scoring', 'Film Grade', 'Madden Rating', 'Market Implied'];
-  let v1 = [7, 7, 7, grade1, ovr1 / 10, 7];
-  let v2 = [7, 7, 7, grade2, ovr2 / 10, 7];
+
+  let radarLabels = ['Volume', 'Efficiency', 'Scoring', 'Film Grade', 'Market Implied'];
+  let v1 = [7, 7, 7, grade1, 7];
+  let v2 = [7, 7, 7, grade2, 7];
 
   if (pos1 === 'QB' || pos2 === 'QB') {
-    radarLabels = ['Pass Yds', 'Pass TDs', 'Pass Acc %', 'Rush Threat', 'Film Grade', 'Madden OVR'];
+    radarLabels = ['Pass Yds', 'Pass TDs', 'Pass Acc %', 'Rush Threat', 'Film Grade'];
     const cmpPct1 = cp1.pass_att ? (cp1.pass_comp / cp1.pass_att * 10) : 6.5;
     const cmpPct2 = cp2.pass_att ? (cp2.pass_comp / cp2.pass_att * 10) : 6.5;
     v1 = [
@@ -5062,52 +5532,46 @@ function renderPlayerCompare() {
       Math.min(10, ((cp1.pass_td || 20) / 36) * 10),
       Math.min(10, cmpPct1),
       Math.min(10, ((cp1.rush_yds || 0) / 800) * 10),
-      grade1,
-      ovr1 / 10
+      grade1
     ];
     v2 = [
       Math.min(10, ((cp2.pass_yds || 3000) / 4500) * 10),
       Math.min(10, ((cp2.pass_td || 20) / 36) * 10),
       Math.min(10, cmpPct2),
       Math.min(10, ((cp2.rush_yds || 0) / 800) * 10),
-      grade2,
-      ovr2 / 10
+      grade2
     ];
   } else if (pos1 === 'RB' || pos2 === 'RB') {
-    radarLabels = ['Rush Yds', 'Rush TDs', 'Rec Share', 'Total Scrimmage', 'Film Grade', 'Madden OVR'];
+    radarLabels = ['Rush Yds', 'Rush TDs', 'Rec Share', 'Total Scrimmage', 'Film Grade'];
     v1 = [
       Math.min(10, ((cp1.rush_yds || 500) / 1400) * 10),
       Math.min(10, ((cp1.rush_td || 5) / 14) * 10),
       Math.min(10, ((cp1.rec || 20) / 80) * 10),
       Math.min(10, (((cp1.rush_yds || 0) + (cp1.rec_yds || 0)) / 1800) * 10),
-      grade1,
-      ovr1 / 10
+      grade1
     ];
     v2 = [
       Math.min(10, ((cp2.rush_yds || 500) / 1400) * 10),
       Math.min(10, ((cp2.rush_td || 5) / 14) * 10),
       Math.min(10, ((cp2.rec || 20) / 80) * 10),
       Math.min(10, (((cp2.rush_yds || 0) + (cp2.rec_yds || 0)) / 1800) * 10),
-      grade2,
-      ovr2 / 10
+      grade2
     ];
   } else if (['WR', 'TE'].includes(pos1) || ['WR', 'TE'].includes(pos2)) {
-    radarLabels = ['Targets', 'Receptions', 'Rec Yds', 'Rec TDs', 'Film Grade', 'Madden OVR'];
+    radarLabels = ['Targets', 'Receptions', 'Rec Yds', 'Rec TDs', 'Film Grade'];
     v1 = [
       Math.min(10, ((cp1.targets || 50) / 160) * 10),
       Math.min(10, ((cp1.rec || 40) / 110) * 10),
       Math.min(10, ((cp1.rec_yds || 500) / 1500) * 10),
       Math.min(10, ((cp1.rec_td || 4) / 12) * 10),
-      grade1,
-      ovr1 / 10
+      grade1
     ];
     v2 = [
       Math.min(10, ((cp2.targets || 50) / 160) * 10),
       Math.min(10, ((cp2.rec || 40) / 110) * 10),
       Math.min(10, ((cp2.rec_yds || 500) / 1500) * 10),
       Math.min(10, ((cp2.rec_td || 4) / 12) * 10),
-      grade2,
-      ovr2 / 10
+      grade2
     ];
   }
 
@@ -5168,10 +5632,7 @@ function renderPlayerCompare() {
               <h3 class="text-xl font-black text-white">${d1.name}</h3>
               <div class="text-xs text-slate-400 mt-0.5">${pos1} · ${team1} · ${p1.age ? p1.age+' yrs' : 'Age N/A'}</div>
             </div>
-            <div class="text-right">
-              <div class="text-[9px] uppercase font-bold text-slate-500">Madden 27</div>
-              <div class="text-xl font-black text-cyan-400">${ovr1}</div>
-            </div>
+
           </div>
           <div class="space-y-1.5 text-xs">
             <div class="flex justify-between py-1 border-b border-slate-800/60"><span class="text-slate-400">Starter Grade</span><strong class="text-emerald-400">${grade1}/10</strong></div>
@@ -5204,10 +5665,7 @@ function renderPlayerCompare() {
               <h3 class="text-xl font-black text-white">${d2.name}</h3>
               <div class="text-xs text-slate-400 mt-0.5">${pos2} · ${team2} · ${p2.age ? p2.age+' yrs' : 'Age N/A'}</div>
             </div>
-            <div class="text-right">
-              <div class="text-[9px] uppercase font-bold text-slate-500">Madden 27</div>
-              <div class="text-xl font-black text-amber-400">${ovr2}</div>
-            </div>
+
           </div>
           <div class="space-y-1.5 text-xs">
             <div class="flex justify-between py-1 border-b border-slate-800/60"><span class="text-slate-400">Starter Grade</span><strong class="text-emerald-400">${grade2}/10</strong></div>
@@ -5225,7 +5683,6 @@ function renderPlayerCompare() {
 
   // ── Stat-by-Stat Direct Delta Table ──
   const statDefs = [
-    { label: 'Madden 27 Rating', k1: ovr1, k2: ovr2, unit: '', higherIsBetter: true },
     { label: 'Starter Film Grade', k1: grade1, k2: grade2, unit: '/10', higherIsBetter: true },
     { label: 'Projected Fantasy Points', k1: cp1.ff_pts, k2: cp2.ff_pts, unit: ' pts', higherIsBetter: true },
     { label: 'Passing Yards (Raw 17g)', k1: cp1.pass_yds, k2: cp2.pass_yds, unit: ' yds', higherIsBetter: true },
@@ -5386,6 +5843,8 @@ function handleCommandSearch(q) {
     { label: 'Teams & Rosters', type: 'Tab', icon: '🛡', action: () => { showTab('teams'); closeCommandPalette(); } },
     { label: 'Mike Clay Projections', type: 'Tab', icon: '📊', action: () => { showTab('projections'); closeCommandPalette(); } },
     { label: 'Props & Value Board', type: 'Tab', icon: '💰', action: () => { showTab('props'); closeCommandPalette(); } },
+    { label: 'Win Totals', type: 'Tab', icon: '🏆', action: () => { showTab('wintotals'); closeCommandPalette(); } },
+    { label: 'Matchup Lab', type: 'Tab', icon: '⚔️', action: () => { showTab('matchup'); closeCommandPalette(); } },
     { label: 'Clay vs Market Delta', type: 'Feature', icon: '⚡', action: () => { showTab('projections'); switchProjSubTab('clay_delta'); closeCommandPalette(); } },
     { label: 'Opponent Matchup Matrix', type: 'Feature', icon: '🎯', action: () => { showTab('projections'); switchProjSubTab('matchup_matrix'); closeCommandPalette(); } },
     { label: 'Consensus Power Index', type: 'Feature', icon: '🏆', action: () => { showTab('projections'); switchProjSubTab('consensus'); closeCommandPalette(); } },
@@ -5939,7 +6398,7 @@ function renderConsensusPower(c, data) {
             <span>🏆</span> 2026 Unified Consensus Power Index
           </h3>
           <p class="text-xs text-slate-400 mt-0.5">
-            Calibrated 0–100 power index blending Mike Clay projected wins (40%), unit grade film analysis (35%), and Madden 27 roster strength (25%).
+            Calibrated 0–100 power index blending Mike Clay projected wins (40%), unit grade film analysis (35%), and roster strength (25%).
           </p>
         </div>
         <div class="flex items-center gap-2 text-xs flex-wrap">
@@ -5962,7 +6421,6 @@ function renderConsensusPower(c, data) {
             <th class="py-2 px-2 text-center">Tier</th>
             <th class="py-2 px-2 text-center">Clay Wins</th>
             <th class="py-2 px-2 text-center">Unit Grade</th>
-            <th class="py-2 px-2 text-center">Madden Avg</th>
             <th class="py-2 px-2 text-center">Point Diff</th>
           </tr>
         </thead>
@@ -6000,7 +6458,6 @@ function renderConsensusPower(c, data) {
         <td class="py-2 px-2 text-center"><span class="px-2 py-0.5 rounded text-[10px] border ${tierColor}">${tierIcon} ${tier}</span></td>
         <td class="py-2 px-2 text-center font-bold ${t.projWins >= 10 ? 'text-emerald-400' : 'text-slate-300'}">${t.projWins} W</td>
         <td class="py-2 px-2 text-center text-slate-300">${t.unitGrade}</td>
-        <td class="py-2 px-2 text-center text-slate-400">${t.maddenAvg}</td>
         <td class="py-2 px-2 text-center font-bold ${t.diff > 0 ? 'text-emerald-400' : 'text-red-400'}">${t.diff > 0 ? '+' : ''}${t.diff}</td>
       </tr>
     `;

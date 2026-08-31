@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.nfldashboard.rostersync</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>/usr/bin/env</string>
+        <string>node</string>
+        <string>/absolute/path/to/NFL_Main/nfldashboard/sync_supabase_rosters.js</string>
+    </array>
+    <key>WorkingDirectory</key>
+    <string>/absolute/path/to/NFL_Main/nfldashboard</string>
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>SUPABASE_URL</key>
+        <string>https://your-project.supabase.co/rest/v1/</string>
+        <key>SUPABASE_ANON_KEY</key>
+        <string>set-in-launchd-or-a-secret-manager</string>
+    </dict>
+    <key>StartInterval</key>
+    <integer>604800</integer>
+    <key>RunAtLoad</key>
+    <false/>
+    <key>StandardOutPath</key>
+    <string>/tmp/nfldashboard-rostersync.log</string>
+    <key>StandardErrorPath</key>
+    <string>/tmp/nfldashboard-rostersync.log</string>
+</dict>
+</plist>
