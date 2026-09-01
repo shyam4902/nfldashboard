@@ -1,13 +1,49 @@
 # NFL Dashboard
 
-> Edge app URL policy: use `https://edgeplay-analytics.pages.dev`. The custom domain `https://edge.shyamsapps.qzz.io` is not verified for active use, and Lovable is historical only.
- Static App
+> Edge app URL policy: use `https://edgeplay-analytics.pages.dev`. The custom
+> domain `https://edge.shyamsapps.qzz.io` is not verified for active use, and
+> Lovable is historical only.
 
-Standalone static dashboard. The Props & Value tab reads the canonical board
-at `~/Library/Application Support/nfldashboard-props/nfldashboard/props-board.json`
-when served from the deployed runtime. Use `fantasyfootball/scripts/install-launchd.sh`
-to deploy this page and every local JSON asset it fetches together.
+Static dashboard app, single-file (`index.html` + JSON assets).
 
-For a standalone source checkout preview, serve the deployed runtime directory
-rather than the Desktop checkout so the page and export always read the same
-live state.
+## Deploy (confirmed 2026-09-01)
+
+`https://nfldashboard.pages.dev/` is **git-connected to the GitHub repo
+(`shyam4902/nfldashboard`, branch `main`) and auto-deploys on push**. To ship a
+change:
+
+```bash
+git push origin main
+```
+
+Cloudflare Pages builds the pushed commit and publishes it (takes ~1–2 min).
+Verified 2026-09-01: live site matched `origin/main` byte-for-byte before a
+push, and the new build appeared ~1 min after `c805bff..503f3d2` landed.
+
+Verification after deploy:
+
+```bash
+curl -s https://nfldashboard.pages.dev/ | grep -o "<marker text>"
+# or load the URL in a browser and check console for errors
+```
+
+## Data files
+
+The dashboard fetches its data from the repo itself: `props-board.json`
+(copied from the fantasyfootball export), `schedule.json`, `nfl_rosters_2026.json`,
+`clay_projections_2026.json`, `team_season_efficiency.json`, and the
+`data/shared/` unified layer. Keep every JSON the page fetches committed, or
+the deployed page 404s on it.
+
+> The Props & Value tab is gone (ticket 13); props live in the Edge Analytics
+> app. The dashboard reads `props-board.json` only for the Home insight line,
+> the player modal, and the Schedule cross-link.
+
+## Local dev preview
+
+`~/Library/Application Support/nfldashboard-props/nfldashboard/` is a *local*
+runtime copy maintained by `fantasyfootball/scripts/install-launchd.sh` (used
+by the launchd pipeline jobs). It is **not** the public deployment — editing it
+does not ship anything. For a quick local preview, either serve this checkout
+(`python3 -m http.server`) or refresh that runtime copy; neither touches
+pages.dev.

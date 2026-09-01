@@ -1,8 +1,10 @@
 # NFL Dashboard — State
 
 - updated: 2026-09-01
-- live: https://nfldashboard.pages.dev/ (Cloudflare Pages, auto-deploys on push to main)
+- live: https://nfldashboard.pages.dev/ (Cloudflare Pages, **git-connected: auto-deploys on `git push origin main`**; verified 2026-09-01)
 - repo: https://github.com/shyam4902/nfldashboard · single-file app in `index.html` + Supabase + static JSON
+- deploy: commit → `git push origin main` → Pages builds (~1-2 min). The only step that ships the public site is the push.
+- NOTE: `~/Library/Application Support/nfldashboard-props/nfldashboard/` is the launchd/local dev-preview copy, NOT the public deployment.
 
 ## Docs 2026-09-01 — source-of-truth rule + change-triggered refresh ticket (planning)
 - **Data source of truth rule added to all agent guidance**: root
