@@ -6418,7 +6418,7 @@ function renderPlayerCompare() {
         </div>
         <input list="pCompareList1" value="${comparePlayer1 || ''}" onchange="comparePlayer1=this.value;renderPlayerCompare()" placeholder="Search Player 1..." class="bg-slate-800 border border-slate-600 rounded-lg px-3 py-1.5 text-xs w-full text-white focus:outline-none focus:border-cyan-500">
         <datalist id="pCompareList1">
-          ${allNames.slice(0, 200).map(n => `<option value="${n.replace(/"/g, '&quot;')}">`).join('')}
+          ${allNames.map(n => `<option value="${n.replace(/"/g, '&quot;')}">`).join('')}
         </datalist>
       </div>
 
@@ -6429,7 +6429,7 @@ function renderPlayerCompare() {
         </div>
         <input list="pCompareList2" value="${comparePlayer2 || ''}" onchange="comparePlayer2=this.value;renderPlayerCompare()" placeholder="Search Player 2..." class="bg-slate-800 border border-slate-600 rounded-lg px-3 py-1.5 text-xs w-full text-white focus:outline-none focus:border-amber-500">
         <datalist id="pCompareList2">
-          ${allNames.slice(0, 200).map(n => `<option value="${n.replace(/"/g, '&quot;')}">`).join('')}
+          ${allNames.map(n => `<option value="${n.replace(/"/g, '&quot;')}">`).join('')}
         </datalist>
       </div>
     </div>

@@ -6,6 +6,19 @@
 - deploy: commit → `git push origin main` → Pages builds (~1-2 min). The only step that ships the public site is the push.
 - NOTE: `~/Library/Application Support/nfldashboard-props/nfldashboard/` is the launchd/local dev-preview copy, NOT the public deployment.
 
+## Fixed 2026-09-01 — compare modal player search truncated to first 200 names
+- **Bug**: the Player Compare search only suggested names starting with A–D.
+  The datalists were built from `allNames.slice(0, 200)` on the
+  alphabetically-sorted name list (~849 names), so anything past the first
+  200 (roughly A–D) never appeared as a suggestion.
+- **Fix**: removed the `.slice(0, 200)` cap in both compare datalists
+  (`index.html`); all player names are now searchable. Regression assertion
+  added to `test_all_extensions.py` (datalists must contain >200 options and
+  non-A names). `props-smoke.mjs` still PASSES.
+- Note: `build_complete_app.py` is a stale 2026-08-23 builder (hardcoded to a
+  machine path, predates the marquee masthead); it is not the generator of
+  the current `index.html`, so it was left untouched.
+
 ## Shipped 2026-09-01 — Home hero redesign & scrolling team masthead
 - **Hero layout streamlined**: Removed the Command Bar card from the hero banner, trimmed hero description copy, and gave full width to the title and team navigation.
 - **Scrolling team marquee masthead**: Implemented continuous infinite marquee for all 32 NFL team pills with edge-fade gradient masks and hover-to-pause for navigation.

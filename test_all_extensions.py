@@ -233,6 +233,17 @@ with sync_playwright() as p:
     else:
         failures.append(f"Player comparison modal missing key deep metrics or radar (radar={has_radar}, table={has_stat_table}, rivals={has_rivals})")
 
+    # Regression: compare search datalists must contain ALL player names, not
+    # just the first 200 alphabetically (bug: only A-D names populated).
+    p1_values = page.locator("#pCompareList1 option").evaluate_all("els => els.map(e => e.value)")
+    p2_values = page.locator("#pCompareList2 option").evaluate_all("els => els.map(e => e.value)")
+    if (len(p1_values) > 200 and len(p2_values) > 200
+            and "Justin Jefferson" in p1_values and "Patrick Mahomes" in p1_values
+            and "Justin Jefferson" in p2_values):
+        successes.append("Compare search datalists include all player names (no A-name truncation)")
+    else:
+        failures.append(f"Compare search datalist truncated (p1 opts={len(p1_values)}, p2 opts={len(p2_values)})")
+
     # Test clicking a quick rival in compare modal
     page.locator("button", has_text="vs Patrick Mahomes").first.click()
     page.wait_for_timeout(600)
