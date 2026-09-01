@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>2026 NFL Offseason Delta Dashboard</title>
+<title>NFL 2026 Season Hub · Live Intelligence & Analytics</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
@@ -13,6 +13,8 @@ body { font-family: 'Inter', sans-serif; background: #0a0e17; color: #e2e8f0; }
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: #1a1f2e; }
 ::-webkit-scrollbar-thumb { background: #3b4261; border-radius: 4px; }
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 .glass { background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(12px); border: 1px solid rgba(71, 85, 105, 0.3); }
 .new-badge { background: linear-gradient(135deg, #10b981, #059669); animation: pulse-green 2s infinite; font-size: 11px; }
 .lost-badge { background: linear-gradient(135deg, #ef4444, #b91c1c); font-size: 11px; }
@@ -882,44 +884,55 @@ body.theme-analyst .cmd-item.selected {
 
 <!-- HEADER -->
 <header class="sticky top-0 z-50 glass border-b border-slate-700/50">
-  <div class="max-w-[1600px] mx-auto px-4 py-3 flex flex-col md:flex-row items-center justify-between gap-3">
-    <div class="flex items-center gap-3">
-      <div class="text-2xl font-black tracking-tight">
-        <span class="text-blue-400">NFL</span><span class="text-slate-300"> 2026</span>
-        <span class="text-amber-400 text-lg font-semibold ml-1">OFFSEASON DELTA</span>
+  <div class="max-w-[1600px] mx-auto px-4 py-2.5 flex items-center justify-between gap-3">
+    <!-- Brand / Title -->
+    <div class="flex items-center gap-2.5 shrink-0">
+      <div class="text-xl sm:text-2xl font-black tracking-tight flex items-center whitespace-nowrap">
+        <span class="text-blue-400">NFL</span><span class="text-slate-100"> 2026</span>
+        <span class="text-amber-400 text-[10px] sm:text-xs font-black tracking-wider uppercase ml-2 px-2 py-0.5 rounded bg-amber-500/10 border border-amber-500/25 shrink-0">Pro Hub</span>
       </div>
-      <span class="text-xs text-slate-500 border border-slate-700 rounded px-2 py-0.5">Updated — Aug 25, 2026</span>
+      <span class="hidden 2xl:inline-block text-[11px] text-slate-400 border border-slate-700/80 bg-slate-800/60 rounded px-2 py-0.5 font-medium whitespace-nowrap">2026 Season</span>
     </div>
-    <div class="flex items-center gap-2.5 w-full md:w-auto flex-wrap">
-      <div class="relative flex-1 md:w-64">
-        <input id="searchBox" type="text" placeholder="Search player, team... (⌘K)" class="search-glow bg-slate-800/80 border border-slate-600 rounded-lg pl-3 pr-10 py-2 text-sm w-full focus:outline-none focus:border-blue-500 transition" oninput="filterDashboard(this.value)">
-        <button onclick="openCommandPalette()" class="absolute right-2 top-2 text-[10px] bg-slate-700/80 text-slate-400 px-1.5 py-0.5 rounded font-mono hover:bg-slate-600 transition" title="Open command palette (Cmd+K / Ctrl+K)">⌘K</button>
+    
+    <!-- Controls & Nav -->
+    <div class="flex items-center gap-2 lg:gap-2.5 justify-end min-w-0">
+      <div class="relative hidden sm:block w-28 md:w-36 lg:w-44 xl:w-52 shrink-0">
+        <input id="searchBox" type="text" placeholder="Search... (⌘K)" class="search-glow bg-slate-800/80 border border-slate-600 rounded-lg pl-2.5 pr-8 py-1.5 text-xs w-full focus:outline-none focus:border-blue-500 transition" oninput="filterDashboard(this.value)">
+        <button onclick="openCommandPalette()" class="absolute right-1.5 top-1.5 text-[9px] bg-slate-700/80 text-slate-400 px-1 py-0.5 rounded font-mono hover:bg-slate-600 transition" title="Open command palette (Cmd+K / Ctrl+K)">⌘K</button>
       </div>
-      <div class="flex gap-1 flex-wrap items-center">
-        <button onclick="showTab('home')" class="tab-btn active text-xs px-3 py-2 rounded-lg font-semibold transition" data-tab="home">Home</button>
-        <button onclick="showTab('schedule')" class="tab-btn text-xs px-3 py-2 rounded-lg font-semibold bg-slate-800 text-slate-400 hover:bg-slate-700 transition" data-tab="schedule">Schedule</button>
-        <button onclick="showTab('matchup')" class="tab-btn text-xs px-3 py-2 rounded-lg font-semibold bg-slate-800 text-slate-400 hover:bg-slate-700 transition" data-tab="matchup">Matchup</button>
-        <button onclick="showTab('teams')" class="tab-btn text-xs px-3 py-2 rounded-lg font-semibold bg-slate-800 text-slate-400 hover:bg-slate-700 transition" data-tab="teams">Teams</button>
-        <button onclick="showTab('projections')" class="tab-btn text-xs px-3 py-2 rounded-lg font-semibold bg-slate-800 text-slate-400 hover:bg-slate-700 transition" data-tab="projections">Projections</button>
-        <button onclick="showTab('props')" class="tab-btn text-xs px-3 py-2 rounded-lg font-semibold bg-slate-800 text-slate-400 hover:bg-slate-700 transition" data-tab="props">Props & Value</button>
-        <button onclick="showTab('wintotals')" class="tab-btn text-xs px-3 py-2 rounded-lg font-semibold bg-slate-800 text-slate-400 hover:bg-slate-700 transition" data-tab="wintotals">Win Totals</button>
-        <button onclick="openPlayerCompareModal()" class="text-xs px-2.5 py-2 rounded-lg font-semibold bg-indigo-600/20 text-indigo-300 border border-indigo-500/40 hover:bg-indigo-500/30 transition flex items-center gap-1 shrink-0" title="Compare any two players side-by-side">
-          <span>⚖</span> Player Compare
+
+      <nav class="flex gap-1 items-center overflow-x-auto no-scrollbar py-0.5">
+        <button onclick="showTab('home')" class="tab-btn active text-xs px-2.5 py-1.5 rounded-lg font-semibold transition shrink-0" data-tab="home">Home</button>
+        <button onclick="showTab('schedule')" class="tab-btn text-xs px-2.5 py-1.5 rounded-lg font-semibold bg-slate-800 text-slate-400 hover:bg-slate-700 transition shrink-0" data-tab="schedule">Schedule</button>
+        <button onclick="showTab('matchup')" class="tab-btn text-xs px-2.5 py-1.5 rounded-lg font-semibold bg-slate-800 text-slate-400 hover:bg-slate-700 transition shrink-0" data-tab="matchup">Matchup</button>
+        <button onclick="showTab('teams')" class="tab-btn text-xs px-2.5 py-1.5 rounded-lg font-semibold bg-slate-800 text-slate-400 hover:bg-slate-700 transition shrink-0" data-tab="teams">Teams</button>
+        <button onclick="showTab('projections')" class="tab-btn text-xs px-2.5 py-1.5 rounded-lg font-semibold bg-slate-800 text-slate-400 hover:bg-slate-700 transition shrink-0" data-tab="projections">Projections</button>
+        <button onclick="showTab('props')" class="tab-btn text-xs px-2.5 py-1.5 rounded-lg font-semibold bg-slate-800 text-slate-400 hover:bg-slate-700 transition shrink-0" data-tab="props">Props & Value</button>
+        <button onclick="showTab('wintotals')" class="tab-btn text-xs px-2.5 py-1.5 rounded-lg font-semibold bg-slate-800 text-slate-400 hover:bg-slate-700 transition shrink-0" data-tab="wintotals">Win Totals</button>
+      </nav>
+
+      <!-- Utility actions -->
+      <div class="flex items-center gap-1.5 pl-1.5 border-l border-slate-700/60 shrink-0">
+        <button onclick="openPlayerCompareModal()" class="text-xs px-2.5 py-1.5 rounded-lg font-semibold bg-slate-800 text-slate-300 border border-slate-700 hover:bg-slate-700 hover:text-white hover:border-slate-500 transition flex items-center gap-1.5 shrink-0" title="Compare any two players side-by-side">
+          <svg class="w-3.5 h-3.5 text-indigo-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3h5v5"/><path d="M4 20L21 3"/><path d="M21 16v5h-5"/><path d="M15 15l6 6"/><path d="M4 4l5 5"/></svg>
+          <span class="hidden sm:inline">Compare</span>
         </button>
-        <a href="https://edgeplay-analytics.pages.dev" target="_blank" rel="noopener" class="text-xs px-2.5 py-2 rounded-lg font-semibold bg-fuchsia-600/20 text-fuchsia-300 border border-fuchsia-500/40 hover:bg-fuchsia-500/30 transition flex items-center gap-1 shrink-0" title="Open the Edge Analytics app (value analysis)">
-          <span>🎯</span> Edge Analytics
+        <a href="https://edgeplay-analytics.pages.dev" target="_blank" rel="noopener" class="text-xs px-2.5 py-1.5 rounded-lg font-semibold bg-slate-800 text-slate-300 border border-slate-700 hover:bg-slate-700 hover:text-white hover:border-slate-500 transition flex items-center gap-1.5 shrink-0" title="Open the Edge Analytics app (value analysis)">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span class="hidden md:inline">Edge Analytics</span>
+          <span class="md:hidden">Edge</span>
+          <svg class="w-3 h-3 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
         </a>
-        <select id="themeSelector" onchange="changeTheme(this.value)" class="text-xs px-2 py-2 rounded-lg font-semibold bg-slate-800/90 text-slate-300 border border-slate-700 focus:outline-none focus:border-blue-500 cursor-pointer" title="Switch visual theme">
-          <option value="default">🎨 Default Dark</option>
-          <option value="stadium">🏟 Stadium Lights</option>
-          <option value="espn">📺 ESPN Broadcast</option>
-          <option value="retro">📟 Retro Scoreboard</option>
-          <option value="analyst">📊 Clean Analyst</option>
-        </select>
-        <button onclick="exportRostersCSV()" class="text-xs px-2.5 py-2 rounded-lg font-semibold bg-emerald-600/20 text-emerald-400 border border-emerald-500/40 hover:bg-emerald-500/30 transition flex items-center gap-1 shrink-0" title="Export rosters as CSV for Excel / Google Sheets">
-          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-          CSV
-        </button>
+        <div class="relative flex items-center shrink-0">
+          <select id="themeSelector" onchange="changeTheme(this.value)" class="text-xs appearance-none pl-2.5 pr-6 py-1.5 rounded-lg font-semibold bg-slate-800 text-slate-300 border border-slate-700 hover:bg-slate-700 hover:border-slate-500 focus:outline-none focus:border-blue-500 cursor-pointer transition" title="Switch visual theme">
+            <option value="default">Dark</option>
+            <option value="stadium">Stadium</option>
+            <option value="espn">ESPN</option>
+            <option value="retro">Retro</option>
+            <option value="analyst">Analyst</option>
+          </select>
+          <svg class="w-3 h-3 text-slate-400 absolute right-2 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+        </div>
       </div>
     </div>
   </div>
@@ -1984,8 +1997,8 @@ function homeHeroHtml(){
     <div class="relative flex flex-col lg:flex-row lg:items-center justify-between gap-6">
       <div class="min-w-0 flex-1">
         <div class="flex items-center gap-2 flex-wrap mb-2.5">
-          <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-widest bg-amber-500/15 text-amber-400 border border-amber-500/30">
-            2026 NFL Offseason
+          <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-widest bg-blue-500/15 text-blue-400 border border-blue-500/30">
+            2026 NFL Season
           </span>
           <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
             <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> LIVE INTELLIGENCE
@@ -5273,6 +5286,7 @@ function setScheduleView(v){
 function renderScheduleGrid(){
   const c = document.getElementById('scheduleGrid');
   if (!c) return;
+  c.className = 'w-full';
   const data = SCHEDULE_DATA;
   if (!data || !data.games || !data.games.length){
     c.innerHTML = '<p class="text-xs text-slate-500">No schedule data.</p>';
@@ -5289,28 +5303,49 @@ function renderScheduleGrid(){
   }
   const weeks = scheduleWeeks();
   const teamList = [...teams].sort();
-  let h = '<div class="overflow-x-auto"><table class="w-full text-xs">' +
-    '<thead><tr class="text-slate-500 border-b border-slate-700/50">' +
-      '<th class="text-left px-2 py-2 font-semibold sticky left-0 bg-slate-900">Team</th>';
-  for (const w of weeks) h += '<th class="text-center px-1.5 py-2 font-semibold">WK ' + w + '</th>';
-  h += '</tr></thead><tbody>';
+  let h = '<div class="glass rounded-xl border border-slate-700/60 overflow-hidden shadow-2xl p-4 w-full">' +
+    '<div class="flex flex-wrap items-center justify-between gap-3 mb-3 pb-2.5 border-b border-slate-700/50">' +
+      '<div class="text-xs text-slate-400 font-medium">All 32 teams across 18 weeks. Bold boxes = Home games. Click any cell to open the Matchup Center.</div>' +
+      '<div class="flex items-center gap-3 text-[11px] text-slate-400">' +
+        '<span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded bg-slate-800 border border-slate-600"></span> Home (vs)</span>' +
+        '<span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded bg-transparent border border-slate-700"></span> Away (@)</span>' +
+      '</div>' +
+    '</div>' +
+    '<div class="overflow-x-auto w-full">' +
+    '<table class="w-full text-xs text-left border-collapse min-w-[950px]">' +
+      '<thead><tr class="text-slate-400 border-b border-slate-700/60 bg-slate-900/80 text-[11px] uppercase tracking-wider">' +
+        '<th class="text-left px-3 py-2.5 font-bold sticky left-0 z-20 bg-slate-900 shadow-md min-w-[170px]">Team</th>';
+  for (const w of weeks) h += '<th class="text-center px-1 py-2.5 font-bold">W' + w + '</th>';
+  h += '</tr></thead><tbody class="divide-y divide-slate-800/40">';
   for (const name of teamList){
     const abbr = esc(teamAbbrFor(name) || name);
-    h += '<tr class="border-b border-slate-800/50 hover:bg-slate-800/30">' +
-      '<td class="px-2 py-1.5 font-semibold text-slate-200 whitespace-nowrap sticky left-0 bg-slate-900">' + esc(name) + ' <span class="text-slate-500 text-[10px]">' + abbr + '</span></td>';
+    h += '<tr class="hover:bg-slate-800/40 transition">' +
+      '<td class="px-3 py-1.5 font-semibold text-slate-200 whitespace-nowrap sticky left-0 z-10 bg-slate-900 shadow-md">' +
+        '<div class="flex items-center gap-2">' +
+          '<span class="w-2 h-2 rounded-full shrink-0" style="background:' + (DATA.teamColors[name] || '#3b82f6') + '"></span>' +
+          '<span class="truncate">' + esc(name) + '</span> <span class="text-slate-500 text-[10px] font-mono shrink-0">' + abbr + '</span>' +
+        '</div>' +
+      '</td>';
     for (const w of weeks){
       const cell = matrix[name] && matrix[name][w];
       if (!cell){
-        h += '<td class="text-center px-1.5 py-1.5 text-slate-700 text-[10px]">BYE</td>';
+        h += '<td class="text-center px-1 py-1.5 text-slate-600 text-[10px] font-medium bg-slate-950/20">BYE</td>';
       } else {
         const opp = esc(teamAbbrFor(cell.opp) || cell.opp);
-        const cls = cell.home ? 'text-slate-100 bg-slate-800/50 hover:bg-blue-900/40' : 'text-slate-500 hover:bg-blue-900/40';
-        h += '<td class="text-center px-1.5 py-1.5 text-[10px] cursor-pointer ' + cls + '" onclick="openMatchup(\'' + esc(cell.gid) + '\')" title="WK ' + w + ': ' + (cell.home ? 'vs' : 'at') + ' ' + esc(cell.opp) + ' — click for analysis">' + opp + '</td>';
+        const label = (cell.home ? '' : '@') + opp;
+        const cls = cell.home
+          ? 'text-white font-bold bg-slate-800/90 border border-slate-700 hover:bg-blue-600/30 hover:border-blue-500 shadow-xs'
+          : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/60';
+        h += '<td class="text-center p-0.5">' +
+          '<button onclick="openMatchup(\'' + esc(cell.gid) + '\')" class="w-full py-1 px-0.5 rounded text-[10px] transition ' + cls + '" title="WK ' + w + ': ' + (cell.home ? 'vs ' : 'at ') + esc(cell.opp) + ' — click for analysis">' +
+            label +
+          '</button>' +
+        '</td>';
       }
     }
     h += '</tr>';
   }
-  h += '</tbody></table></div>';
+  h += '</tbody></table></div></div>';
   c.innerHTML = h;
 }
 
@@ -5466,6 +5501,7 @@ async function renderSchedule(){
   if (scheduleView === 'grid') return renderScheduleGrid();
   const c = document.getElementById('scheduleGrid');
   if (!c) return;
+  c.className = 'grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4';
   await loadGameLines();
   const data = SCHEDULE_DATA;
   if (!data || !data.games || !data.games.length) {

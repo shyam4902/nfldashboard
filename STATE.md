@@ -1,8 +1,14 @@
 # NFL Dashboard — State
 
-- updated: 2026-08-31
+- updated: 2026-09-01
 - live: https://nfldashboard.pages.dev/ (Cloudflare Pages, auto-deploys on push to main)
 - repo: https://github.com/shyam4902/nfldashboard · single-file app in `index.html` + Supabase + static JSON
+
+## Shipped 2026-09-01 — Navigation Polish & Schedule Grid Fix
+- **Schedule Full-Season Grid Fix**: Fixed container width constraint where the 32×18 table was locked inside a 3-column CSS grid card wrapper. The matrix now dynamically expands across 100% of the viewport width with all 18 weeks cleanly distributed, team colors, sticky team headers, and Home/Away badges.
+- **Title and Branding Update**: Renamed header branding to `NFL 2026 Pro Hub` and page title to `NFL 2026 Season Hub · Live Intelligence & Analytics`. Updated Home hero badge from offseason to `2026 NFL Season`.
+- **Top Bar Simplification**: Removed CSV export button from the top navigation bar. CSV export remains available via Home tools and Command Palette.
+- **Button Styling Redesign**: Replaced the chunky high-contrast styling on `Player Compare`, `Edge Analytics`, and `Theme Selector` with subtle glass buttons, crisp SVG icons, live pulse indicator, and clean custom dropdown layout.
 
 ## Shipped 2026-08-31 (late) — Edge wrong-URL wipe + launcher redeploy
 - The wrong `edge-analytics.pages.dev` link (an unrelated consultancy site) is
