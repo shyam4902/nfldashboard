@@ -1057,6 +1057,7 @@ body.theme-analyst .cmd-item.selected {
 <main class="max-w-[1600px] mx-auto px-4 py-6">
   <div id="tab-home">
     <div id="homeHero" class="mb-6"></div>
+    <div id="homeFrontDoor" class="mb-6"></div>
     <div id="homeShowcase" class="mb-8"></div>
     <div id="homeSpotlights"></div>
   </div>
@@ -1162,7 +1163,7 @@ body.theme-analyst .cmd-item.selected {
     <h2 class="text-xl font-bold mb-3 flex items-center gap-2">
       <svg class="w-5 h-5 text-cyan-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"/><path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clip-rule="evenodd"/></svg>
       Mike Clay 2026 Projections
-      <span class="text-xs text-slate-500 font-normal ml-1">Updated 8/19/2026</span>
+      <span class="text-xs text-slate-500 font-normal ml-1" id="clayUpdatedLabel">Updated —</span>
     </h2>
     <div id="projSubTabs" class="flex flex-wrap gap-1.5 mb-4"></div>
     <div id="projContent" class="glass rounded-xl p-4 overflow-x-auto"></div>
@@ -1182,11 +1183,11 @@ body.theme-analyst .cmd-item.selected {
       <select id="propsSideFilter" onchange="renderPropsBoard()" class="text-[11px] px-3 py-1.5 rounded-lg border border-slate-600 bg-slate-800 text-slate-300 focus:outline-none focus:border-emerald-500">
         <option value="">All sides</option><option value="over">Over</option><option value="under">Under</option>
       </select>
-      <label class="text-[11px] text-slate-400 flex items-center gap-1 ml-auto"><input type="checkbox" id="propsEdgeOnly" onchange="renderPropsBoard()" class="accent-emerald-500"> Only +EV</label>
+      <label class="text-[11px] text-slate-400 flex items-center gap-1 ml-auto"><input type="checkbox" id="propsEdgeOnly" onchange="renderPropsBoard()" class="accent-emerald-500"> Only value plays</label>
     </div>
     <div class="grid grid-cols-1 xl:grid-cols-3 gap-4">
       <div class="xl:col-span-2 glass rounded-xl p-4 overflow-x-auto">
-        <div class="text-[10px] uppercase tracking-wider text-emerald-400 font-bold mb-2">⚡ Best Lines by Model Edge <span class="text-slate-500 normal-case font-normal">— active source, market, side, and +EV filters apply</span></div>
+        <div class="text-[10px] uppercase tracking-wider text-emerald-400 font-bold mb-2">⚡ Best Lines <span class="text-slate-500 normal-case font-normal">— where the model sees the market gap, filtered by source, market, and side</span></div>
         <div id="propsBestLines"><p class="text-xs text-slate-500">Loading…</p></div>
       </div>
       <div class="glass rounded-xl p-4">
@@ -1199,7 +1200,7 @@ body.theme-analyst .cmd-item.selected {
       <div id="propsTrending"><p class="text-xs text-slate-500">Loading…</p></div>
     </div>
     <div class="glass rounded-xl p-4 mt-4 overflow-x-auto">
-      <div class="text-[10px] uppercase tracking-wider text-cyan-400 font-bold mb-2">Value Board <span class="text-slate-500 normal-case font-normal">— model probability vs market, ranked by EV · <span id="propsBoardCount"></span></span></div>
+      <div class="text-[10px] uppercase tracking-wider text-cyan-400 font-bold mb-2">Value Board <span class="text-slate-500 normal-case font-normal">— where the model disagrees with the market, ranked by value · <span id="propsBoardCount"></span></span></div>
       <div id="propsBoard"><p class="text-xs text-slate-500">Loading…</p></div>
     </div>
   </div>
@@ -1990,6 +1991,108 @@ function homeStatCards(){
     </div>`).join('');
 }
 
+// Ticket 03: Today in the NFL front door. Shows the next upcoming games
+// (from schedule.json) and a one-line prop insight (from the props board).
+// When no games are today, it shows the next games on the calendar.
+function todayInNflHtml(){
+  const now = new Date();
+  const games = (SCHEDULE_DATA && SCHEDULE_DATA.games) ? SCHEDULE_DATA.games : [];
+  const upcoming = games
+    .filter(g => { const d = new Date(g.kickoff_utc); return !isNaN(d.getTime()) && d >= now; })
+    .sort((a, b) => String(a.kickoff_utc || '').localeCompare(String(b.kickoff_utc || '')))
+    .slice(0, 4);
+  if (!upcoming.length && !games.length) return '';
+
+  // One-line prop insight: the top trust-scored play from the board.
+  let insightHtml = '';
+  if (PROPS_BOARD && PROPS_BOARD.plays && PROPS_BOARD.plays.length) {
+    const evidenceByMarket = new Map();
+    (PROPS_BOARD.market_evidence || []).forEach(e => evidenceByMarket.set(e.market_id, e));
+    const candidates = [];
+    for (const p of PROPS_BOARD.plays) {
+      if (!p.ev_pct || p.ev_pct <= 0) continue;
+      if (!p.edge_pct || p.edge_pct < 2) continue;
+      if (p.edge_pct > 25 || p.ev_pct > 150) continue;
+      const market = p.market_id || p.market;
+      const evidence = evidenceByMarket.get(market);
+      const trust = discriminationTrust(evidence);
+      if (trust <= 0) continue;
+      const score = 60 * Math.min(1, p.edge_pct / 12) + 40 * trust;
+      candidates.push({ play: p, score });
+    }
+    candidates.sort((a, b) => b.score - a.score);
+    if (candidates.length) {
+      const p = candidates[0].play;
+      const marketLabel = propsMarketLabels[p.market] || p.market;
+      const valueWord = p.edge_pct >= 8 ? 'generous' : p.edge_pct >= 3 ? 'a lean' : 'a slight edge';
+      insightHtml = `<button onclick="showTab('props')" class="text-left w-full mt-3 pt-3 border-t border-slate-700/50 hover:text-blue-300 transition group">
+        <div class="flex items-center gap-2 text-[11px] text-slate-300">
+          <span class="text-amber-400">\u{1F448}</span>
+          <span class="font-bold text-white">${homeEsc(p.player)}</span>
+          <span class="text-slate-400">${homeEsc(marketLabel)}</span>
+          <span class="font-bold ${p.side === 'over' ? 'text-emerald-400' : 'text-cyan-400'}">${homeEsc(p.side)} ${homeEsc(p.line)}</span>
+          <span class="text-slate-400">at ${homeEsc(p.venue)}</span>
+          <span class="text-slate-500 group-hover:text-blue-300 transition">line looks ${valueWord}</span>
+          <span class="text-blue-400 font-semibold shrink-0 group-hover:underline">view board \u2192</span>
+        </div>
+      </button>`;
+    }
+  }
+
+  // If no upcoming games (all in the past or no schedule), show a season teaser.
+  if (!upcoming.length) {
+    return `<div class="glass rounded-2xl p-5 border border-slate-700/60">
+      <div class="flex items-center justify-between mb-3">
+        <div class="text-sm font-extrabold text-white flex items-center gap-2"><span>\u{1F4C5}</span> Today in the NFL</div>
+        <button onclick="showTab('schedule')" class="text-[11px] text-blue-400 hover:text-blue-300 font-bold">full schedule \u2192</button>
+      </div>
+      <p class="text-xs text-slate-400">No games scheduled today. The 2026 season kicks off ${games.length ? 'Sep 9' : 'soon'}.</p>
+      ${insightHtml}
+    </div>`;
+  }
+
+  const gameCards = upcoming.map(g => {
+    const d = new Date(g.kickoff_utc);
+    const days = Math.round((d - now) / 86400000);
+    const when = days === 0 ? 'Today' : days === 1 ? 'Tomorrow' : d.toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' });
+    const time = d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+    const colorA = DATA.teamColors[g.away_team] || '#3b4261';
+    const colorH = DATA.teamColors[g.home_team] || '#3b4261';
+    const aAbbr = teamAbbrFor(g.away_team) || g.away_team.slice(0, 3).toUpperCase();
+    const hAbbr = teamAbbrFor(g.home_team) || g.home_team.slice(0, 3).toUpperCase();
+    return `<div class="glass rounded-lg p-3 cursor-pointer hover:border-blue-500/50 transition border border-slate-700/50" onclick="openMatchup('${homeEsc(g.game_id)}')" title="${homeEsc(g.away_team)} at ${homeEsc(g.home_team)} - click for matchup analysis">
+      <div class="text-[10px] text-slate-400 font-semibold mb-1.5 flex items-center justify-between">
+        <span>${when} ${time}</span>
+        <span class="text-[9px] text-slate-500">${homeEsc(g.tv || '')}</span>
+      </div>
+      <div class="flex items-center gap-2 py-0.5">
+        <span class="text-[10px] font-black w-7 h-5 rounded flex items-center justify-center shrink-0" style="background:${colorA}33;color:${colorA};border:1px solid ${colorA}">${homeEsc(aAbbr)}</span>
+        <span class="text-xs font-bold text-white truncate">${homeEsc(g.away_team)}</span>
+      </div>
+      <div class="flex items-center gap-2 py-0.5">
+        <span class="text-[10px] font-black w-7 h-5 rounded flex items-center justify-center shrink-0" style="background:${colorH}33;color:${colorH};border:1px solid ${colorH}">${homeEsc(hAbbr)}</span>
+        <span class="text-xs font-bold text-white truncate">${homeEsc(g.home_team)}</span>
+      </div>
+      <div class="text-[10px] text-slate-500 mt-1">${homeEsc(g.venue || '')}</div>
+    </div>`;
+  }).join('');
+
+  return `<div class="glass rounded-2xl p-5 border border-slate-700/60 relative overflow-hidden">
+    <div class="absolute inset-0 home-hero-glow pointer-events-none opacity-50"></div>
+    <div class="relative">
+      <div class="flex items-center justify-between mb-3">
+        <div class="text-sm font-extrabold text-white flex items-center gap-2">
+          <span>\u{1F4C5}</span> Today in the NFL
+          <span class="text-slate-400 font-normal text-[11px]">${upcoming.length} upcoming games</span>
+        </div>
+        <button onclick="showTab('schedule')" class="text-[11px] text-blue-400 hover:text-blue-300 font-bold">full schedule \u2192</button>
+      </div>
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-2.5">${gameCards}</div>
+      ${insightHtml}
+    </div>
+  </div>`;
+}
+
 function homeHeroHtml(){
   return `
   <div class="glass rounded-2xl p-6 md:p-8 relative overflow-hidden border border-slate-700/60 shadow-2xl mb-6">
@@ -2009,7 +2112,7 @@ function homeHeroHtml(){
           <span>League Command Center</span>
         </h1>
         <p class="text-sm text-slate-300 mt-2.5 max-w-3xl leading-relaxed">
-          The complete 2026 NFL season intelligence terminal. Explore the Week 1 slate with live sportsbook odds and log5 win probabilities, Mike Clay's full 2026 projection model, composite power rankings, depth charts, draft analysis, and +EV prop market edges.
+          The complete 2026 NFL season intelligence terminal. Explore the Week 1 slate with live sportsbook odds and log5 win probabilities, Mike Clay's full 2026 projection model, composite power rankings, depth charts, draft analysis, and prop market value reads.
         </p>
         <div class="flex items-center gap-1.5 mt-4 overflow-x-auto pb-1 max-w-full text-xs">
           <span class="text-[10px] uppercase font-bold text-slate-400 tracking-wider shrink-0 mr-1">Teams:</span>
@@ -2028,7 +2131,7 @@ function homeHeroHtml(){
         <div class="flex items-center justify-between gap-2 text-[10px] text-slate-400 pt-1 border-t border-slate-800">
           <button onclick="openPlayerCompareModal('Patrick Mahomes','Josh Allen')" class="hover:text-amber-300 underline transition truncate">⚔ Mahomes vs Allen</button>
           <span>·</span>
-          <button onclick="showTab('props')" class="hover:text-emerald-300 underline transition truncate">+EV Props</button>
+          <button onclick="showTab('props')" class="hover:text-emerald-300 underline transition truncate">Value Props</button>
         </div>
       </div>
     </div>
@@ -2042,7 +2145,7 @@ const HOME_FEATURES = [
   { icon:'📅', title:'Schedule', tab:'schedule', accent:'#3b82f6', stat:'Week 1 · Sep 9–14', desc:'All 16 opening-week matchups with live spreads, totals, moneylines and model win probabilities. Click any game for deep matchup analytics.' },
   { icon:'⚔️', title:'Matchup Lab', tab:'matchup', accent:'#f43f5e', stat:'offense vs defense', desc:"X's and O's formation preview for any matchup. Pick personnel and defensive front, scan Clay unit-grade advantages, click a player for their full profile." },
   { icon:'📊', title:'Mike Clay Projections', tab:'projections', accent:'#06b6d4', stat:'12 sub-tabs', desc:'The complete 2026 guide: projected standings, category leaders, projected starters, coaching staffs, unit grades and Clay vs Market deltas.' },
-  { icon:'💰', title:'Props & Value', tab:'props', accent:'#10b981', stat:'model edge · EV', desc:'Player props ranked by model edge across six sportsbooks — best lines, alerts and a full value board you can filter by source and side.' },
+  { icon:'💰', title:'Props & Value', tab:'props', accent:'#10b981', stat:'value reads', desc:'Player props ranked by model-to-market gap across six sportsbooks. Plus Edge Analytics for deep value analysis.', extLink:'https://edgeplay-analytics.pages.dev', extLabel:'Edge Analytics' },
   { icon:'🛡️', title:'Teams & Rosters', tab:'teams', accent:'#f59e0b', stat:() => DATA.teams.length + ' teams', desc:'Depth charts, rosters and division navigation for every team, plus head-to-head player comparison.' },
   { icon:'⚡', title:'Transactions', tab:'feed', accent:'#ef4444', stat:() => DATA.transactions.length + ' moves', desc:'Every offseason move since Super Bowl LX — trades, signings and draft pickups, with blockbuster moves flagged.' },
 ];
@@ -2072,7 +2175,8 @@ function homeShowcaseHtml(){
       </div>
       <div class="mt-3.5 pt-2 border-t border-slate-800/80 flex items-center justify-between text-[10px]">
         <span class="text-slate-500 font-medium">Click to navigate</span>
-        <span class="text-blue-400 font-semibold group-hover:underline">Open tab →</span>
+        ${f.extLink ? `<a href="${f.extLink}" target="_blank" rel="noopener" onclick="event.stopPropagation()" class="text-fuchsia-400 font-semibold hover:underline shrink-0">${f.extLabel} \u2192</a>` : ''}
+        <span class="text-blue-400 font-semibold group-hover:underline ${f.extLink ? 'hidden' : ''}">Open tab \u2192</span>
       </div>
     </div>`;
   }).join('');
@@ -2343,7 +2447,7 @@ function topConfidencePlaysHtml(){
       <span class="text-[10px] font-black px-2 py-0.5 rounded border ${sideCls} shrink-0">${homeEsc(p.side)} ${homeEsc(p.line)}</span>
       <div class="min-w-0 flex-1">
         <div class="text-xs font-bold text-white truncate">${homeEsc(p.player)} <span class="text-[10px] text-slate-400 font-normal">· ${homeEsc(propsMarketLabels[p.market] || p.market)}</span> ${starsHtml(stars)}</div>
-        <div class="text-[10px] text-slate-400 truncate">model ${(p.model_prob * 100).toFixed(0)}% vs market ${(p.market_prob * 100).toFixed(0)}% · confidence ${score.toFixed(0)}/100</div>
+        <div class="text-[10px] text-slate-400 truncate">model sees the line ${(p.edge_pct > 0 ? 'generous' : 'tight')} · trust ${score.toFixed(0)}/100</div>
       </div>
       <div class="text-right shrink-0">
         <div class="text-xs font-extrabold ${p.ev_pct > 0 ? 'text-emerald-400' : 'text-slate-300'}">${homeEsc(p.odds || '')}</div>
@@ -2355,14 +2459,14 @@ function topConfidencePlaysHtml(){
     <div>
       <div class="flex items-center justify-between mb-3 pb-2 border-b border-slate-700/50">
         <div class="text-xs font-extrabold text-white flex items-center gap-2">
-          <span>🎯</span> Top Model Bets <span class="text-slate-400 font-normal text-[11px]">(Calibrated Markets)</span>
+          <span>🎯</span> Top Model Bets <span class="text-slate-400 font-normal text-[11px]">(Tested Markets)</span>
         </div>
         <a href="javascript:showTab('props')" class="text-blue-400 hover:text-blue-300 text-[11px] font-bold">value board →</a>
       </div>
       <div class="flex flex-col gap-1">${h}</div>
     </div>
     <div class="mt-3 pt-2 border-t border-slate-800/80 text-[10px] text-slate-500 flex justify-between">
-      <span>Calibrated markets with tested discrimination · Moderate EV</span>
+      <span>Markets the model can read · sorted by trust score</span>
       <span class="text-slate-400">Top ${top.length} of ${candidates.length} candidates</span>
     </div>
   </div>`;
@@ -2381,8 +2485,9 @@ function valuePlaysHtml(){
     const [side, s] = sides[0];
     const edge = s.edge_pct || 0;
     const edgeCls = edge >= 15 ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/50' : 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30';
+    const edgeLabel = edge >= 10 ? 'Generous' : edge >= 5 ? 'Lean' : edge >= 2 ? 'Slight' : 'Fair';
     h += `<div class="spotlight-row" onclick="showTab('props')" title="Open Props & Value">
-      <span class="text-[10px] font-black px-2 py-0.5 rounded border ${edgeCls} shrink-0">${homeEsc(edge >= 0 ? '+' : '')}${edge.toFixed(1)}%</span>
+      <span class="text-[10px] font-black px-2 py-0.5 rounded border ${edgeCls} shrink-0">${edgeLabel}</span>
       <div class="min-w-0 flex-1">
         <div class="text-xs font-bold text-white truncate">${homeEsc(p.player)}</div>
         <div class="text-[10px] text-slate-400 truncate">${homeEsc(p.market_label || p.market || '')}</div>
@@ -2397,15 +2502,15 @@ function valuePlaysHtml(){
     <div>
       <div class="flex items-center justify-between mb-3 pb-2 border-b border-slate-700/50">
         <div class="text-xs font-extrabold text-white flex items-center gap-2">
-          <span>💎</span> Top Value Plays <span class="text-slate-400 font-normal text-[11px]">(model edge)</span>
+          <span>💎</span> Top Value Plays <span class="text-slate-400 font-normal text-[11px]">(model vs market)</span>
         </div>
         <a href="javascript:showTab('props')" class="text-blue-400 hover:text-blue-300 text-[11px] font-bold">value board →</a>
       </div>
       <div class="flex flex-col gap-1">${h}</div>
     </div>
     <div class="mt-3 pt-2 border-t border-slate-800/80 text-[10px] text-slate-500 flex justify-between">
-      <span>Market consensus vs Mike Clay model</span>
-      <span class="text-slate-400">+EV Prop Opportunities</span>
+      <span>Mike Clay model vs market consensus</span>
+      <span class="text-slate-400">Value Prop Reads</span>
     </div>
   </div>`;
 }
@@ -2452,18 +2557,23 @@ function biggestMovesHtml(){
 
 async function renderHome(){
   const hero = document.getElementById('homeHero');
+  const front = document.getElementById('homeFrontDoor');
   const show = document.getElementById('homeShowcase');
   const spots = document.getElementById('homeSpotlights');
   if (!hero || !show || !spots) return;
   hero.innerHTML = homeHeroHtml();
+  // Front door needs schedule + props board data.
+  if (front) front.innerHTML = '<div class="text-xs text-slate-500 p-3">Loading today\u2026</div>';
   show.innerHTML = homeShowcaseHtml();
-  spots.innerHTML = '<div class="text-xs text-slate-500 p-4">Loading highlights…</div>';
+  spots.innerHTML = '<div class="text-xs text-slate-500 p-4">Loading highlights\u2026</div>';
   // Spotlights fill in as their data arrives (all cached for their tabs too)
   await Promise.all([
     loadClayProjections().catch(() => null),
     loadPropsBoard().catch(() => null),
     loadSchedule().catch(() => null),
   ]);
+  // Render the front door once schedule + props data are loaded.
+  if (front) front.innerHTML = todayInNflHtml() || '';
   const fill = () => {
     const cards = [topConfidencePlaysHtml(), projPowerHtml(), marqueeHtml(), valuePlaysHtml(), biggestMovesHtml()].filter(Boolean);
     if (!cards.length) return '<div class="text-xs text-slate-500">Highlights unavailable right now.</div>';
@@ -4767,7 +4877,6 @@ const PROJ_SUB_TABS = [
   { id: 'cb', label: 'CB', icon: '🛡' },
   { id: 's', label: 'S', icon: '🛡' },
   { id: 'unitgrades', label: 'Unit Grades', icon: '📊' },
-  { id: 'starters', label: 'Starters', icon: '⭐' },
   { id: 'coaching', label: 'Coaching', icon: '📋' },
 ];
 
@@ -4778,6 +4887,11 @@ async function loadClayProjections() {
       const res = await fetch(url, { cache: 'no-store' });
       if (res.ok) {
         CLAY_DATA = await res.json();
+        // Wire the Clay metadata "updated" date to the label, replacing the
+        // old hardcoded "Updated 8/19/2026" string.
+        const meta = CLAY_DATA.metadata || {};
+        const label = document.getElementById('clayUpdatedLabel');
+        if (label && meta.updated) label.textContent = 'Updated ' + meta.updated;
         return CLAY_DATA;
       }
     } catch (e) {}
@@ -5113,7 +5227,11 @@ function renderUnitGrades(c, data) {
 }
 
 function renderStarters(c, data) {
-  if (!data.projected_starters) { c.innerHTML = '<p class="text-slate-500">No starters data</p>'; return; }
+  // The Clay projected_starters dataset is scrambled (players listed under wrong
+  // teams, e.g. Quinnen Williams on the Cowboys). It is not shown to visitors.
+  // Roster depth comes from the Teams tab, which reads Supabase directly.
+  c.innerHTML = '<p class="text-xs text-slate-500">Depth charts moved to the Teams tab. The Clay projected starters dataset had players assigned to wrong teams and has been removed from this view.</p>';
+  return;
   const posOrder = {
     'QB': 1, 'RB': 2, 'WR': 3, 'TE': 4,
     'LT': 5, 'LG': 6, 'C': 7, 'RG': 8, 'RT': 9, 'OL': 10, 'OT': 10, 'G': 10, 'OG': 10,
@@ -5709,6 +5827,20 @@ function venueAgeBadge(venue, recordedAt, nowMs) {
 // 2024 historical-form badge for a play (Feature 1/3): season-total verdict,
 // per-game over rate and streak. Renders nothing when data is absent —
 // rookies and untracked markets get no invented numbers.
+// Plain-English value label from raw edge/EV numbers.
+// edge_pct = how far the model thinks the line is off (in percentage points).
+// ev_pct    = expected value as a percentage (positive = the bet pays back more than it costs).
+function valueLabelHtml(edgePct, evPct) {
+  if (!edgePct && !evPct) return '<span class="text-slate-600">—</span>';
+  const e = Number(edgePct) || 0, ev = Number(evPct) || 0;
+  if (ev > 0 && e >= 8) return '<span class="text-emerald-400 font-bold">Generous</span><div class="text-[9px] text-slate-500">+' + ev.toFixed(0) + '% return</div>';
+  if (ev > 0 && e >= 3) return '<span class="text-emerald-400">Lean over</span><div class="text-[9px] text-slate-500">+' + ev.toFixed(0) + '% return</div>';
+  if (ev > 0) return '<span class="text-slate-300">Slight edge</span><div class="text-[9px] text-slate-500">+' + ev.toFixed(0) + '% return</div>';
+  if (e <= 1 && Math.abs(ev) <= 2) return '<span class="text-slate-400">Fair</span>';
+  if (ev < 0 && e < 3) return '<span class="text-slate-500">Tight</span>';
+  return '<span class="text-slate-500">No edge</span>';
+}
+
 function insightsBadge(ins) {
   if (!ins) return '<span class="text-slate-600">—</span>';
   const verdict = ins.season_line_would_have === 'over'
@@ -5768,9 +5900,9 @@ async function renderPropsBoard(){
   const totalEv = plays.reduce((s,p)=>s+ (p.ev_pct>0?1:0),0);
   const sumEl = document.getElementById('propsSummary');
   if (sumEl) sumEl.innerHTML = [
-    statChip('+EV plays', totalEv, 'text-emerald-400'),
-    statChip('Avg edge', (plays.length ? (plays.reduce((s,p)=>s+p.edge_pct,0)/plays.length) : 0).toFixed(1)+'pp', 'text-cyan-400'),
-    statChip('Best EV', plays.length ? Math.max(...plays.map(p=>p.ev_pct)).toFixed(0)+'%' : '—', 'text-amber-400'),
+    statChip('Value plays', totalEv, 'text-emerald-400'),
+    statChip('Model gap', (plays.length ? (plays.reduce((s,p)=>s+p.edge_pct,0)/plays.length) : 0).toFixed(1)+' pts', 'text-cyan-400'),
+    statChip('Top value', plays.length ? Math.max(...plays.map(p=>p.ev_pct)).toFixed(0)+'%' : '—', 'text-amber-400'),
     statChip('Sources', Object.keys(board.summary.venues || {}).length, 'text-violet-400'),
   ].join('');
 
@@ -5844,8 +5976,7 @@ async function renderPropsBoard(){
             <th class="py-2 px-2 text-center">Line</th>
             <th class="py-2 px-2 text-center">Venue</th>
             <th class="py-2 px-2 text-center">Odds</th>
-            <th class="py-2 px-2 text-center">Edge</th>
-            <th class="py-2 px-2 text-center">EV%</th>
+            <th class="py-2 px-2 text-center" title="Analyst read on the model-to-market gap: Generous, Lean, Fair, Tight">Value</th>
             <th class="py-2 px-2 text-center" title="Star rating: calibrated edge + per-market discrimination evidence (AUC)">Stars</th>
             <th class="py-2 px-2 text-center" title="2024 per-game form: season line ÷ 17 vs actual weekly output last season">2024 Form</th>
             <th class="py-2 px-2 text-center" title="When this quote was last read from the source — missing means the source did not report a time">Age</th>
@@ -5864,8 +5995,7 @@ async function renderPropsBoard(){
               <td class="py-1.5 px-2 text-center font-bold text-white">${p.line}</td>
               <td class="py-1.5 px-2 text-center text-slate-400">${p.venue}</td>
               <td class="py-1.5 px-2 text-center text-slate-300">${p.odds || '—'}</td>
-              <td class="py-1.5 px-2 text-center font-bold text-cyan-400">${p.edge_pct ? p.edge_pct.toFixed(1)+'pp' : '—'}</td>
-              <td class="py-1.5 px-2 text-center font-bold ${p.ev_pct>0?'text-emerald-400':'text-slate-400'}">${p.ev_pct ? (p.ev_pct>0?'+':'')+p.ev_pct.toFixed(1)+'%' : '—'}</td>
+              <td class="py-1.5 px-2 text-center">${valueLabelHtml(p.edge_pct, p.ev_pct)}</td>
               <td class="py-1.5 px-2 text-center">${starsHtml(stars) || '<span class="text-slate-600">—</span>'}</td>
               <td class="py-1.5 px-2 text-center">${insightsBadge(p.insights)}</td>
               <td class="py-1.5 px-2 text-center">${venueAgeBadge(p.venue, p.recorded_at, nowMs) || '<span class="text-slate-600">—</span>'}</td>
@@ -5874,7 +6004,7 @@ async function renderPropsBoard(){
               </td>
             </tr>
             <tr id="oddsCompareRow-${i}" class="hidden">
-              <td colspan="12" class="py-2 px-6 bg-slate-900/60">
+              <td colspan="11" class="py-2 px-6 bg-slate-900/60">
                 <div id="oddsCompareBody-${i}" class="text-[11px]"></div>
               </td>
             </tr>
@@ -6165,8 +6295,11 @@ function findPlayerData(name, teamHint = '') {
     }
   }
 
-  let starterInfo = null;
-  if (CLAY_DATA && CLAY_DATA.projected_starters) {
+  // Clay projected_starters is scrambled (players under wrong teams) and is
+  // intentionally not looked up here. Position/team come from Supabase roster
+  // or Clay positional_projections only.
+  const starterInfo = null;
+  if (false && CLAY_DATA && CLAY_DATA.projected_starters) {
     for (const [conf, teams] of Object.entries(CLAY_DATA.projected_starters)) {
       for (const [tm, starters] of Object.entries(teams)) {
         const match = starters.find(s => {
@@ -6208,12 +6341,14 @@ async function openPlayerModal(name, teamHint = '') {
 
   const p = data.pRecord || {};
   const cp = data.clayPosProj;
-  const st = data.starterInfo;
-  const pos = p.pos || cp?.pos || st?.position || 'N/A';
-  const team = p.team_id ? (DATA.teams.find(t=>t.id===p.team_id)?.name || p.team_id) : (cp?.team_abbr || st?.teamName || teamHint || 'NFL');
+  // NOTE: starterInfo from Clay projected_starters is intentionally NOT used here.
+  // That data is scrambled (players listed under wrong teams). Position and team
+  // come from the Supabase roster record or Clay positional projections only.
+  const pos = p.pos || cp?.pos || 'N/A';
+  const team = p.team_id ? (DATA.teams.find(t=>t.id===p.team_id)?.name || p.team_id) : (cp?.team_abbr || teamHint || 'NFL');
   const jersey = p.jersey ? `#${p.jersey}` : '';
   const age = p.age ? `${p.age} yrs` : '';
-  const ovr = p.ovr !== null && p.ovr !== undefined ? p.ovr : (st ? st.rating * 10 : null);
+  const ovr = p.ovr !== null && p.ovr !== undefined ? p.ovr : null;
   const ratingBadgeClass = ovr ? (ovr >= 90 ? 'rating-elite' : ovr >= 80 ? 'rating-star' : ovr >= 70 ? 'rating-solid' : 'rating-dev') : '';
 
   let html = `
@@ -6233,7 +6368,6 @@ async function openPlayerModal(name, teamHint = '') {
             <span class="font-semibold text-slate-300">${team}</span>
             <span>·</span>
             <span>${age || 'Age N/A'}</span>
-            ${st ? `<span>·</span><span>Starter Rating: <strong class="text-amber-400">${st.rating}/10</strong> (${st.position}${st.depth})</span>` : ''}
           </div>
         </div>
       </div>
@@ -6321,7 +6455,7 @@ async function openPlayerModal(name, teamHint = '') {
     html += `
       <div class="mb-5 glass rounded-xl p-4">
         <div class="text-xs font-bold uppercase tracking-wider text-emerald-400 mb-3 flex items-center gap-2">
-          <span>💰</span> Active Season Props & Clay vs Market Edge
+          <span>💰</span> Active Season Props & Value Reads
         </div>
         <div class="overflow-x-auto">
           <table class="w-full text-xs">
@@ -6332,8 +6466,7 @@ async function openPlayerModal(name, teamHint = '') {
                 <th class="text-center py-1.5 px-2">Line</th>
                 <th class="text-center py-1.5 px-2">Venue</th>
                 <th class="text-center py-1.5 px-2">Odds</th>
-                <th class="text-center py-1.5 px-2">Model Edge</th>
-                <th class="text-center py-1.5 px-2">EV%</th>
+                <th class="text-center py-1.5 px-2" title="Analyst read on the model-to-market gap: Generous, Lean, Fair, Tight">Value</th>
                 <th class="text-center py-1.5 px-2" title="All venues quoting this player+market+side">All Odds</th>
               </tr>
             </thead>
@@ -6349,8 +6482,7 @@ async function openPlayerModal(name, teamHint = '') {
           <td class="py-1.5 px-2 text-center font-bold text-white">${pr.line}</td>
           <td class="py-1.5 px-2 text-center text-slate-400">${pr.venue}</td>
           <td class="py-1.5 px-2 text-center text-slate-300">${pr.odds || '—'}</td>
-          <td class="py-1.5 px-2 text-center text-cyan-400 font-bold">${pr.edge_pct ? pr.edge_pct.toFixed(1)+'pp' : '—'}</td>
-          <td class="py-1.5 px-2 text-center ${evColor}">${pr.ev_pct ? (pr.ev_pct>0?'+':'')+pr.ev_pct.toFixed(1)+'%' : '—'}</td>
+          <td class="py-1.5 px-2 text-center">${valueLabelHtml(pr.edge_pct, pr.ev_pct)}</td>
           <td class="py-1.5 px-2 text-center"><button onclick="event.stopPropagation();showTab('props');setTimeout(()=>toggleOddsCompare('${pr.player_id}|${pr.market}|${pr.side}', 0), 300)" class="text-[10px] px-1.5 py-0.5 rounded border border-slate-600 text-slate-300 hover:border-cyan-400 hover:text-cyan-300" title="Compare this line across all venues">⊞</button></td>
         </tr>
       `;
@@ -6514,17 +6646,19 @@ function renderPlayerCompare() {
   const p2 = d2.pRecord || {};
   const cp2 = d2.clayPosProj || {};
 
-  const pos1 = p1.pos || cp1.pos || d1.starterInfo?.position || 'QB';
-  const pos2 = p2.pos || cp2.pos || d2.starterInfo?.position || 'QB';
+  // NOTE: starterInfo from Clay projected_starters is intentionally NOT used
+  // here. That data is scrambled (players listed under wrong teams).
+  const pos1 = p1.pos || cp1.pos || 'QB';
+  const pos2 = p2.pos || cp2.pos || 'QB';
 
-  const ovr1 = p1.ovr !== null && p1.ovr !== undefined ? p1.ovr : (d1.starterInfo ? d1.starterInfo.rating * 10 : 75);
-  const ovr2 = p2.ovr !== null && p2.ovr !== undefined ? p2.ovr : (d2.starterInfo ? d2.starterInfo.rating * 10 : 75);
+  const ovr1 = p1.ovr !== null && p1.ovr !== undefined ? p1.ovr : 75;
+  const ovr2 = p2.ovr !== null && p2.ovr !== undefined ? p2.ovr : 75;
 
-  const grade1 = d1.starterInfo?.rating || (cp1.pos_rank <= 5 ? 8.5 : cp1.pos_rank <= 12 ? 7.5 : 6.5);
-  const grade2 = d2.starterInfo?.rating || (cp2.pos_rank <= 5 ? 8.5 : cp2.pos_rank <= 12 ? 7.5 : 6.5);
+  const grade1 = cp1.pos_rank <= 5 ? 8.5 : cp1.pos_rank <= 12 ? 7.5 : 6.5;
+  const grade2 = cp2.pos_rank <= 5 ? 8.5 : cp2.pos_rank <= 12 ? 7.5 : 6.5;
 
-  const team1 = p1.team_id ? (DATA.teams?.find(t=>t.id===p1.team_id)?.name || p1.team_id) : (cp1.team_abbr || d1.starterInfo?.teamName || 'NFL');
-  const team2 = p2.team_id ? (DATA.teams?.find(t=>t.id===p2.team_id)?.name || p2.team_id) : (cp2.team_abbr || d2.starterInfo?.teamName || 'NFL');
+  const team1 = p1.team_id ? (DATA.teams?.find(t=>t.id===p1.team_id)?.name || p1.team_id) : (cp1.team_abbr || 'NFL');
+  const team2 = p2.team_id ? (DATA.teams?.find(t=>t.id===p2.team_id)?.name || p2.team_id) : (cp2.team_abbr || 'NFL');
 
 
   let radarLabels = ['Volume', 'Efficiency', 'Scoring', 'Film Grade', 'Market Implied'];

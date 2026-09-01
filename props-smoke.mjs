@@ -58,6 +58,12 @@ console.log('--- trending strip chips:', (String(trending).match(/rounded-full/g
 console.log('--- 2024 Form column populated:', formCells.filter(t => t && !t.startsWith('—')).length, '/', formCells.length);
 console.log('--- board table count:', boardTable, '| rows:', rowCount);
 console.log('--- home landing card present:', homeCard > 0, '| spotlight rows:', homeCardRows);
+
+// Ticket 03: Today in the NFL front door.
+const frontDoor = await page.locator('#homeFrontDoor').textContent().catch(() => '');
+const frontDoorGames = await page.locator('#homeFrontDoor .glass.rounded-lg').count().catch(() => 0);
+const frontDoorInsight = frontDoor.includes('looks generous') || frontDoor.includes('a lean') || frontDoor.includes('a slight edge');
+console.log('--- front door present:', frontDoor.length > 20, '| game cards:', frontDoorGames, '| has prop insight:', frontDoorInsight);
 console.log('--- propsMeta:', String(meta).slice(0, 300));
 
 // Open the first player in the value board → verify the modal's 2024 Form

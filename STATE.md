@@ -4,6 +4,75 @@
 - live: https://nfldashboard.pages.dev/ (Cloudflare Pages, auto-deploys on push to main)
 - repo: https://github.com/shyam4902/nfldashboard · single-file app in `index.html` + Supabase + static JSON
 
+## Shipped 2026-09-01 — 53-man roster refresh
+- Roster sync from Supabase ran clean: 2517 players fetched, 2523 after
+  the summer overlay (13 trade/FA additions). 32 teams, 69-87 players
+  each (53-man + practice squad + IR).
+- Key players verified: Mahomes KC 97, Jaxson Dart Giants 73 (still
+  correct), Myles Garrett Rams 99, A.J. Brown Patriots 89, Josh Allen
+  Bills 99.
+- File written to both `nfldashboard/nfl_rosters_2026.json` and
+  `data/shared/nfl_rosters_2026.json` so both the dashboard and edge
+  app read the same refreshed snapshot.
+- Smoke test PASSED, zero page errors.
+
+## Shipped 2026-09-01 — Homepage front door (launch ticket 03)
+- **Today in the NFL front door**: New section between the hero and the
+  showcase. Shows the next 4 upcoming games from `schedule.json` with
+  team abbreviations, colors, kickoff time (Today/Tomorrow/date), TV
+  network, and venue. Each game card links to the Matchup Center. When
+  no games are scheduled, shows a season teaser.
+- **One-line prop insight**: The top trust-scored play from the props
+  board renders as a one-liner below the game cards: player, market,
+  side/line, venue, and a plain-English read ("line looks generous" /
+  "a lean" / "a slight edge"). Clicking opens the Props tab.
+- **Edge Analytics cross-link on Props card**: The Props & Value feature
+  card now has an "Edge Analytics" link in its footer, opening the edge
+  app in a new tab. Same-house, different doors.
+- **Smoke test**: extended to assert front door present, 4 game cards,
+  prop insight visible. PASSED, zero page errors.
+
+## Shipped 2026-09-01 — Data accuracy audit (launch ticket 10)
+- **Clay projected_starters scrambled data removed**: The Clay
+  `projected_starters` dataset had players assigned to wrong teams
+  (Quinnen Williams on the Cowboys, Justin Fields on the Chiefs). It was
+  used as a fallback for player position/team/OVR in `findPlayerData()`
+  and rendered directly in a Projections sub-tab. Both are fixed: the
+  fallback is dead-coded, the sub-tab button is removed, and the render
+  function shows an honest "data moved to Teams tab" message.
+- **Hardcoded Projections date fixed**: "Updated 8/19/2026" was a
+  hardcoded string. Now reads from `CLAY_DATA.metadata.updated` on
+  load.
+- **Player modal Starter Rating badge removed**: Sourced from the
+  scrambled projected_starters data. Removed entirely.
+- **Audit report**: `docs/launch/data-accuracy-audit.md` with error
+  rates per panel, findings, and documented decisions.
+- **Schedule, rosters, props, win totals, matchup lab**: all clean.
+  Team names are 100% consistent across schedule, rosters, and Clay.
+  272 games, 32 teams, no duplicates, no missing fields.
+- **Smoke test**: PASSED, zero console errors.
+
+## Shipped 2026-09-01 — Props board plain-English (launch ticket 02)
+- **Value column replaces Edge + EV%**: The value board table and the player
+  modal props table now show a single "Value" column with analyst-language
+  labels (Generous, Lean over, Slight edge, Fair, Tight) instead of raw
+  edge_pct in "pp" and EV% as a number. The math runs underneath; the screen
+  speaks human. The All Odds expander keeps the raw Edge/EV% columns since
+  that is a power-user deep-dive behind a button click.
+- **Summary stats reworded**: "+EV plays" becomes "Value plays", "Avg edge"
+  becomes "Model gap" (in pts not pp), "Best EV" becomes "Top value".
+- **Section headers reworded**: "Best Lines by Model Edge" becomes "Best Lines",
+  the subtitle now says "where the model sees the market gap". Value Board
+  subtitle changed from "ranked by EV" to "ranked by value".
+- **Filter label**: "Only +EV" becomes "Only value plays".
+- **Landing cards reworded**: spotlight copy changed from "model X% vs market
+  Y% · confidence Z/100" to "model sees the line generous/tight · trust Z/100".
+  Value plays badge changed from raw edge% to a plain label (Generous/Lean/
+  Slight/Fair). Footer changed from "+EV Prop Opportunities" to "Value Prop
+  Reads". Home hero blurb and feature card de-jargoned.
+- **Smoke test**: PASSED, zero console errors. 100 board rows render, player
+  modal opens, all tabs clean.
+
 ## Shipped 2026-09-01 — Navigation Polish & Schedule Grid Fix
 - **Schedule Full-Season Grid Fix**: Fixed container width constraint where the 32×18 table was locked inside a 3-column CSS grid card wrapper. The matrix now dynamically expands across 100% of the viewport width with all 18 weeks cleanly distributed, team colors, sticky team headers, and Home/Away badges.
 - **Title and Branding Update**: Renamed header branding to `NFL 2026 Pro Hub` and page title to `NFL 2026 Season Hub · Live Intelligence & Analytics`. Updated Home hero badge from offseason to `2026 NFL Season`.
