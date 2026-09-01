@@ -6,6 +6,11 @@
 - deploy: commit → `git push origin main` → Pages builds (~1-2 min). The only step that ships the public site is the push.
 - NOTE: `~/Library/Application Support/nfldashboard-props/nfldashboard/` is the launchd/local dev-preview copy, NOT the public deployment.
 
+## Shipped 2026-09-01 — Home hero redesign & scrolling team masthead
+- **Hero layout streamlined**: Removed the Command Bar card from the hero banner, trimmed hero description copy, and gave full width to the title and team navigation.
+- **Scrolling team marquee masthead**: Implemented continuous infinite marquee for all 32 NFL team pills with edge-fade gradient masks and hover-to-pause for navigation.
+- **Relocated KPI cards**: Moved the 5 stat cards (`32 Teams`, `2523 Players`, `373 Moves`, `16 Week 1 Games`, `Value Reads`) to a dedicated bottom card on the Home tab.
+
 ## Docs 2026-09-01 — source-of-truth rule + change-triggered refresh ticket (planning)
 - **Data source of truth rule added to all agent guidance**: root
   `AGENTS.md`/`CLAUDE.md`, `docs/agents/repo-map.md` (Cross-project rules),
