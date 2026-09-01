@@ -1,6 +1,6 @@
 # NFL Dashboard
 
-> Edge app URL policy: use `https://edgeplay-analytics.pages.dev`. Never use `https://edge-analytics.pages.dev`, which is an unrelated consultancy site. The custom domain `https://edge.shyamsapps.qzz.io` is not verified for active use, and Lovable is historical only.
+> Edge app URL policy: use `https://edgeplay-analytics.pages.dev`. The custom domain `https://edge.shyamsapps.qzz.io` is not verified for active use, and Lovable is historical only.
  Static App
 
 Standalone static dashboard. The Props & Value tab reads the canonical board

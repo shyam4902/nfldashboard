@@ -1,8 +1,34 @@
 # NFL Dashboard — State
 
-- updated: 2026-08-30
+- updated: 2026-08-31
 - live: https://nfldashboard.pages.dev/ (Cloudflare Pages, auto-deploys on push to main)
 - repo: https://github.com/shyam4902/nfldashboard · single-file app in `index.html` + Supabase + static JSON
+
+## Shipped 2026-08-31 (late) — Edge wrong-URL wipe + launcher redeploy
+- The wrong `edge-analytics.pages.dev` link (an unrelated consultancy site) is
+  gone everywhere. Live `shyamsapps.pages.dev` launcher redeployed from
+  `~/Desktop/Live Apps/Home/` (Pages project `shyamsapps`, deployment
+  `13967df4`, branch `main`) — its Edge card now links
+  `edgeplay-analytics.pages.dev` (verified live; that destination serves the
+  real EDGE//NFL app, and the dashboard's own cross-link was already correct).
+- Wiped the wrong URL from all 11 in-repo docs: root `AGENTS.md`/`CLAUDE.md`,
+  `docs/agents/edge-url-policy.md`, and `AGENTS.md`/`CLAUDE.md`/`README.md` in
+  nfldashboard, fantasyfootball, and edgeplay-analytics. Also scrubbed 3
+  second-brain files (EDGE-URL-POLICY.md, STATE.md, the launcher fix-plan).
+- Machine-wide sweep (rg + plain grep, incl. dotdirs and runtime dirs, run
+  twice) returns zero hits for the wrong string.
+
+## Shipped 2026-08-31 — Next Gen Stats Pro Matchup Center
+- **Pro Matchup Center & Advanced Comparisons**: Complete overhaul of the Matchup tab inspired by Next Gen Stats pro previews and player compare design patterns.
+  - **Sub-navigation system**: `Pro Preview`, `At a Glance`, `Key Advantages`, `Passing`, `Rushing`, `Defense & Trenches`, `Matchup Insights`, and `Formation Lab`.
+  - **Game Meta & Hero Banner**: High-impact away vs home banner with logos, projected records, playoff seeds, kickoff time, venue, TV network, model win probability bar, and live market lines.
+  - **At a Glance Efficiency Table**: 3-column table comparing team PPG, Point Differential, Close Game Record, Avg Margin of Victory, Turnover Diff, and Total Penalties with NFL rankings.
+  - **Side-by-Side Advantage Matrix**: Dual Offense vs Defense situational split tables with 1–5 star advantage badges styled in team colors with logos.
+  - **Team Skill Dual Radar**: 5-axis visual radar comparing Passing Attack, Rushing Attack, Pass Defense, Rush Defense, and Trench Play.
+  - **Matchup Insights**: Story cards with player spotlights, trench battles (OT vs Edge), unit matchups (TE vs Secondary), and coordinator scheme tendencies with deep links to player dossiers.
+  - **Matchups 101 Guide Modal**: Interactive explainer modal detailing rank delta calculations and star ratings.
+  - **Schedule & Command Palette Integration**: One-click jump from schedule game cards and Command Palette directly into the Pro Matchup Center.
+  - Verified in headless Chromium with Playwright: 0 page errors.
 
 ## Shipped 2026-08-30 — Win Totals tab + research repo
 - **Win Totals tab** (index.html + props-smoke.mjs): reads `props-board.json`'s

@@ -2,7 +2,7 @@
 
 This repo is the static NFL dashboard. It displays the board produced by `fantasyfootball` and other NFL data. For the cross-project map, read `../docs/agents/repo-map.md`.
 
-The Edge app link must use `https://edgeplay-analytics.pages.dev`. Never use `https://edge-analytics.pages.dev`, which is an unrelated consultancy site. The custom domain `https://edge.shyamsapps.qzz.io` is not verified for active use. Lovable is historical and is not the current host or source of truth.
+The Edge app link must use `https://edgeplay-analytics.pages.dev`. The custom domain `https://edge.shyamsapps.qzz.io` is not verified for active use. Lovable is historical and is not the current host or source of truth.
 
 ## Local facts
 

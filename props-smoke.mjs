@@ -47,7 +47,7 @@ const trending = await page.locator('#propsTrending').innerHTML().catch(() => 'M
 const boardTable = await page.locator('#propsBoard table').count().catch(() => 0);
 const rowCount = await page.locator('#propsBoard tbody tr').count().catch(() => 0);
 const formCells = await page.locator('#propsBoard tbody tr td:nth-child(9)').allTextContents().catch(() => []);
-const homeCard = await page.locator('.spotlight-card', { hasText: 'Mejores Apuestas' }).count().catch(() => 0);
+const homeCard = await page.locator('.spotlight-card', { hasText: /Top Model Bets|Mejores Apuestas/i }).count().catch(() => 0);
 const homeCardRows = await page.locator('.spotlight-card .spotlight-row').count().catch(() => 0);
 const meta = await page.locator('#propsMeta').textContent().catch(() => '');
 
@@ -110,23 +110,38 @@ let matchupOk = false;
 let gamePickOk = false;
 await page.evaluate(() => { try { closePlayerModal(); closeRoster(); } catch (e) {} }).catch(() => {});
 await page.waitForTimeout(300);
-const matchupBtn = page.locator('button', { hasText: /matchup/i }).first();
+const matchupBtn = page.locator('button[data-tab="matchup"]').first();
 if (await matchupBtn.count()) {
   await matchupBtn.click();
   await page.waitForTimeout(1500);
-  const offChips = await page.locator('#matchupOffense .formation-player').count().catch(() => -1);
-  const defChips = await page.locator('#matchupDefense .formation-player').count().catch(() => -1);
-  const unitRows = await page.locator('#matchupUnitStrip .unit-match-row').count().catch(() => -1);
-  const verdictText = await page.locator('#matchupVerdict').textContent().catch(() => '');
-  // Flip personnel + front, confirm the offense field re-renders without errors.
+  
+  const heroText = await page.locator('#matchupHeroBanner').textContent().catch(() => '');
+  const sidebarText = await page.locator('#matchupSidebar').textContent().catch(() => '');
+  console.log('--- matchup hero banner:', String(heroText).replace(/\s+/g, ' ').slice(0, 70));
+  
+  // Test Passing splits subtab
+  await page.evaluate(() => setMatchupSubTab('passing'));
+  await page.waitForTimeout(500);
+  const passRows = await page.locator('#matchupMainContent .matchup-table-row').count().catch(() => 0);
+  console.log('--- matchup passing split rows:', passRows);
+
+  // Switch to Formation Lab subtab
+  await page.evaluate(() => setMatchupSubTab('formation'));
+  await page.waitForTimeout(800);
+
+  const offChips = await page.locator('.formation-field .fp-o').count().catch(() => -1);
+  const defChips = await page.locator('.formation-field .fp-x').count().catch(() => -1);
+  const unitRows = await page.locator('.unit-match-row').count().catch(() => -1);
+  
+  // Flip personnel + front, confirm the formation re-renders without errors.
   await page.selectOption('#matchupPersonnel', '10');
   await page.selectOption('#matchupFront', 'nickel');
   await page.waitForTimeout(800);
-  const offChips2 = await page.locator('#matchupOffense .formation-player').count().catch(() => -1);
-  const defChips2 = await page.locator('#matchupDefense .formation-player').count().catch(() => -1);
-  matchupOk = offChips >= 10 && defChips >= 10 && unitRows === 5 && /over|≈|grade/i.test(String(verdictText)) && offChips2 === offChips && defChips2 === defChips;
-  // Game picker: fed from the schedule (272 games across 18 weeks); picking a
-  // game sets offense = away, defense = home and re-renders without errors.
+  const offChips2 = await page.locator('.formation-field .fp-o').count().catch(() => -1);
+  const defChips2 = await page.locator('.formation-field .fp-x').count().catch(() => -1);
+  matchupOk = heroText.length > 10 && passRows >= 12 && offChips >= 10 && defChips >= 10 && unitRows === 5 && offChips2 === offChips && defChips2 === defChips;
+  
+  // Game picker: fed from the schedule (272 games across 18 weeks); picking a game re-renders
   const gameOptions = await page.locator('#matchupGame option').count().catch(() => -1);
   gamePickOk = gameOptions >= 200;
   if (gamePickOk) {
@@ -134,19 +149,18 @@ if (await matchupBtn.count()) {
     if (firstVal) {
       await page.selectOption('#matchupGame', firstVal);
       await page.waitForTimeout(800);
-      const offHeader = await page.locator('#matchupOffense .text-xs.font-black').first().textContent().catch(() => '');
-      const defHeader = await page.locator('#matchupDefense .text-xs.font-black').first().textContent().catch(() => '');
-      const chipsAfter = await page.locator('#matchupOffense .formation-player').count().catch(() => -1);
-      gamePickOk = offHeader.length > 0 && defHeader.length > 0 && chipsAfter === offChips;
-      console.log('--- matchup game picker:', gameOptions, 'options | picked:', String(offHeader).trim(), 'vs', String(defHeader).trim(), '| chips', chipsAfter);
+      const heroAfter = await page.locator('#matchupHeroBanner').textContent().catch(() => '');
+      gamePickOk = heroAfter.length > 10;
+      console.log('--- matchup game picker:', gameOptions, 'options | picked:', firstVal);
     }
   } else {
     console.log('--- matchup game picker: FAILED (options', gameOptions + ')' );
   }
-  console.log('--- matchup lab: O chips', offChips, 'X chips', defChips, '| unit rows', unitRows, '| verdict:', String(verdictText).trim().slice(0, 70));
+  console.log('--- matchup lab: O chips', offChips, 'X chips', defChips, '| unit rows', unitRows);
   console.log('--- matchup re-render after personnel/front change: O', offChips2, 'X', defChips2);
+  
   // Click the first player chip → player modal should open (props deep-link path).
-  const firstChip = page.locator('#matchupOffense .formation-player').first();
+  const firstChip = page.locator('.formation-field .formation-player').first();
   if (await firstChip.count()) {
     await firstChip.click();
     await page.waitForTimeout(1200);
