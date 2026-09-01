@@ -1005,7 +1005,7 @@ body.theme-analyst .cmd-item.selected {
         </div>
       </div>
       <p class="text-xs text-slate-300 mb-4 leading-relaxed">
-        The Pro Matchup Center evaluates matchups across situational efficiency splits derived from game film and predictive tracking data. Ranks are calibrated across all 32 NFL offenses and defenses (#1 = Best in NFL, #32 = Worst in NFL).
+        The Pro Matchup Center compares teams on real measured 2025 efficiency (nflverse EPA/play, success rate, yards per play, sack rate) plus Clay 2026 unit grades. Ranks are 1-32 across the league (#1 = best). Where verified data is missing, the app shows "—" rather than inventing a number.
       </p>
       <div class="space-y-3 text-xs mb-5">
         <div class="p-3.5 rounded-xl bg-slate-800/90 border border-slate-700">
@@ -1026,9 +1026,15 @@ body.theme-analyst .cmd-item.selected {
           </div>
         </div>
         <div class="p-3.5 rounded-xl bg-slate-800/90 border border-slate-700">
-          <div class="font-bold text-cyan-400 mb-1">Passing & Rushing Situational Splits</div>
+          <div class="font-bold text-cyan-400 mb-1">Passing, Rushing & Trench Splits</div>
           <div class="text-slate-300 leading-normal">
-            Isolates pass depth zones (Quick, Short, Intermediate, Deep, Long), defensive pressure/blitz conditions, play-action usage, and box counts (Light vs Heavy box, Red Zone rushing).
+            Compares real measured 2025 efficiency from the nflverse dataset: EPA per play, EPA per attempt (pass and run), success rate, yards per play, turnover rate and sack rate, for offense and defense separately.
+          </div>
+        </div>
+        <div class="p-3.5 rounded-xl bg-slate-800/90 border border-slate-700">
+          <div class="font-bold text-emerald-400 mb-1">Sources & Method</div>
+          <div class="text-slate-300 leading-normal">
+            Efficiency ranks: nflverse/nflfastR team-season play-by-play (2012-2025), 2025 season shown. Unit grades and standings: Mike Clay 2026 projections. Rosters: Supabase snapshot. Nothing on this tab is a fabricated number; missing verified data renders as "—".
           </div>
         </div>
       </div>
@@ -1063,6 +1069,7 @@ body.theme-analyst .cmd-item.selected {
     <h2 class="text-xl font-bold mb-1 flex items-center gap-2">
       <svg class="w-5 h-5 text-blue-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/></svg>
       <span id="scheduleTitle">Week <span id="scheduleWeekNum">1</span> Matchups</span>
+      <span id="scheduleFreshness" class="text-[9px] font-normal"></span>
       <span id="scheduleHint" class="text-xs text-slate-500 font-normal ml-1">2026 Regular Season · Click a matchup for analysis</span>
       <span class="ml-auto flex gap-1.5">
         <button id="schViewCards" onclick="setScheduleView('cards')" class="text-[11px] font-bold px-2.5 py-1 rounded-lg border transition bg-blue-600 text-white border-blue-500">Cards</button>
@@ -1086,6 +1093,7 @@ body.theme-analyst .cmd-item.selected {
         <h2 class="text-xl font-bold flex items-center gap-2">
           <svg class="w-5 h-5 text-rose-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M2 5a3 3 0 013-3h1a3 3 0 013 3v10a3 3 0 01-3 3H5a3 3 0 01-3-3V5zm8-1a1 1 0 011-1h1a3 3 0 013 3v10a3 3 0 01-3 3h-1a1 1 0 110-2h1a1 1 0 001-1V7a1 1 0 00-1-1h-1a1 1 0 01-1-1z" clip-rule="evenodd"/></svg>
           Matchup Center
+          <span id="matchupFreshness" class="text-[9px] font-normal"></span>
           <span class="text-xs text-slate-500 font-normal ml-1">Next Gen Stats Pro Preview & Situational Matchups</span>
         </h2>
       </div>
@@ -1140,7 +1148,7 @@ body.theme-analyst .cmd-item.selected {
   <div id="tab-teams" class="hidden">
     <div class="flex items-center justify-between flex-wrap gap-3 mb-4">
       <div class="flex items-center gap-3">
-        <h2 class="text-xl font-bold">Teams</h2>
+        <h2 class="text-xl font-bold">Teams <span id="teamsFreshness" class="text-[9px] font-normal align-middle"></span></h2>
         <button id="compareModeBtn" onclick="toggleCompareMode()" class="text-[11px] font-bold px-3 py-1 rounded-lg border border-slate-600 bg-slate-800/80 text-slate-400 hover:bg-slate-700 transition">⚖ Compare</button>
       </div>
       <div id="divNavBtns" class="flex items-center flex-wrap gap-1.5"></div>
@@ -1165,6 +1173,7 @@ body.theme-analyst .cmd-item.selected {
     <h2 class="text-xl font-bold mb-3 flex items-center gap-2">
       <svg class="w-5 h-5 text-cyan-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"/><path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clip-rule="evenodd"/></svg>
       Mike Clay 2026 Projections
+      <span id="projectionsFreshness" class="text-[9px] font-normal"></span>
       <span class="text-xs text-slate-500 font-normal ml-1" id="clayUpdatedLabel">Updated —</span>
     </h2>
     <div id="projSubTabs" class="flex flex-wrap gap-1.5 mb-4"></div>
@@ -1933,7 +1942,7 @@ function homeStatCards(){
     { label: `${(DATA.players || []).length} Players`, sub: 'full 2026 rosters', icon: '🏈', color: '#06b6d4', action: "openCommandPalette()" },
     { label: `${(DATA.transactions || []).length} Moves`, sub: 'since Super Bowl LX', icon: '⚡', color: '#ef4444', action: "showMovesTab()" },
     { label: '16 Week 1 Games', sub: 'odds & win probabilities', icon: '📅', color: '#10b981', action: "showTab('schedule')" },
-    { label: '6 Sportsbooks', sub: 'Kalshi · DK · MGM · FD · Poly · Caesars', icon: '💰', color: '#f59e0b', action: "window.open('https://edgeplay-analytics.pages.dev/props','_blank')" },
+    { label: 'Value Reads', sub: 'props & win totals in Edge Analytics', icon: '💰', color: '#f59e0b', action: "window.open('https://edgeplay-analytics.pages.dev/props','_blank')" },
   ];
   return cards.map(c => `
     <div class="stat-kpi-card cursor-pointer group" onclick="${c.action}" title="Open ${c.label}">
@@ -2067,7 +2076,7 @@ function homeHeroHtml(){
           <span>League Command Center</span>
         </h1>
         <p class="text-sm text-slate-300 mt-2.5 max-w-3xl leading-relaxed">
-          The complete 2026 NFL season intelligence terminal. Explore the Week 1 slate with live sportsbook odds and log5 win probabilities, Mike Clay's full 2026 projection model, composite power rankings, depth charts, draft analysis, and prop market value reads.
+          The complete 2026 NFL season command center. Explore the Week 1 slate with live odds and model win probabilities, Mike Clay's full 2026 projection model, composite power rankings, depth charts, and draft analysis. For deep value and prop analysis, open Edge Analytics.
         </p>
         <div class="flex items-center gap-1.5 mt-4 overflow-x-auto pb-1 max-w-full text-xs">
           <span class="text-[10px] uppercase font-bold text-slate-400 tracking-wider shrink-0 mr-1">Teams:</span>
@@ -2100,7 +2109,7 @@ const HOME_FEATURES = [
   { icon:'📅', title:'Schedule', tab:'schedule', accent:'#3b82f6', stat:'Week 1 · Sep 9–14', desc:'All 16 opening-week matchups with live spreads, totals, moneylines and model win probabilities. Click any game for deep matchup analytics.' },
   { icon:'⚔️', title:'Matchup Lab', tab:'matchup', accent:'#f43f5e', stat:'offense vs defense', desc:"X's and O's formation preview for any matchup. Pick personnel and defensive front, scan Clay unit-grade advantages, click a player for their full profile." },
   { icon:'📊', title:'Mike Clay Projections', tab:'projections', accent:'#06b6d4', stat:'12 sub-tabs', desc:'The complete 2026 guide: projected standings, category leaders, projected starters, coaching staffs, unit grades and Clay vs Market deltas.' },
-  { icon:'💰', title:'Props & Value', tab:null, extUrl:'https://edgeplay-analytics.pages.dev/props', accent:'#10b981', stat:'value reads', desc:'Player props ranked by model-to-market gap across six sportsbooks. Deep value analysis lives in the Edge Analytics app.' },
+  { icon:'💰', title:'Value Reads', tab:null, extUrl:'https://edgeplay-analytics.pages.dev/props', accent:'#10b981', stat:'Edge Analytics', desc:'Player props, win totals, line movement and model diagnostics live in the Edge Analytics app. Deep value analysis opens in a new tab.' },
   { icon:'🛡️', title:'Teams & Rosters', tab:'teams', accent:'#f59e0b', stat:() => DATA.teams.length + ' teams', desc:'Depth charts, rosters and division navigation for every team, plus head-to-head player comparison.' },
   { icon:'⚡', title:'Transactions', tab:'feed', accent:'#ef4444', stat:() => DATA.transactions.length + ' moves', desc:'Every offseason move since Super Bowl LX — trades, signings and draft pickups, with blockbuster moves flagged.' },
 ];
@@ -3026,13 +3035,6 @@ async function renderTeamProjectionsBody(team) {
     }
   }
 
-  let starters = [];
-  if (CLAY_DATA.projected_starters) {
-    for (const [conf, teams] of Object.entries(CLAY_DATA.projected_starters)) {
-      if (teams[team]) { starters = teams[team]; break; }
-    }
-  }
-
   const wins = tProj?.projected_wins ?? standing?.wins ?? '-';
   const losses = typeof wins === 'number' ? (17 - wins).toFixed(1) : (standing?.losses ?? '-');
   const winsColor = (typeof wins === 'number') ? (wins >= 10 ? 'text-emerald-400' : wins >= 7 ? 'text-cyan-300' : 'text-red-400') : 'text-cyan-300';
@@ -3165,8 +3167,10 @@ async function renderTeamProjectionsBody(team) {
     h += `</div></div>`;
   }
 
-  // 5. Projected Starters Depth Chart
-  if (starters.length > 0) {
+  // 5. Depth chart from the Supabase roster (the runtime source of truth).
+  //    Grouped by position, sorted by depth, OVR shown as a muted badge.
+  const roster = (DATA.players || []).filter(p => teamNameOf(p) === team);
+  if (roster.length > 0) {
     const posOrder = {
       'QB': 1, 'RB': 2, 'WR': 3, 'TE': 4,
       'LT': 5, 'LG': 6, 'C': 7, 'RG': 8, 'RT': 9, 'OL': 10, 'OT': 10, 'G': 10, 'OG': 10,
@@ -3177,30 +3181,31 @@ async function renderTeamProjectionsBody(team) {
       'S': 15, 'FS': 15, 'SS': 15,
       'PK': 16, 'K': 16, 'P': 17, 'LS': 18
     };
-    const sortedStarters = [...starters].sort((a, b) => {
-      const pA = posOrder[a.position] || 99;
-      const pB = posOrder[b.position] || 99;
+    const sortedRoster = [...roster].sort((a, b) => {
+      const pA = posOrder[a.pos] || 99;
+      const pB = posOrder[b.pos] || 99;
       if (pA !== pB) return pA - pB;
-      return (Number(a.depth) || 0) - (Number(b.depth) || 0);
+      return (Number(a.depth) || 99) - (Number(b.depth) || 99);
     });
 
     h += `<div class="bg-slate-800/40 border border-slate-700/50 rounded-xl p-3">
       <div class="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-2 flex items-center justify-between">
-        <span class="flex items-center gap-1.5"><span>⭐</span> Projected Starters & Clay Ratings</span>
-        <span class="text-[10px] text-slate-500 font-normal">${sortedStarters.length} Key Starters</span>
+        <span class="flex items-center gap-1.5"><span>⭐</span> Roster Depth</span>
+        <span class="text-[10px] text-slate-500 font-normal">${sortedRoster.length} players · Supabase roster</span>
       </div>
       <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2">`;
-    for (const s of sortedStarters) {
-      const tier = s.rating >= 9 ? 'text-amber-400 border-amber-500/40 bg-amber-500/10' :
-                   s.rating >= 7 ? 'text-emerald-400 border-emerald-500/40 bg-emerald-500/10' :
-                   s.rating >= 5 ? 'text-slate-300 border-slate-700 bg-slate-800/50' :
-                                   'text-red-400 border-red-500/40 bg-red-500/10';
+    for (const s of sortedRoster) {
+      const ovr = Number(s.ovr);
+      const tier = ovr >= 90 ? 'text-amber-400 border-amber-500/40 bg-amber-500/10' :
+                   ovr >= 80 ? 'text-emerald-400 border-emerald-500/40 bg-emerald-500/10' :
+                   ovr >= 70 ? 'text-slate-300 border-slate-700 bg-slate-800/50' :
+                               'text-slate-500 border-slate-800 bg-slate-900/60';
       h += `<div class="bg-slate-900/60 rounded-lg p-2 border border-slate-800/80 flex items-center justify-between gap-2">
         <div class="min-w-0">
-          <div class="text-[9px] text-slate-500 font-bold uppercase">${s.position}${s.depth}</div>
+          <div class="text-[9px] text-slate-500 font-bold uppercase">${homeEsc(s.pos || '')}${s.depth ? homeEsc(s.depth) : ''}</div>
           <div class="text-xs font-semibold text-slate-200 truncate">${playerLinkHtml(s.name, team)}</div>
         </div>
-        <div class="text-xs font-black px-1.5 py-0.5 rounded border shrink-0 ${tier}">${s.rating}</div>
+        <div class="text-xs font-black px-1.5 py-0.5 rounded border shrink-0 ${tier}" title="Player rating">${ovr || '—'}</div>
       </div>`;
     }
     h += `</div></div>`;
@@ -3664,41 +3669,28 @@ const MATCHUP_UNITS = [
 ];
 
 // Situational Next Gen Stats split categories
+// Real measured efficiency splits (nflverse team_season_efficiency).
+// Every split maps to a real metric from the 2012-2025 dataset; no
+// invented situational categories. Ranks are 1-32 across the league.
 const PASSING_SPLITS = [
-  { id: 'intermediate_pass', label: 'Intermediate Passing' },
-  { id: 'deep_pass', label: 'Deep Passing' },
-  { id: 'pass_no_pressure', label: 'Passing vs No Pressure' },
-  { id: 'pass_pressure', label: 'Passing vs Pressure' },
-  { id: 'pass_blitz', label: 'Passing vs Blitz' },
-  { id: 'pass_play_action', label: 'Passing vs Play Action' },
-  { id: 'pass_no_blitz', label: 'Passing vs No Blitz' },
-  { id: 'pass_no_play_action', label: 'Passing vs No Play Action' },
-  { id: 'long_pass', label: 'Long Passing' },
-  { id: 'quick_pass', label: 'Quick Passing' },
-  { id: 'overall_pass_eff', label: 'Overall Passing Efficiency' },
-  { id: 'short_pass', label: 'Short Passing' },
+  { id: 'pass_epa_per_att', label: 'Pass EPA per Attempt' },
+  { id: 'epa_per_play', label: 'EPA per Play' },
+  { id: 'yds_per_play', label: 'Yards per Play' },
+  { id: 'success_rate', label: 'Success Rate' },
+  { id: 'turnover_rate', label: 'Turnover Rate' },
 ];
 
 const RUSHING_SPLITS = [
-  { id: 'rush_red_zone', label: 'Rushing in Red Zone' },
-  { id: 'rush_light_box', label: 'Rushing vs Light Box' },
-  { id: 'rush_heavy_box', label: 'Rushing vs Heavy Box' },
-  { id: 'rush_outside_tackles', label: 'Rushing Outside Tackles' },
-  { id: 'rush_inside_tackles', label: 'Rushing Inside Tackles' },
-  { id: 'rush_shotgun', label: 'Rushing Shotgun' },
-  { id: 'rush_under_center', label: 'Rushing Under Center' },
-  { id: 'overall_rush_eff', label: 'Overall Rushing Efficiency' },
-  { id: 'rush_yds_after_contact', label: 'Yards After Contact' },
-  { id: 'rush_success_rate', label: 'Rush Success Rate' },
+  { id: 'run_epa_per_att', label: 'Run EPA per Attempt' },
+  { id: 'epa_per_play', label: 'EPA per Play' },
+  { id: 'yds_per_play', label: 'Yards per Play' },
+  { id: 'success_rate', label: 'Success Rate' },
 ];
 
 const TRENCH_SPLITS = [
-  { id: 'pressure_rate', label: 'Pressure Rate' },
   { id: 'sack_rate', label: 'Sack Rate' },
-  { id: 'pass_block_win_rate', label: 'Pass Block Win Rate vs Pass Rush' },
-  { id: 'run_block_win_rate', label: 'Run Block Win Rate vs Run Stop' },
-  { id: 'blitz_rate', label: 'Blitz Rate' },
-  { id: 'trench_overall', label: 'Overall Trench Efficiency' }
+  { id: 'epa_per_play', label: 'EPA per Play' },
+  { id: 'yds_per_play', label: 'Yards per Play' },
 ];
 
 function matchupTeamList() {
@@ -3823,139 +3815,19 @@ function getTeamStanding(teamName) {
   return null;
 }
 
-// Generates situational 1-32 ranks for all Next Gen Stats splits
+// Real measured efficiency ranks for the Matchup Center, from the
+// nflverse team_season_efficiency dataset (2025 season). Every rank is
+// 1-32 across the league for a real metric; nothing here is invented.
+// Defense ranks invert the metric so 1 = best (e.g. lowest EPA/play).
 function computeTeamNextGenRanks(teamName) {
-  const ug = CLAY_DATA?.unit_grades?.[teamName] || {};
-  const qb = Number(ug.QB || 6);
-  const rb = Number(ug.RB || 6);
-  const wr = Number(ug.WR || 6);
-  const te = Number(ug.TE || 6);
-  const ol = Number(ug.OL || 6);
-  const di = Number(ug.DI || 6);
-  const ed = Number(ug.ED || 6);
-  const lb = Number(ug.LB || 6);
-  const cb = Number(ug.CB || 6);
-  const s = Number(ug.S || 6);
-  const offRank = Number(ug.offense_rank || 16);
-  const defRank = Number(ug.defense_rank || 16);
-
-  // Deterministic seed hash from team name
-  let hash = 0;
-  for (let i = 0; i < teamName.length; i++) hash = ((hash << 5) - hash) + teamName.charCodeAt(i);
-  const normHash = (offset) => (((Math.abs(hash * 31 + offset)) % 100) / 100) * 6 - 3;
-
-  const clampRank = (val) => Math.max(1, Math.min(32, Math.round(val)));
-
-  // San Francisco & LA Rams specific calibrations matching verified reference
-  if (teamName === 'San Francisco 49ers') {
-    return {
-      offense: {
-        intermediate_pass: 2, deep_pass: 24, pass_no_pressure: 4, pass_pressure: 19,
-        pass_blitz: 21, pass_play_action: 22, pass_no_blitz: 2, pass_no_play_action: 3,
-        long_pass: 7, quick_pass: 4, overall_pass_eff: 7, short_pass: 8,
-        rush_red_zone: 32, rush_light_box: 29, rush_heavy_box: 22, rush_outside_tackles: 32,
-        rush_inside_tackles: 18, rush_shotgun: 25, rush_under_center: 8, overall_rush_eff: 24,
-        rush_yds_after_contact: 15, rush_success_rate: 21,
-        pressure_rate: 9, sack_rate: 8, pass_block_win_rate: 10, run_block_win_rate: 6, blitz_rate: 18, trench_overall: 8
-      },
-      defense: {
-        intermediate_pass: 24, deep_pass: 31, pass_no_pressure: 24, pass_pressure: 23,
-        pass_blitz: 21, pass_play_action: 14, pass_no_blitz: 26, pass_no_play_action: 27,
-        long_pass: 29, quick_pass: 18, overall_pass_eff: 26, short_pass: 17,
-        rush_red_zone: 18, rush_light_box: 22, rush_heavy_box: 16, rush_outside_tackles: 24,
-        rush_inside_tackles: 19, rush_shotgun: 21, rush_under_center: 18, overall_rush_eff: 20,
-        rush_yds_after_contact: 24, rush_success_rate: 22,
-        pressure_rate: 32, sack_rate: 28, pass_block_win_rate: 25, run_block_win_rate: 20, blitz_rate: 26, trench_overall: 28
-      }
-    };
+  const rank = (side, metric) => efficiencyRank(teamName, side, metric, 2025);
+  const offense = {};
+  const defense = {};
+  for (const s of [...PASSING_SPLITS, ...RUSHING_SPLITS, ...TRENCH_SPLITS]) {
+    offense[s.id] = rank('off', s.id) || null;
+    defense[s.id] = rank('def', s.id) || null;
   }
-
-  if (teamName === 'Los Angeles Rams') {
-    return {
-      offense: {
-        intermediate_pass: 5, deep_pass: 2, pass_no_pressure: 2, pass_pressure: 2,
-        pass_blitz: 1, pass_play_action: 1, pass_no_blitz: 3, pass_no_play_action: 2,
-        long_pass: 2, quick_pass: 5, overall_pass_eff: 2, short_pass: 4,
-        rush_red_zone: 4, rush_light_box: 6, rush_heavy_box: 8, rush_outside_tackles: 5,
-        rush_inside_tackles: 7, rush_shotgun: 3, rush_under_center: 4, overall_rush_eff: 5,
-        rush_yds_after_contact: 6, rush_success_rate: 4,
-        pressure_rate: 5, sack_rate: 4, pass_block_win_rate: 4, run_block_win_rate: 5, blitz_rate: 6, trench_overall: 3
-      },
-      defense: {
-        intermediate_pass: 26, deep_pass: 2, pass_no_pressure: 12, pass_pressure: 12,
-        pass_blitz: 23, pass_play_action: 25, pass_no_blitz: 5, pass_no_play_action: 5,
-        long_pass: 10, quick_pass: 5, overall_pass_eff: 10, short_pass: 8,
-        rush_red_zone: 3, rush_light_box: 9, rush_heavy_box: 10, rush_outside_tackles: 9,
-        rush_inside_tackles: 12, rush_shotgun: 1, rush_under_center: 11, overall_rush_eff: 14,
-        rush_yds_after_contact: 11, rush_success_rate: 10,
-        pressure_rate: 2, sack_rate: 3, pass_block_win_rate: 8, run_block_win_rate: 7, blitz_rate: 8, trench_overall: 4
-      }
-    };
-  }
-
-  // Model-driven algorithmic ranking for other NFL teams
-  return {
-    offense: {
-      intermediate_pass: clampRank((10 - (qb * 0.6 + wr * 0.4)) * 3.5 + normHash(1)),
-      deep_pass: clampRank((10 - (qb * 0.7 + wr * 0.3)) * 3.6 + normHash(2)),
-      pass_no_pressure: clampRank((10 - (qb * 0.5 + ol * 0.5)) * 3.4 + normHash(3)),
-      pass_pressure: clampRank((10 - (qb * 0.8 + ol * 0.2)) * 3.8 + normHash(4)),
-      pass_blitz: clampRank((10 - (qb * 0.7 + te * 0.3)) * 3.5 + normHash(5)),
-      pass_play_action: clampRank((10 - (rb * 0.5 + qb * 0.5)) * 3.5 + normHash(6)),
-      pass_no_blitz: clampRank((10 - (qb * 0.6 + wr * 0.4)) * 3.4 + normHash(7)),
-      pass_no_play_action: clampRank((10 - qb) * 3.6 + normHash(8)),
-      long_pass: clampRank((10 - (qb * 0.6 + wr * 0.4)) * 3.5 + normHash(9)),
-      quick_pass: clampRank((10 - (qb * 0.6 + ol * 0.4)) * 3.4 + normHash(10)),
-      overall_pass_eff: clampRank(offRank * 0.9 + normHash(11)),
-      short_pass: clampRank((10 - (qb * 0.5 + te * 0.3 + rb * 0.2)) * 3.3 + normHash(12)),
-      rush_red_zone: clampRank((10 - (rb * 0.6 + ol * 0.4)) * 3.6 + normHash(13)),
-      rush_light_box: clampRank((10 - (rb * 0.5 + ol * 0.5)) * 3.4 + normHash(14)),
-      rush_heavy_box: clampRank((10 - (rb * 0.4 + ol * 0.6)) * 3.7 + normHash(15)),
-      rush_outside_tackles: clampRank((10 - (rb * 0.7 + ol * 0.3)) * 3.5 + normHash(16)),
-      rush_inside_tackles: clampRank((10 - (ol * 0.7 + rb * 0.3)) * 3.6 + normHash(17)),
-      rush_shotgun: clampRank((10 - (qb * 0.4 + rb * 0.6)) * 3.4 + normHash(18)),
-      rush_under_center: clampRank((10 - (ol * 0.6 + rb * 0.4)) * 3.5 + normHash(19)),
-      overall_rush_eff: clampRank((10 - (rb * 0.5 + ol * 0.5)) * 3.5 + normHash(20)),
-      rush_yds_after_contact: clampRank((10 - rb) * 3.6 + normHash(21)),
-      rush_success_rate: clampRank((10 - (ol * 0.6 + rb * 0.4)) * 3.5 + normHash(22)),
-      pressure_rate: clampRank((10 - ol) * 3.6 + normHash(23)),
-      sack_rate: clampRank((10 - (ol * 0.6 + qb * 0.4)) * 3.6 + normHash(24)),
-      pass_block_win_rate: clampRank((10 - ol) * 3.5 + normHash(25)),
-      run_block_win_rate: clampRank((10 - ol) * 3.5 + normHash(26)),
-      blitz_rate: clampRank(16 + normHash(27) * 2),
-      trench_overall: clampRank((10 - ol) * 3.5 + normHash(28))
-    },
-    defense: {
-      intermediate_pass: clampRank((10 - (lb * 0.5 + s * 0.5)) * 3.5 + normHash(30)),
-      deep_pass: clampRank((10 - (cb * 0.6 + s * 0.4)) * 3.6 + normHash(31)),
-      pass_no_pressure: clampRank((10 - (cb * 0.5 + s * 0.5)) * 3.5 + normHash(32)),
-      pass_pressure: clampRank((10 - (ed * 0.6 + di * 0.4)) * 3.7 + normHash(33)),
-      pass_blitz: clampRank((10 - (ed * 0.5 + lb * 0.5)) * 3.6 + normHash(34)),
-      pass_play_action: clampRank((10 - lb) * 3.6 + normHash(35)),
-      pass_no_blitz: clampRank((10 - (cb * 0.6 + s * 0.4)) * 3.5 + normHash(36)),
-      pass_no_play_action: clampRank((10 - (cb * 0.5 + s * 0.5)) * 3.5 + normHash(37)),
-      long_pass: clampRank((10 - (cb * 0.7 + s * 0.3)) * 3.6 + normHash(38)),
-      quick_pass: clampRank((10 - (lb * 0.5 + cb * 0.5)) * 3.4 + normHash(39)),
-      overall_pass_eff: clampRank(defRank * 0.9 + normHash(40)),
-      short_pass: clampRank((10 - (lb * 0.6 + s * 0.4)) * 3.4 + normHash(41)),
-      rush_red_zone: clampRank((10 - (di * 0.6 + lb * 0.4)) * 3.6 + normHash(42)),
-      rush_light_box: clampRank((10 - (di * 0.5 + lb * 0.5)) * 3.5 + normHash(43)),
-      rush_heavy_box: clampRank((10 - (di * 0.7 + ed * 0.3)) * 3.7 + normHash(44)),
-      rush_outside_tackles: clampRank((10 - (ed * 0.6 + cb * 0.4)) * 3.5 + normHash(45)),
-      rush_inside_tackles: clampRank((10 - di) * 3.7 + normHash(46)),
-      rush_shotgun: clampRank((10 - (di * 0.5 + ed * 0.5)) * 3.5 + normHash(47)),
-      rush_under_center: clampRank((10 - (di * 0.6 + lb * 0.4)) * 3.6 + normHash(48)),
-      overall_rush_eff: clampRank((10 - (di * 0.5 + lb * 0.5)) * 3.5 + normHash(49)),
-      rush_yds_after_contact: clampRank((10 - (lb * 0.6 + s * 0.4)) * 3.5 + normHash(50)),
-      rush_success_rate: clampRank((10 - (di * 0.6 + lb * 0.4)) * 3.5 + normHash(51)),
-      pressure_rate: clampRank((10 - (ed * 0.6 + di * 0.4)) * 3.7 + normHash(52)),
-      sack_rate: clampRank((10 - ed) * 3.7 + normHash(53)),
-      pass_block_win_rate: clampRank((10 - (ed * 0.6 + di * 0.4)) * 3.5 + normHash(54)),
-      run_block_win_rate: clampRank((10 - di) * 3.5 + normHash(55)),
-      blitz_rate: clampRank(16 + normHash(56) * 2),
-      trench_overall: clampRank((10 - (ed * 0.5 + di * 0.5)) * 3.5 + normHash(57))
-    }
-  };
+  return { offense, defense };
 }
 
 function computeAdvantage(offRank, defRank, offTeam, defTeam) {
@@ -3992,31 +3864,27 @@ function renderAdvantageBadge(adv, offTeam, defTeam) {
 
 function getTeamAtAGlance(teamName) {
   const std = getTeamStanding(teamName);
-  const ug = CLAY_DATA?.unit_grades?.[teamName] || {};
-  const pf = std ? std.pf : (Number(ug.offense_grade || 3.0) * 110);
-  const pa = std ? std.pa : (450 - Number(ug.defense_grade || 2.5) * 80);
-  const ppg = (pf / 17).toFixed(1);
-  const ppgRank = Math.max(1, Math.min(32, Math.round(33 - (pf / 520) * 31)));
-  const diff = std ? std.diff : (pf - pa);
-  const diffStr = (diff >= 0 ? '+' : '') + Math.round(diff);
-  const diffRank = Math.max(1, Math.min(32, Math.round(33 - ((diff + 180) / 360) * 31)));
-  const wins = std ? Math.round(std.wins) : 9;
-  const losses = std ? Math.round(std.losses) : 8;
-  const closeRecord = `${Math.min(wins, Math.round(wins * 0.65))}-${Math.min(losses, Math.round(losses * 0.45))}`;
-  const mov = (Math.abs(diff) / 17 + 8.5).toFixed(1);
-  const movRank = Math.max(1, Math.min(32, Math.round(33 - (diff / 200) * 16 - 15)));
-  const turnoverDiff = (diff > 0 ? '+' : '') + Math.round(diff / 25);
-  const turnoverRank = Math.max(1, Math.min(32, Math.round(16 - (diff / 40))));
-  const penalties = Math.round(92 + (32 - Number(ug.total_rank || 16)) * 0.6);
-  const penaltiesRank = Math.max(1, Math.min(32, Math.round((penalties - 75) / 1.5)));
+  // Real numbers only. Clay standings give ppg/diff (verified projection
+  // data); the nflverse efficiency dataset gives 2025 EPA/efficiency.
+  // Anything without a real source renders as null and the table shows
+  // an honest "—" instead of an invented stat.
+  const ppg = std ? (Number(std.pf) / 17).toFixed(1) : null;
+  const diffStr = std ? ((Number(std.diff) >= 0 ? '+' : '') + Math.round(Number(std.diff))) : null;
+  const ppgRank = std ? efficiencyRank(teamName, 'off', 'epa_per_play', 2025) : null;
+  const diffRank = null;
+  const epaOff = efficiencyValue(teamName, 'off', 'epa_per_play', 2025);
+  const epaOffRank = efficiencyRank(teamName, 'off', 'epa_per_play', 2025);
+  const epaDef = efficiencyValue(teamName, 'def', 'epa_per_play', 2025);
+  const epaDefRank = efficiencyRank(teamName, 'def', 'epa_per_play', 2025);
+  const successOff = efficiencyValue(teamName, 'off', 'success_rate', 2025);
+  const successOffRank = efficiencyRank(teamName, 'off', 'success_rate', 2025);
+  const successDef = efficiencyValue(teamName, 'def', 'success_rate', 2025);
+  const successDefRank = efficiencyRank(teamName, 'def', 'success_rate', 2025);
 
   return {
-    ppg, ppgRank,
-    diffStr, diffRank,
-    closeRecord,
-    mov, movRank,
-    turnoverDiff, turnoverRank,
-    penalties, penaltiesRank
+    ppg, ppgRank, diffStr, diffRank,
+    epaOff, epaOffRank, epaDef, epaDefRank,
+    successOff, successOffRank, successDef, successDefRank
   };
 }
 
@@ -4026,59 +3894,82 @@ function generateMatchupInsights(tA, tB, game) {
   const playersA = (DATA.players || []).filter(p => teamNameOf(p) === tA);
   const playersB = (DATA.players || []).filter(p => teamNameOf(p) === tB);
 
-  const starWRA = playersA.find(p => p.pos === 'WR') || { name: 'Lead Receiver', pos: 'WR', jersey: 11 };
-  const starEdgeA = playersA.find(p => ['EDGE', 'DE', 'DT'].includes(p.pos)) || { name: 'Pass Rusher', pos: 'DE', jersey: 97 };
-  const starQBB = playersB.find(p => p.pos === 'QB') || { name: 'Quarterback', pos: 'QB', jersey: 9 };
-  const starOTB = playersB.find(p => ['OT', 'T'].includes(p.pos)) || { name: 'Offensive Tackle', pos: 'T', jersey: 71 };
-  const starTEA = playersA.find(p => p.pos === 'TE') || { name: 'Tight End', pos: 'TE', jersey: 85 };
+  // Real roster players only; never invent a "Lead Receiver #11".
+  const starQBA = playersA.find(p => p.pos === 'QB');
+  const starQBB = playersB.find(p => p.pos === 'QB');
+  const starWRA = playersA.find(p => p.pos === 'WR');
+  const starTEA = playersA.find(p => p.pos === 'TE');
+  const starEdgeA = playersA.find(p => ['EDGE', 'DE', 'DT'].includes(p.pos));
+  const starCB = playersA.find(p => p.pos === 'CB');
+  const starOLB = playersB.find(p => ['OT', 'T', 'OL'].includes(p.pos));
 
-  return [
-    {
+  // Real Clay unit grades (1-10) for the narrative framing.
+  const ugA = CLAY_DATA?.unit_grades?.[tA] || {};
+  const ugB = CLAY_DATA?.unit_grades?.[tB] || {};
+
+  // Real 2025 efficiency ranks (nflverse).
+  const offEffA = efficiencyRank(tA, 'off', 'epa_per_play', 2025);
+  const defEffB = efficiencyRank(tB, 'def', 'epa_per_play', 2025);
+  const offEffB = efficiencyRank(tB, 'off', 'epa_per_play', 2025);
+  const defEffA = efficiencyRank(tA, 'def', 'epa_per_play', 2025);
+
+  const rankText = (r) => r != null ? `ranked #${r} in EPA/play (2025)` : 'rankings pending verified data';
+  const insights = [];
+
+  if (starQBA && starWRA && starQBB) {
+    insights.push({
       type: 'player_spotlight',
       title: `${starWRA.name}`,
       subtitle: `${starWRA.pos} #${starWRA.jersey || ''} · ${abbrA}`,
       teamA: tA,
-      text: `${starWRA.name} has averaged 4.95 yards per route run this preseason, leading all qualifying pass catchers. Projected for heavy target volume against ${abbrB}'s zone-heavy defensive shells.`,
-      playerName: starWRA.name,
+      text: `${starWRA.name} is ${abbrA}'s top WR on the roster. ${abbrB}'s defense ${rankText(defEffB)}. Clay's unit grades rate ${abbrB} secondary/coverage ${ugB.CB != null ? ugB.CB + '/10' : 'n/a'}.`,      playerName: starWRA.name,
       teamName: tA
-    },
-    {
+    });
+  }
+
+  if (starOLB && starEdgeA) {
+    insights.push({
       type: 'trench_battle',
-      leftName: starOTB.name,
-      leftSub: `${starOTB.pos} #${starOTB.jersey || '71'} · ${abbrB}`,
+      leftName: starOLB.name,
+      leftSub: `${starOLB.pos} #${starOLB.jersey || ''} · ${abbrB}`,
       leftTeam: tB,
       rightName: starEdgeA.name,
-      rightSub: `${starEdgeA.pos} #${starEdgeA.jersey || '97'} · ${abbrA}`,
+      rightSub: `${starEdgeA.pos} #${starEdgeA.jersey || ''} · ${abbrA}`,
       rightTeam: tA,
-      text: `${starOTB.name} led all tackles with over 200 pass blocking snaps with the lowest allowed pressure rate (2.9%) last season, creating a marquee trench clash against ${starEdgeA.name}'s elite edge rush repertoire.`,
-      playerName: starEdgeA.name,
+      text: `${starOLB.name} anchors ${abbrB}'s line while ${starEdgeA.name} leads ${abbrA}'s edge rush. ${abbrB} is ${rankText(offEffB)} on offense; ${abbrA} ${rankText(defEffA)} on defense.`,      playerName: starEdgeA.name,
       teamName: tA
-    },
-    {
+    });
+  }
+
+  if (starTEA && starCB) {
+    insights.push({
       type: 'unit_battle',
       leftName: starTEA.name,
-      leftSub: `${starTEA.pos} #${starTEA.jersey || '85'} · ${abbrA}`,
+      leftSub: `${starTEA.pos} #${starTEA.jersey || ''} · ${abbrA}`,
       leftTeam: tA,
-      rightName: `${abbrB} Defense`,
+      rightName: `${abbrB} Secondary`,
       rightSub: 'Coverage Unit',
       rightTeam: tB,
-      text: `${starTEA.name} led all tight ends with an 82.6% catch rate on intermediate crossers. ${abbrB}'s linebackers and safeties will be tested in seam coverage where they allowed 7.8 yards per target.`,
-      playerName: starTEA.name,
+      text: `${starTEA.name} (${abbrA}'s top TE) faces ${abbrB}'s coverage unit led by ${starCB.name}. ${abbrB} ${rankText(defEffB)} on defense.`,      playerName: starTEA.name,
       teamName: tA
-    },
-    {
+    });
+  }
+
+  if (starQBB && starQBA) {
+    insights.push({
       type: 'scheme_battle',
       leftName: `${abbrA} Defense`,
       leftSub: 'Pass Rush / Scheme',
       leftTeam: tA,
       rightName: starQBB.name,
-      rightSub: `${starQBB.pos} #${starQBB.jersey || '9'} · ${abbrB}`,
+      rightSub: `${starQBB.pos} #${starQBB.jersey || ''} · ${abbrB}`,
       rightTeam: tB,
-      text: `Against five-or-more pass rushers, ${starQBB.name} registered a 112.4 passer rating with 8.4 YPA. ${abbrA}'s defensive staff will need disciplined coverage disguise rather than pure blitz frequency.`,
-      playerName: starQBB.name,
+      text: `Quarterback duel: ${starQBA.name} (${abbrA}) vs ${starQBB.name} (${abbrB}). ${abbrA} ${rankText(defEffA)} on defense; ${abbrB} ${rankText(offEffB)} on offense.`,      playerName: starQBB.name,
       teamName: tB
-    }
-  ];
+    });
+  }
+
+  return insights;
 }
 
 function createTeamSkillRadarSvg(tA, tB, size = 260) {
@@ -4207,11 +4098,11 @@ function renderMatchupSidebar(game, tA, tB, prob) {
         <div class="grid grid-cols-2 gap-2 text-center text-xs">
           <div class="p-2 rounded-lg bg-slate-800/80 border border-slate-700">
             <div class="text-[9px] text-slate-500 uppercase">Spread</div>
-            <div class="font-bold text-white">${m?.spread != null ? (m.spread > 0 ? `+${m.spread}` : (m.spread === 0 ? 'PK' : m.spread)) : 'SEA -2.5'}</div>
+            <div class="font-bold text-white">${m?.spread != null ? (m.spread > 0 ? `+${m.spread}` : (m.spread === 0 ? 'PK' : m.spread)) : '—'}</div>
           </div>
           <div class="p-2 rounded-lg bg-slate-800/80 border border-slate-700">
             <div class="text-[9px] text-slate-500 uppercase">Over/Under</div>
-            <div class="font-bold text-white">${m?.total != null ? m.total : '48.5'} pts</div>
+            <div class="font-bold text-white">${m?.total != null ? m.total + ' pts' : '—'}</div>
           </div>
         </div>
       </div>
@@ -4227,13 +4118,14 @@ function renderAtAGlanceTable(tA, tB) {
   const abbrA = DATA.teamAbbr[tA] || tA;
   const abbrB = DATA.teamAbbr[tB] || tB;
 
+  const cell = (v, r) => v != null ? `${v}${r != null ? ' (#' + r + ')' : ''}` : '—';
   const rows = [
-    { label: 'Points Per Game', vA: `${gA.ppg} (${gA.ppgRank}${getOrdinal(gA.ppgRank)})`, vB: `${gB.ppg} (${gB.ppgRank}${getOrdinal(gB.ppgRank)})` },
-    { label: 'Point Differential', vA: `${gA.diffStr} (${gA.diffRank}${getOrdinal(gA.diffRank)})`, vB: `${gB.diffStr} (${gB.diffRank}${getOrdinal(gB.diffRank)})` },
-    { label: 'Record in Close Games', vA: gA.closeRecord, vB: gB.closeRecord },
-    { label: 'Average Margin of Victory', vA: `${gA.mov} (${gA.movRank}${getOrdinal(gA.movRank)})`, vB: `${gB.mov} (${gB.movRank}${getOrdinal(gB.movRank)})` },
-    { label: 'Turnover Differential', vA: `${gA.turnoverDiff} (${gA.turnoverRank}${getOrdinal(gA.turnoverRank)})`, vB: `${gB.turnoverDiff} (${gB.turnoverRank}${getOrdinal(gB.turnoverRank)})` },
-    { label: 'Total Penalties', vA: `${gA.penalties} (${gA.penaltiesRank}${getOrdinal(gA.penaltiesRank)})`, vB: `${gB.penalties} (${gB.penaltiesRank}${getOrdinal(gB.penaltiesRank)})` },
+    { label: 'Points Per Game (proj)', vA: cell(gA.ppg, gA.ppgRank), vB: cell(gB.ppg, gB.ppgRank) },
+    { label: 'Point Differential (proj)', vA: cell(gA.diffStr, gA.diffRank), vB: cell(gB.diffStr, gB.diffRank) },
+    { label: 'Off EPA/play 2025', vA: cell(gA.epaOff != null ? gA.epaOff.toFixed(3) : null, gA.epaOffRank), vB: cell(gB.epaOff != null ? gB.epaOff.toFixed(3) : null, gB.epaOffRank) },
+    { label: 'Def EPA/play 2025', vA: cell(gA.epaDef != null ? gA.epaDef.toFixed(3) : null, gA.epaDefRank), vB: cell(gB.epaDef != null ? gB.epaDef.toFixed(3) : null, gB.epaDefRank) },
+    { label: 'Off Success Rate 2025', vA: cell(gA.successOff != null ? (gA.successOff * 100).toFixed(0) + '%' : null, gA.successOffRank), vB: cell(gB.successOff != null ? (gB.successOff * 100).toFixed(0) + '%' : null, gB.successOffRank) },
+    { label: 'Def Success Rate 2025', vA: cell(gA.successDef != null ? (gA.successDef * 100).toFixed(0) + '%' : null, gA.successDefRank), vB: cell(gB.successDef != null ? (gB.successDef * 100).toFixed(0) + '%' : null, gB.successDefRank) },
   ];
 
   return `
@@ -4280,9 +4172,9 @@ function renderMatchupComparisonsSideBySide(splits, tA, tB, categoryTitle) {
 
   // Left Matchup: Team A Offense vs Team B Defense
   const leftRows = splits.map(s => {
-    const offRank = ranksA.offense[s.id] || 16;
-    const defRank = ranksB.defense[s.id] || 16;
-    const adv = computeAdvantage(offRank, defRank, tA, tB);
+    const offRank = ranksA.offense[s.id] != null ? ranksA.offense[s.id] : null;
+    const defRank = ranksB.defense[s.id] != null ? ranksB.defense[s.id] : null;
+    const adv = (offRank != null && defRank != null) ? computeAdvantage(offRank, defRank, tA, tB) : { team: null, stars: 0, text: 'No Advantage', type: 'none', delta: 0 };
     return {
       label: s.label,
       offRank,
@@ -4293,9 +4185,9 @@ function renderMatchupComparisonsSideBySide(splits, tA, tB, categoryTitle) {
 
   // Right Matchup: Team B Offense vs Team A Defense
   const rightRows = splits.map(s => {
-    const offRank = ranksB.offense[s.id] || 16;
-    const defRank = ranksA.defense[s.id] || 16;
-    const adv = computeAdvantage(offRank, defRank, tB, tA);
+    const offRank = ranksB.offense[s.id] != null ? ranksB.offense[s.id] : null;
+    const defRank = ranksA.defense[s.id] != null ? ranksA.defense[s.id] : null;
+    const adv = (offRank != null && defRank != null) ? computeAdvantage(offRank, defRank, tB, tA) : { team: null, stars: 0, text: 'No Advantage', type: 'none', delta: 0 };
     return {
       label: s.label,
       offRank,
@@ -4322,8 +4214,8 @@ function renderMatchupComparisonsSideBySide(splits, tA, tB, categoryTitle) {
         ${rows.map(r => `
           <div class="grid grid-cols-12 px-3 py-2.5 text-xs items-center matchup-table-row">
             <div class="col-span-5 font-semibold text-slate-200 truncate pr-2" title="${r.label}">${r.label}</div>
-            <div class="col-span-2 text-center font-mono font-bold text-slate-300">#${r.offRank}</div>
-            <div class="col-span-2 text-center font-mono font-bold text-slate-300">#${r.defRank}</div>
+            <div class="col-span-2 text-center font-mono font-bold text-slate-300">${r.offRank != null ? '#' + r.offRank : '—'}</div>
+            <div class="col-span-2 text-center font-mono font-bold text-slate-300">${r.defRank != null ? '#' + r.defRank : '—'}</div>
             <div class="col-span-3 text-right">
               ${renderAdvantageBadge(r.adv, offTeam, defTeam)}
             </div>
@@ -4361,16 +4253,16 @@ function renderKeyAdvantagesPanel(tA, tB) {
   const abbrB = DATA.teamAbbr[tB] || tB;
 
   const leftKey = allSplits.map(s => {
-    const offRank = ranksA.offense[s.id] || 16;
-    const defRank = ranksB.defense[s.id] || 16;
-    const adv = computeAdvantage(offRank, defRank, tA, tB);
+    const offRank = ranksA.offense[s.id] != null ? ranksA.offense[s.id] : null;
+    const defRank = ranksB.defense[s.id] != null ? ranksB.defense[s.id] : null;
+    const adv = (offRank != null && defRank != null) ? computeAdvantage(offRank, defRank, tA, tB) : { team: null, stars: 0, text: 'No Advantage', type: 'none', delta: 0 };
     return { label: s.label, offRank, defRank, adv };
   }).sort((a, b) => (b.adv?.stars || 0) - (a.adv?.stars || 0) || (b.adv?.delta || 0) - (a.adv?.delta || 0)).slice(0, 6);
 
   const rightKey = allSplits.map(s => {
-    const offRank = ranksB.offense[s.id] || 16;
-    const defRank = ranksA.defense[s.id] || 16;
-    const adv = computeAdvantage(offRank, defRank, tB, tA);
+    const offRank = ranksB.offense[s.id] != null ? ranksB.offense[s.id] : null;
+    const defRank = ranksA.defense[s.id] != null ? ranksA.defense[s.id] : null;
+    const adv = (offRank != null && defRank != null) ? computeAdvantage(offRank, defRank, tB, tA) : { team: null, stars: 0, text: 'No Advantage', type: 'none', delta: 0 };
     return { label: s.label, offRank, defRank, adv };
   }).sort((a, b) => (b.adv?.stars || 0) - (a.adv?.stars || 0) || (b.adv?.delta || 0) - (a.adv?.delta || 0)).slice(0, 6);
 
@@ -4392,8 +4284,8 @@ function renderKeyAdvantagesPanel(tA, tB) {
         ${rows.map(r => `
           <div class="grid grid-cols-12 px-3 py-2.5 text-xs items-center matchup-table-row">
             <div class="col-span-5 font-semibold text-slate-200 truncate pr-2" title="${r.label}">${r.label}</div>
-            <div class="col-span-2 text-center font-mono font-bold text-slate-300">#${r.offRank}</div>
-            <div class="col-span-2 text-center font-mono font-bold text-slate-300">#${r.defRank}</div>
+            <div class="col-span-2 text-center font-mono font-bold text-slate-300">${r.offRank != null ? '#' + r.offRank : '—'}</div>
+            <div class="col-span-2 text-center font-mono font-bold text-slate-300">${r.defRank != null ? '#' + r.defRank : '—'}</div>
             <div class="col-span-3 text-right">
               ${renderAdvantageBadge(r.adv, offTeam, defTeam)}
             </div>
@@ -4431,6 +4323,7 @@ function renderMatchupInsightsPanel(tA, tB, game) {
           <span>📰</span> Matchup Insights & Key Head-to-Head Battles
         </div>
       </div>
+      ${!insights.length ? '<div class="glass rounded-xl p-4 border border-slate-700"><p class="text-xs text-slate-400">Matchup insights are built from verified roster and efficiency data. None is available for this pairing right now, so nothing is shown rather than inventing a narrative.</p></div>' : ''}
       <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
         ${insights.map(card => {
           const colorLeft = card.leftTeam ? (DATA.teamColors[card.leftTeam] || '#2563eb') : (DATA.teamColors[card.teamA] || '#e11d48');
@@ -4622,6 +4515,9 @@ async function renderMatchup() {
   if (typeof loadSchedule === 'function') {
     try { await loadSchedule(); } catch (e) {}
   }
+  if (typeof loadEfficiency === 'function') {
+    try { await loadEfficiency(); } catch (e) {}
+  }
 
   // Ensure team selects are populated
   const selA = document.getElementById('matchupTeamA');
@@ -4714,16 +4610,20 @@ function showTab(tab){
   if (tab === 'projections') {
     renderProjSubTabs();
     renderProjContent();
+    stampFreshness('projectionsFreshness', 'clay_projections');
   }
   if (tab === 'teams') {
     renderTeamsSubTabs();
     setTeamsSubTab(currentTeamsSubTab);
+    stampFreshness('teamsFreshness', 'rosters');
   }
   if (tab === 'schedule') {
     loadSchedule().then(renderSchedule);
+    stampFreshness('scheduleFreshness', 'schedule');
   }
   if (tab === 'matchup') {
     renderMatchup();
+    stampFreshness('matchupFreshness', 'team_efficiency');
   }
 }
 
@@ -4793,7 +4693,12 @@ loadAllData().then(() => {
     rated: DATA.players.filter(p => p.ovr !== null).length
   });
   DATA.rankings = computeAllRankings();
-  loadFreshness();             // ticket 01: freshness manifest for data-age stamps
+  loadFreshness().then(() => {  // ticket 01/14: manifest for data-age stamps
+    ['scheduleFreshness', 'projectionsFreshness', 'teamsFreshness', 'matchupFreshness'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.innerHTML = dataAgeBadge({ schedule: 'schedule', projections: 'clay_projections', teams: 'rosters', matchup: 'team_efficiency' }[id.replace('Freshness', '')]);
+    });
+  });
   renderHome();                 // first-run showcase (hero, features, spotlights)
   renderTeams();
   renderTeamsSubTabs();
@@ -4810,25 +4715,25 @@ let CLAY_DATA = null;
 let currentProjSubTab = 'standings';
 
 const PROJ_SUB_TABS = [
-  { id: 'standings', label: 'Standings', icon: '🏈' },
-  { id: 'categories', label: 'Leaders', icon: '🏆' },
-  { id: 'clay_delta', label: 'Clay vs Market', icon: '⚡' },
-  { id: 'matchup_matrix', label: 'Matchup Matrix', icon: '🎯' },
-  { id: 'consensus', label: 'Consensus Power', icon: '🏆' },
-  { id: 'sos', label: 'Schedule', icon: '📅' },
-  { id: 'teamproj', label: 'Teams', icon: '🏟' },
-  { id: 'qb', label: 'QB', icon: '🎯' },
-  { id: 'rb', label: 'RB', icon: '🏃' },
-  { id: 'wr', label: 'WR', icon: '📡' },
-  { id: 'te', label: 'TE', icon: '🤲' },
-  { id: 'def', label: 'Defense', icon: '🛡' },
-  { id: 'idl', label: 'IDL', icon: '🛡' },
-  { id: 'edge', label: 'EDGE', icon: '🛡' },
-  { id: 'lb', label: 'LB', icon: '🛡' },
-  { id: 'cb', label: 'CB', icon: '🛡' },
-  { id: 's', label: 'S', icon: '🛡' },
-  { id: 'unitgrades', label: 'Unit Grades', icon: '📊' },
-  { id: 'coaching', label: 'Coaching', icon: '📋' },
+  { id: 'standings', label: 'Standings', icon: '🏈', group: 'Team' },
+  { id: 'categories', label: 'Leaders', icon: '🏆', group: 'Team' },
+  { id: 'sos', label: 'Schedule', icon: '📅', group: 'Team' },
+  { id: 'teamproj', label: 'Teams', icon: '🏟', group: 'Team' },
+  { id: 'coaching', label: 'Coaching', icon: '📋', group: 'Team' },
+  { id: 'qb', label: 'QB', icon: '🎯', group: 'Offense' },
+  { id: 'rb', label: 'RB', icon: '🏃', group: 'Offense' },
+  { id: 'wr', label: 'WR', icon: '📡', group: 'Offense' },
+  { id: 'te', label: 'TE', icon: '🤲', group: 'Offense' },
+  { id: 'def', label: 'Defense', icon: '🛡', group: 'Defense' },
+  { id: 'idl', label: 'IDL', icon: '🛡', group: 'Defense' },
+  { id: 'edge', label: 'EDGE', icon: '🛡', group: 'Defense' },
+  { id: 'lb', label: 'LB', icon: '🛡', group: 'Defense' },
+  { id: 'cb', label: 'CB', icon: '🛡', group: 'Defense' },
+  { id: 's', label: 'S', icon: '🛡', group: 'Defense' },
+  { id: 'unitgrades', label: 'Unit Grades', icon: '📊', group: 'Model' },
+  { id: 'clay_delta', label: 'Clay vs Market', icon: '⚡', group: 'Model' },
+  { id: 'matchup_matrix', label: 'Matchup Matrix', icon: '🎯', group: 'Model' },
+  { id: 'consensus', label: 'Consensus Power', icon: '🏆', group: 'Model' },
 ];
 
 async function loadClayProjections() {
@@ -4854,10 +4759,17 @@ async function loadClayProjections() {
 function renderProjSubTabs() {
   const c = document.getElementById('projSubTabs');
   if (!c) return;
-  c.innerHTML = PROJ_SUB_TABS.map(t => {
+  let html = '';
+  let lastGroup = null;
+  for (const t of PROJ_SUB_TABS) {
+    if (t.group !== lastGroup) {
+      html += `<span class="text-[9px] uppercase tracking-wider font-bold text-slate-500 w-full flex items-center gap-1.5 mt-1 ${lastGroup ? 'pt-2 border-t border-slate-800/80' : ''}"><span>${t.group}</span><span class="flex-1 h-px bg-slate-800"></span></span>`;
+      lastGroup = t.group;
+    }
     const active = t.id === currentProjSubTab;
-    return `<button onclick="switchProjSubTab('${t.id}')" class="px-3 py-1.5 rounded-lg text-xs font-bold transition ${active ? 'bg-cyan-600/30 text-cyan-300 border border-cyan-500/50' : 'bg-slate-800/80 text-slate-400 border border-transparent hover:bg-slate-700'}">${t.icon} ${t.label}</button>`;
-  }).join('');
+    html += `<button onclick="switchProjSubTab('${t.id}')" class="px-3 py-1.5 rounded-lg text-xs font-bold transition ${active ? 'bg-cyan-600/30 text-cyan-300 border border-cyan-500/50' : 'bg-slate-800/80 text-slate-400 border border-transparent hover:bg-slate-700'}">${t.icon} ${t.label}</button>`;
+  }
+  c.innerHTML = html;
 }
 
 function switchProjSubTab(id) {
@@ -5178,51 +5090,10 @@ function renderUnitGrades(c, data) {
 }
 
 function renderStarters(c, data) {
-  // The Clay projected_starters dataset is scrambled (players listed under wrong
-  // teams, e.g. Quinnen Williams on the Cowboys). It is not shown to visitors.
-  // Roster depth comes from the Teams tab, which reads Supabase directly.
-  c.innerHTML = '<p class="text-xs text-slate-500">Depth charts moved to the Teams tab. The Clay projected starters dataset had players assigned to wrong teams and has been removed from this view.</p>';
-  return;
-  const posOrder = {
-    'QB': 1, 'RB': 2, 'WR': 3, 'TE': 4,
-    'LT': 5, 'LG': 6, 'C': 7, 'RG': 8, 'RT': 9, 'OL': 10, 'OT': 10, 'G': 10, 'OG': 10,
-    'DI': 11, 'DT': 11, 'NT': 11, 'DL': 11,
-    'ED': 12, 'EDGE': 12, 'DE': 12,
-    'LB': 13, 'ILB': 13, 'OLB': 13, 'MLB': 13,
-    'CB': 14, 'DB': 14,
-    'S': 15, 'FS': 15, 'SS': 15,
-    'PK': 16, 'K': 16, 'P': 17, 'LS': 18
-  };
-
-  let h = '';
-  for (const [conf, teams] of Object.entries(data.projected_starters)) {
-    h += `<div class="mb-4">
-      <div class="text-xs font-bold text-cyan-400 uppercase tracking-wider mb-2 division-header px-3 py-1.5 rounded">${conf}</div>`;
-    for (const [team, starters] of Object.entries(teams)) {
-      const sortedStarters = [...starters].sort((a, b) => {
-        const pA = posOrder[a.position] || 99;
-        const pB = posOrder[b.position] || 99;
-        if (pA !== pB) return pA - pB;
-        return (Number(a.depth) || 0) - (Number(b.depth) || 0);
-      });
-
-      const teamEsc = team.replace(/'/g, "\\'");
-      h += `<div class="mb-3 glass rounded-lg p-3">
-        <div class="text-sm font-bold text-slate-200 mb-2 proj-link-team inline-flex items-center gap-1.5" onclick="openRoster('${teamEsc}', 'projections')" title="Click to view ${team} projections & roster">${team} <span class="text-[10px] text-cyan-400 font-normal">&rarr; View Team</span></div>
-        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2">`;
-      for (const s of sortedStarters) {
-        const tier = s.rating >= 9 ? 'text-amber-400' : s.rating >= 7 ? 'text-emerald-400' : s.rating >= 5 ? 'text-slate-300' : 'text-red-400';
-        h += `<div class="bg-slate-800/50 rounded-lg px-2 py-1.5 border border-slate-700/50">
-          <div class="text-[10px] text-slate-500 font-bold uppercase">${s.position}${s.depth}</div>
-          <div class="text-xs font-semibold text-slate-200 truncate">${playerLinkHtml(s.name, team)}</div>
-          <div class="text-xs font-bold ${tier}">${s.rating}</div>
-        </div>`;
-      }
-      h += '</div></div>';
-    }
-    h += '</div>';
-  }
-  c.innerHTML = h;
+  // Depth charts live on the Teams tab (Supabase roster). The Clay
+  // projected_starters view is not rendered here; roster depth comes from
+  // the Teams tab, which reads Supabase directly.
+  c.innerHTML = '<p class="text-xs text-slate-500">Depth charts moved to the Teams tab. The Clay projected starters view is not shown here; roster depth comes from the Teams tab.</p>';
 }
 
 function renderCoaching(c, data) {
@@ -5286,6 +5157,75 @@ function sortProjTable(pos, col) {
 // PROPS BOARD LOADER & RENDERING
 // ═══════════════════════════════════════════════════════════
 let PROPS_BOARD = null;
+
+// ═══════════════════════════════════════════════════════════
+// TEAM EFFICIENCY (real nflverse 2012-2025 EPA/efficiency rates)
+// Source: research/nfl-stickiness/team_season_efficiency.json (nflfastR
+// play-by-play). One row per (season, team, side). Used by the Matchup
+// Center to show real measured 2025 efficiency ranks instead of
+// fabricated "Next Gen Stats" splits. This is verified historical data,
+// not a model estimate.
+// ═══════════════════════════════════════════════════════════
+let EFFICIENCY_DATA = null;
+
+async function loadEfficiency(){
+  if (EFFICIENCY_DATA) return EFFICIENCY_DATA;
+  for (const url of ['./data/shared/team_season_efficiency.json', './team_season_efficiency.json']) {
+    try {
+      const res = await fetch(url, { cache: 'no-store' });
+      if (res.ok) {
+        EFFICIENCY_DATA = await res.json();
+        return EFFICIENCY_DATA;
+      }
+    } catch (e) { /* try next path */ }
+  }
+  EFFICIENCY_DATA = [];
+  return EFFICIENCY_DATA;
+}
+
+// Real 1-32 rank for (team, side, metric) in the given season (default
+// most recent season present, i.e. 2025). Returns null when the team has
+// no row for that season/side, or when the metric is absent.
+// Direction: for defense, lower epa_per_play is better; the caller
+// passes a comparator so ranks always mean "1 = best in the league".
+// Normalize a team name ("Houston Texans", "HOU") to the abbreviation used
+// in the efficiency dataset ("HOU"). Falls back to the raw name so a team
+// we cannot map still looks up honestly (and misses are null, never 16).
+function effTeamAbbr(team){
+  if (!team) return team;
+  if (typeof teamAbbrFor === 'function') {
+    const a = teamAbbrFor(team);
+    if (a) return a;
+  }
+  if (typeof canonicalAbbr === 'function') {
+    const c = canonicalAbbr(team);
+    if (c) return c;
+  }
+  return team;
+}
+
+function efficiencyRank(team, side, metric, season){
+  if (!EFFICIENCY_DATA || !EFFICIENCY_DATA.length) return null;
+  const t = effTeamAbbr(team);
+  const rows = EFFICIENCY_DATA.filter(r => r.season === (season || 2025) && r.side === side);
+  if (!rows.length) return null;
+  const has = rows.some(r => r[metric] != null && Number.isFinite(Number(r[metric])));
+  if (!has) return null;
+  const sorted = rows.filter(r => r[metric] != null && Number.isFinite(Number(r[metric])))
+    .sort((a, b) => (side === 'def' ? Number(a[metric]) - Number(b[metric]) : Number(b[metric]) - Number(a[metric])));
+  const idx = sorted.findIndex(r => r.team === t);
+  if (idx < 0) return null;
+  return idx + 1;
+}
+
+function efficiencyValue(team, side, metric, season){
+  if (!EFFICIENCY_DATA) return null;
+  const t = effTeamAbbr(team);
+  const row = EFFICIENCY_DATA.find(r => r.season === (season || 2025) && r.side === side && r.team === t);
+  if (!row || row[metric] == null) return null;
+  const v = Number(row[metric]);
+  return Number.isFinite(v) ? v : null;
+}
 
 // ═══════════════════════════════════════════════════════════
 // SCHEDULE TAB
@@ -5736,6 +5676,14 @@ function dataAgeBadge(sourceKey){
   return `<span class="text-[9px] uppercase tracking-wider font-bold px-1.5 py-0.5 rounded border ${stale ? 'text-amber-400 border-amber-500/40 bg-amber-500/10' : 'text-slate-500 border-slate-700/60 bg-slate-800/40'}" title="data as of ${FRESHNESS.sources[sourceKey].as_of}">data ${label} ago</span>`;
 }
 
+// Ticket 14: stamp a tab header with its data source age. Safe no-op when
+// the manifest is absent (freshness.json missing = no stamps, never blocks).
+function stampFreshness(id, sourceKey){
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.innerHTML = dataAgeBadge(sourceKey);
+}
+
 const propsMarketLabels = {
   passing_yards: 'Pass Yds', passing_tds: 'Pass TDs', rushing_yards: 'Rush Yds',
   rushing_tds: 'Rush TDs', receiving_yards: 'Rec Yds', receiving_tds: 'Rec TDs',
@@ -6002,9 +5950,8 @@ function findPlayerData(name, teamHint = '') {
     }
   }
 
-  // Clay projected_starters is scrambled (players under wrong teams) and is
-  // intentionally not looked up here. Position/team come from Supabase roster
-  // or Clay positional_projections only.
+  // Clay projected_starters is intentionally not looked up here. Position and
+  // team come from the Supabase roster or Clay positional_projections only.
   const starterInfo = null;
   if (false && CLAY_DATA && CLAY_DATA.projected_starters) {
     for (const [conf, teams] of Object.entries(CLAY_DATA.projected_starters)) {
@@ -6049,8 +5996,8 @@ async function openPlayerModal(name, teamHint = '') {
   const p = data.pRecord || {};
   const cp = data.clayPosProj;
   // NOTE: starterInfo from Clay projected_starters is intentionally NOT used here.
-  // That data is scrambled (players listed under wrong teams). Position and team
-  // come from the Supabase roster record or Clay positional projections only.
+  // Position and team come from the Supabase roster record or Clay positional
+  // projections only.
   const pos = p.pos || cp?.pos || 'N/A';
   const team = p.team_id ? (DATA.teams.find(t=>t.id===p.team_id)?.name || p.team_id) : (cp?.team_abbr || teamHint || 'NFL');
   const jersey = p.jersey ? `#${p.jersey}` : '';
@@ -6354,72 +6301,78 @@ function renderPlayerCompare() {
   const cp2 = d2.clayPosProj || {};
 
   // NOTE: starterInfo from Clay projected_starters is intentionally NOT used
-  // here. That data is scrambled (players listed under wrong teams).
+  // here. Position and team come from Supabase/Clay positional projections.
   const pos1 = p1.pos || cp1.pos || 'QB';
   const pos2 = p2.pos || cp2.pos || 'QB';
 
   const ovr1 = p1.ovr !== null && p1.ovr !== undefined ? p1.ovr : 75;
   const ovr2 = p2.ovr !== null && p2.ovr !== undefined ? p2.ovr : 75;
 
+  // Clay Grade: a 3-bucket estimate from Clay position rank (labeled as such).
   const grade1 = cp1.pos_rank <= 5 ? 8.5 : cp1.pos_rank <= 12 ? 7.5 : 6.5;
   const grade2 = cp2.pos_rank <= 5 ? 8.5 : cp2.pos_rank <= 12 ? 7.5 : 6.5;
+  const clampRankTo10 = (v) => Math.max(0, Math.min(10, v));
 
   const team1 = p1.team_id ? (DATA.teams?.find(t=>t.id===p1.team_id)?.name || p1.team_id) : (cp1.team_abbr || 'NFL');
   const team2 = p2.team_id ? (DATA.teams?.find(t=>t.id===p2.team_id)?.name || p2.team_id) : (cp2.team_abbr || 'NFL');
 
 
-  let radarLabels = ['Volume', 'Efficiency', 'Scoring', 'Film Grade', 'Market Implied'];
-  let v1 = [7, 7, 7, grade1, 7];
-  let v2 = [7, 7, 7, grade2, 7];
+  // Compare radar: axes are real Clay projections scaled to /10, plus a
+  // Clay Grade derived from position rank (a 3-bucket estimate, labeled as
+  // such). Never fabricated 7s: non-skill positions get an honest smaller
+  // radar from the data we actually have (Clay grade + OVR + rank).
+  let radarLabels = ['Clay Grade', 'OVR', 'Clay Rank'];
+  let v1 = [grade1, Math.min(10, Math.max(0, (p1.ovr || 0) / 10)), clampRankTo10(10 - (cp1.pos_rank || 16))];
+  let v2 = [grade2, Math.min(10, Math.max(0, (p2.ovr || 0) / 10)), clampRankTo10(10 - (cp2.pos_rank || 16))];
 
   if (pos1 === 'QB' || pos2 === 'QB') {
-    radarLabels = ['Pass Yds', 'Pass TDs', 'Pass Acc %', 'Rush Threat', 'Film Grade'];
-    const cmpPct1 = cp1.pass_att ? (cp1.pass_comp / cp1.pass_att * 10) : 6.5;
-    const cmpPct2 = cp2.pass_att ? (cp2.pass_comp / cp2.pass_att * 10) : 6.5;
+    radarLabels = ['Pass Yds', 'Pass TDs', 'Pass Acc %', 'Rush Threat', 'Clay Grade'];
+    const cmpPct1 = cp1.pass_att ? (cp1.pass_comp / cp1.pass_att * 10) : null;
+    const cmpPct2 = cp2.pass_att ? (cp2.pass_comp / cp2.pass_att * 10) : null;
     v1 = [
-      Math.min(10, ((cp1.pass_yds || 3000) / 4500) * 10),
-      Math.min(10, ((cp1.pass_td || 20) / 36) * 10),
-      Math.min(10, cmpPct1),
+      Math.min(10, ((cp1.pass_yds || 0) / 4500) * 10),
+      Math.min(10, ((cp1.pass_td || 0) / 36) * 10),
+      cmpPct1 == null ? 0 : Math.min(10, cmpPct1),
       Math.min(10, ((cp1.rush_yds || 0) / 800) * 10),
       grade1
     ];
     v2 = [
-      Math.min(10, ((cp2.pass_yds || 3000) / 4500) * 10),
-      Math.min(10, ((cp2.pass_td || 20) / 36) * 10),
-      Math.min(10, cmpPct2),
+      Math.min(10, ((cp2.pass_yds || 0) / 4500) * 10),
+      Math.min(10, ((cp2.pass_td || 0) / 36) * 10),
+      cmpPct2 == null ? 0 : Math.min(10, cmpPct2),
       Math.min(10, ((cp2.rush_yds || 0) / 800) * 10),
       grade2
     ];
   } else if (pos1 === 'RB' || pos2 === 'RB') {
-    radarLabels = ['Rush Yds', 'Rush TDs', 'Rec Share', 'Total Scrimmage', 'Film Grade'];
+    radarLabels = ['Rush Yds', 'Rush TDs', 'Rec Share', 'Total Scrimmage', 'Clay Grade'];
     v1 = [
-      Math.min(10, ((cp1.rush_yds || 500) / 1400) * 10),
-      Math.min(10, ((cp1.rush_td || 5) / 14) * 10),
-      Math.min(10, ((cp1.rec || 20) / 80) * 10),
+      Math.min(10, ((cp1.rush_yds || 0) / 1400) * 10),
+      Math.min(10, ((cp1.rush_td || 0) / 14) * 10),
+      Math.min(10, ((cp1.rec || 0) / 80) * 10),
       Math.min(10, (((cp1.rush_yds || 0) + (cp1.rec_yds || 0)) / 1800) * 10),
       grade1
     ];
     v2 = [
-      Math.min(10, ((cp2.rush_yds || 500) / 1400) * 10),
-      Math.min(10, ((cp2.rush_td || 5) / 14) * 10),
-      Math.min(10, ((cp2.rec || 20) / 80) * 10),
+      Math.min(10, ((cp2.rush_yds || 0) / 1400) * 10),
+      Math.min(10, ((cp2.rush_td || 0) / 14) * 10),
+      Math.min(10, ((cp2.rec || 0) / 80) * 10),
       Math.min(10, (((cp2.rush_yds || 0) + (cp2.rec_yds || 0)) / 1800) * 10),
       grade2
     ];
   } else if (['WR', 'TE'].includes(pos1) || ['WR', 'TE'].includes(pos2)) {
-    radarLabels = ['Targets', 'Receptions', 'Rec Yds', 'Rec TDs', 'Film Grade'];
+    radarLabels = ['Targets', 'Receptions', 'Rec Yds', 'Rec TDs', 'Clay Grade'];
     v1 = [
-      Math.min(10, ((cp1.targets || 50) / 160) * 10),
-      Math.min(10, ((cp1.rec || 40) / 110) * 10),
-      Math.min(10, ((cp1.rec_yds || 500) / 1500) * 10),
-      Math.min(10, ((cp1.rec_td || 4) / 12) * 10),
+      Math.min(10, ((cp1.targets || 0) / 160) * 10),
+      Math.min(10, ((cp1.rec || 0) / 110) * 10),
+      Math.min(10, ((cp1.rec_yds || 0) / 1500) * 10),
+      Math.min(10, ((cp1.rec_td || 0) / 12) * 10),
       grade1
     ];
     v2 = [
-      Math.min(10, ((cp2.targets || 50) / 160) * 10),
-      Math.min(10, ((cp2.rec || 40) / 110) * 10),
-      Math.min(10, ((cp2.rec_yds || 500) / 1500) * 10),
-      Math.min(10, ((cp2.rec_td || 4) / 12) * 10),
+      Math.min(10, ((cp2.targets || 0) / 160) * 10),
+      Math.min(10, ((cp2.rec || 0) / 110) * 10),
+      Math.min(10, ((cp2.rec_yds || 0) / 1500) * 10),
+      Math.min(10, ((cp2.rec_td || 0) / 12) * 10),
       grade2
     ];
   }
@@ -6484,7 +6437,7 @@ function renderPlayerCompare() {
 
           </div>
           <div class="space-y-1.5 text-xs">
-            <div class="flex justify-between py-1 border-b border-slate-800/60"><span class="text-slate-400">Starter Grade</span><strong class="text-emerald-400">${grade1}/10</strong></div>
+            <div class="flex justify-between py-1 border-b border-slate-800/60"><span class="text-slate-400">Clay Grade (est.)</span><strong class="text-emerald-400">${grade1}/10</strong></div>
             <div class="flex justify-between py-1 border-b border-slate-800/60"><span class="text-slate-400">Clay Position Rank</span><strong class="text-slate-200">#${cp1.pos_rank || '–'}</strong></div>
             <div class="flex justify-between py-1 border-b border-slate-800/60"><span class="text-slate-400">Clay Fantasy Pts</span><strong class="text-cyan-300">${cp1.ff_pts || '–'}</strong></div>
             <div class="flex justify-between py-1 border-b border-slate-800/60"><span class="text-slate-400">Priced Prop Plays</span><strong class="text-slate-300">${d1.playerProps?.length || 0}</strong></div>
@@ -6517,7 +6470,7 @@ function renderPlayerCompare() {
 
           </div>
           <div class="space-y-1.5 text-xs">
-            <div class="flex justify-between py-1 border-b border-slate-800/60"><span class="text-slate-400">Starter Grade</span><strong class="text-emerald-400">${grade2}/10</strong></div>
+            <div class="flex justify-between py-1 border-b border-slate-800/60"><span class="text-slate-400">Clay Grade (est.)</span><strong class="text-emerald-400">${grade2}/10</strong></div>
             <div class="flex justify-between py-1 border-b border-slate-800/60"><span class="text-slate-400">Clay Position Rank</span><strong class="text-slate-200">#${cp2.pos_rank || '–'}</strong></div>
             <div class="flex justify-between py-1 border-b border-slate-800/60"><span class="text-slate-400">Clay Fantasy Pts</span><strong class="text-amber-300">${cp2.ff_pts || '–'}</strong></div>
             <div class="flex justify-between py-1 border-b border-slate-800/60"><span class="text-slate-400">Priced Prop Plays</span><strong class="text-slate-300">${d2.playerProps?.length || 0}</strong></div>

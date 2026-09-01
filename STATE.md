@@ -4,6 +4,103 @@
 - live: https://nfldashboard.pages.dev/ (Cloudflare Pages, auto-deploys on push to main)
 - repo: https://github.com/shyam4902/nfldashboard · single-file app in `index.html` + Supabase + static JSON
 
+## Docs 2026-09-01 — source-of-truth rule + change-triggered refresh ticket (planning)
+- **Data source of truth rule added to all agent guidance**: root
+  `AGENTS.md`/`CLAUDE.md`, `docs/agents/repo-map.md` (Cross-project rules),
+  `nfldashboard/AGENTS.md`/`CLAUDE.md`, and `fantasyfootball/AGENTS.md`/
+  `CLAUDE.md`. Rule: the project's data (Supabase, `data/shared/`, exports) is
+  authoritative for player-team assignments and rosters; never "correct" it
+  from model training knowledge, which is always outdated. Example cited:
+  Quinnen Williams on the Cowboys and Justin Fields on the Chiefs are correct
+  in this project's 2026 data. If data seems wrong, check project sources or
+  ask the user before touching it.
+- **Launch ticket 15 filed** — `change-triggered-data-refresh`
+  (`.scratch/launch/issues/15-change-triggered-data-refresh.md`): a source
+  watch (`source-watch.json`) that polls upstream URLs (nflverse
+  rosters/transactions, Sleeper NFL state, Kalshi/Polymarket markets,
+  file-based artifacts), detects change by hash/timestamp, and triggers the
+  existing daily-pipeline/rostersync within ~24h — so a trade appears in the
+  app without waiting for the daily clock. Runtime (Go vs Node) left open;
+  complements ticket 08 (stale → alert; 15 is change → refresh early).
+  Added to `.scratch/launch/map.md` and the repo-map's scheduled-jobs
+  section. NOT built yet.
+- This session also logged the app-wide fabricated-numbers audit and the
+  roster "scrambling" misdiagnosis correction below.
+
+## Shipped 2026-09-01 — app-wide fabricated-numbers audit (follow-on to ticket 14)
+- **Teams depth panel now shows the Supabase roster.** The team projections
+  panel rendered a Clay `projected_starters` view; it now renders a
+  **Roster Depth** grid from the Supabase roster (the runtime source of
+  truth): grouped by position, sorted by depth, OVR badge. The unused
+  `renderStarters` renderer in Projections was trimmed to an honest "depth
+  charts live on the Teams tab" message.
+- **Matchup hero banner market fallbacks removed.** Missing spread/total
+  used to render invented "SEA -2.5" and "48.5 pts"; now honest "—".
+- **Compare modal radar de-fabricated.** "Film Grade" renamed to "Clay
+  Grade" (it was a 3-bucket estimate from Clay pos_rank, not film).
+  Non-skill positions (DEF etc.) used to draw a radar of fabricated 7s;
+  now they draw a real 3-axis radar (Clay Grade / OVR / Clay Rank). Skill
+  positions use real Clay projection values scaled to /10; missing
+  projection values render 0 rather than invented defaults (3000 yds, 20
+  TDs, etc.).
+- **Curated transaction overlay noted.** `applySummer2026Updates` is a
+  hand-entered offseason-move list (13 additions, documented); it is
+  curated real moves, not fabricated stats. Consider labeling it as
+  "curated" in the UI later.
+- Smoke test extended: asserts the Teams depth panel shows the Roster
+  Depth view. PASSED, zero page errors.
+
+## Correction 2026-09-01 — roster "scrambling" was a misdiagnosis (user)
+- Earlier entries in this file claimed Clay `projected_starters` and the
+  roster seed were "scrambled" because Quinnen Williams appeared on the
+  Cowboys, Kenny Clark on the Cowboys, and Justin Fields on the Chiefs.
+  **Those moves are correct.** Quinnen Williams is on the Cowboys, Kenny
+  Clark went Packers→Cowboys, and Justin Fields went Jets→Chiefs in this
+  project's 2026 data. The "scramble" claim came from agent training-data
+  priors (pre-2026 rosters), not from the project's data.
+- Lesson for agents: **the project's data is the source of truth. Do not
+  "correct" roster/team assignments from model knowledge.** AI training
+  data is always behind; if a player's team differs from what a model
+  "knows", trust the data.
+- The roster files were never actually changed (the correction attempt
+  from this session was reverted). No Supabase changes are needed.
+
+## Shipped 2026-09-01 — Matchup Center trust & polish (launch ticket 14, Option A)
+- **Fabricated matchup numbers removed.** The Matchup Center was generating
+  fake "Next Gen Stats" splits from a hash of the team name (30 of 32 teams;
+  SF/LAR hardcoded), plus invented At-a-Glance columns (close record,
+  margin of victory, turnover diff, penalties) and hardcoded story-card
+  claims ("4.95 yards per route run", "2.9% pressure rate"). All gone.
+- **Real 2025 efficiency data now powers the Matchup Center.**
+  `team_season_efficiency.json` (nflverse/nflfastR, 2012-2025, off/def per
+  team) is loaded by the app and ranked 1-32 per metric. Splits now show
+  real EPA/play, EPA/att, success rate, yds/play, turnover rate, sack
+  rate. Verified: Houston's defense correctly shows #1 in EPA/play (-0.131)
+  — previously shown as ~average by the hash fabricator.
+- **Honest gaps.** Missing verified data renders as "—" (never a fallback
+  rank of 16). At-a-Glance shows real Clay ppg/diff + 2025 EPA/success;
+  invented columns removed. Matchup Insights cards are built from real
+  roster players, Clay unit grades, and real efficiency ranks; no invented
+  story stats. Empty state says nothing is shown rather than inventing a
+  narrative. Intro copy + Matchups 101 modal updated; a "Sources & Method"
+  footnote names each data source.
+- **Freshness trust-bar stamps restored** (regression from ticket 13):
+  "data X ago" badges on Schedule, Projections, Teams, and Matchup headers,
+  from the shared `freshness.json` manifest; stale-amber when >24h.
+- **Home decluttered for the fan:** hero blurb no longer promises "prop
+  market value reads"; "6 Sportsbooks" stat card is now "Value Reads"
+  linking to the edge app; the Props feature card is "Value Reads · Edge
+  Analytics" link-out.
+- **Projections sub-tabs grouped** into Team / Offense / Defense / Model
+  sections with divider labels instead of one flat row of 19 pills.
+- **Data plumbing:** `team_season_efficiency.json` added to the dashboard
+  repo, to `data/shared/` (sync script copies it), and stamped in
+  `freshness.json` under `team_efficiency`. Schedule tab already read the
+  shared layer — verified, no change needed.
+- Smoke test extended: asserts real EPA in At-a-Glance, no fabricated
+  columns, Sources & Method note, freshness stamps, projections groups.
+  PASSED with zero page errors.
+
 ## Shipped 2026-09-01 — dashboard consolidation (launch ticket 13)
 - **Props & Value and Win Totals tabs removed from the dashboard.** Both
   now live exclusively in the Edge Analytics app. The dashboard is a
@@ -58,18 +155,22 @@
   prop insight visible. PASSED, zero page errors.
 
 ## Shipped 2026-09-01 — Data accuracy audit (launch ticket 10)
-- **Clay projected_starters scrambled data removed**: The Clay
-  `projected_starters` dataset had players assigned to wrong teams
-  (Quinnen Williams on the Cowboys, Justin Fields on the Chiefs). It was
-  used as a fallback for player position/team/OVR in `findPlayerData()`
-  and rendered directly in a Projections sub-tab. Both are fixed: the
-  fallback is dead-coded, the sub-tab button is removed, and the render
-  function shows an honest "data moved to Teams tab" message.
+  **NOTE (corrected 2026-09-01):** this entry's "scrambled" claim about
+  Quinnen Williams on the Cowboys and Justin Fields on the Chiefs was a
+  misdiagnosis from agent training-data priors. Those assignments are
+  correct in this project's 2026 data. The code changes below (removing
+  the projected_starters fallback/sub-tab) still stand on their own
+  merits — roster depth reads Supabase directly — but they were not a
+  "scramble" fix. See the Correction entry at the top.
+- **Clay projected_starters view removed from Projections**: The Clay
+  `projected_starters` sub-tab and its fallback in `findPlayerData()`
+  were removed; roster depth reads the Supabase roster directly. The
+  render function shows a "depth charts moved to Teams tab" message.
 - **Hardcoded Projections date fixed**: "Updated 8/19/2026" was a
   hardcoded string. Now reads from `CLAY_DATA.metadata.updated` on
   load.
-- **Player modal Starter Rating badge removed**: Sourced from the
-  scrambled projected_starters data. Removed entirely.
+- **Player modal Starter Rating badge removed**: Sourced from the Clay
+  projected_starters view. Removed entirely.
 - **Audit report**: `docs/launch/data-accuracy-audit.md` with error
   rates per panel, findings, and documented decisions.
 - **Schedule, rosters, props, win totals, matchup lab**: all clean.
@@ -202,8 +303,8 @@
   modal. Clay unit-grade matchup strip (QB vs Secondary, OL vs Pass rush,
   RB vs LB, WR vs CB, TE vs S) with +N advantage badges, plus an aggregate
   offense-vs-defense verdict pill. Data: `DATA.players` (team via
-  `DATA.teamById`) + `CLAY_DATA.unit_grades`; clay `projected_starters` JSON
-  is scrambled (Dallas => Quinnen Williams) so unused. Verified headless
+  `DATA.teamById`) + `CLAY_DATA.unit_grades`; clay `projected_starters` is
+  unused for starters (the Teams tab reads Supabase). Verified headless
   Chromium: 11 O + 11 X chips, 5 unit rows, verdict, personnel/front
   re-render, modal deep-link, zero page errors (`props-smoke.mjs` extended).
 

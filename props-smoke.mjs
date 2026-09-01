@@ -61,10 +61,23 @@ console.log('--- schedule win-totals link present:', schedLink > 0);
 const edgeBtn = await page.locator('a[href*="edgeplay-analytics.pages.dev"]').count().catch(() => 0);
 console.log('--- edge analytics links present:', edgeBtn);
 
+// Ticket 14: freshness stamps visible on tab headers.
+let freshnessOk = false;
+await page.locator('button[data-tab="schedule"]').first().click();
+await page.waitForTimeout(800);
+const schedStamp = await page.locator('#scheduleFreshness').textContent().catch(() => '');
+await page.locator('button[data-tab="projections"]').first().click();
+await page.waitForTimeout(800);
+const projStamp = await page.locator('#projectionsFreshness').textContent().catch(() => '');
+const projGroups = await page.locator('#projSubTabs span').filter({ hasText: /Team|Offense|Defense|Model/ }).count().catch(() => 0);
+freshnessOk = /data .* ago/.test(schedStamp) && /data .* ago/.test(projStamp) && projGroups >= 4;
+console.log('--- freshness stamps (schedule/proj):', /data .* ago/.test(schedStamp), /data .* ago/.test(projStamp), '| projections groups:', projGroups);
+
 // Matchup Lab: switch to the tab, assert 11 O + 11 X chips, unit strip rows,
 // verdict pill, and that switching personnel/defensive front re-renders.
 let matchupOk = false;
 let gamePickOk = false;
+let trustOk = false;
 await page.evaluate(() => { try { closePlayerModal(); closeRoster(); } catch (e) {} }).catch(() => {});
 await page.waitForTimeout(300);
 const matchupBtn = page.locator('button[data-tab="matchup"]').first();
@@ -76,11 +89,22 @@ if (await matchupBtn.count()) {
   const sidebarText = await page.locator('#matchupSidebar').textContent().catch(() => '');
   console.log('--- matchup hero banner:', String(heroText).replace(/\s+/g, ' ').slice(0, 70));
 
-  // Test Passing splits subtab
+  // Test Passing splits subtab — real efficiency metrics (5 per side × 2 sides)
   await page.evaluate(() => setMatchupSubTab('passing'));
   await page.waitForTimeout(500);
   const passRows = await page.locator('#matchupMainContent .matchup-table-row').count().catch(() => 0);
   console.log('--- matchup passing split rows:', passRows);
+
+  // Trust bar (ticket 14): At a Glance shows real EPA/success numbers, not
+  // fabricated close-record / penalties. Sources & method footnote present.
+  await page.evaluate(() => setMatchupSubTab('overview'));
+  await page.waitForTimeout(500);
+  const glanceText = await page.locator('#matchupMainContent').textContent().catch(() => '');
+  const hasRealEpa = /EPA\/play 2025/.test(glanceText);
+  const noFakeStats = !/Record in Close Games/.test(glanceText) && !/Total Penalties/.test(glanceText);
+  const sourcesNote = await page.locator('text=Sources & Method').count().catch(() => 0);
+  trustOk = hasRealEpa && noFakeStats && sourcesNote > 0;
+  console.log('--- at-a-glance real EPA:', hasRealEpa, '| no fabricated columns:', noFakeStats, '| sources note:', sourcesNote > 0);
 
   // Switch to Formation Lab subtab
   await page.evaluate(() => setMatchupSubTab('formation'));
@@ -96,7 +120,7 @@ if (await matchupBtn.count()) {
   await page.waitForTimeout(800);
   const offChips2 = await page.locator('.formation-field .fp-o').count().catch(() => -1);
   const defChips2 = await page.locator('.formation-field .fp-x').count().catch(() => -1);
-  matchupOk = heroText.length > 10 && passRows >= 12 && offChips >= 10 && defChips >= 10 && unitRows === 5 && offChips2 === offChips && defChips2 === defChips;
+  matchupOk = heroText.length > 10 && passRows >= 8 && offChips >= 10 && defChips >= 10 && unitRows === 5 && offChips2 === offChips && defChips2 === defChips;
 
   // Game picker: fed from the schedule (272 games across 18 weeks); picking a game re-renders
   const gameOptions = await page.locator('#matchupGame option').count().catch(() => -1);
@@ -126,9 +150,27 @@ if (await matchupBtn.count()) {
     if (String(modalText).length <= 50) matchupOk = false;
   }
 }
+// Ticket 14 audit: Teams depth panel renders the real Supabase roster view
+// ("Roster Depth"), not the removed Clay projected_starters panel.
+let rosterDepthOk = false;
+await page.evaluate(() => { try { closeRoster(); } catch (e) {} }).catch(() => {});
+const rosterCheck = await page.evaluate(async () => {
+  if (typeof openRoster !== 'function') return { skipped: true };
+  await openRoster('Dallas Cowboys', 'projections');
+  await new Promise(r => setTimeout(r, 1200));
+  const txt = document.getElementById('rosterBody')?.textContent || '';
+  return {
+    hasRosterDepth: /Roster Depth/.test(txt),
+    hasOldPanelTitle: /Projected Starters & Clay Ratings/.test(txt)
+  };
+});
+if (!rosterCheck.skipped) {
+  rosterDepthOk = rosterCheck.hasRosterDepth && !rosterCheck.hasOldPanelTitle;
+  console.log('--- roster depth panel: real roster view:', rosterCheck.hasRosterDepth, '| old Clay starters panel gone:', !rosterCheck.hasOldPanelTitle);
+}
 console.log('--- page errors:', errors.length ? errors.slice(0, 5) : 'none');
 
 await browser.close();
 server.close();
-if (errors.length || !matchupOk || !gamePickOk || propsNavBtn !== 0 || wtNavBtn !== 0) { console.log('SMOKE TEST FAILED'); process.exit(1); }
+if (errors.length || !matchupOk || !gamePickOk || !trustOk || !freshnessOk || !rosterDepthOk || propsNavBtn !== 0 || wtNavBtn !== 0) { console.log('SMOKE TEST FAILED'); process.exit(1); }
 console.log('SMOKE TEST PASSED');

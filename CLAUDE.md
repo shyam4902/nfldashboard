@@ -4,6 +4,10 @@ This repo is the static NFL dashboard. It displays the board produced by `fantas
 
 The Edge app link must use `https://edgeplay-analytics.pages.dev`. The custom domain `https://edge.shyamsapps.qzz.io` is not verified for active use. Lovable is historical and is not the current host or source of truth.
 
+## Data source of truth
+
+**The project's data is the source of truth — never "correct" it from model knowledge.** Live teams, players, and transactions come from Supabase through `loadAllData()`; the committed `nfl_rosters_2026.json` is the deploy artifact of that same data. AI training data is always outdated, so roster assignments that differ from what you "know" (e.g. Quinnen Williams on the Cowboys, Justin Fields on the Chiefs) are correct in this project's 2026 data — not scrambling to fix. If data looks wrong, check the transaction feed, sync scripts, or `STATE.md`, or ask the user. Do not silently change roster data from memory.
+
 ## Local facts
 
 - The app is primarily `index.html` and deploys to Cloudflare Pages.
