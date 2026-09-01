@@ -4,6 +4,31 @@
 - live: https://nfldashboard.pages.dev/ (Cloudflare Pages, auto-deploys on push to main)
 - repo: https://github.com/shyam4902/nfldashboard · single-file app in `index.html` + Supabase + static JSON
 
+## Shipped 2026-09-01 — dashboard consolidation (launch ticket 13)
+- **Props & Value and Win Totals tabs removed from the dashboard.** Both
+  now live exclusively in the Edge Analytics app. The dashboard is a
+  team/matchup/schedule hub for the browsing fan; the edge app owns all
+  deep value analysis (props board, recommendations, line movement, model
+  lab, win totals, alerts, parlay).
+- **Nav reduced to 5 tabs:** Home, Schedule, Matchup, Teams, Projections.
+- **Props presence on the dashboard is minimal:** the one-line prop insight
+  under the game cards on Home (now links to the edge app), the Home feature
+  card (opens the edge app), the Home stat card (opens edge app), and the
+  Edge Analytics top-bar button. No filters, no trending strip, no all-odds
+  expander on the dashboard anymore.
+- **Win totals cross-link** added to the Schedule tab, pointing to
+  `edgeplay-analytics.pages.dev/win-totals`.
+- **Command palette** entries for Props and Win Totals now open the edge app
+  in a new tab instead of switching to a removed tab.
+- **Player modal** compare-odds button no longer switches to the removed
+  Props tab; it just toggles the odds comparison inline.
+- `renderPropsBoard()` and `renderWinTotals()` functions removed (~245
+  lines). `loadPropsBoard()` kept because the Home insight line and the
+  player modal still read the board data.
+- Smoke test rewritten: no Props/Win Totals tab assertions; asserts nav
+  buttons are gone, edge cross-links present, Home front door + Matchup Lab
+  still work.
+
 ## Shipped 2026-09-01 — 53-man roster refresh
 - Roster sync from Supabase ran clean: 2517 players fetched, 2523 after
   the summer overlay (13 trade/FA additions). 32 teams, 69-87 players
