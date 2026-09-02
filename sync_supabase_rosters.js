@@ -22,51 +22,11 @@ const headers = {
   Authorization: `Bearer ${SUPABASE_ANON_KEY}`
 };
 
-// Known summer 2026 roster moves that the Supabase DB does NOT yet carry.
-// Mirror of applySummer2026Updates in generate_roster_files.js. When the DB
-// is authoritative for a move, remove it here.
-const PLAYER_UPDATES = [
-  { name: 'Myles Garrett', newTeam: 'Los Angeles Rams', acq: 'trade', pos: 'EDGE', unit: 'defense', ovr: 98, age: 30, jersey: 95 },
-  { name: 'Jared Verse', newTeam: 'Cleveland Browns', acq: 'trade', pos: 'EDGE', unit: 'defense', ovr: 85, age: 25, jersey: 55 },
-  { name: 'A.J. Brown', newTeam: 'New England Patriots', acq: 'trade', pos: 'WR', unit: 'offense', ovr: 92, age: 29, jersey: 11 },
-  { name: 'Stefon Diggs', newTeam: 'Washington Commanders', acq: 'fa', pos: 'WR', unit: 'offense', ovr: 88, age: 32, jersey: 1 },
-  { name: 'Tyler Linderbaum', newTeam: 'Las Vegas Raiders', acq: 'fa', pos: 'C', unit: 'offense', ovr: 89, age: 26, jersey: 64 },
-  { name: 'Malik Willis', newTeam: 'Miami Dolphins', acq: 'fa', pos: 'QB', unit: 'offense', ovr: 71, age: 27, jersey: 7 },
-  { name: 'DJ Reader', newTeam: 'New York Giants', acq: 'fa', pos: 'DT', unit: 'defense', ovr: 84, age: 32, jersey: 98 },
-  { name: 'Dontayvion Wicks', newTeam: 'Philadelphia Eagles', acq: 'trade', pos: 'WR', unit: 'offense', ovr: 78, age: 25, jersey: 13 },
-  { name: 'Ogbonnia Okoronkwo', newTeam: 'San Francisco 49ers', acq: 'fa', pos: 'EDGE', unit: 'defense', ovr: 77, age: 31, jersey: 94 },
-  { name: 'Kristian Wilkerson', newTeam: 'Atlanta Falcons', acq: 'fa', pos: 'WR', unit: 'offense', ovr: 70, age: 29, jersey: 83 },
-  { name: 'Tyrod Taylor', newTeam: 'Green Bay Packers', acq: 'fa', pos: 'QB', unit: 'offense', ovr: 71, age: 37, jersey: 2 },
-  { name: 'Scott Miller', newTeam: 'Chicago Bears', acq: 'fa', pos: 'WR', unit: 'offense', ovr: 72, age: 29, jersey: 10 },
-  { name: 'Irvin Charles', newTeam: 'Seattle Seahawks', acq: 'trade', pos: 'WR', unit: 'offense', ovr: 68, age: 29, jersey: 82 }
-];
-
 function normalizeName(name) {
   if (!name) return "";
   return name.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")
     .replace(/['’.\\-]/g, "").replace(/\b(jr|sr|ii|iii|iv|v)\b/gi, "")
     .replace(/\s+/g, " ").trim();
-}
-
-function applyUpdates(data) {
-  const teamIdByName = Object.fromEntries(data.teams.map(t => [t.name, t.id]));
-  for (const item of PLAYER_UPDATES) {
-    const targetTeamId = teamIdByName[item.newTeam];
-    if (!targetTeamId) continue;
-    let p = data.players.find(x => normalizeName(x.name) === normalizeName(item.name));
-    if (p) {
-      p.team_id = targetTeamId;
-      p.acquisition_type = item.acq;
-      p.unit = item.unit || p.unit;
-    } else {
-      data.players.push({
-        id: `custom-p-${normalizeName(item.name).replace(/\s+/g, '-')}`,
-        name: item.name, pos: item.pos, team_id: targetTeamId, ovr: item.ovr,
-        unit: item.unit, jersey: item.jersey, age: item.age,
-        is_rookie: false, acquisition_type: item.acq
-      });
-    }
-  }
 }
 
 // Madden OVR overlay (same matcher as the app) so ratings stay current.
@@ -155,7 +115,6 @@ async function main() {
   console.log(`  ${players.length} players`);
 
   const data = { teams, players };
-  applyUpdates(data);
 
   const maddenMap = loadMaddenMap();
   const teamById = Object.fromEntries(teams.map(t => [t.id, t]));

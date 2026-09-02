@@ -53,7 +53,7 @@ PDF (82 pages)
 | 63 | Unit Grades | 📊 Unit Grades | 32 teams × 10 position groups (1–10 scale) |
 | 64–73 | Positional Unit Ranks | — (in JSON, used by Teams tab) | Depth charts with grades |
 | 74 | Coaching Staffs | 📋 Coaching | 32 coaching staffs (HC, OC, Playcaller, DC, GM) |
-| 75–82 | Projected Starters | ⭐ Starters | 346 starters across 8 divisions with player ratings |
+| 75–82 | Projected Starters | Retired from dashboard UI | Source PDF extraction remains available in JSON; roster depth is shown in Teams |
 
 ---
 
@@ -120,7 +120,9 @@ Teams sub-tabs: Overview | Moves | Power Index
 Projections sub-tabs:
   🏈 Standings | 🏆 Leaders | 📅 Schedule | 🏟 Teams |
   🎯 QB | 🏃 RB | 📡 WR | 🤲 TE | 🛡 Defense |
-  📊 Unit Grades | ⭐ Starters | 📋 Coaching
+  📊 Unit Grades | 📋 Coaching
+
+The Clay projected-starters panel is retired. Use Teams for current roster depth; the source extraction remains in the JSON artifact.
 ```
 
 ### Draft Capital (team roster modal + team tiles)
@@ -131,7 +133,7 @@ The former Draft tab was removed after the 2026 draft. Each team's roster modal 
 
 `schedule.json` covers all 272 regular-season games (weeks 1-18), built by `scripts/build_full_schedule.py` from nflverse games.csv (Week 1 keeps its hand-enriched TV/city data). The Schedule tab has a week-chip selector defaulting to the current week; market lines are keyed by week and pulled live from nflverse. The home marquee follows the current week.
 
-### Rendering Functions
+### Rendering functions
 
 | Function | Sub-tab | Description |
 |----------|---------|-------------|
@@ -143,14 +145,18 @@ The former Draft tab was removed after the 2026 draft. Each team's roster modal 
 | `renderPosProj()` | QB/RB/WR/TE | Sortable tables with search filtering |
 | `renderDefProj()` | Defense | Sub-tabs for IDL/EDGE/LB/CB/S with stat tables |
 | `renderUnitGrades()` | Unit Grades | Full 32-team table with color-coded grades (≥9 amber, ≥7 green, <5 red) |
-| `renderStarters()` | Starters | Division-by-division starter cards with rating badges |
+| `renderStarters()` | Retired | The dashboard no longer renders Clay projected starters; Teams provides roster depth |
 | `renderCoaching()` | Coaching | Full table with HC, OC, Playcaller, DC, GM |
+
+`renderStarters()` is retained only as a compatibility path that explains the retired view. It does not render Clay projected starters.
 
 ---
 
-## Known Limitations & Issues
+## Known limitations
 
-### Extraction Issues
+The former dashboard verification issues are resolved. The current test suite uses source-backed runtime data, follows the current Teams and Projections UI, and runs from repository-relative paths.
+
+### Extraction issues
 
 1. **Defensive position extraction from team pages** — The defense regex may capture some weekly projection data. This is cosmetic and doesn't affect the positional projections (which are cleaner).
 
@@ -158,13 +164,13 @@ The former Draft tab was removed after the 2026 draft. Each team's roster modal 
 
 3. **Unit Ranks depth charts** — Extracted into `unit_ranks` JSON but displayed indirectly through the Teams tab card view rather than a dedicated sub-tab.
 
-### Dashboard Issues
+### Dashboard notes
 
-1. **The `═` characters in comments** — These are box-drawing characters used in section dividers. They're valid in JavaScript but fail Python's `compile()` check. Not a real issue.
+1. **The `═` characters in comments** are box-drawing characters used in section dividers. They are valid in JavaScript but can fail Python source checks. This is cosmetic and does not affect the dashboard runtime.
 
-2. **Smart quotes** — The original codebase had some smart quotes (U+2018, U+2019) that were replaced with regular quotes. This was necessary for the `normName()` regex to work correctly.
+2. **Projected starters** remain in the Clay extraction JSON, but the dashboard does not render a Clay Starters tab. Current roster depth comes from the Teams flow.
 
-3. **Multi-line single-quoted strings** — The `renderSOS()` function had a multi-line single-quoted string which is invalid JavaScript. Fixed by using string concatenation.
+3. **Missing live data** must render as unavailable. The dashboard must not restore browser-side summer transaction, roster, or cap-space overrides.
 
 ---
 
@@ -199,11 +205,12 @@ All data was verified against the PDF:
 
 - **Top QB:** Josh Allen (BUF) — 369 FF pts ✓
 - **Top RB:** Jahmyr Gibbs (DET) — 365 FF pts ✓
-- **Top WR:** Puka Nacua (LAR) — 356 FF pts ✓
+- **WR example from the Clay projection source:** Puka Nacua (LAR) — 356 FF pts
+  (not a dashboard-wide ranking)
 - **Top TE:** Trey McBride (ARI) — 242 FF pts ✓
 - **#1 SOS:** Detroit Lions ✓
 - **#1 Unit Grade:** Los Angeles Rams (7.1 overall) ✓
 - **Projected wins range:** 3.5 (ARI) to 13.2 (LAR) ✓
 - **Standings:** All 32 teams across 8 divisions ✓
 - **Coaching staffs:** All 32 teams ✓
-- **Starters:** 346 total with player ratings ✓
+- **Projected starters:** retained in the source JSON extraction; not rendered as a dashboard tab

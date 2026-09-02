@@ -10,7 +10,7 @@ import http.server
 import time
 from playwright.sync_api import sync_playwright
 
-DASHBOARD_DIR = "/Users/shyampatel/Desktop/NFL_Main/nfldashboard"
+DASHBOARD_DIR = os.path.dirname(os.path.abspath(__file__))
 SCREENSHOT_DIR = os.path.join(DASHBOARD_DIR, "screenshots_expansion")
 os.makedirs(SCREENSHOT_DIR, exist_ok=True)
 
@@ -163,20 +163,25 @@ with sync_playwright() as p:
     else:
         failures.append("Moves feed date grouping missing")
     original_rows = page.locator('#movesNewswire .move-row').count()
-    page.locator('#movesSearch').fill('Myles Garrett')
-    page.wait_for_timeout(200)
-    filtered_rows = page.locator('#movesNewswire .move-row').count()
-    if filtered_rows > 0 and filtered_rows < original_rows:
-        successes.append("Moves search filter narrows the wire")
+    if original_rows > 0:
+        first_player = page.locator('#movesNewswire .move-row').first.locator('.move-player').inner_text()
+        page.locator('#movesSearch').fill(first_player)
+        page.wait_for_timeout(200)
+        filtered_rows = page.locator('#movesNewswire .move-row').count()
+        if filtered_rows > 0 and filtered_rows < original_rows:
+            successes.append("Moves search filter narrows the source-backed wire")
+        else:
+            failures.append("Moves search filter did not narrow the source-backed wire")
     else:
-        failures.append("Moves search filter did not narrow the wire")
-    page.locator('#movesNewswire .move-row').first.click()
-    page.wait_for_timeout(200)
-    if page.locator('#moveDetailDrawer.active').count() == 1 and page.locator('#moveDetailContent').inner_text():
-        successes.append("Move detail drawer opens from a wire row")
-    else:
-        failures.append("Move detail drawer failed to open")
-    page.locator('.move-drawer-close').click()
+        failures.append("Moves source returned no transactions; cannot test search interaction")
+    if page.locator('#movesNewswire .move-row').count() > 0:
+        page.locator('#movesNewswire .move-row').first.click()
+        page.wait_for_timeout(200)
+        if page.locator('#moveDetailDrawer.active').count() == 1 and page.locator('#moveDetailContent').inner_text():
+            successes.append("Move detail drawer opens from a wire row")
+        else:
+            failures.append("Move detail drawer failed to open")
+        page.locator('.move-drawer-close').click()
     page.locator('#movesSearch').fill('')
     page.wait_for_timeout(150)
     page.set_viewport_size({"width": 390, "height": 844})
@@ -309,6 +314,8 @@ with sync_playwright() as p:
     page.wait_for_timeout(500)
 
     browser.close()
+
+server.shutdown()
 
 print("\n" + "="*50)
 print("TEST SUMMARY")

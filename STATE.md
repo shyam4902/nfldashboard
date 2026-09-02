@@ -17,13 +17,21 @@
 - Earlier: 2026-09-01 compare-search fix (`ba40e27`), fabricated-numbers audit, dashboard consolidation (5 tabs), freshness badges, unified data layer.
 
 ## In flight
-- Nothing — working tree clean at `f66cd85`. All checks green (node --check, `props-smoke.mjs`, `test_all_extensions.py`, mobile 390px).
+- ESPN transaction ingestion hardening is underway. The parser now has isolated Node fixtures for signings, releases, waiver claims, trades, unsupported descriptions, and normalized dashboard records. `--dry-run` validates and writes a timestamped `espn_transactions_2026.json` inspection artifact without changing roster files or a database. No live sync or database write was run.
+- The commented browser-side summer override was deleted from `index.html`; source checks now reject all legacy override identifiers rather than allowing dead code to remain searchable.
+- Dashboard verification is aligned with the current source/UI contract: Moves tests use a rendered source-backed transaction rather than requiring Myles Garrett, projections tests no longer target the retired Clay Starters control, test paths are repository-relative, and the smoke test now fails when Home content is genuinely unavailable.
+
+## Session wrap 2026-09-02
+- Matchup Insights now selects roster players deterministically by depth-chart order, then OVR, then name. Narrative claims such as "top WR," "leads the edge rush," and player-specific coverage assignments were removed when the snapshot cannot prove them.
+- Missing matchup metadata no longer falls back to hardcoded Seattle/kickoff/broadcast values. The panel discloses that player assignments, injuries, and weekly projections are unavailable.
+- Regression coverage was added to `props-smoke.mjs`; `node props-smoke.mjs` and `python3 test_all_extensions.py` pass with zero console errors.
 
 ## Next
-- **Module split (proposed; user interested):** extract `styles.css` + `app.js` (+ per-domain chunks) from the 7.3k-line `index.html` using plain `<script src>` tags — no build step, deploys stay static, smoke/guard scripts unchanged.
-- Lock the 2026-09-02 fixes into `props-smoke.mjs` as permanent regression checks (Chris Jones join, empty-state note, roster click-through).
-- Repoint the 06:00 roster-sync crontab at `~/Desktop/NFL_Main/nfldashboard` (dead since the 08-31 repo move; editing cron is the user's call).
-- Producer-to-Edge publishing automation (shared with the Edge thread); retire the old Lovable deployment.
+- Continue the prototype-to-production audit one issue at a time. The stale global “Top WR” walkthrough claim was relabeled as a source-scoped Clay example, missing cap space/win probability now render unavailable instead of fabricated numeric values, and freshness badges surface non-fresh manifest status.
+- Consider the proposed module split only after trust cleanup settles: extract `styles.css` + `app.js` from the 7.3k-line `index.html` without adding a build step.
+- The checked-in launchd plist now uses a portable placeholder path and `/usr/bin/env node`; install it with the actual checkout path when configuring a machine. No live launchd job was edited.
+- Producer-to-Edge publishing automation (shared with the Edge thread) remains separate; no deploy or live sync was run in this session.
+- HTML validation uses `check_html_scripts.mjs`, which extracts inline scripts and runs Node syntax checks; `node --check index.html` is not a valid command.
 
 ## Blockers
 - None.

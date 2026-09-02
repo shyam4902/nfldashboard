@@ -39,6 +39,54 @@ the deployed page 404s on it.
 > app. The dashboard reads `props-board.json` only for the Home insight line,
 > the player modal, and the Schedule cross-link.
 
+## Data and verification status
+
+The browser does not apply summer roster, transaction, or cap-space overrides. The dashboard reads roster and transaction state from Supabase-backed data populated by the ESPN ingestion workflow. Missing values render as unavailable instead of being guessed, including cap-space and matchup win-probability fields. Freshness badges also surface non-fresh source status when provided by the manifest.
+
+The current verification suite passes:
+
+```bash
+node props-smoke.mjs
+python3 test_all_extensions.py
+python3 test_projections.py
+```
+
+The Moves test searches for a transaction returned by the source at runtime. It does not require a particular player or hardcoded transaction. The projections test follows the current UI, where the Clay projected-starters view is retired and roster depth is covered through the Teams flow.
+
+## Verification status
+
+For HTML syntax validation, use the repository-aware checker rather than `node --check index.html` (Node does not accept `.html` files directly):
+
+```bash
+node check_html_scripts.mjs
+```
+
+The source and test cleanup is complete. The dashboard no longer applies browser-side summer roster, transaction, or cap-space overrides. Transactions and roster state come from the Supabase-backed data populated by the ESPN ingestion workflow. Missing values render as unavailable rather than being guessed.
+
+Run the current checks with:
+
+```bash
+node props-smoke.mjs
+python3 test_all_extensions.py
+python3 test_projections.py
+```
+
+The Moves check uses a transaction returned at runtime instead of requiring a named player. The projections check follows the current UI and does not target the retired Clay projected-starters view.
+
+## ESPN transaction ingestion
+
+`update_rosters_from_espn.js` is the ESPN ingestion script. It normalizes supported signings, waivers, claims, and trades into the dashboard transaction shape, validates required fields, and skips unsupported descriptions without creating records. Use `--dry-run` to write `espn_transactions_2026.json` for inspection without changing roster files or a database:
+
+```bash
+node update_rosters_from_espn.js --dry-run
+```
+
+The output includes the ESPN source URL, fetch timestamp, record count, stable source keys, and normalized transactions. The script does not write Supabase transactions yet. The dashboard continues to read its transaction data from Supabase. No live sync or database write is part of the dry-run path.
+
+## Automation and source status
+
+The checked-in launchd plists are templates only: replace `/absolute/path/to/NFL_Main` with the checkout location and provide Supabase credentials through the machine's secret manager before loading them. This cleanup does not install or modify live launchd jobs. Publishing remains the repository's Cloudflare Pages push workflow; producer/shared-data synchronization is handled outside this repository.
+
 ## Local dev preview
 
 `~/Library/Application Support/nfldashboard-props/nfldashboard/` is a *local*

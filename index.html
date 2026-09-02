@@ -1194,7 +1194,7 @@ body.theme-analyst .cmd-item.selected {
 </div>
 
 <footer class="text-center text-xs text-slate-600 py-8 border-t border-slate-800">
-  Data sourced from NFL.com, ESPN, PFF · Composite player ratings · Last updated Aug 7, 2026
+  Data sources and timestamps are shown on each panel; unavailable fields are not inferred.
 </footer>
 
 <!-- Back to Top Button -->
@@ -1225,329 +1225,7 @@ async function fetchAllPlayers() {
   return all;
 }
 
-function applySummer2026Updates(data) {
-  const summerTxs = [
-    {
-      id: "tx-2026-08-07-1",
-      type: "signing",
-      blockbuster: false,
-      player_name: "O'Cyrus Torrence",
-      pos: "OG",
-      from_team: "Buffalo Bills",
-      to_team: "Buffalo Bills",
-      detail: "Signed 4-year, $78.4M contract extension ($46M guaranteed)",
-      date_str: "Aug 07, 2026",
-      sort_date: "2026-08-07"
-    },
-    {
-      id: "tx-2026-08-07-2",
-      type: "signing",
-      blockbuster: false,
-      player_name: "Kristian Wilkerson",
-      pos: "WR",
-      from_team: "Free Agent",
-      to_team: "Atlanta Falcons",
-      detail: "Signed 1-year contract following release of LB Troy Andersen",
-      date_str: "Aug 07, 2026",
-      sort_date: "2026-08-07"
-    },
-    {
-      id: "tx-2026-08-05-1",
-      type: "signing",
-      blockbuster: false,
-      player_name: "Ogbonnia Okoronkwo",
-      pos: "EDGE",
-      from_team: "Cleveland Browns",
-      to_team: "San Francisco 49ers",
-      detail: "Signed 1-year contract to bolster pass rush",
-      date_str: "Aug 05, 2026",
-      sort_date: "2026-08-05"
-    },
-    {
-      id: "tx-2026-08-04-1",
-      type: "signing",
-      blockbuster: true,
-      player_name: "Darnell Wright",
-      pos: "OT",
-      from_team: "Chicago Bears",
-      to_team: "Chicago Bears",
-      detail: "4-year, $116M extension ($93M guaranteed) - highest-paid RT in NFL history",
-      date_str: "Aug 04, 2026",
-      sort_date: "2026-08-04"
-    },
-    {
-      id: "tx-2026-07-28-1",
-      type: "signing",
-      blockbuster: true,
-      player_name: "Jahmyr Gibbs",
-      pos: "RB",
-      from_team: "Detroit Lions",
-      to_team: "Detroit Lions",
-      detail: "3-year, $67.5M extension ($45M guaranteed)",
-      date_str: "Jul 28, 2026",
-      sort_date: "2026-07-28"
-    },
-    {
-      id: "tx-2026-07-24-1",
-      type: "trade",
-      blockbuster: true,
-      player_name: "Myles Garrett",
-      pos: "EDGE",
-      from_team: "Cleveland Browns",
-      to_team: "Los Angeles Rams",
-      detail: "Traded to Rams for EDGE Jared Verse, 2027 1st round pick, and 2028 2nd round pick",
-      date_str: "Jul 24, 2026",
-      sort_date: "2026-07-24"
-    },
-    {
-      id: "tx-2026-07-24-2",
-      type: "trade",
-      blockbuster: false,
-      player_name: "Jared Verse",
-      pos: "EDGE",
-      from_team: "Los Angeles Rams",
-      to_team: "Cleveland Browns",
-      detail: "Acquired by Browns in blockbuster Myles Garrett package",
-      date_str: "Jul 24, 2026",
-      sort_date: "2026-07-24"
-    },
-    {
-      id: "tx-2026-07-20-1",
-      type: "trade",
-      blockbuster: true,
-      player_name: "A.J. Brown",
-      pos: "WR",
-      from_team: "Philadelphia Eagles",
-      to_team: "New England Patriots",
-      detail: "Traded to Patriots for 2027 1st round pick and 2027 3rd round pick",
-      date_str: "Jul 20, 2026",
-      sort_date: "2026-07-20"
-    },
-    {
-      id: "tx-2026-07-18-1",
-      type: "trade",
-      blockbuster: false,
-      player_name: "Dontayvion Wicks",
-      pos: "WR",
-      from_team: "Green Bay Packers",
-      to_team: "Philadelphia Eagles",
-      detail: "Acquired to reinforce receiving corps following A.J. Brown trade",
-      date_str: "Jul 18, 2026",
-      sort_date: "2026-07-18"
-    },
-    {
-      id: "tx-2026-07-15-1",
-      type: "signing",
-      blockbuster: true,
-      player_name: "Denzel Ward",
-      pos: "CB",
-      from_team: "Cleveland Browns",
-      to_team: "Cleveland Browns",
-      detail: "2-year, $62.2M contract extension ($40M guaranteed)",
-      date_str: "Jul 15, 2026",
-      sort_date: "2026-07-15"
-    },
-    {
-      id: "tx-2026-07-10-1",
-      type: "signing",
-      blockbuster: false,
-      player_name: "Jonathan Taylor",
-      pos: "RB",
-      from_team: "Indianapolis Colts",
-      to_team: "Indianapolis Colts",
-      detail: "2-year, $38M contract extension ($24M guaranteed)",
-      date_str: "Jul 10, 2026",
-      sort_date: "2026-07-10"
-    },
-    {
-      id: "tx-2026-06-25-1",
-      type: "signing",
-      blockbuster: true,
-      player_name: "Tyler Linderbaum",
-      pos: "C",
-      from_team: "Baltimore Ravens",
-      to_team: "Las Vegas Raiders",
-      detail: "Signed 4-year, $68M contract in free agency",
-      date_str: "Jun 25, 2026",
-      sort_date: "2026-06-25"
-    },
-    {
-      id: "tx-2026-06-18-1",
-      type: "signing",
-      blockbuster: true,
-      player_name: "Malik Willis",
-      pos: "QB",
-      from_team: "Green Bay Packers",
-      to_team: "Miami Dolphins",
-      detail: "Signed 3-year, $67.5M contract to assume starting QB role",
-      date_str: "Jun 18, 2026",
-      sort_date: "2026-06-18"
-    },
-    {
-      id: "tx-2026-06-12-1",
-      type: "signing",
-      blockbuster: true,
-      player_name: "Chris Olave",
-      pos: "WR",
-      from_team: "New Orleans Saints",
-      to_team: "New Orleans Saints",
-      detail: "4-year, $92M contract extension ($58M guaranteed)",
-      date_str: "Jun 12, 2026",
-      sort_date: "2026-06-12"
-    },
-    {
-      id: "tx-2026-06-05-1",
-      type: "signing",
-      blockbuster: true,
-      player_name: "Stefon Diggs",
-      pos: "WR",
-      from_team: "New England Patriots",
-      to_team: "Washington Commanders",
-      detail: "Signed 1-year, $14M contract after offseason release",
-      date_str: "Jun 05, 2026",
-      sort_date: "2026-06-05"
-    },
-    {
-      id: "tx-2026-05-28-1",
-      type: "trade",
-      blockbuster: false,
-      player_name: "Irvin Charles",
-      pos: "WR",
-      from_team: "New York Jets",
-      to_team: "Seattle Seahawks",
-      detail: "Traded for 2027 6th round pick",
-      date_str: "May 28, 2026",
-      sort_date: "2026-05-28"
-    },
-    {
-      id: "tx-2026-05-20-1",
-      type: "signing",
-      blockbuster: false,
-      player_name: "Tyrod Taylor",
-      pos: "QB",
-      from_team: "New York Jets",
-      to_team: "Green Bay Packers",
-      detail: "Signed 1-year backup QB contract",
-      date_str: "May 20, 2026",
-      sort_date: "2026-05-20"
-    },
-    {
-      id: "tx-2026-05-14-1",
-      type: "signing",
-      blockbuster: false,
-      player_name: "DJ Reader",
-      pos: "DT",
-      from_team: "Detroit Lions",
-      to_team: "New York Giants",
-      detail: "Signed 2-year, $18M contract",
-      date_str: "May 14, 2026",
-      sort_date: "2026-05-14"
-    },
-    {
-      id: "tx-2026-05-08-1",
-      type: "signing",
-      blockbuster: false,
-      player_name: "Scott Miller",
-      pos: "WR",
-      from_team: "Atlanta Falcons",
-      to_team: "Chicago Bears",
-      detail: "Signed 1-year contract",
-      date_str: "May 08, 2026",
-      sort_date: "2026-05-08"
-    },
-    {
-      id: "tx-2026-05-02-1",
-      type: "signing",
-      blockbuster: false,
-      player_name: "Henry To'oTo'o",
-      pos: "LB",
-      from_team: "Houston Texans",
-      to_team: "Houston Texans",
-      detail: "2-year contract extension",
-      date_str: "May 02, 2026",
-      sort_date: "2026-05-02"
-    },
-    {
-      id: "tx-2026-08-10-1",
-      type: "trade",
-      blockbuster: false,
-      player_name: "Caedan Wallace",
-      pos: "OT",
-      from_team: "New England Patriots",
-      to_team: "Miami Dolphins",
-      detail: "Traded to Miami with a 2029 7th-round pick for a 2028 6th-round pick",
-      date_str: "Aug 10, 2026",
-      sort_date: "2026-08-10"
-    }
-  ];
-
-  // Combine & sort transactions
-  data.transactions = [...summerTxs, ...data.transactions].sort((a,b) => (b.sort_date||'').localeCompare(a.sort_date||''));
-
-  // Team ID lookup
-  const teamIdByName = Object.fromEntries(data.teams.map(t => [t.name, t.id]));
-
-  // Player roster moves & additions
-  const playerUpdates = [
-    { name: 'Myles Garrett', newTeam: 'Los Angeles Rams', acq: 'trade', pos: 'EDGE', unit: 'defense', ovr: 98, age: 30, jersey: 95 },
-    { name: 'Jared Verse', newTeam: 'Cleveland Browns', acq: 'trade', pos: 'EDGE', unit: 'defense', ovr: 85, age: 25, jersey: 55 },
-    { name: 'A.J. Brown', newTeam: 'New England Patriots', acq: 'trade', pos: 'WR', unit: 'offense', ovr: 92, age: 29, jersey: 11 },
-    { name: 'Stefon Diggs', newTeam: 'Washington Commanders', acq: 'fa', pos: 'WR', unit: 'offense', ovr: 88, age: 32, jersey: 1 },
-    { name: 'Tyler Linderbaum', newTeam: 'Las Vegas Raiders', acq: 'fa', pos: 'C', unit: 'offense', ovr: 89, age: 26, jersey: 64 },
-    { name: 'Malik Willis', newTeam: 'Miami Dolphins', acq: 'fa', pos: 'QB', unit: 'offense', ovr: 71, age: 27, jersey: 7 },
-    { name: 'DJ Reader', newTeam: 'New York Giants', acq: 'fa', pos: 'DT', unit: 'defense', ovr: 84, age: 32, jersey: 98 },
-    { name: 'Dontayvion Wicks', newTeam: 'Philadelphia Eagles', acq: 'trade', pos: 'WR', unit: 'offense', ovr: 78, age: 25, jersey: 13 },
-    { name: 'Ogbonnia Okoronkwo', newTeam: 'San Francisco 49ers', acq: 'fa', pos: 'EDGE', unit: 'defense', ovr: 77, age: 31, jersey: 94 },
-    { name: 'Kristian Wilkerson', newTeam: 'Atlanta Falcons', acq: 'fa', pos: 'WR', unit: 'offense', ovr: 70, age: 29, jersey: 83 },
-    { name: 'Tyrod Taylor', newTeam: 'Green Bay Packers', acq: 'fa', pos: 'QB', unit: 'offense', ovr: 71, age: 37, jersey: 2 },
-    { name: 'Scott Miller', newTeam: 'Chicago Bears', acq: 'fa', pos: 'WR', unit: 'offense', ovr: 72, age: 29, jersey: 10 },
-    { name: 'Irvin Charles', newTeam: 'Seattle Seahawks', acq: 'trade', pos: 'WR', unit: 'offense', ovr: 68, age: 29, jersey: 82 }
-  ];
-
-  for (const item of playerUpdates) {
-    const targetTeamId = teamIdByName[item.newTeam];
-    if (!targetTeamId) continue;
-    let p = data.players.find(x => x.name.toLowerCase() === item.name.toLowerCase());
-    if (p) {
-      p.team_id = targetTeamId;
-      p.acquisition_type = item.acq;
-      p.unit = item.unit || p.unit;
-    } else {
-      data.players.push({
-        id: `custom-p-${Date.now()}-${Math.random().toString(36).substr(2,4)}`,
-        name: item.name,
-        pos: item.pos,
-        team_id: targetTeamId,
-        ovr: item.ovr,
-        unit: item.unit,
-        jersey: item.jersey,
-        age: item.age,
-        is_rookie: false,
-        acquisition_type: item.acq
-      });
-    }
-  }
-
-  // Adjust cap space estimates for teams with major summer contracts
-  const capAdjustments = {
-    'Los Angeles Rams': -22000000,
-    'New England Patriots': -18500000,
-    'Cleveland Browns': 12000000,
-    'Chicago Bears': -8000000,
-    'Buffalo Bills': -6500000,
-    'Detroit Lions': -7500000,
-    'Las Vegas Raiders': -12000000,
-    'Miami Dolphins': -11000000,
-    'Washington Commanders': -9000000,
-    'New Orleans Saints': -7000000
-  };
-
-  for (const t of data.teams) {
-    if (capAdjustments[t.name]) {
-      t.cap_space = (Number(t.cap_space) + capAdjustments[t.name]).toString();
-    }
-  }
-}
+/* ESPN-ingested transactions and Supabase rosters are authoritative. */
 
 async function loadAllData() {
   const [teams, players, transactions] = await Promise.all([
@@ -1565,9 +1243,6 @@ async function loadAllData() {
     const capRes = await fetch('draft-capital.json');
     DATA.draftCapital = capRes.ok ? await capRes.json() : null;
   } catch { DATA.draftCapital = null; }
-
-  // Apply summer 2026 transactions & roster updates (May 1 - Aug 7, 2026)
-  applySummer2026Updates(DATA);
 
   // Overlay EA Madden ratings from madden_official_ratings.json if present
   try {
@@ -2095,7 +1770,7 @@ function homeHeroHtml(){
 const HOME_FEATURES = [
   { icon:'📅', title:'Schedule', tab:'schedule', accent:'#3b82f6', stat:'Week 1 · Sep 9–14', desc:'All 16 opening-week matchups with live spreads, totals, moneylines and model win probabilities. Click any game for deep matchup analytics.' },
   { icon:'⚔️', title:'Matchup Lab', tab:'matchup', accent:'#f43f5e', stat:'offense vs defense', desc:"X's and O's formation preview for any matchup. Pick personnel and defensive front, scan Clay unit-grade advantages, click a player for their full profile." },
-  { icon:'📊', title:'Mike Clay Projections', tab:'projections', accent:'#06b6d4', stat:'12 sub-tabs', desc:'The complete 2026 guide: projected standings, category leaders, projected starters, coaching staffs, unit grades and Clay vs Market deltas.' },
+  { icon:'📊', title:'Mike Clay Projections', tab:'projections', accent:'#06b6d4', stat:'11 supported views', desc:'2026 projected standings, category leaders, coaching staffs, unit grades and Clay vs Market deltas.' },
   { icon:'💰', title:'Value Reads', tab:null, extUrl:'https://edgeplay-analytics.pages.dev/props', accent:'#10b981', stat:'Edge Analytics', desc:'Player props, win totals, line movement and model diagnostics live in the Edge Analytics app. Deep value analysis opens in a new tab.' },
   { icon:'🛡️', title:'Teams & Rosters', tab:'teams', accent:'#f59e0b', stat:() => DATA.teams.length + ' teams', desc:'Depth charts, rosters and division navigation for every team, plus head-to-head player comparison.' },
   { icon:'⚡', title:'Transactions', tab:'feed', accent:'#ef4444', stat:() => DATA.transactions.length + ' moves', desc:'Every offseason move since Super Bowl LX — trades, signings and draft pickups, with blockbuster moves flagged.' },
@@ -2961,10 +2636,12 @@ async function openRoster(team, defaultSide = 'offense') {
   const titleEl = document.getElementById('rosterTitle');
   if (titleEl) titleEl.textContent = team;
   renderRosterSummary(team);
-  const cap = (DATA.capData && DATA.capData[team]) || { space: 0, status: '' };
+  const cap = DATA.capData && DATA.capData[team];
   const subEl = document.getElementById('rosterSubtitle');
   if (subEl) {
-    subEl.innerHTML = `<span class="${getStatusColor(cap.status)} font-semibold">${cap.status || ''}</span> &middot; Cap: <span class="${cap.space >= 0 ? 'cap-positive' : 'cap-negative'} font-bold">${formatCap(cap.space || 0)}</span>`;
+    const capLabel = cap && Number.isFinite(Number(cap.space)) ? formatCap(Number(cap.space)) : 'Unavailable';
+    const capStatus = cap?.status ? `<span class="${getStatusColor(cap.status)} font-semibold">${homeEsc(cap.status)}</span> &middot; ` : '';
+    subEl.innerHTML = `${capStatus}Cap: <span class="${cap && Number(cap.space) >= 0 ? 'cap-positive' : 'text-slate-400'} font-bold">${capLabel}</span>`;
   }
 
   // Highlight tab
@@ -3323,7 +3000,7 @@ async function renderTeamProjectionsBody(team) {
 async function renderRosterSummary(team){
   const el = document.getElementById('rosterSummary');
   if (!el) return;
-  const cap = (DATA.capData && DATA.capData[team]) || { space: 0, status: '' };
+  const cap = DATA.capData && DATA.capData[team];
 
   // Projected record from the Clay model (loaded lazily; strip renders without it on failure)
   let record = null;
@@ -3362,7 +3039,7 @@ async function renderRosterSummary(team){
 
   el.innerHTML =
     card('Projected Record', record || '\u2014', record ? 'Mike Clay model' : 'Clay data unavailable', 'text-cyan-300') +
-    card('Cap Space', formatCap(cap.space || 0), cap.status || '', (cap.space >= 0 ? 'cap-positive' : 'cap-negative')) +
+    card('Cap Space', cap && Number.isFinite(Number(cap.space)) ? formatCap(Number(cap.space)) : '\u2014', cap?.status || 'Cap data unavailable', cap && Number(cap.space) >= 0 ? 'cap-positive' : 'text-slate-400') +
     card('Draft Capital', dcVal || '\u2014', dcSub || '', 'text-violet-300') +
     card('Top Player', top ? top.name : '\u2014', top ? `Highest rated \u00b7 ${top.pos}` : '', 'text-amber-300');
 }
@@ -3724,14 +3401,31 @@ function teamNameOf(p) {
 
 function attrEsc(s) { return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;'); }
 
+function playerSortKey(p) {
+  const depth = Number(p.depth_chart_order ?? p.depthChartOrder ?? p.depth ?? 999);
+  const hasDepth = Number.isFinite(depth) && depth > 0;
+  return {
+    hasDepth,
+    depth: hasDepth ? depth : 999,
+    ovr: Number.isFinite(Number(p.ovr)) ? Number(p.ovr) : -1,
+    name: String(p.name || '')
+  };
+}
+
+function compareRosterPlayers(a, b) {
+  const ak = playerSortKey(a);
+  const bk = playerSortKey(b);
+  if (ak.hasDepth !== bk.hasDepth) return ak.hasDepth ? -1 : 1;
+  if (ak.depth !== bk.depth) return ak.depth - bk.depth;
+  if (ak.ovr !== bk.ovr) return bk.ovr - ak.ovr;
+  return ak.name.localeCompare(bk.name);
+}
+
 function pickStarter(team, posCands, used) {
-  let best = null;
-  for (const p of DATA.players || []) {
-    if (used[p.name]) continue;
-    if (teamNameOf(p) !== team) continue;
-    if (!posCands.includes(p.pos)) continue;
-    if (!best || (Number(p.ovr) || 0) > (Number(best.ovr) || 0)) best = p;
-  }
+  const candidates = (DATA.players || [])
+    .filter(p => !used[p.name] && teamNameOf(p) === team && posCands.includes(String(p.pos || '').toUpperCase()))
+    .sort(compareRosterPlayers);
+  const best = candidates[0] || null;
   if (best) used[best.name] = 1;
   return best;
 }
@@ -3893,19 +3587,22 @@ function getTeamAtAGlance(teamName) {
 }
 
 function generateMatchupInsights(tA, tB, game) {
+  if (!game) return [];
   const abbrA = DATA.teamAbbr[tA] || tA;
   const abbrB = DATA.teamAbbr[tB] || tB;
   const playersA = (DATA.players || []).filter(p => teamNameOf(p) === tA);
   const playersB = (DATA.players || []).filter(p => teamNameOf(p) === tB);
 
   // Real roster players only; never invent a "Lead Receiver #11".
-  const starQBA = playersA.find(p => p.pos === 'QB');
-  const starQBB = playersB.find(p => p.pos === 'QB');
-  const starWRA = playersA.find(p => p.pos === 'WR');
-  const starTEA = playersA.find(p => p.pos === 'TE');
-  const starEdgeA = playersA.find(p => ['EDGE', 'DE', 'DT'].includes(p.pos));
-  const starCB = playersA.find(p => p.pos === 'CB');
-  const starOLB = playersB.find(p => ['OT', 'T', 'OL'].includes(p.pos));
+  const usedA = {};
+  const usedB = {};
+  const starQBA = pickStarter(tA, ['QB'], usedA);
+  const starQBB = pickStarter(tB, ['QB'], usedB);
+  const starWRA = pickStarter(tA, ['WR'], usedA);
+  const starTEA = pickStarter(tA, ['TE'], usedA);
+  const starEdgeA = pickStarter(tA, ['EDGE', 'DE', 'DT'], usedA);
+  const starCB = pickStarter(tB, ['CB', 'DB'], usedB);
+  const starOLB = pickStarter(tB, ['OT', 'T', 'OL'], usedB);
 
   // Real Clay unit grades (1-10) for the narrative framing.
   const ugA = CLAY_DATA?.unit_grades?.[tA] || {};
@@ -3917,7 +3614,14 @@ function generateMatchupInsights(tA, tB, game) {
   const offEffB = efficiencyRank(tB, 'off', 'epa_per_play', 2025);
   const defEffA = efficiencyRank(tA, 'def', 'epa_per_play', 2025);
 
-  const rankText = (r) => r != null ? `ranked #${r} in EPA/play (2025)` : 'rankings pending verified data';
+  const rankText = (r) => r != null ? `2025 EPA/play rank #${r}` : '2025 EPA/play rank unavailable';
+  const rosterText = (p) => {
+    if (!p) return '';
+    const rating = p.ovr != null ? ` · OVR ${p.ovr}` : '';
+    const depth = Number(p.depth_chart_order ?? p.depthChartOrder ?? p.depth);
+    const order = Number.isFinite(depth) && depth > 0 ? ` · depth ${depth}` : '';
+    return `${p.name} · ${p.pos}${rating}${order}`;
+  };
   const insights = [];
 
   if (starQBA && starWRA && starQBB) {
@@ -3926,7 +3630,7 @@ function generateMatchupInsights(tA, tB, game) {
       title: `${starWRA.name}`,
       subtitle: `${starWRA.pos} #${starWRA.jersey || ''} · ${abbrA}`,
       teamA: tA,
-      text: `${starWRA.name} is ${abbrA}'s top WR on the roster. ${abbrB}'s defense ${rankText(defEffB)}. Clay's unit grades rate ${abbrB} secondary/coverage ${ugB.CB != null ? ugB.CB + '/10' : 'n/a'}.`,      playerName: starWRA.name,
+      text: `${rosterText(starWRA)}. ${abbrB} defense: ${rankText(defEffB)}. ${abbrB} CB unit grade: ${ugB.CB != null ? ugB.CB + '/10' : 'unavailable'}. These are roster and team-context measures, not a player-specific matchup projection.`,      playerName: starWRA.name,
       teamName: tA
     });
   }
@@ -3940,7 +3644,7 @@ function generateMatchupInsights(tA, tB, game) {
       rightName: starEdgeA.name,
       rightSub: `${starEdgeA.pos} #${starEdgeA.jersey || ''} · ${abbrA}`,
       rightTeam: tA,
-      text: `${starOLB.name} anchors ${abbrB}'s line while ${starEdgeA.name} leads ${abbrA}'s edge rush. ${abbrB} is ${rankText(offEffB)} on offense; ${abbrA} ${rankText(defEffA)} on defense.`,      playerName: starEdgeA.name,
+      text: `${rosterText(starOLB)} · ${rosterText(starEdgeA)}. ${abbrB} offense: ${rankText(offEffB)}. ${abbrA} defense: ${rankText(defEffA)}. No player-vs-player assignment is available in this snapshot.`,      playerName: starEdgeA.name,
       teamName: tA
     });
   }
@@ -3954,7 +3658,7 @@ function generateMatchupInsights(tA, tB, game) {
       rightName: `${abbrB} Secondary`,
       rightSub: 'Coverage Unit',
       rightTeam: tB,
-      text: `${starTEA.name} (${abbrA}'s top TE) faces ${abbrB}'s coverage unit led by ${starCB.name}. ${abbrB} ${rankText(defEffB)} on defense.`,      playerName: starTEA.name,
+      text: `${rosterText(starTEA)}. ${abbrB} CB context: ${rosterText(starCB)}. ${abbrB} defense: ${rankText(defEffB)}. Coverage assignments and player-specific projections are unavailable.`,      playerName: starTEA.name,
       teamName: tA
     });
   }
@@ -3968,7 +3672,7 @@ function generateMatchupInsights(tA, tB, game) {
       rightName: starQBB.name,
       rightSub: `${starQBB.pos} #${starQBB.jersey || ''} · ${abbrB}`,
       rightTeam: tB,
-      text: `Quarterback duel: ${starQBA.name} (${abbrA}) vs ${starQBB.name} (${abbrB}). ${abbrA} ${rankText(defEffA)} on defense; ${abbrB} ${rankText(offEffB)} on offense.`,      playerName: starQBB.name,
+      text: `${rosterText(starQBA)} · ${rosterText(starQBB)}. ${abbrA} defense: ${rankText(defEffA)}. ${abbrB} offense: ${rankText(offEffB)}. The roster comparison does not predict the game result.`,      playerName: starQBB.name,
       teamName: tB
     });
   }
@@ -4006,8 +3710,8 @@ function renderMatchupHeroBanner(game, tA, tB) {
   const logoB = getNflTeamLogo(tB);
   const colorA = DATA.teamColors[tA] || '#e11d48';
   const colorB = DATA.teamColors[tB] || '#2563eb';
-  const recA = stdA ? `${Math.round(stdA.wins)}-${Math.round(stdA.losses)} (${stdA.divisionName || 'AFC'} Seed)` : '0-0 (AFC)';
-  const recB = stdB ? `${Math.round(stdB.wins)}-${Math.round(stdB.losses)} (${stdB.divisionName || 'NFC'} Seed)` : '0-0 (NFC)';
+  const recA = stdA ? `${Math.round(stdA.wins)}-${Math.round(stdA.losses)} (${stdA.divisionName || 'division'} standings)` : 'Standings unavailable';
+  const recB = stdB ? `${Math.round(stdB.wins)}-${Math.round(stdB.losses)} (${stdB.divisionName || 'division'} standings)` : 'Standings unavailable';
 
   return `
     <div class="flex items-center justify-between flex-wrap gap-4 relative z-10">
@@ -4046,14 +3750,14 @@ function renderMatchupSidebar(game, tA, tB, prob) {
   const d = game?.kickoff_utc ? new Date(game.kickoff_utc) : null;
   const when = d && !isNaN(d.getTime())
     ? d.toLocaleString([], { weekday: 'long', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', timeZoneName: 'short' })
-    : 'Wednesday, September 9, 2026 · 8:20 PM EDT';
-  const venue = game?.venue || 'Lumen Field';
-  const city = game?.city || 'Seattle, WA';
-  const tv = game?.tv || 'NBC, Peacock';
+    : 'Kickoff unavailable';
+  const venue = game?.venue || 'Venue unavailable';
+  const city = game?.city || 'Location unavailable';
+  const tv = game?.tv || 'Broadcast information unavailable';
   const m = game?.market;
 
-  const awayProb = prob != null ? ((1 - prob) * 100).toFixed(1) : '50.0';
-  const homeProb = prob != null ? (prob * 100).toFixed(1) : '50.0';
+  const awayProb = prob != null ? ((1 - prob) * 100).toFixed(1) : '—';
+  const homeProb = prob != null ? (prob * 100).toFixed(1) : '—';
 
   return `
     <!-- Game Meta Card -->
@@ -4085,14 +3789,12 @@ function renderMatchupSidebar(game, tA, tB, prob) {
         <div class="flex items-center justify-between text-[10px] uppercase font-bold tracking-wider text-slate-400 mb-1.5">
           <span>MODEL WIN PROBABILITY</span>
           <span class="text-slate-500 font-mono">${awayProb}% - ${homeProb}%</span>
-        </div>
-        <div class="prob-split-bar mb-2">
-          <div style="width:${awayProb}%;background:${DATA.teamColors[tA] || '#e11d48'}"></div>
-          <div style="width:${homeProb}%;background:${DATA.teamColors[tB] || '#2563eb'}"></div>
+        </div>          <div class="prob-split-bar mb-2">
+          ${prob != null ? `<div style="width:${awayProb}%;background:${DATA.teamColors[tA] || '#e11d48'}"></div><div style="width:${homeProb}%;background:${DATA.teamColors[tB] || '#2563eb'}"></div>` : '<div class="w-full bg-slate-700"></div>'}
         </div>
         <div class="flex justify-between text-[11px] font-bold">
-          <span style="color:${DATA.teamColors[tA] || '#fda4af'}">${DATA.teamAbbr[tA] || tA} ${awayProb}%</span>
-          <span style="color:${DATA.teamColors[tB] || '#93c5fd'}">${DATA.teamAbbr[tB] || tB} ${homeProb}%</span>
+          <span style="color:${DATA.teamColors[tA] || '#fda4af'}">${DATA.teamAbbr[tA] || tA} ${prob != null ? awayProb + '%' : '—'}</span>
+          <span style="color:${DATA.teamColors[tB] || '#93c5fd'}">${DATA.teamAbbr[tB] || tB} ${prob != null ? homeProb + '%' : '—'}</span>
         </div>
       </div>
 
@@ -4324,8 +4026,11 @@ function renderMatchupInsightsPanel(tA, tB, game) {
     <div>
       <div class="flex items-center justify-between mb-3">
         <div class="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-2">
-          <span>📰</span> Matchup Insights & Key Head-to-Head Battles
+          <span>📰</span> Matchup context
         </div>
+      </div>
+      <div class="glass rounded-xl p-3 mb-3 border border-slate-700/70">
+        <p class="text-[11px] text-slate-400 leading-relaxed">Roster order, ratings, Clay unit grades, and 2025 team efficiency only. This snapshot does not contain player-vs-player assignments, injury status, or a player-specific weekly projection.</p>
       </div>
       ${!insights.length ? '<div class="glass rounded-xl p-4 border border-slate-700"><p class="text-xs text-slate-400">Matchup insights are built from verified roster and efficiency data. None is available for this pairing right now, so nothing is shown rather than inventing a narrative.</p></div>' : ''}
       <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
@@ -4371,7 +4076,7 @@ function renderMatchupInsightsPanel(tA, tB, game) {
               ${card.playerName ? `
                 <div class="p-3 pt-0">
                   <button onclick="openPlayerModal('${attrEsc(card.playerName).replace(/'/g, "\\'")}','${attrEsc(card.teamName || tA).replace(/'/g, "\\'")}')" class="w-full py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-[11px] font-semibold text-slate-300 transition">
-                    View ${attrEsc(card.playerName)} Dossier
+                    View ${attrEsc(card.playerName)} roster profile
                   </button>
                 </div>
               ` : ''}
@@ -4436,7 +4141,7 @@ function renderMatchupPanels() {
   const tA = MATCHUP_STATE.teamA;
   const tB = MATCHUP_STATE.teamB;
   const games = (SCHEDULE_DATA && SCHEDULE_DATA.games) || [];
-  const curGame = games.find(g => g.away_team === tA && g.home_team === tB) || games[0];
+  const curGame = games.find(g => g.away_team === tA && g.home_team === tB) || null;
 
   const offGrade = [['QB'], ['RB'], ['WR'], ['TE'], ['OL']].map(u => matchupGrade(tA, u)).filter(v => v != null);
   const defGrade = [['DI'], ['ED'], ['LB'], ['CB'], ['S']].map(u => matchupGrade(tB, u)).filter(v => v != null);
@@ -5678,11 +5383,13 @@ function dataAgeBadge(sourceKey){
   const hours = Math.floor((Date.now() - asOf) / 3600000);
   const label = hours < 1 ? '<1h' : hours < 48 ? hours + 'h' : Math.round(hours / 24) + 'd';
   const stale = hours >= 24;
-  return `<span class="text-[9px] uppercase tracking-wider font-bold px-1.5 py-0.5 rounded border ${stale ? 'text-amber-400 border-amber-500/40 bg-amber-500/10' : 'text-slate-500 border-slate-700/60 bg-slate-800/40'}" title="data as of ${FRESHNESS.sources[sourceKey].as_of}">data ${label} ago</span>`;
+  const status = FRESHNESS.sources[sourceKey].status;
+  const statusLabel = status && status !== 'fresh' ? ` · ${homeEsc(status)}` : '';
+  return `<span class="text-[9px] uppercase tracking-wider font-bold px-1.5 py-0.5 rounded border ${stale || status !== 'fresh' ? 'text-amber-400 border-amber-500/40 bg-amber-500/10' : 'text-slate-500 border-slate-700/60 bg-slate-800/40'}" title="data as of ${homeEsc(FRESHNESS.sources[sourceKey].as_of)}">data ${label} ago${statusLabel}</span>`;
 }
 
-// Ticket 14: stamp a tab header with its data source age. Safe no-op when
-// the manifest is absent (freshness.json missing = no stamps, never blocks).
+// Ticket 14: stamp a tab header with its data source age/status. Safe no-op
+// when the manifest is absent (freshness.json missing = no stamps, never blocks).
 function stampFreshness(id, sourceKey){
   const el = document.getElementById(id);
   if (!el) return;

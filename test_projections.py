@@ -3,7 +3,7 @@
 import os, sys, threading, http.server, time
 from playwright.sync_api import sync_playwright
 
-DASHBOARD_DIR = "/Users/shyampatel/Desktop/NFL_Main/nfldashboard"
+DASHBOARD_DIR = os.path.dirname(os.path.abspath(__file__))
 SCREENSHOT_DIR = os.path.join(DASHBOARD_DIR, "screenshots")
 os.makedirs(SCREENSHOT_DIR, exist_ok=True)
 
@@ -73,12 +73,11 @@ with sync_playwright() as p:
     content = page.inner_text("#projContent")
     print(f"✓ Unit Grades tab: {'Los Angeles Rams' in content}")
 
-    # Starters
-    page.locator("button", has_text="Starters").first.click()
-    page.wait_for_timeout(1500)
-    page.screenshot(path=f"{SCREENSHOT_DIR}/07_starters.png", full_page=False)
-    content = page.inner_text("#projContent")
-    print(f"✓ Starters tab: {'NFC' in content or 'AFC' in content}")
+    # Current UI contract: projected starters were retired; roster depth lives
+    # in Teams and is covered by the dashboard smoke suite. Verify the
+    # projections panel does not expose the retired Starters control.
+    retired_starters = page.locator("button", has_text="Starters").count()
+    print(f"✓ Retired Starters control absent: {retired_starters == 0}")
 
     # Coaching
     page.locator("button", has_text="Coaching").first.click()

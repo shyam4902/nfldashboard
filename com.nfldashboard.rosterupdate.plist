@@ -6,18 +6,19 @@
     <string>com.nfldashboard.rosterupdate</string>
     <key>ProgramArguments</key>
     <array>
-        <string>/Users/shyampatel/.local/bin/node</string>
-        <string>/Users/shyampatel/Desktop/nfldashboard/update_rosters_from_espn.js</string>
+        <string>/usr/bin/env</string>
+        <string>node</string>
+        <string>/absolute/path/to/NFL_Main/nfldashboard/update_rosters_from_espn.js</string>
     </array>
     <key>WorkingDirectory</key>
-    <string>/Users/shyampatel/Desktop/nfldashboard</string>
+    <string>/absolute/path/to/NFL_Main/nfldashboard</string>
     <key>StartInterval</key>
     <integer>86400</integer>
     <key>RunAtLoad</key>
     <true/>
     <key>StandardOutPath</key>
-    <string>/Users/shyampatel/Desktop/nfldashboard/update.log</string>
+    <string>/tmp/nfldashboard-rosterupdate.log</string>
     <key>StandardErrorPath</key>
-    <string>/Users/shyampatel/Desktop/nfldashboard/update.log</string>
+    <string>/tmp/nfldashboard-rosterupdate.log</string>
 </dict>
 </plist>

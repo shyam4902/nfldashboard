@@ -15,6 +15,17 @@ import { readFile } from 'node:fs/promises';
 import { extname, join } from 'node:path';
 
 const root = process.cwd();
+const sourceHtml = await readFile(join(root, 'index.html'), 'utf8');
+const walkthrough = await readFile(join(root, 'WALKTHROUGH.md'), 'utf8');
+const hasUnsupportedWalkthroughRanking = /\*\*Top WR:\*\*/.test(walkthrough);
+if (hasUnsupportedWalkthroughRanking) throw new Error('WALKTHROUGH.md contains unsupported global Top WR ranking claim');
+const hasFabricatedMissingValueFallback = /cap\.space \|\| 0|prob != null \? .* : \(\(1 - prob\) \* 100\).*50\.0/.test(sourceHtml);
+if (hasFabricatedMissingValueFallback) throw new Error('Dashboard contains fabricated numeric fallback for missing cap space or win probability');
+const hasBrowserSummerOverride = /applySummer2026Updates|tx-2026-|capAdjustments|custom-p-/.test(sourceHtml);
+const generatorSource = await readFile(join(root, 'generate_roster_files.js'), 'utf8');
+const syncSource = await readFile(join(root, 'sync_supabase_rosters.js'), 'utf8');
+const hasLegacyRosterOverride = /applySummer2026Updates|PLAYER_UPDATES|applyUpdates\s*\(/.test(generatorSource + syncSource);
+console.log('--- browser-side summer override removed:', !hasBrowserSummerOverride, '| duplicate roster overrides removed:', !hasLegacyRosterOverride);
 const types = { '.html': 'text/html', '.js': 'text/javascript', '.json': 'application/json', '.css': 'text/css' };
 const server = createServer(async (req, res) => {
   try {
@@ -100,10 +111,15 @@ if (await matchupBtn.count()) {
   await page.evaluate(() => setMatchupSubTab('overview'));
   await page.waitForTimeout(500);
   const glanceText = await page.locator('#matchupMainContent').textContent().catch(() => '');
+  await page.evaluate(() => setMatchupSubTab('insights'));
+  await page.waitForTimeout(400);
+  const insightsText = await page.locator('#matchupMainContent').textContent().catch(() => '');
+  const noUnsupportedNarrative = !/top WR|leads .* edge rush|anchors .* line|coverage unit led by|Quarterback duel/.test(insightsText);
+  const hasContextDisclosure = /player-vs-player assignments, injury status, or a player-specific weekly projection/.test(insightsText);
   const hasRealEpa = /EPA\/play 2025/.test(glanceText);
   const noFakeStats = !/Record in Close Games/.test(glanceText) && !/Total Penalties/.test(glanceText);
   const sourcesNote = await page.locator('text=Sources & Method').count().catch(() => 0);
-  trustOk = hasRealEpa && noFakeStats && sourcesNote > 0;
+  trustOk = hasRealEpa && noFakeStats && sourcesNote > 0 && noUnsupportedNarrative && hasContextDisclosure;
   console.log('--- at-a-glance real EPA:', hasRealEpa, '| no fabricated columns:', noFakeStats, '| sources note:', sourcesNote > 0);
 
   // Switch to Formation Lab subtab
@@ -172,5 +188,6 @@ console.log('--- page errors:', errors.length ? errors.slice(0, 5) : 'none');
 
 await browser.close();
 server.close();
-if (errors.length || !matchupOk || !gamePickOk || !trustOk || !freshnessOk || !rosterDepthOk || propsNavBtn !== 0 || wtNavBtn !== 0) { console.log('SMOKE TEST FAILED'); process.exit(1); }
+const homeOk = frontDoor.length > 20 && (frontDoorGames > 0 || /no games|unavailable/i.test(frontDoor));
+if (errors.length || hasBrowserSummerOverride || hasLegacyRosterOverride || !homeOk || !matchupOk || !gamePickOk || !trustOk || !freshnessOk || !rosterDepthOk || propsNavBtn !== 0 || wtNavBtn !== 0) { console.log('SMOKE TEST FAILED'); process.exit(1); }
 console.log('SMOKE TEST PASSED');

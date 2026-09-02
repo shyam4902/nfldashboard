@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 
 const ESPN_TRANSACTIONS_URL = "https://site.api.espn.com/apis/site/v2/sports/football/nfl/transactions?limit=250";
+const NORMALIZED_TRANSACTIONS_PATH = path.join(__dirname, 'espn_transactions_2026.json');
 
 const TEAM_METADATA = {
   "Arizona Cardinals": { abbr: "ARI", division: "NFC West" },
@@ -78,9 +79,12 @@ function parseTransactionSentence(desc, teamName) {
     let m = s.match(/^Signed\s+(?:(?:(?:QB|RB|FB|WR|TE|OT|T|G|OG|C|OL|DE|DT|NT|LB|ILB|OLB|CB|S|FS|SS|DB|K|PK|P|LS|EDGE)s?)\s+)?(.+)/i);
     if (m) {
       const rest = m[1];
-      const names = rest.split(/,\s*|\s+and\s+/).map(cleanName).filter(Boolean);
+      const leadingPos = s.match(new RegExp(`^Signed\\s+(${POSITIONS.join('|')})\\s+`, 'i'));
+      const restWithoutPos = leadingPos ? rest.replace(new RegExp(`^${leadingPos[1]}\\s+`, 'i'), '') : rest;
+      const posName = leadingPos ? leadingPos[1].toUpperCase() : '';
+      const names = restWithoutPos.split(/,\s*|\s+and\s+/).map(cleanName).filter(Boolean);
       for (const name of names) {
-        let pos = "";
+        let pos = posName;
         let clean = name;
         for (const p of POSITIONS) {
           if (clean.startsWith(p + " ")) {
@@ -100,9 +104,12 @@ function parseTransactionSentence(desc, teamName) {
     m = s.match(/^(?:Waived|Released|Terminated the contract of|Terminated contract of)\s+(?:(?:(?:QB|RB|FB|WR|TE|OT|T|G|OG|C|OL|DE|DT|NT|LB|ILB|OLB|CB|S|FS|SS|DB|K|PK|P|LS|EDGE)s?)\s+)?(.+)/i);
     if (m) {
       const rest = m[1];
-      const names = rest.split(/,\s*|\s+and\s+/).map(cleanName).filter(Boolean);
+      const leadingPos = s.match(new RegExp(`^(?:Waived|Released|Terminated the contract of|Terminated contract of)\\s+(${POSITIONS.join('|')})\\s+`, 'i'));
+      const restWithoutPos = leadingPos ? rest.replace(new RegExp(`^${leadingPos[1]}\\s+`, 'i'), '') : rest;
+      const posName = leadingPos ? leadingPos[1].toUpperCase() : '';
+      const names = restWithoutPos.split(/,\s*|\s+and\s+/).map(cleanName).filter(Boolean);
       for (const name of names) {
-        let pos = "";
+        let pos = posName;
         let clean = name;
         for (const p of POSITIONS) {
           if (clean.startsWith(p + " ")) {
@@ -119,36 +126,84 @@ function parseTransactionSentence(desc, teamName) {
     }
 
     // 3. Claimed off waivers
-    m = s.match(/^Claimed\s+(?:(?:(?:QB|RB|FB|WR|TE|OT|T|G|OG|C|OL|DE|DT|NT|LB|ILB|OLB|CB|S|FS|SS|DB|K|PK|P|LS|EDGE)s?)\s+)?(.+?)\s+off waivers/i);
+    m = s.match(/^Claimed\s+(?:(?:(?:QB|RB|FB|WR|TE|OT|T|G|OG|C|OL|DE|DT|NT|LB|ILB|OLB|CB|S|FS|SS|DB|K|PK|P|LS|EDGE)s?)\s+)?(.+?)\s+off waivers(?:\s+from\s+(.+?))?$/i);
     if (m) {
       let clean = cleanName(m[1]);
       let pos = "";
-      for (const p of POSITIONS) {
-        if (clean.startsWith(p + " ")) {
-          pos = p;
-          clean = clean.slice(p.length + 1).trim();
-          break;
-        }
-      }
+      const leadingPos = s.match(new RegExp(`^Claimed\\s+(${POSITIONS.join('|')})\\s+`, 'i'));
+      if (leadingPos) { pos = leadingPos[1].toUpperCase(); clean = clean.replace(new RegExp(`^${leadingPos[1]}\\s+`, 'i'), ''); }
       if (clean && clean.length > 2) {
-        moves.push({ type: "claim", player: clean, pos, team: teamName });
+        moves.push({ type: "claim", player: clean, pos, team: teamName, ...(m[2] ? { fromTeam: m[2].trim() } : {}) });
       }
       continue;
     }
 
-    // 4. Traded / Acquired
-    m = s.match(/^(?:Traded|Acquired)\s+(?:(?:(?:QB|RB|FB|WR|TE|OT|T|G|OG|C|OL|DE|DT|NT|LB|ILB|OLB|CB|S|FS|SS|DB|K|PK|P|LS|EDGE)s?)\s+)?(.+?)\s+(?:to|from)\s+(.+)/i);
+    // 4. Traded / Acquired. Ignore draft compensation after the player name.
+    m = s.match(/^Traded\s+(.+?)\s+to\s+(.+?)(?:\s+in exchange for|\s+for|$)/i);
+    if (m) {
+      let clean = cleanName(m[1].replace(/\s+and\s+a\s+\d+\s+.*?round pick.*$/i, '').replace(/\s+and\s+\d+\s+.*?round pick.*$/i, ''));
+      let pos = '';
+      const leadingPos = clean.match(new RegExp(`^(${POSITIONS.join('|')})\\s+(.+)$`, 'i'));
+      if (leadingPos) { pos = leadingPos[1].toUpperCase(); clean = leadingPos[2]; }
+      if (clean && clean.length > 2) {
+        moves.push({ type: "trade", player: clean, pos, team: m[2].trim(), fromTeam: teamName });
+      }
+      continue;
+    }
+
+    m = s.match(/^Acquired\s+(?:(?:(?:QB|RB|FB|WR|TE|OT|T|G|OG|C|OL|DE|DT|NT|LB|ILB|OLB|CB|S|FS|SS|DB|K|PK|P|LS|EDGE)s?)\s+)?(.+?)\s+from\s+(.+)$/i);
     if (m) {
       let clean = cleanName(m[1]);
-      let dest = s.startsWith("Traded") ? m[2].trim() : teamName;
-      if (clean && clean.length > 2) {
-        moves.push({ type: "trade", player: clean, pos: "", team: dest });
-      }
+      if (clean && clean.length > 2) moves.push({ type: "trade", player: clean, pos: "", team: teamName, fromTeam: m[2].trim() });
       continue;
     }
   }
 
   return moves;
+}
+
+function formatDate(date) {
+  const value = new Date(date);
+  return Number.isNaN(value.getTime()) ? '' : value.toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' });
+}
+
+function normalizeEspnTransaction(item) {
+  const teamName = item.team?.displayName || '';
+  const desc = item.description || '';
+  const sourceKey = `${item.date || ''}_${teamName}_${desc}`;
+  const moves = parseTransactionSentence(desc, teamName);
+  return moves.map(move => ({
+    id: `${item.id || sourceKey}:${move.type}:${normalizeName(move.player).replace(/\s+/g, '-')}`,
+    source: 'ESPN',
+    source_id: item.id || null,
+    source_key: sourceKey,
+    type: move.type === 'sign' ? 'signing' : move.type === 'waive' ? 'waiver' : move.type,
+    blockbuster: false,
+    player_name: move.player,
+    pos: move.pos || '',
+    from_team: move.fromTeam || (move.type === 'waive' ? teamName : 'Free Agent'),
+    to_team: move.team,
+    detail: desc,
+    date_str: formatDate(item.date),
+    sort_date: String(item.date || '').slice(0, 10)
+  }));
+}
+
+function normalizeEspnTransactions(items) {
+  return items.flatMap(normalizeEspnTransaction);
+}
+
+function validateTransactions(rows) {
+  const errors = [];
+  const required = ['id', 'source', 'source_key', 'type', 'player_name', 'from_team', 'to_team', 'detail', 'sort_date'];
+  rows.forEach((row, index) => {
+    for (const field of required) {
+      if (row[field] === undefined || row[field] === null || row[field] === '') {
+        errors.push(`row ${index}: ${field} is required`);
+      }
+    }
+  });
+  return { valid: errors.length === 0, errors };
 }
 
 async function updateRostersFromESPN() {
@@ -187,6 +242,24 @@ async function updateRostersFromESPN() {
   }
 
   console.log(`Fetched ${espnTransactions.length} transactions from ESPN.`);
+
+  const normalizedTransactions = normalizeEspnTransactions(espnTransactions);
+  const validation = validateTransactions(normalizedTransactions);
+  if (!validation.valid) {
+    console.error('Normalized ESPN transaction validation failed:', validation.errors.join('; '));
+    return;
+  }
+  if (process.argv.includes('--dry-run')) {
+    fs.writeFileSync(NORMALIZED_TRANSACTIONS_PATH, JSON.stringify({
+      source: 'ESPN',
+      source_url: ESPN_TRANSACTIONS_URL,
+      fetched_at: new Date().toISOString(),
+      record_count: normalizedTransactions.length,
+      transactions: normalizedTransactions
+    }, null, 2), 'utf8');
+    console.log(`Dry run wrote ${normalizedTransactions.length} normalized transactions to ${NORMALIZED_TRANSACTIONS_PATH}`);
+    return;
+  }
 
   let moveCount = 0;
   // Transactions are sorted newest first; iterate in chronological order (oldest to newest)
@@ -351,6 +424,7 @@ async function updateRostersFromESPN() {
   console.log(`Sync complete at ${new Date().toLocaleTimeString()}.`);
 }
 
+if (require.main === module) {
 // Check for --schedule or --daemon flag
 const isScheduled = process.argv.includes('--schedule') || process.argv.includes('--daemon');
 
@@ -364,3 +438,6 @@ if (isScheduled) {
 } else {
   updateRostersFromESPN();
 }
+}
+
+module.exports = { normalizeName, parseTransactionSentence, normalizeEspnTransaction, normalizeEspnTransactions, validateTransactions };
