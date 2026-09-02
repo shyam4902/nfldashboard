@@ -62,7 +62,6 @@ body { font-family: 'Inter', sans-serif; background: #0a0e17; color: #e2e8f0; }
 .r3 { background: #0891b2; color: white; } .r4 { background: #059669; color: white; }
 .r5 { background: #65a30d; color: white; } .r6 { background: #ca8a04; color: white; }
 .r7 { background: #9a3412; color: white; }
-.notes-area { resize: vertical; min-height: 50px; }
 .division-header { background: linear-gradient(90deg, rgba(30,64,175,0.3), transparent); border-left: 3px solid #3b82f6; }
 .search-glow:focus { box-shadow: 0 0 0 3px rgba(59,130,246,0.3); }
 
@@ -84,10 +83,6 @@ body { font-family: 'Inter', sans-serif; background: #0a0e17; color: #e2e8f0; }
 .roster-close:hover { background: rgba(255,255,255,0.2); }
 
 /* Player card in roster */
-.player-slot { background: rgba(30,41,59,0.7); border: 1px solid rgba(71,85,105,0.4); border-radius: 10px; padding: 8px; text-align: center; min-width: 100px; max-width: 120px; transition: transform 0.15s, border-color 0.15s; position: relative; }
-.player-slot:hover { transform: scale(1.05); border-color: rgba(59,130,246,0.5); }
-.player-slot.is-new { border-color: rgba(16,185,129,0.6); box-shadow: 0 0 12px rgba(16,185,129,0.15); }
-.player-slot.is-lost { border-color: rgba(239,68,68,0.4); opacity: 0.5; }
 .rating-badge { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px; margin: 0 auto 4px; }
 .rating-elite { background: linear-gradient(135deg, #f59e0b, #d97706); color: #000; }
 .rating-star { background: linear-gradient(135deg, #22c55e, #16a34a); color: #000; }
@@ -99,7 +94,6 @@ body { font-family: 'Inter', sans-serif; background: #0a0e17; color: #e2e8f0; }
 
 /* Roster formation layout */
 .formation-row { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }
-.position-group-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: rgba(148,163,184,0.6); text-align: center; margin: 12px 0 6px; }
 .roster-tab { padding: 6px 16px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; border: 1px solid transparent; transition: all 0.15s; text-transform: uppercase; letter-spacing: 0.5px; }
 .roster-tab.active-proj { background: rgba(6,182,212,0.2); border-color: #06b6d4; color: #22d3ee; }
 .roster-tab.active-off { background: rgba(59,130,246,0.2); border-color: #3b82f6; color: #60a5fa; }
@@ -135,7 +129,6 @@ body { font-family: 'Inter', sans-serif; background: #0a0e17; color: #e2e8f0; }
 .compact-player .cp-name { color: #f1f5f9; font-weight: 800; font-size: 14px; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; letter-spacing: -0.2px; }
 .compact-player .cp-pos { color: #cbd5e1; font-size: 12px; font-weight: 700; min-width: 30px; }
 .compact-player .cp-age { color: #64748b; font-size: 12px; }
-.compact-player .cp-new { font-size: 9px; font-weight: 800; color: #10b981; background: rgba(16,185,129,0.15); padding: 1px 4px; border-radius: 3px; white-space: nowrap; }
 
 /* Phase 3: rookie/new badges + sort tweaks */
 .badge-rook { background: linear-gradient(135deg, #10b981, #059669); color: white; font-size: 9px; font-weight: 800; padding: 1px 5px; border-radius: 3px; letter-spacing: 0.5px; margin-left: auto; flex-shrink: 0; }
@@ -247,15 +240,6 @@ body { font-family: 'Inter', sans-serif; background: #0a0e17; color: #e2e8f0; }
   .move-detail { grid-column:2 / -1; white-space:normal; line-height:1.35; margin-top:-2px; }
 }
 
-.tx-tbl { display:grid; grid-template-columns: 80px 70px 1.5fr 50px 1fr 1.6fr; gap:0; background:rgba(15,23,42,0.5); border-radius:8px; overflow:hidden; border:1px solid rgba(71,85,105,0.3); }
-.tx-th-cell { font-size:10px; color:#94a3b8; text-transform:uppercase; padding:8px 10px; letter-spacing:0.5px; background:rgba(30,41,59,0.6); cursor:pointer; user-select:none; font-weight:700; border-bottom:1px solid rgba(71,85,105,0.3); }
-.tx-th-cell:hover { background:rgba(59,130,246,0.15); color:#93c5fd; }
-.tx-th-cell.sorted { color:#3b82f6; background:rgba(59,130,246,0.12); }
-.tx-th-cell.no-sort { cursor:default; }
-.tx-th-cell.no-sort:hover { background:rgba(30,41,59,0.6); color:#94a3b8; }
-.tx-td-cell { padding:6px 10px; font-size:11px; color:#cbd5e1; border-bottom:1px solid rgba(71,85,105,0.15); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.tx-td-cell.bb { background:rgba(245,158,11,0.06); }
-.tx-row-bb-marker { color:#f59e0b; font-weight:700; margin-right:4px; }
 .tx-pill { display:inline-block; padding:1px 6px; border-radius:3px; font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; }
 .tx-pill.trade { background:rgba(59,130,246,0.2); color:#93c5fd; }
 .tx-pill.signing { background:rgba(16,185,129,0.2); color:#6ee7b7; }
@@ -1590,9 +1574,7 @@ async function loadAllData() {
     const mRes = await fetch('./madden_official_ratings.json');
     if (mRes.ok) {
       const maddenMap = await mRes.json();
-      function normName(n) {
-        return (n||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/['’.\-]/g,"").replace(/\b(jr|sr|ii|iii|iv|v)\b/gi,"").replace(/\s+/g," ").trim();
-      }
+      // normName is defined once at the top level (see propsMarketLabels).
 
       function matchMadden(maddenMap, p) {
         if (!p || !p.name) return null;
@@ -3457,7 +3439,8 @@ function renderRosterBody(team,side){
       if (p.isRookie) badge = `<span class="badge-rook">ROOK</span>`;
       else if (p.acquisitionType === 'fa' || p.acquisitionType === 'trade') badge = `<span class="badge-new">NEW</span>`;
       const rowCls = p.isRookie ? 'is-rookie' : (p.isNew ? 'is-new' : '');
-      h+=`<div class="compact-player ${rowCls}">
+      const nameEsc = (p.name||'').replace(/'/g,"\\'");
+      h+=`<div class="compact-player ${rowCls}" onclick="openPlayerModal('${nameEsc}','${(team||'').replace(/'/g,"\\'")}')" role="button" title="Open ${p.name}">
         <span class="cp-num">${p.num||'-'}</span>
         <span class="cp-name" title="${p.name}">${p.name}</span>
         <span class="cp-pos">${p.pos}</span>
@@ -4762,8 +4745,9 @@ async function loadClayProjections() {
   for (const url of ['./data/shared/clay_projections_2026.json', './clay_projections_2026.json']) {
     try {
       const res = await fetch(url, { cache: 'no-store' });
-      if (res.ok) {
+      if (res.ok && isJsonResponse(res)) {
         CLAY_DATA = await res.json();
+        buildClayIndex(CLAY_DATA);
         // Wire the Clay metadata "updated" date to the label, replacing the
         // old hardcoded "Updated 8/19/2026" string.
         const meta = CLAY_DATA.metadata || {};
@@ -5194,7 +5178,7 @@ async function loadEfficiency(){
   for (const url of ['./data/shared/team_season_efficiency.json', './team_season_efficiency.json']) {
     try {
       const res = await fetch(url, { cache: 'no-store' });
-      if (res.ok) {
+      if (res.ok && isJsonResponse(res)) {
         EFFICIENCY_DATA = await res.json();
         return EFFICIENCY_DATA;
       }
@@ -5259,7 +5243,7 @@ async function loadSchedule(){
   for (const url of ['./data/shared/schedule.json', './schedule.json']) {
     try {
       const res = await fetch(url, { cache: 'no-store' });
-      if (res.ok) {
+      if (res.ok && isJsonResponse(res)) {
         SCHEDULE_DATA = await res.json();
         currentScheduleWeek = SCHEDULE_DATA.week || 1;
         return SCHEDULE_DATA;
@@ -5665,7 +5649,7 @@ async function loadPropsBoard(){
   for (const url of ['./data/shared/props-board.json', './props-board.json']) {
     try {
       const res = await fetch(url, { cache: 'no-store' });
-      if (!res.ok) throw new Error('HTTP ' + res.status);
+      if (!res.ok || !isJsonResponse(res)) throw new Error('bad or non-JSON response');
       PROPS_BOARD = await res.json();
       PROPS_BOARD.__source = url;
       return PROPS_BOARD;
@@ -5681,7 +5665,7 @@ async function loadFreshness(){
   if (FRESHNESS) return FRESHNESS;
   try {
     const res = await fetch('./data/shared/freshness.json', { cache: 'no-store' });
-    if (res.ok) FRESHNESS = await res.json();
+    if (res.ok && isJsonResponse(res)) FRESHNESS = await res.json();
   } catch (err) { /* absent manifest = no stamps, never block rendering */ }
   return FRESHNESS;
 }
@@ -5703,6 +5687,49 @@ function stampFreshness(id, sourceKey){
   const el = document.getElementById(id);
   if (!el) return;
   el.innerHTML = dataAgeBadge(sourceKey);
+}
+
+// Single shared name normalizer (collapses the 9 inline copies that used to
+// live in this file). Strips diacritics, punctuation, and generational
+// suffixes so roster names, Clay names, and prop-board names can be joined.
+function normName(n) {
+  return (n || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/['’.\-]/g,"").replace(/\b(jr|sr|ii|iii|iv|v)\b/gi,"").replace(/\s+/g," ").trim();
+}
+
+// First+last key for middle-initial tolerance ("Chris D. Jones" ↔ "Chris Jones").
+function firstLastName(n) {
+  const toks = normName(n).split(" ");
+  return toks.length > 2 ? (toks[0] + " " + toks[toks.length - 1]) : normName(n);
+}
+
+// Clay lookup index, built once when projections load. byFirstLast only keeps
+// keys with exactly one candidate, so a fallback match is always unambiguous.
+let CLAY_INDEX = null;
+function buildClayIndex(clay) {
+  CLAY_INDEX = { count: 0, byFirstLast: new Map() };
+  if (!clay || !clay.positional_projections) return CLAY_INDEX;
+  for (const [pos, list] of Object.entries(clay.positional_projections)) {
+    CLAY_INDEX.count += list.length;
+    for (const p of list) {
+      const key = firstLastName(p.name);
+      const entry = CLAY_INDEX.byFirstLast.get(key);
+      if (entry) { entry.list.push({ p, pos }); }
+      else { CLAY_INDEX.byFirstLast.set(key, { list: [{ p, pos }] }); }
+    }
+  }
+  for (const v of CLAY_INDEX.byFirstLast.values()) {
+    if (v.list.length !== 1) v.list = []; // ambiguous → unusable
+  }
+  return CLAY_INDEX;
+}
+
+// Cloudflare Pages serves an SPA-fallback index.html (HTTP 200, text/html)
+// for missing paths, so res.ok alone cannot be trusted for data fetches.
+// Verify the response is actually JSON before parsing it.
+function isJsonResponse(res) {
+  const ct = (res.headers && res.headers.get && res.headers.get('content-type')) || '';
+  if (ct.includes('application/json')) return true;
+  return false; // HTML fallback or unknown → treat as a miss, try next path
 }
 
 const propsMarketLabels = {
@@ -5948,62 +5975,53 @@ function playerLinkHtml(name, team = '', extraClass = '') {
 }
 
 function findPlayerData(name, teamHint = '') {
-  const norm = (name || '').toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/['’.\-]/g,"").replace(/\b(jr|sr|ii|iii|iv|v)\b/gi,"").replace(/\s+/g," ").trim();
-  
-  let pRecord = DATA.players ? DATA.players.find(p => {
-    const pn = (p.name || '').toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/['’.\-]/g,"").replace(/\b(jr|sr|ii|iii|iv|v)\b/gi,"").replace(/\s+/g," ").trim();
-    return pn === norm;
-  }) : null;
+  const norm = normName(name);
+
+  let pRecord = DATA.players ? DATA.players.find(p => normName(p.name) === norm) : null;
 
   let clayPosProj = null;
   let posGroup = null;
   if (CLAY_DATA && CLAY_DATA.positional_projections) {
     for (const [pos, list] of Object.entries(CLAY_DATA.positional_projections)) {
-      const match = list.find(p => {
-        const pn = (p.name || '').toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/['’.\-]/g,"").replace(/\b(jr|sr|ii|iii|iv|v)\b/gi,"").replace(/\s+/g," ").trim();
-        return pn === norm;
-      });
+      const match = list.find(p => normName(p.name) === norm);
       if (match) {
         clayPosProj = match;
         posGroup = pos;
         break;
       }
     }
-  }
-
-  // Clay projected_starters is intentionally not looked up here. Position and
-  // team come from the Supabase roster or Clay positional_projections only.
-  const starterInfo = null;
-  if (false && CLAY_DATA && CLAY_DATA.projected_starters) {
-    for (const [conf, teams] of Object.entries(CLAY_DATA.projected_starters)) {
-      for (const [tm, starters] of Object.entries(teams)) {
-        const match = starters.find(s => {
-          const sn = (s.name || '').toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/['’.\-]/g,"").replace(/\b(jr|sr|ii|iii|iv|v)\b/gi,"").replace(/\s+/g," ").trim();
-          return sn === norm;
-        });
-        if (match) {
-          starterInfo = { ...match, teamName: tm, conference: conf };
-          break;
-        }
+    if (!clayPosProj && CLAY_INDEX) {
+      // Middle-initial tolerance: Clay writes "Chris D. Jones", rosters write
+      // "Chris Jones". Exact match failed → try the unambiguous
+      // first+last index. Still no hit → this player simply has no Clay
+      // projection (most backups/practice-squad players don't).
+      const fb = CLAY_INDEX.byFirstLast.get(firstLastName(name));
+      if (fb && fb.list.length === 1) {
+        clayPosProj = fb.list[0].p;
+        posGroup = fb.list[0].pos;
       }
-      if (starterInfo) break;
     }
   }
 
+  // starterInfo is permanently retired: Clay projected_starters is no longer
+  // read anywhere (ticket 14). Position and team come from the Supabase
+  // roster or Clay positional_projections only.
+  const starterInfo = null;
+
   let playerTxs = DATA.transactions ? DATA.transactions.filter(t => {
-    const tn = (t.player_name || '').toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/['’.\-]/g,"").replace(/\b(jr|sr|ii|iii|iv|v)\b/gi,"").replace(/\s+/g," ").trim();
+    const tn = normName(t.player_name);
     return tn === norm;
   }) : [];
 
   let playerProps = [];
   if (PROPS_BOARD && PROPS_BOARD.plays) {
     playerProps = PROPS_BOARD.plays.filter(pl => {
-      const pln = (pl.player || '').toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/['’.\-]/g,"").replace(/\b(jr|sr|ii|iii|iv|v)\b/gi,"").replace(/\s+/g," ").trim();
+      const pln = normName(pl.player);
       return pln === norm;
     });
   }
 
-  return { name, norm, pRecord, clayPosProj, posGroup, starterInfo, playerTxs, playerProps };
+  return { name, norm, pRecord, clayPosProj, posGroup, starterInfo, playerTxs, playerProps, clayCount: CLAY_INDEX ? CLAY_INDEX.count : 0 };
 }
 
 async function openPlayerModal(name, teamHint = '') {
@@ -6121,6 +6139,24 @@ async function openPlayerModal(name, teamHint = '') {
         </div>
         <div class="text-[10px] text-slate-500 italic">
           *Mike Clay Prop Baseline: Removes ${discountGames} games worth of stats (${(baselineMult * 100).toFixed(1)}% multiplier) to discount in-season injury risk.
+        </div>
+      </div>
+    `;
+  } else {
+    // No Clay projection for this player. Mike Clay publishes ~935 of the
+    // ~2523 rostered players (starters + rotation), so this is expected for
+    // backups and practice-squad players — say so instead of rendering an
+    // apparently-broken empty modal.
+    const posLabel = p.pos || '';
+    html += `
+      <div class="mb-5 glass rounded-xl p-4">
+        <div class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2 flex items-center gap-2">
+          <span>📊</span> Mike Clay 2026 Projections
+        </div>
+        <div class="text-xs text-slate-400 leading-relaxed">
+          No Mike Clay projection is published for this player${posLabel ? ' (' + posLabel + ')' : ''}.
+          Clay covers roughly ${data.clayCount || 935} rostered players (starters and top backups),
+          so most depth and practice-squad players have no projected stats here.
         </div>
       </div>
     `;
@@ -6959,8 +6995,7 @@ function renderClayMarketDelta(c, data) {
   if (data.positional_projections) {
     for (const [pos, list] of Object.entries(data.positional_projections)) {
       for (const p of list) {
-        const norm = (p.name || '').toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/['’.\-]/g,"").replace(/\b(jr|sr|ii|iii|iv|v)\b/gi,"").replace(/\s+/g," ").trim();
-        clayPlayersMap[norm] = { ...p, posGroup: pos };
+        clayPlayersMap[normName(p.name)] = { ...p, posGroup: pos };
       }
     }
   }
@@ -6968,8 +7003,7 @@ function renderClayMarketDelta(c, data) {
   const deltas = [];
 
   for (const play of PROPS_BOARD.plays) {
-    const norm = (play.player || '').toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/['’.\-]/g,"").replace(/\b(jr|sr|ii|iii|iv|v)\b/gi,"").replace(/\s+/g," ").trim();
-    const cp = clayPlayersMap[norm];
+    const cp = clayPlayersMap[normName(play.player)];
     if (!cp) continue;
 
     const pos = cp.pos || cp.posGroup || play.position || '';

@@ -1,7 +1,49 @@
 # NFL Dashboard — State
 
-- updated: 2026-09-01
+- updated: 2026-09-02
 - live: https://nfldashboard.pages.dev/ (Cloudflare Pages, **git-connected: auto-deploys on `git push origin main`**; verified 2026-09-01)
+
+## Fixed 2026-09-02 — friend-feedback audit: 4 root causes traced and fixed
+- **Full-surface audit** (headless Chromium sweep of all 5 tabs, 8 matchup
+  subtabs, 19 projection subtabs, modals, themes, mobile 390px): zero page
+  errors, zero console errors, no mobile overflow. The reported issues were
+  data-trust failures, not crashes:
+- **P1 — deploys never carried the data layer.** `data/shared/` lives outside
+  every git repo, so Cloudflare Pages deploys never included it. Every
+  `./data/shared/*.json` fetch on the live site returned the SPA-fallback
+  `index.html` (HTTP 200, text/html!), and the app silently survived on
+  repo-local fallback copies. `freshness.json` has no fallback, so the ticket-14
+  "data X ago / stale-amber" trust badges were dead in production. Fixes:
+  (a) root `scripts/sync_shared_data.sh` now also publishes the layer into
+  `nfldashboard/data/shared/` (git-tracked → ships with every deploy);
+  (b) `isJsonResponse()` guards every data fetch — a 200-with-HTML fallback
+  response is treated as a miss, so fetches fall through to the repo-local
+  copy instead of parsing HTML. **Deploy note: commit the new `data/` dir.**
+- **P2 — Clay name-variant join ("Chris D. Jones" vs "Chris Jones").**
+  `findPlayerData` exact-matched names; Clay writes middle initials, rosters
+  don't, so 7 starters (incl. Chris Jones OVR 96, Byron Young 82) opened a
+  modal with no projections. Fix: shared `normName()` + `firstLastName()` and
+  a one-time `CLAY_INDEX` (built on projections load); on exact-miss it falls
+  back to the first+last index **only when unambiguous** (single candidate).
+- **P3 — ~1,725 of 2,523 players opened a mystery-empty modal.** Clay projects
+  ~935 players (and no OL at all); everyone else got a header + Compare button
+  and nothing else. Fix: honest explanatory note ("No Mike Clay projection is
+  published for this player…") — consistent with the no-fabrication rule.
+- **P4 — roster modal rows were dead ends.** `renderRosterBody` rows had
+  `cursor:pointer` styling but no onclick. Now every row deep-links via
+  `openPlayerModal(name, team)`.
+- **Trim pass:** deleted the dead `if (false && …)` projected-starters branch,
+  collapsed 9 inline name-normalizer copies into the shared `normName()`,
+  removed ~16 lines of dead CSS (`.player-slot`, `.tx-tbl/.tx-th-cell/
+  .tx-td-cell`, `.notes-area`, `.position-group-label`, `.cp-new`), and deleted
+  6 stale one-off scripts (`build_complete_app.py`, `fix_starters.py`,
+  `extract_remaining.py`, `check_csv.js`, `spot_check.js`, `verify_schedule.py`).
+- Verified: JS syntax check, `props-smoke.mjs` PASSED (0 page errors),
+  `test_all_extensions.py` all passed (0 console errors), plus a fix-verification
+  script (Chris Jones / Byron Young Clay join, empty-state note, roster-row
+  click-through, in-repo freshness JSON). Mobile re-check clean.
+- Module-split exploration (single file → modules) is proposed, not started:
+  see the 2026-09-02 session notes. Pending user decision.
 - repo: https://github.com/shyam4902/nfldashboard · single-file app in `index.html` + Supabase + static JSON
 - deploy: commit → `git push origin main` → Pages builds (~1-2 min). The only step that ships the public site is the push.
 - NOTE: `~/Library/Application Support/nfldashboard-props/nfldashboard/` is the launchd/local dev-preview copy, NOT the public deployment.
