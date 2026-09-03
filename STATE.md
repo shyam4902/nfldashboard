@@ -25,6 +25,16 @@
 - `node update_rosters_from_espn.js --dry-run` produces a source-tagged normalized inspection artifact without roster-file or database writes.
 - Normalized ESPN transaction persistence to Supabase is not implemented; the dashboard continues to read transactions from Supabase.
 
+## Backend hardening (2026-09-03)
+
+- `scripts/data-assets.json` is the single inventory of dashboard data assets: canonical copy, duplicated deploy copies, required/optional status, freshness key and threshold, browser fallbacks, and producer for each asset (including the research handoffs that are freshness-tracked but not deployed).
+- `scripts/validate-data.js` is the one boring validator: `node scripts/validate-data.js` checks JSON parsing, required fields, byte-identity of every duplicated deploy copy, browser-fallback presence, freshness provenance (embedded `generated_at`, canonical-file mtime, or internal consistency for research-sourced assets), and the bidirectional manifest ⇄ inventory contract. Exit code 0/1. `validate_data.test.js` covers it hermetically against a throwaway fixture workspace.
+- Publishing writes are atomic: `scripts/atomic-write.js` (temp + rename) backs the three roster writers; the schedule/draft-capital/Clay builders write via same-dir temp + `os.replace`; `fantasyfootball/scripts/sync-shared-data.sh` publishes every nfldashboard copy atomically. An interrupted run can no longer leave a truncated tracked artifact.
+- The sync script is the sole writer of every nfldashboard deploy copy, including the root `props-board.json` and `team_season_efficiency.json` browser fallbacks whose sources live outside the dashboard — the root props fallback had silently drifted one export behind; the validator now catches any future drift.
+- `props-smoke.mjs` serves the versioned `data/shared/` deploy copies (not the unversioned workspace handoff), so the browser test exercises the same bytes the Pages deploy ships.
+- Removed dead `scripts/inseason_sync.py` (zero consumers, fabricated `last_updated`) and the legacy `com.nfldashboard.rosterupdate.plist` template (job never installed; only `props-scan` and `rostersync` are loaded). `update_rosters_from_espn.js` stays as the dry-run normalization tool.
+- `extract_clay_projections.py` derives its PDF/output paths from the script location instead of hardcoded `/Users/shyampatel/Desktop/NFL_Main` paths.
+
 ## Shipped cleanup
 
 - Browser-side summer roster, transaction, cap-space, and synthetic-player overrides were removed.
@@ -40,17 +50,21 @@
 The current checks are:
 
 ```bash
+node scripts/validate-data.js
 node check_html_scripts.mjs
 node --check generate_roster_files.js
 node --check sync_supabase_rosters.js
 node --check update_rosters_from_espn.js
 node --test update_rosters_from_espn.test.js
+node --test validate_data.test.js
 PLAYWRIGHT_MODULE=/path/to/installed/playwright node props-smoke.mjs
 python3 test_all_extensions.py
 python3 test_projections.py
 python3 test_schedule_data.py
 python3 -m py_compile test_all_extensions.py test_projections.py test_schedule_data.py
 ```
+
+`scripts/validate-data.js` is the data-layer gate (run it before any deploy that changes data). The HTML checker is required because Node does not syntax-check `.html` files directly.
 
 The HTML checker is required because Node does not syntax-check `.html` files directly. The review-finding implementation plan is complete; the remaining limitations below are separate follow-up work.
 

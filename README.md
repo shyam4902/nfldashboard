@@ -32,6 +32,18 @@ The browser does not apply summer roster, transaction, or cap-space overrides. T
 
 Missing cap-space values and missing or malformed weekly win probabilities render as `Unavailable`; explicit zero values remain valid. Freshness badges show source age and non-fresh manifest status when `data/shared/freshness.json` provides it.
 
+## Data assets and validation
+
+`scripts/data-assets.json` inventories every dashboard data asset — canonical copy, duplicated deploy copies, required/optional status, freshness key and threshold, browser fallbacks, and producer. One boring validator enforces it:
+
+```bash
+node scripts/validate-data.js
+```
+
+It checks that each JSON parses and has its required fields, that every duplicated deploy copy is byte-identical to the canonical file, that browser fallbacks exist, that each freshness-manifest `as_of` matches the asset's true data vintage, and that the manifest and inventory cover each other. Exit 0 means the data layer is consistent; run it before deploying data changes.
+
+Every nfldashboard copy of the shared layer is written by one path: `fantasyfootball/scripts/sync-shared-data.sh` (root `scripts/sync_shared_data.sh` is a shim). Publishing writes are atomic, so an interrupted sync cannot corrupt a tracked artifact. Edge's `src/data/props-board.json` is intentionally separate — it is refreshed only via `refresh-props-board.ts`.
+
 ## ESPN transaction ingestion
 
 `update_rosters_from_espn.js` parses supported ESPN signings, releases, waiver claims, and trades into the dashboard transaction shape. It canonicalizes unambiguous full, abbreviated, and ESPN short team names, validates normalized record fields and dry-run metadata, preserves source identifiers and descriptions, and skips unsupported descriptions rather than converting them into invented rows.
@@ -51,11 +63,13 @@ The roster generator and Supabase roster export no longer inject synthetic summe
 Run from `nfldashboard/`:
 
 ```bash
+node scripts/validate-data.js
 node check_html_scripts.mjs
 node --check generate_roster_files.js
 node --check sync_supabase_rosters.js
 node --check update_rosters_from_espn.js
 node --test update_rosters_from_espn.test.js
+node --test validate_data.test.js
 PLAYWRIGHT_MODULE=/path/to/installed/playwright node props-smoke.mjs
 python3 test_all_extensions.py
 python3 test_projections.py
