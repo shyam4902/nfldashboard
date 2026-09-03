@@ -40,9 +40,9 @@ Missing cap-space values and missing or malformed weekly win probabilities rende
 node scripts/validate-data.js
 ```
 
-It checks that each JSON parses and has its required fields, that every duplicated deploy copy is byte-identical to the canonical file, that browser fallbacks exist, that each freshness-manifest `as_of` matches the asset's true data vintage, and that the manifest and inventory cover each other. Exit 0 means the data layer is consistent; run it before deploying data changes.
+It checks that each JSON parses and has its required fields and shapes, that every duplicated deploy copy is byte-identical to the canonical file, that browser fallbacks exist, that props-board's embedded `generated_at` matches its manifest `as_of`, and that every other freshness entry is internally consistent (`as_of` parseable and never postdating `generated_at`; `age_hours`/`status` derived from it; thresholds matching the inventory). File mtimes are deliberately not provenance — Git discards them on checkout, so a clean clone must validate — and exact source vintages are verified producer-side by the fantasyfootball freshness-provenance test. Runtime dependencies (Supabase tables, the nflverse games feed) are inventoried with required status, failure behavior, and fallback policy; the validator never contacts the network. Exit 0 means the data layer is consistent; run it before deploying data changes.
 
-Every nfldashboard copy of the shared layer is written by one path: `fantasyfootball/scripts/sync-shared-data.sh` (root `scripts/sync_shared_data.sh` is a shim). Publishing writes are atomic, so an interrupted sync cannot corrupt a tracked artifact. Edge's `src/data/props-board.json` is intentionally separate — it is refreshed only via `refresh-props-board.ts`.
+Every nfldashboard copy of the shared layer is written by one path: `fantasyfootball/scripts/sync-shared-data.sh` (root `scripts/sync_shared_data.sh` is a shim). Publishing writes are atomic — same-dir temp plus rename, with temp names unique per process — so an interrupted sync, or two concurrent syncs, cannot corrupt a tracked artifact. Edge's `src/data/props-board.json` is intentionally separate — it is refreshed only via `refresh-props-board.ts`.
 
 ## ESPN transaction ingestion
 
@@ -70,6 +70,7 @@ node --check sync_supabase_rosters.js
 node --check update_rosters_from_espn.js
 node --test update_rosters_from_espn.test.js
 node --test validate_data.test.js
+node --test concurrent_publish.test.js
 PLAYWRIGHT_MODULE=/path/to/installed/playwright node props-smoke.mjs
 python3 test_all_extensions.py
 python3 test_projections.py
@@ -79,7 +80,7 @@ python3 -m py_compile test_all_extensions.py test_projections.py test_schedule_d
 
 `check_html_scripts.mjs` extracts the inline JavaScript from `index.html` and runs Node syntax validation on it. `node --check index.html` is not a valid HTML check.
 
-The browser tests exercise the main flows and fail on content assertions or console errors. `props-smoke.mjs` uses normal Node module resolution or the `PLAYWRIGHT_MODULE` environment override when Playwright is installed outside the repository.
+The browser tests exercise the main flows and fail on content assertions or console errors. They are hermetic against project data by default: Supabase and nflverse requests are intercepted with deterministic fixtures derived from committed data (see `test-fixtures/README.md`). Real-network runs are explicit opt-ins — `DASH_LIVE_NETWORK=1` for the Python suites, `LIVE_SMOKE=1` for `props-smoke.mjs`. `props-smoke.mjs` uses normal Node module resolution or the `PLAYWRIGHT_MODULE` environment override when Playwright is installed outside the repository.
 
 Generated screenshots are test artifacts and should not be included in a source/docs commit unless intentionally refreshed.
 

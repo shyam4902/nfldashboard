@@ -26,10 +26,15 @@ The Edge app link uses the live custom domain `https://edge.shyamsapps.qzz.io`. 
 ## Commands
 
 ```bash
-node props-smoke.mjs
-python3 test_all_extensions.py
-python3 test_projections.py
+node scripts/validate-data.js        # data-layer gate (JSON shape, copy identity, freshness)
+node props-smoke.mjs                 # browser smoke — hermetic fixtures by default
+python3 test_all_extensions.py       # hermetic fixtures by default
+python3 test_projections.py          # hermetic fixtures by default
+node --test validate_data.test.js
+node --test concurrent_publish.test.js
 ```
+
+Browser tests intercept Supabase/nflverse with committed-data fixtures by default; real-network runs are explicit opt-ins (`DASH_LIVE_NETWORK=1`, `LIVE_SMOKE=1`). The validator never treats file mtimes as provenance (Git discards them on checkout) — run it before deploying data changes.
 
 Use `node sync_supabase_rosters.js` only when the task requires a roster refresh. It contacts a live service and changes local data.
 
