@@ -8,24 +8,36 @@
 // insight line) and the Matchup Lab (formation chips, unit rows, game
 // picker).
 import { createRequire } from 'node:module';
+import { access } from 'node:fs/promises';
 const require = createRequire(import.meta.url);
-const { chromium } = require('/Users/shyampatel/.hermes/hermes-agent/node_modules/playwright');
+const playwrightModule = process.env.PLAYWRIGHT_MODULE || 'playwright';
+let chromium;
+try {
+  ({ chromium } = require(playwrightModule));
+} catch (error) {
+  throw new Error(`Unable to load Playwright from '${playwrightModule}'. Install it in the repository or set PLAYWRIGHT_MODULE to a valid module path. Original error: ${error.message}`);
+}
 import { createServer } from 'node:http';
 import { readFile } from 'node:fs/promises';
 import { extname, join } from 'node:path';
 
 const root = process.cwd();
+await access(join(root, 'index.html'));
 const sourceHtml = await readFile(join(root, 'index.html'), 'utf8');
 const walkthrough = await readFile(join(root, 'WALKTHROUGH.md'), 'utf8');
 const hasUnsupportedWalkthroughRanking = /\*\*Top WR:\*\*/.test(walkthrough);
 if (hasUnsupportedWalkthroughRanking) throw new Error('WALKTHROUGH.md contains unsupported global Top WR ranking claim');
-const hasFabricatedMissingValueFallback = /cap\.space \|\| 0|prob != null \? .* : \(\(1 - prob\) \* 100\).*50\.0/.test(sourceHtml);
+const hasFabricatedMissingValueFallback = /cap\.space\s*\|\|\s*0|parseInt\(g\.win_probability\)\s*\|\|\s*50/.test(sourceHtml);
 if (hasFabricatedMissingValueFallback) throw new Error('Dashboard contains fabricated numeric fallback for missing cap space or win probability');
+const hasRawMissingProbabilityLabel = /\$\{g\.win_probability\}/.test(sourceHtml) && !/probability === null \? ['"]Unavailable['"]/.test(sourceHtml);
+if (hasRawMissingProbabilityLabel) throw new Error('Dashboard can render a raw missing win probability instead of an unavailable state');
 const hasBrowserSummerOverride = /applySummer2026Updates|tx-2026-|capAdjustments|custom-p-/.test(sourceHtml);
 const generatorSource = await readFile(join(root, 'generate_roster_files.js'), 'utf8');
 const syncSource = await readFile(join(root, 'sync_supabase_rosters.js'), 'utf8');
 const hasLegacyRosterOverride = /applySummer2026Updates|PLAYER_UPDATES|applyUpdates\s*\(/.test(generatorSource + syncSource);
-console.log('--- browser-side summer override removed:', !hasBrowserSummerOverride, '| duplicate roster overrides removed:', !hasLegacyRosterOverride);
+const hasStaleSyncComments = /applied updates|ESPN depth-chart overlay/i.test(syncSource);
+if (hasStaleSyncComments) throw new Error('Roster sync script contains stale override or overlay comments');
+console.log('--- browser-side summer override removed:', !hasBrowserSummerOverride, '| duplicate roster overrides removed:', !hasLegacyRosterOverride, '| sync comments current:', !hasStaleSyncComments);
 const types = { '.html': 'text/html', '.js': 'text/javascript', '.json': 'application/json', '.css': 'text/css' };
 const server = createServer(async (req, res) => {
   try {
@@ -44,8 +56,10 @@ const server = createServer(async (req, res) => {
 });
 await new Promise(r => server.listen(8123, r));
 
-const browser = await chromium.launch();
-const page = await browser.newPage();
+let browser;
+try {
+  browser = await chromium.launch();
+  const page = await browser.newPage();
 const errors = [];
 page.on('pageerror', e => errors.push(String(e)));
 page.on('console', m => { if (m.type() === 'error') errors.push(m.text()); });
@@ -184,10 +198,50 @@ if (!rosterCheck.skipped) {
   rosterDepthOk = rosterCheck.hasRosterDepth && !rosterCheck.hasOldPanelTitle;
   console.log('--- roster depth panel: real roster view:', rosterCheck.hasRosterDepth, '| old Clay starters panel gone:', !rosterCheck.hasOldPanelTitle);
 }
+const missingProbabilityCheck = await page.evaluate(async () => {
+  const team = Object.keys(CLAY_DATA?.team_projections || {}).find(name =>
+    CLAY_DATA.team_projections[name]?.weekly_projections?.some(game => game.opponent && game.opponent !== '0'));
+  if (!team) return { hasUnavailable: false, hasRawUndefined: false, error: 'No team with a weekly projection was available' };
+  const games = CLAY_DATA.team_projections[team].weekly_projections;
+  const target = games.find(game => game.opponent && game.opponent !== '0');
+  const original = target.win_probability;
+  try {
+    target.win_probability = undefined;
+    await renderTeamProjectionsBody(team);
+    const text = document.getElementById('rosterBody')?.textContent || '';
+    return { hasUnavailable: text.includes('Unavailable'), hasRawUndefined: text.includes('undefined'), error: null };
+  } finally {
+    target.win_probability = original;
+    await renderTeamProjectionsBody(team);
+  }
+}).catch(error => ({ hasUnavailable: false, hasRawUndefined: false, error: String(error) }));
+const probabilityOk = missingProbabilityCheck.hasUnavailable && !missingProbabilityCheck.hasRawUndefined;
+console.log('--- missing weekly probability renders unavailable:', probabilityOk, missingProbabilityCheck.error || '');
+const missingCapCheck = await page.evaluate(async () => {
+  const team = 'Dallas Cowboys';
+  const original = DATA.capData[team];
+  try {
+    delete DATA.capData[team];
+    await renderRosterSummary(team);
+    const text = document.getElementById('rosterSummary')?.textContent || '';
+    return { hasUnavailable: text.includes('Unavailable') || text.includes('—'), hasZero: text.includes('$0'), error: null };
+  } finally {
+    DATA.capData[team] = original;
+    await renderRosterSummary(team);
+  }
+}).catch(error => ({ hasUnavailable: false, hasZero: true, error: String(error) }));
+const capOk = missingCapCheck.hasUnavailable && !missingCapCheck.hasZero;
+console.log('--- missing cap space renders unavailable:', capOk, missingCapCheck.error || '');
 console.log('--- page errors:', errors.length ? errors.slice(0, 5) : 'none');
 
-await browser.close();
-server.close();
-const homeOk = frontDoor.length > 20 && (frontDoorGames > 0 || /no games|unavailable/i.test(frontDoor));
-if (errors.length || hasBrowserSummerOverride || hasLegacyRosterOverride || !homeOk || !matchupOk || !gamePickOk || !trustOk || !freshnessOk || !rosterDepthOk || propsNavBtn !== 0 || wtNavBtn !== 0) { console.log('SMOKE TEST FAILED'); process.exit(1); }
-console.log('SMOKE TEST PASSED');
+  const homeOk = frontDoor.length > 20 && (frontDoorGames > 0 || /no games|unavailable/i.test(frontDoor));
+  if (errors.length || hasBrowserSummerOverride || hasLegacyRosterOverride || !homeOk || !matchupOk || !gamePickOk || !trustOk || !freshnessOk || !rosterDepthOk || !probabilityOk || !capOk || propsNavBtn !== 0 || wtNavBtn !== 0) {
+    console.log('SMOKE TEST FAILED');
+    process.exitCode = 1;
+  } else {
+    console.log('SMOKE TEST PASSED');
+  }
+} finally {
+  await browser?.close();
+  await new Promise(resolve => server.close(resolve));
+}

@@ -1,12 +1,10 @@
 #!/usr/bin/env node
 // Sync nfl_rosters_2026.json from the live Supabase roster source.
-// Mirrors generate_roster_files.js (same anon-key reads + applied updates)
-// but only refreshes the JSON file the app reads, no CSV/TXT.
+// Fetches teams and players, applies the local Madden rating overlay, and
+// writes only the JSON artifact consumed by the app.
 //
-// Purpose: propagate weekly roster/depth changes (cuts, chart moves) into the
-// dashboard without re-deriving from a stale local snapshot. During the
-// preseason ESPN exposes no depth order, so this is the source of truth;
-// in-season an ESPN depth-chart overlay can be layered on top later.
+// Purpose: propagate the current Supabase roster snapshot into the dashboard
+// without re-deriving it from a stale local artifact.
 //
 // Usage: node sync_supabase_rosters.js        (writes nfl_rosters_2026.json)
 const fs = require('fs');

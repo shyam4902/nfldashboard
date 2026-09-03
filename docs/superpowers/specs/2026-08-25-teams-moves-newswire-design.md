@@ -1,5 +1,7 @@
 # Teams -> Moves Newswire Design
 
+> Historical record: this design was implemented. Use `README.md` and `STATE.md` for the current dashboard contract.
+
 **Status:** Approved design
 **Date:** August 25, 2026
 

@@ -1,5 +1,7 @@
 # Teams -> Moves Newswire Implementation Plan
 
+> Historical record: this plan was completed and pushed. Use `README.md` and `STATE.md` for the current dashboard contract and verification commands.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [x]`) syntax for tracking.
 
 **Goal:** Move Transactions into a compact Moves sub-tab under Teams and replace the current card-plus-table page with a dense date-grouped transaction newswire.
@@ -27,7 +29,7 @@
 **Files:**
 - Modify: `nfldashboard/index.html` header markup, home feature/spotlight actions, command palette actions, and `showTab` routing.
 - Modify: `nfldashboard/WALKTHROUGH.md` navigation description.
-- Test: `nfldashboard/test_all_extensions.py`, `nfldashboard/verify_schedule.py` if stale route assertions are present.
+- Test: `nfldashboard/test_all_extensions.py`, `nfldashboard/test_schedule_data.py` for schedule assertions.
 
 - [x] Remove the `data-tab="feed"` Transactions button from the primary header.
 - [x] Replace every Home feature, Home spotlight, command-palette, and other internal action that opens `feed` with a Teams -> Moves action.

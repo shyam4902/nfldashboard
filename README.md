@@ -1,97 +1,80 @@
 # NFL Dashboard
 
-> Edge app URL policy: use `https://edge.shyamsapps.qzz.io`, the live custom
-> domain. `https://edgeplay-analytics.pages.dev` is the fallback for the same
-> deployment. Lovable is historical only.
+Static NFL dashboard served from `index.html` and repository data assets.
 
-Static dashboard app, single-file (`index.html` + JSON assets).
+> The Edge app uses `https://edge.shyamsapps.qzz.io`. Its `pages.dev` URL remains a valid fallback. Lovable references are historical only.
 
-## Deploy (confirmed 2026-09-01)
+## Production deployment
 
-`https://nfldashboard.pages.dev/` is **git-connected to the GitHub repo
-(`shyam4902/nfldashboard`, branch `main`) and auto-deploys on push**. To ship a
-change:
+`https://nfldashboard.pages.dev/` is git-connected to `shyam4902/nfldashboard` on `main`. Push a verified commit to publish through Cloudflare Pages:
 
 ```bash
 git push origin main
 ```
 
-Cloudflare Pages builds the pushed commit and publishes it (takes ~1–2 min).
-Verified 2026-09-01: live site matched `origin/main` byte-for-byte before a
-push, and the new build appeared ~1 min after `c805bff..503f3d2` landed.
+Allow roughly 1–2 minutes for the Pages build. Verify the deployed page in a browser and check the console for errors when a release changes runtime behavior.
 
-Verification after deploy:
+## Current dashboard
 
-```bash
-curl -s https://nfldashboard.pages.dev/ | grep -o "<marker text>"
-# or load the URL in a browser and check console for errors
-```
+Primary views:
 
-## Data files
+- **Home** — current schedule cards, source-backed prop insight, highlights, and navigation.
+- **Schedule** — 18-week schedule with market-line and freshness context when available.
+- **Matchup** — schedule-backed game picker, team efficiency comparisons, formation views, and source-scoped disclosures.
+- **Teams** — roster overview, `Moves` newswire, Power Index, roster depth, player profiles, and draft capital.
+- **Projections** — Clay standings, leaders, schedule, team projections, positional projections, defense, unit grades, coaching, and model comparison views.
 
-The dashboard fetches its data from the repo itself: `props-board.json`
-(copied from the fantasyfootball export), `schedule.json`, `nfl_rosters_2026.json`,
-`clay_projections_2026.json`, `team_season_efficiency.json`, and the
-`data/shared/` unified layer. Keep every JSON the page fetches committed, or
-the deployed page 404s on it.
+Props and win totals are owned by the Edge Analytics app; the dashboard keeps only the links and source-backed Home integration that remain part of its contract.
 
-> The Props & Value tab is gone (ticket 13); props live in the Edge Analytics
-> app. The dashboard reads `props-board.json` only for the Home insight line,
-> the player modal, and the Schedule cross-link.
+## Data contract
 
-## Data and verification status
+The browser does not apply summer roster, transaction, or cap-space overrides. Teams, players, and dashboard transactions come from the Supabase-backed data path. Static artifacts such as `schedule.json`, `clay_projections_2026.json`, `draft-capital.json`, `madden_official_ratings.json`, and the shared data layer are loaded from the repository where the page requires them.
 
-The browser does not apply summer roster, transaction, or cap-space overrides. The dashboard reads roster and transaction state from Supabase-backed data populated by the ESPN ingestion workflow. Missing values render as unavailable instead of being guessed, including cap-space and matchup win-probability fields. Freshness badges also surface non-fresh source status when provided by the manifest.
-
-The current verification suite passes:
-
-```bash
-node props-smoke.mjs
-python3 test_all_extensions.py
-python3 test_projections.py
-```
-
-The Moves test searches for a transaction returned by the source at runtime. It does not require a particular player or hardcoded transaction. The projections test follows the current UI, where the Clay projected-starters view is retired and roster depth is covered through the Teams flow.
-
-## Verification status
-
-For HTML syntax validation, use the repository-aware checker rather than `node --check index.html` (Node does not accept `.html` files directly):
-
-```bash
-node check_html_scripts.mjs
-```
-
-The source and test cleanup is complete. The dashboard no longer applies browser-side summer roster, transaction, or cap-space overrides. Transactions and roster state come from the Supabase-backed data populated by the ESPN ingestion workflow. Missing values render as unavailable rather than being guessed.
-
-Run the current checks with:
-
-```bash
-node props-smoke.mjs
-python3 test_all_extensions.py
-python3 test_projections.py
-```
-
-The Moves check uses a transaction returned at runtime instead of requiring a named player. The projections check follows the current UI and does not target the retired Clay projected-starters view.
+Missing cap-space values and missing or malformed weekly win probabilities render as `Unavailable`; explicit zero values remain valid. Freshness badges show source age and non-fresh manifest status when `data/shared/freshness.json` provides it.
 
 ## ESPN transaction ingestion
 
-`update_rosters_from_espn.js` is the ESPN ingestion script. It normalizes supported signings, waivers, claims, and trades into the dashboard transaction shape, validates required fields, and skips unsupported descriptions without creating records. Use `--dry-run` to write `espn_transactions_2026.json` for inspection without changing roster files or a database:
+`update_rosters_from_espn.js` parses supported ESPN signings, releases, waiver claims, and trades into the dashboard transaction shape. It canonicalizes unambiguous full, abbreviated, and ESPN short team names, validates normalized record fields and dry-run metadata, preserves source identifiers and descriptions, and skips unsupported descriptions rather than converting them into invented rows.
+
+Use the dry-run path for inspection only:
 
 ```bash
 node update_rosters_from_espn.js --dry-run
 ```
 
-The output includes the ESPN source URL, fetch timestamp, record count, stable source keys, and normalized transactions. The script does not write Supabase transactions yet. The dashboard continues to read its transaction data from Supabase. No live sync or database write is part of the dry-run path.
+This writes `espn_transactions_2026.json` with source metadata and normalized records. It does not write roster files or Supabase. The dashboard still reads its live transaction view from Supabase; persistence of normalized ESPN transactions is a separate follow-up.
 
-## Automation and source status
+The roster generator and Supabase roster export no longer inject synthetic summer moves. Do not run live sync commands unless the task explicitly requires a remote write.
 
-The checked-in launchd plists are templates only: replace `/absolute/path/to/NFL_Main` with the checkout location and provide Supabase credentials through the machine's secret manager before loading them. This cleanup does not install or modify live launchd jobs. Publishing remains the repository's Cloudflare Pages push workflow; producer/shared-data synchronization is handled outside this repository.
+## Verification
 
-## Local dev preview
+Run from `nfldashboard/`:
 
-`~/Library/Application Support/nfldashboard-props/nfldashboard/` is a *local*
-runtime copy maintained by `fantasyfootball/scripts/install-launchd.sh` (used
-by the launchd pipeline jobs). It is **not** the public deployment — editing it
-does not ship anything. For a quick local preview, either serve this checkout
-(`python3 -m http.server`) or refresh that runtime copy; neither touches
-pages.dev.
+```bash
+node check_html_scripts.mjs
+node --check generate_roster_files.js
+node --check sync_supabase_rosters.js
+node --check update_rosters_from_espn.js
+node --test update_rosters_from_espn.test.js
+PLAYWRIGHT_MODULE=/path/to/installed/playwright node props-smoke.mjs
+python3 test_all_extensions.py
+python3 test_projections.py
+python3 test_schedule_data.py
+python3 -m py_compile test_all_extensions.py test_projections.py test_schedule_data.py
+```
+
+`check_html_scripts.mjs` extracts the inline JavaScript from `index.html` and runs Node syntax validation on it. `node --check index.html` is not a valid HTML check.
+
+The browser tests exercise the main flows and fail on content assertions or console errors. `props-smoke.mjs` uses normal Node module resolution or the `PLAYWRIGHT_MODULE` environment override when Playwright is installed outside the repository.
+
+Generated screenshots are test artifacts and should not be included in a source/docs commit unless intentionally refreshed.
+
+## Local preview and automation
+
+Serve the checkout directly for a local preview:
+
+```bash
+python3 -m http.server 8080
+```
+
+The checked-in launchd plists are templates. Replace `/absolute/path/to/NFL_Main` with the checkout location and provide credentials through the machine's secret manager before loading them. This repository does not install or modify live launchd jobs. The local launchd runtime copy under `~/Library/Application Support/nfldashboard-props/nfldashboard/` is not the public deployment.

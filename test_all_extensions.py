@@ -333,4 +333,4 @@ print(f"\nConsole errors logged: {len(console_errors)}")
 for err in console_errors:
     print(f"  [Console Error] {err}")
 
-sys.exit(0 if len(failures) == 0 else 1)
+sys.exit(0 if len(failures) == 0 and len(console_errors) == 0 else 1)

@@ -425,22 +425,26 @@ body.theme-retro .cmd-palette-modal {
 
 /* 4. CLEAN ANALYST (High-Contrast Light Workstation) */
 body.theme-analyst {
-  background: #f1f5f9 fixed !important;
+  background: #f8fafc fixed !important;
   color: #0f172a !important;
 }
 body.theme-analyst .glass {
   background: #ffffff !important;
-  border: 1px solid #cbd5e1 !important;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04) !important;
+  border: 1px solid #e2e8f0 !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.03) !important;
 }
 body.theme-analyst header {
   background: #ffffff !important;
   border-bottom: 1px solid #e2e8f0 !important;
 }
 body.theme-analyst .tab-btn {
-  background: #e2e8f0 !important;
+  background: #f1f5f9 !important;
   color: #475569 !important;
-  border: 1px solid #cbd5e1 !important;
+  border: 1px solid #e2e8f0 !important;
+}
+body.theme-analyst .tab-btn:hover {
+  background: #e2e8f0 !important;
+  color: #0f172a !important;
 }
 body.theme-analyst .tab-btn.active {
   background: #0f172a !important;
@@ -449,22 +453,26 @@ body.theme-analyst .tab-btn.active {
   font-weight: 700 !important;
 }
 body.theme-analyst .bg-slate-800, 
+body.theme-analyst .bg-slate-800\/90, 
 body.theme-analyst .bg-slate-800\/80, 
 body.theme-analyst .bg-slate-800\/60, 
 body.theme-analyst .bg-slate-800\/50, 
 body.theme-analyst .bg-slate-800\/40, 
-body.theme-analyst .bg-slate-900 {
-  background-color: #f8fafc !important;
+body.theme-analyst .bg-slate-900,
+body.theme-analyst .bg-slate-900\/60,
+body.theme-analyst .bg-slate-900\/80 {
+  background-color: #f1f5f9 !important;
   border-color: #e2e8f0 !important;
 }
 body.theme-analyst .text-white, 
+body.theme-analyst .text-slate-100,
 body.theme-analyst .text-slate-200 {
   color: #0f172a !important;
   font-weight: 600;
 }
 body.theme-analyst .text-slate-300, 
 body.theme-analyst .text-slate-400 {
-  color: #334155 !important;
+  color: #475569 !important;
 }
 body.theme-analyst .text-slate-500 {
   color: #64748b !important;
@@ -498,10 +506,28 @@ body.theme-analyst table td {
 body.theme-analyst table tr:hover {
   background-color: #f8fafc !important;
 }
-body.theme-analyst .team-tile {
+body.theme-analyst .team-tile,
+body.theme-analyst .spotlight-card,
+body.theme-analyst .feature-card,
+body.theme-analyst .stat-kpi-card {
   background: #ffffff !important;
+  border-color: #e2e8f0 !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04) !important;
+}
+body.theme-analyst .spotlight-card:hover,
+body.theme-analyst .feature-card:hover {
   border-color: #cbd5e1 !important;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.05) !important;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.06) !important;
+}
+body.theme-analyst .team-quick-chip {
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  color: #334155 !important;
+}
+body.theme-analyst .team-quick-chip:hover {
+  border-color: #0284c7 !important;
+  color: #0f172a !important;
+  background: #f0f9ff !important;
 }
 body.theme-analyst input, 
 body.theme-analyst select {
@@ -514,10 +540,95 @@ body.theme-analyst .cmd-palette-modal {
   background: #ffffff !important;
   color: #0f172a !important;
   border-color: #cbd5e1 !important;
+  box-shadow: 0 20px 40px -10px rgba(0,0,0,0.15) !important;
 }
 body.theme-analyst .cmd-item:hover, 
 body.theme-analyst .cmd-item.selected {
   background: #f1f5f9 !important;
+}
+
+/* Schedule cards on light analyst theme */
+body.theme-analyst .sch-card {
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.02) !important;
+}
+body.theme-analyst .sch-card:hover {
+  border-color: #0284c7 !important;
+  box-shadow: 0 8px 24px -4px rgba(2,132,199,0.12) !important;
+}
+body.theme-analyst .sch-head {
+  border-bottom: 1px solid #f1f5f9 !important;
+  color: #64748b !important;
+}
+body.theme-analyst .sch-head strong {
+  color: #0284c7 !important;
+}
+body.theme-analyst .sch-team .sch-name {
+  color: #0f172a !important;
+  font-weight: 800 !important;
+}
+body.theme-analyst .sch-team .sch-info small {
+  color: #64748b !important;
+  font-weight: 700 !important;
+}
+body.theme-analyst .sch-team .sch-abbr {
+  box-shadow: 0 1px 2px rgba(0,0,0,0.06) !important;
+}
+body.theme-analyst .sch-team .sch-prob {
+  color: #059669 !important;
+  font-weight: 800 !important;
+}
+body.theme-analyst .sch-lines {
+  background: transparent !important;
+  border: none !important;
+}
+body.theme-analyst .sch-line {
+  background: #f1f5f9 !important;
+  border: 1px solid #e2e8f0 !important;
+}
+body.theme-analyst .sch-line span {
+  color: #64748b !important;
+  font-weight: 700 !important;
+}
+body.theme-analyst .sch-line b {
+  color: #0f172a !important;
+  font-weight: 800 !important;
+}
+body.theme-analyst .sch-foot {
+  border-top: 1px solid #f1f5f9 !important;
+  color: #64748b !important;
+}
+body.theme-analyst .sch-cta {
+  color: #0284c7 !important;
+  font-weight: 700 !important;
+}
+body.theme-analyst .macro-chip {
+  background: #ffffff !important;
+  border-color: #e2e8f0 !important;
+}
+body.theme-analyst .macro-chip .leader {
+  color: #0f172a !important;
+}
+body.theme-analyst .home-hero-glow {
+  opacity: 0.15 !important;
+}
+body.theme-analyst .compact-player {
+  background: #ffffff !important;
+  border-color: #e2e8f0 !important;
+  color: #0f172a !important;
+}
+body.theme-analyst .compact-player:hover {
+  background: #f8fafc !important;
+  border-color: #cbd5e1 !important;
+}
+body.theme-analyst .compact-player .cp-name {
+  color: #0f172a !important;
+}
+body.theme-analyst .pos-group-header {
+  background: #f1f5f9 !important;
+  border-color: #e2e8f0 !important;
+  color: #0f172a !important;
 }
 
 /* Player links */
@@ -641,14 +752,12 @@ body.theme-analyst .cmd-item.selected {
   height: 34px;
   flex-shrink: 0;
   border-radius: 8px;
-  background: rgba(30, 41, 59, 0.8);
-  border: 1px solid rgba(71, 85, 105, 0.4);
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 11px;
   font-weight: 800;
-  color: #e2e8f0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
 }
 .sch-team .sch-info {
   flex: 1;
@@ -1351,6 +1460,27 @@ async function loadAllData() {
     }
   } catch (e) {
     console.warn("Could not load local madden_official_ratings.json map", e);
+  }
+
+  // High-contrast primary display colors for UI badges & borders across all themes
+  const TEAM_COLOR_OVERRIDES = {
+    'New England Patriots': '#C60C30',   // Patriots Red (was dark navy #002244)
+    'Seattle Seahawks': '#69BE28',       // Action Green (was dark navy #002244)
+    'Houston Texans': '#A71930',         // Battle Red (was dark steel blue #03202F)
+    'Cleveland Browns': '#FF3C00',       // Browns Orange (was dark brown #311D00)
+    'Dallas Cowboys': '#003594',         // Cowboys Royal Blue (was dark navy #041E42)
+    'Baltimore Ravens': '#6B3FA0',       // Ravens Vivid Purple (was dark purple #241773)
+    'Green Bay Packers': '#187A44',      // Packers Green (was dark green #203731)
+    'Indianapolis Colts': '#00529B',     // Colts Speed Blue (was dark blue #002C5F)
+    'New York Giants': '#0053A0',        // Giants Royal Blue (was dark navy #0B2265)
+    'New York Jets': '#007A53',          // Jets Green (was dark green #125740)
+    'Philadelphia Eagles': '#007A65',    // Eagles Kelly/Midnight Green (was #004C54)
+    'Washington Commanders': '#8C182A',  // Commanders Burgundy (was #5A1414)
+  };
+  for (const t of DATA.teams) {
+    if (TEAM_COLOR_OVERRIDES[t.name]) {
+      t.primary_color = TEAM_COLOR_OVERRIDES[t.name];
+    }
   }
 
   // Build legacy-shaped lookups so render functions need minimal changes
@@ -2459,6 +2589,9 @@ function renderComparePanel(team){
   const color=DATA.teamColors[team]||'#64748b';
   const abbr=DATA.teamAbbr[team]||'';
   const cap=DATA.capData[team]||{};
+  const capValue = Number.isFinite(Number(cap.space)) ? Number(cap.space) : null;
+  const capLabel = capValue === null ? 'Unavailable' : formatCap(capValue);
+  const capClass = capValue === null ? 'text-slate-400' : capValue >= 0 ? 'cap-positive' : 'cap-negative';
   const roster=DATA.fullRosters[team]||{offense:[],defense:[],special:[]};
   const all=[...roster.offense,...roster.defense,...roster.special];
   const GRP={QB:['QB'],RB:['RB','FB'],WR:['WR'],TE:['TE'],OL:['OT','OG','C'],IDL:['DT','NT'],EDGE:['EDGE','DE'],LB:['LB','MLB','OLB'],CB:['CB'],S:['S','SS','FS'],ST:['K','P','LS']};
@@ -2488,7 +2621,7 @@ function renderComparePanel(team){
       </div>
       <div style="text-align:right">
         <div style="font-size:9px;color:#64748b;text-transform:uppercase;letter-spacing:0.5px">Cap Space</div>
-        <div style="font-size:13px;font-weight:700" class="${cap.space>=0?'cap-positive':'cap-negative'}">${formatCap(cap.space||0)}</div>
+        <div style="font-size:13px;font-weight:700" class="${capClass}">${capLabel}</div>
         <div style="font-size:10px;font-weight:600" class="${getStatusColor(cap.status)}">${cap.status||''}</div>
       </div>
     </div>
@@ -2831,16 +2964,21 @@ async function renderTeamProjectionsBody(team) {
           <div class="text-[9px] text-slate-600">—</div>
         </div>`;
       } else {
-        const probNum = parseInt(g.win_probability) || 50;
-        const probColor = probNum >= 60 ? 'text-emerald-400 bg-emerald-500/10' :
-                          probNum >= 45 ? 'text-amber-300 bg-amber-500/10' :
+        const probability = typeof g.win_probability === 'number' && Number.isFinite(g.win_probability)
+          ? g.win_probability
+          : typeof g.win_probability === 'string' && /^\d+(?:\.\d+)?%?$/.test(g.win_probability.trim())
+            ? Number.parseFloat(g.win_probability)
+            : null;
+        const probColor = probability === null ? 'text-slate-500 bg-slate-800/40' :
+                          probability >= 60 ? 'text-emerald-400 bg-emerald-500/10' :
+                          probability >= 45 ? 'text-amber-300 bg-amber-500/10' :
                           'text-red-400 bg-red-500/10';
         const locPrefix = g.location === 'V' ? '@' : 'vs';
         h += `<div class="bg-slate-900/60 border border-slate-800/80 hover:border-slate-700 rounded-lg p-2 text-center transition">
           <div class="text-[9px] text-slate-500 font-bold">WK ${g.week}</div>
           <div class="text-xs font-bold text-slate-200 my-0.5 truncate" title="${locPrefix} ${g.opponent}">${locPrefix} ${g.opp_abbr || g.opponent}</div>
           <div class="text-[10px] text-slate-400 font-medium">${(Number(g.team_score)||0).toFixed(1)} - ${(Number(g.opp_score)||0).toFixed(1)}</div>
-          <div class="text-[9px] font-bold rounded mt-1 py-0.5 px-1 ${probColor}">${g.win_probability}</div>
+          <div class="text-[9px] font-bold rounded mt-1 py-0.5 px-1 ${probColor}">${probability === null ? 'Unavailable' : homeEsc(String(g.win_probability))}</div>
         </div>`;
       }
     }
@@ -5209,9 +5347,10 @@ function winProb(homeStr, awayStr){
 
 function scheduleTeamG(teamName, homeStr, awayStr, role, ml){
   const abbr = DATA.teamAbbr[teamName] || ABBR_TO_TEAM[teamName] || teamName;
+  const color = DATA.teamColors[teamName] || '#3b82f6';
   const esc = (s) => String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
   const mlShown = (ml === null || ml === undefined) ? null : (ml > 0 ? '+' + ml : String(ml));
-  return '<div class="sch-team"><div class="sch-abbr" style="background:' + (DATA.teamColors[teamName] || '#1e293b') + '22;border-color:' + (DATA.teamColors[teamName] || '#3b4261') + '">' + esc(abbr) + '</div>' +
+  return '<div class="sch-team"><div class="sch-abbr" style="background:' + color + '33;color:' + color + ';border:1px solid ' + color + '">' + esc(abbr) + '</div>' +
     '<div class="sch-info"><span class="sch-name">' + esc(teamName) + '</span><small>' + role + '</small></div>' +
     '<div class="sch-prob">' + (mlShown === null ? '<span class="muted">—</span>' : esc(mlShown)) + '</div></div>';
 }
@@ -5321,7 +5460,7 @@ function openMatchup(gameId){
     const pct = probVal === null ? '—' : (probVal * 100).toFixed(1) + '%';
     const color = DATA.teamColors[name] || '#3b4261';
     return '<div class="sch-team" style="margin-bottom:14px">' +
-      '<div class="sch-abbr" style="background:' + color + '22;border-color:' + color +'">' + esc(abbr) + '</div>' +
+      '<div class="sch-abbr" style="background:' + color + '33;color:' + color + ';border:1px solid ' + color +'">' + esc(abbr) + '</div>' +
       '<div class="sch-info"><span class="sch-name" style="font-size:15px">' + esc(name) + '</span><small>' + role + '</small></div>' +
       '<div class="sch-prob">' + pct + '</div></div>';
   };

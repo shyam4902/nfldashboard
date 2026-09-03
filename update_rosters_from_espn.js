@@ -49,6 +49,20 @@ const POS_TO_UNIT = {
 };
 
 const POSITIONS = Object.keys(POS_TO_UNIT);
+const NORMALIZED_TRANSACTION_TYPES = new Set(['signing', 'waiver', 'trade', 'draft']);
+
+const TEAM_SHORT_NAMES = {
+  Arizona: 'Arizona Cardinals', Atlanta: 'Atlanta Falcons', Baltimore: 'Baltimore Ravens',
+  Buffalo: 'Buffalo Bills', Carolina: 'Carolina Panthers', Chicago: 'Chicago Bears',
+  Cincinnati: 'Cincinnati Bengals', Cleveland: 'Cleveland Browns', Dallas: 'Dallas Cowboys',
+  Denver: 'Denver Broncos', Detroit: 'Detroit Lions', 'Green Bay': 'Green Bay Packers',
+  Houston: 'Houston Texans', Indianapolis: 'Indianapolis Colts', Jacksonville: 'Jacksonville Jaguars',
+  'Kansas City': 'Kansas City Chiefs', 'Las Vegas': 'Las Vegas Raiders', Miami: 'Miami Dolphins',
+  Minnesota: 'Minnesota Vikings', 'New England': 'New England Patriots', 'New Orleans': 'New Orleans Saints',
+  Philadelphia: 'Philadelphia Eagles', Pittsburgh: 'Pittsburgh Steelers', 'San Francisco': 'San Francisco 49ers',
+  Seattle: 'Seattle Seahawks', 'Tampa Bay': 'Tampa Bay Buccaneers', Tennessee: 'Tennessee Titans',
+  Washington: 'Washington Commanders'
+};
 
 function normalizeName(name) {
   if (!name) return "";
@@ -59,6 +73,17 @@ function normalizeName(name) {
     .replace(/\b(jr|sr|ii|iii|iv|v)\b/gi, "")
     .replace(/\s+/g, " ")
     .trim();
+}
+
+function canonicalTeamName(name) {
+  const value = String(name || '').trim();
+  if (!value) return '';
+  const exact = Object.keys(TEAM_METADATA).find(team => team.toLowerCase() === value.toLowerCase());
+  if (exact) return exact;
+  const abbreviation = Object.entries(TEAM_METADATA).find(([, meta]) => meta.abbr.toLowerCase() === value.toLowerCase());
+  if (abbreviation) return abbreviation[0];
+  const shortMatch = Object.entries(TEAM_SHORT_NAMES).find(([short]) => short.toLowerCase() === value.toLowerCase());
+  return shortMatch ? shortMatch[1] : value;
 }
 
 function cleanName(raw) {
@@ -181,8 +206,8 @@ function normalizeEspnTransaction(item) {
     blockbuster: false,
     player_name: move.player,
     pos: move.pos || '',
-    from_team: move.fromTeam || (move.type === 'waive' ? teamName : 'Free Agent'),
-    to_team: move.team,
+    from_team: canonicalTeamName(move.fromTeam || (move.type === 'waive' ? teamName : 'Free Agent')),
+    to_team: canonicalTeamName(move.team),
     detail: desc,
     date_str: formatDate(item.date),
     sort_date: String(item.date || '').slice(0, 10)
@@ -195,14 +220,51 @@ function normalizeEspnTransactions(items) {
 
 function validateTransactions(rows) {
   const errors = [];
-  const required = ['id', 'source', 'source_key', 'type', 'player_name', 'from_team', 'to_team', 'detail', 'sort_date'];
+  const requiredStrings = ['id', 'source', 'source_key', 'type', 'player_name', 'from_team', 'to_team', 'detail', 'sort_date'];
+  const ids = new Set();
+  if (!Array.isArray(rows)) return { valid: false, errors: ['transactions must be an array'] };
   rows.forEach((row, index) => {
-    for (const field of required) {
-      if (row[field] === undefined || row[field] === null || row[field] === '') {
-        errors.push(`row ${index}: ${field} is required`);
+    if (!row || typeof row !== 'object' || Array.isArray(row)) {
+      errors.push(`row ${index}: must be an object`);
+      return;
+    }
+    for (const field of requiredStrings) {
+      if (typeof row[field] !== 'string' || row[field].trim() === '') {
+        errors.push(`row ${index}: ${field} is required and must be a non-empty string`);
       }
     }
+    if (typeof row.id === 'string' && ids.has(row.id)) errors.push(`row ${index}: id must be unique`);
+    if (typeof row.id === 'string') ids.add(row.id);
+    if (row.source !== 'ESPN') errors.push(`row ${index}: source must be ESPN`);
+    if (!NORMALIZED_TRANSACTION_TYPES.has(row.type)) errors.push(`row ${index}: type is unsupported`);
+    if (typeof row.sort_date === 'string' && !isValidIsoDate(row.sort_date)) {
+      errors.push(`row ${index}: sort_date must be YYYY-MM-DD`);
+    }
+    if (row.pos !== undefined && typeof row.pos !== 'string') errors.push(`row ${index}: pos must be a string`);
   });
+  return { valid: errors.length === 0, errors };
+}
+
+function isValidIsoDate(value) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
+  const [year, month, day] = value.split('-').map(Number);
+  const date = new Date(Date.UTC(year, month - 1, day));
+  return date.getUTCFullYear() === year && date.getUTCMonth() === month - 1 && date.getUTCDate() === day;
+}
+
+function validateDryRunEnvelope(envelope) {
+  const errors = [];
+  if (!envelope || typeof envelope !== 'object') return { valid: false, errors: ['envelope must be an object'] };
+  if (envelope.source !== 'ESPN') errors.push('source must be ESPN');
+  if (typeof envelope.source_url !== 'string' || envelope.source_url.trim() === '') errors.push('source_url is required');
+  if (envelope.source_url !== ESPN_TRANSACTIONS_URL) errors.push('source_url must match the ESPN transactions URL');
+  if (typeof envelope.fetched_at !== 'string' || !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{3})?Z$/.test(envelope.fetched_at) || Number.isNaN(Date.parse(envelope.fetched_at))) {
+    errors.push('fetched_at must be a valid ISO timestamp');
+  }
+  if (!Array.isArray(envelope.transactions)) errors.push('transactions must be an array');
+  if (!Number.isInteger(envelope.record_count) || envelope.record_count !== (Array.isArray(envelope.transactions) ? envelope.transactions.length : -1)) {
+    errors.push('record_count must equal transactions.length');
+  }
   return { valid: errors.length === 0, errors };
 }
 
@@ -250,13 +312,19 @@ async function updateRostersFromESPN() {
     return;
   }
   if (process.argv.includes('--dry-run')) {
-    fs.writeFileSync(NORMALIZED_TRANSACTIONS_PATH, JSON.stringify({
+    const envelope = {
       source: 'ESPN',
       source_url: ESPN_TRANSACTIONS_URL,
       fetched_at: new Date().toISOString(),
       record_count: normalizedTransactions.length,
       transactions: normalizedTransactions
-    }, null, 2), 'utf8');
+    };
+    const envelopeValidation = validateDryRunEnvelope(envelope);
+    if (!envelopeValidation.valid) {
+      console.error('ESPN dry-run envelope validation failed:', envelopeValidation.errors.join('; '));
+      return;
+    }
+    fs.writeFileSync(NORMALIZED_TRANSACTIONS_PATH, JSON.stringify(envelope, null, 2), 'utf8');
     console.log(`Dry run wrote ${normalizedTransactions.length} normalized transactions to ${NORMALIZED_TRANSACTIONS_PATH}`);
     return;
   }
@@ -266,7 +334,7 @@ async function updateRostersFromESPN() {
   const chronological = [...espnTransactions].reverse();
 
   for (const item of chronological) {
-    const teamName = item.team?.displayName || '';
+    const teamName = canonicalTeamName(item.team?.displayName || '');
     const desc = item.description || '';
     const txKey = `${item.date || ''}_${teamName}_${desc}`;
 
@@ -274,33 +342,34 @@ async function updateRostersFromESPN() {
 
     const moves = parseTransactionSentence(desc, teamName);
     for (const move of moves) {
+      const destinationTeam = canonicalTeamName(move.team);
       const norm = normalizeName(move.player);
       let p = players.find(x => normalizeName(x.name) === norm);
 
       if (p) {
         // Move existing player
         const oldTeam = p.team_name;
-        if (move.team === "Free Agent") {
+        if (destinationTeam === "Free Agent") {
           p.team_name = "Free Agent";
           p.team_abbr = "FA";
           p.division = "N/A";
           p.acquisition_type = "fa";
           console.log(` -> [WAIVED/RELEASED] ${p.name} from ${oldTeam} to Free Agency`);
         } else {
-          const meta = TEAM_METADATA[move.team] || { abbr: move.team.slice(0, 3).toUpperCase(), division: "N/A" };
-          p.team_name = move.team;
+          const meta = TEAM_METADATA[destinationTeam] || { abbr: destinationTeam.slice(0, 3).toUpperCase(), division: "N/A" };
+          p.team_name = destinationTeam;
           p.team_abbr = meta.abbr;
           p.division = meta.division;
           p.acquisition_type = (move.type === 'trade') ? 'trade' : 'fa';
-          console.log(` -> [MOVED] ${p.name} (${p.pos}) from ${oldTeam} -> ${move.team}`);
+          console.log(` -> [MOVED] ${p.name} (${p.pos}) from ${oldTeam} -> ${destinationTeam}`);
         }
         moveCount++;
-      } else if (move.team !== "Free Agent") {
+      } else if (destinationTeam !== "Free Agent") {
         // Add newly signed player to the team
-        const meta = TEAM_METADATA[move.team] || { abbr: move.team.slice(0, 3).toUpperCase(), division: "N/A" };
+        const meta = TEAM_METADATA[destinationTeam] || { abbr: destinationTeam.slice(0, 3).toUpperCase(), division: "N/A" };
         const unit = POS_TO_UNIT[move.pos] || 'OFFENSE';
         players.push({
-          team_name: move.team,
+          team_name: destinationTeam,
           team_abbr: meta.abbr,
           division: meta.division,
           name: move.player,
@@ -312,7 +381,7 @@ async function updateRostersFromESPN() {
           is_rookie: 'No',
           acquisition_type: move.type === 'trade' ? 'trade' : 'fa'
         });
-        console.log(` -> [ADDED] ${move.player} (${move.pos || 'N/A'}) to ${move.team}`);
+        console.log(` -> [ADDED] ${move.player} (${move.pos || 'N/A'}) to ${destinationTeam}`);
         moveCount++;
       }
     }
@@ -440,4 +509,4 @@ if (isScheduled) {
 }
 }
 
-module.exports = { normalizeName, parseTransactionSentence, normalizeEspnTransaction, normalizeEspnTransactions, validateTransactions };
+module.exports = { normalizeName, canonicalTeamName, parseTransactionSentence, normalizeEspnTransaction, normalizeEspnTransactions, validateTransactions, validateDryRunEnvelope };
