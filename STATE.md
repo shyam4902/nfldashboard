@@ -40,6 +40,13 @@
 
 ## Shipped cleanup
 
+- Switched team unit overall ratings and position group ratings to Mike Clay 2026 model grades (`CLAY_DATA.unit_grades`), eliminating Madden ratings from `computeTeamOverall`, `computeTeamPositionRating`, `computeMacroRating`, and `renderConsensusPower`.
+- `computeTeamOverall` now computes an authentic 0–100 overall team strength directly from Mike Clay's composite unit grades, driving win probability across Matchup Center and Schedule cards.
+- Teams tab Power Rankings heatmap and macro leaders now display verified Mike Clay 2026 unit ratings (scaled 10–100).
+- `getTeamAtAGlance` now computes real 1–32 league ranks for projected PPG (`pf`) and point differential (`diff`) from Mike Clay 2026 standings.
+- Eliminated Madden `OVR` references from dynamic matchup insights cards.
+- Removed arbitrary fallback in dual skill radar SVG and required verified Clay unit grades.
+- Changed stadium condition from a mock temperature (`Dome, 72°F`) to honest status (`Indoor (Climate Controlled)` vs venue/city).
 - Matchup Center Pro Preview subpage overhauled: restricted all EPA and efficiency metrics strictly to 2025 measured nflverse data (seasons 2012–2024 reserved for research).
 - Inversion fix applied to defensive efficiency ranking: defensive `sack_rate` and `turnover_rate` now sort descending so league-leading sack and turnover units rank #1 in the NFL.
 - Unit Grades calculation and UI overhauled: multi-unit positions properly averaged (`[DI, ED]` for Pass Rush, `[CB, S]` for Secondary), expanded to 5 positional matchups, and visual bars now scale dynamically to true percentage widths (`ga * 10%`, `gb * 10%`).

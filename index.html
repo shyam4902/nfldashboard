@@ -1278,7 +1278,7 @@ body.theme-analyst .pos-group-header {
     <div id="teamsPowerPanel" class="hidden">
       <div class="text-xs font-bold text-slate-300 mb-2 flex items-center gap-2">
         <span>🏆</span> Power Rankings
-        <span class="text-slate-500 font-normal">Unit power ratings — click a column to sort</span>
+        <span class="text-slate-500 font-normal">Mike Clay 2026 unit ratings (scaled 10–100) — click a column to sort</span>
       </div>
       <div id="macroRow" class="flex gap-2 mb-3 overflow-x-auto pb-1"></div>
       <div id="heatmapContainer" class="glass rounded-xl p-3 overflow-x-auto"></div>
@@ -1349,7 +1349,9 @@ async function loadAllData() {
   }
   DATA.teams = teams.data;
   DATA.players = players;
-  DATA.transactions = transactions.data;
+  try {
+    await loadClayProjections();
+  } catch { /* ignore */ }
   try {
     const capRes = await fetch('draft-capital.json');
     DATA.draftCapital = capRes.ok ? await capRes.json() : null;
@@ -1623,19 +1625,15 @@ function ovrTier(ovr) {
 }
 
 function computeTeamPositionRating(teamName, group) {
-  const cfg = POS_GROUPS[group];
-  if (!cfg) return null;
-  const teamObj = DATA.teams.find(t => t.name === teamName);
-  if (!teamObj) return null;
-  const players = DATA.players.filter(p =>
-    p.team_id === teamObj.id
-    && cfg.positions.includes((p.pos || '').toUpperCase())
-    && p.ovr !== null && p.ovr !== undefined
-  );
-  if (players.length === 0) return null;
-  const sorted = players.slice().sort((a, b) => b.ovr - a.ovr).slice(0, cfg.n);
-  const sum = sorted.reduce((s, p) => s + p.ovr, 0);
-  return Math.round(sum / sorted.length);
+  if (typeof CLAY_DATA !== 'undefined' && CLAY_DATA?.unit_grades?.[teamName]) {
+    const ug = CLAY_DATA.unit_grades[teamName];
+    const clayKey = group === 'IDL' ? 'DI' : (group === 'EDGE' ? 'ED' : group);
+    const val = Number(ug[clayKey]);
+    if (Number.isFinite(val)) {
+      return Math.round(val * 10);
+    }
+  }
+  return null;
 }
 
 function computeMacroRating(teamName, macro) {
@@ -3701,6 +3699,24 @@ function renderAdvantageBadge(adv, offTeam, defTeam) {
   return `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-800 border border-subtle ${cls}">${attrEsc(abbr)} ADV <span class="text-[9px] opacity-80">${stars}</span></span>`;
 }
 
+function getClayStandingRank(teamName, field) {
+  if (!CLAY_DATA?.standings?.divisions) return null;
+  const list = [];
+  for (const div in CLAY_DATA.standings.divisions) {
+    const arr = CLAY_DATA.standings.divisions[div];
+    if (Array.isArray(arr)) {
+      for (const t of arr) {
+        const val = Number(t[field]);
+        if (Number.isFinite(val)) list.push({ name: t.name, val });
+      }
+    }
+  }
+  if (!list.length) return null;
+  list.sort((a, b) => b.val - a.val);
+  const idx = list.findIndex(t => t.name === teamName);
+  return idx >= 0 ? idx + 1 : null;
+}
+
 function getTeamAtAGlance(teamName) {
   const std = getTeamStanding(teamName);
   // Real numbers only. Clay standings give ppg/diff (verified projection
@@ -3709,8 +3725,8 @@ function getTeamAtAGlance(teamName) {
   // an honest "—" instead of an invented stat.
   const ppg = std ? (Number(std.pf) / 17).toFixed(1) : null;
   const diffStr = std ? ((Number(std.diff) >= 0 ? '+' : '') + Math.round(Number(std.diff))) : null;
-  const ppgRank = std ? efficiencyRank(teamName, 'off', 'epa_per_play', 2025) : null;
-  const diffRank = null;
+  const ppgRank = std ? getClayStandingRank(teamName, 'pf') : null;
+  const diffRank = std ? getClayStandingRank(teamName, 'diff') : null;
   const epaOff = efficiencyValue(teamName, 'off', 'epa_per_play', 2025);
   const epaOffRank = efficiencyRank(teamName, 'off', 'epa_per_play', 2025);
   const epaDef = efficiencyValue(teamName, 'def', 'epa_per_play', 2025);
@@ -3728,7 +3744,7 @@ function getTeamAtAGlance(teamName) {
 }
 
 function generateMatchupInsights(tA, tB, game) {
-  if (!game) return [];
+  if (!tA || !tB) return [];
   const abbrA = DATA.teamAbbr[tA] || tA;
   const abbrB = DATA.teamAbbr[tB] || tB;
   const playersA = (DATA.players || []).filter(p => teamNameOf(p) === tA);
@@ -3758,10 +3774,9 @@ function generateMatchupInsights(tA, tB, game) {
   const rankText = (r) => r != null ? `2025 EPA/play rank #${r}` : '2025 EPA/play rank unavailable';
   const rosterText = (p) => {
     if (!p) return '';
-    const rating = p.ovr != null ? ` · OVR ${p.ovr}` : '';
     const depth = Number(p.depth_chart_order ?? p.depthChartOrder ?? p.depth);
     const order = Number.isFinite(depth) && depth > 0 ? ` · depth ${depth}` : '';
-    return `${p.name} · ${p.pos}${rating}${order}`;
+    return `${p.name} · ${p.pos}${order}`;
   };
   const insights = [];
 
@@ -3822,23 +3837,27 @@ function generateMatchupInsights(tA, tB, game) {
 }
 
 function createTeamSkillRadarSvg(tA, tB, size = 260) {
-  const ugA = CLAY_DATA?.unit_grades?.[tA] || {};
-  const ugB = CLAY_DATA?.unit_grades?.[tB] || {};
+  const ugA = CLAY_DATA?.unit_grades?.[tA];
+  const ugB = CLAY_DATA?.unit_grades?.[tB];
+
+  if (!ugA || !ugB) {
+    return `<div class="text-xs text-slate-500 text-center py-12 font-mono">Unit grades data loading or unavailable.</div>`;
+  }
 
   const labels = ['Pass Attack', 'Rush Attack', 'Pass Defense', 'Rush Defense', 'Trenches'];
   const v1 = [
-    Math.max(2, Math.min(10, Number(ugA.QB || 6) * 0.6 + Number(ugA.WR || 6) * 0.4)),
-    Math.max(2, Math.min(10, Number(ugA.RB || 6) * 0.6 + Number(ugA.OL || 6) * 0.4)),
-    Math.max(2, Math.min(10, Number(ugA.CB || 6) * 0.6 + Number(ugA.S || 6) * 0.4)),
-    Math.max(2, Math.min(10, Number(ugA.DI || 6) * 0.5 + Number(ugA.LB || 6) * 0.5)),
-    Math.max(2, Math.min(10, Number(ugA.OL || 6) * 0.5 + Number(ugA.ED || 6) * 0.5))
+    Math.max(1, Math.min(10, Number(ugA.QB) * 0.6 + Number(ugA.WR) * 0.4)),
+    Math.max(1, Math.min(10, Number(ugA.RB) * 0.6 + Number(ugA.OL) * 0.4)),
+    Math.max(1, Math.min(10, Number(ugA.CB) * 0.6 + Number(ugA.S) * 0.4)),
+    Math.max(1, Math.min(10, Number(ugA.DI) * 0.5 + Number(ugA.LB) * 0.5)),
+    Math.max(1, Math.min(10, Number(ugA.OL) * 0.5 + Number(ugA.ED) * 0.5))
   ];
   const v2 = [
-    Math.max(2, Math.min(10, Number(ugB.QB || 6) * 0.6 + Number(ugB.WR || 6) * 0.4)),
-    Math.max(2, Math.min(10, Number(ugB.RB || 6) * 0.6 + Number(ugB.OL || 6) * 0.4)),
-    Math.max(2, Math.min(10, Number(ugB.CB || 6) * 0.6 + Number(ugB.S || 6) * 0.4)),
-    Math.max(2, Math.min(10, Number(ugB.DI || 6) * 0.5 + Number(ugB.LB || 6) * 0.5)),
-    Math.max(2, Math.min(10, Number(ugB.OL || 6) * 0.5 + Number(ugB.ED || 6) * 0.5))
+    Math.max(1, Math.min(10, Number(ugB.QB) * 0.6 + Number(ugB.WR) * 0.4)),
+    Math.max(1, Math.min(10, Number(ugB.RB) * 0.6 + Number(ugB.OL) * 0.4)),
+    Math.max(1, Math.min(10, Number(ugB.CB) * 0.6 + Number(ugB.S) * 0.4)),
+    Math.max(1, Math.min(10, Number(ugB.DI) * 0.5 + Number(ugB.LB) * 0.5)),
+    Math.max(1, Math.min(10, Number(ugB.OL) * 0.5 + Number(ugB.ED) * 0.5))
   ];
 
   return createDualRadarSvg(labels, v1, v2, tA, tB, size);
@@ -3852,7 +3871,7 @@ function renderMatchupHeroBanner(game, tA, tB) {
   const weekNum = game?.week || 1;
 
   const isIndoor = venue.includes('Dome') || venue.includes('AT&T') || venue.includes('Ford Field') || venue.includes('Caesars') || venue.includes('SoFi') || venue.includes('Allegiant') || venue.includes('Mercedes-Benz') || venue.includes('State Farm') || venue.includes('U.S. Bank') || venue.includes('NRG') || venue.includes('Lucas Oil');
-  const stadiumCondition = isIndoor ? 'Dome, 72°F' : (city ? `${venue}, ${city}` : venue);
+  const stadiumCondition = isIndoor ? 'Indoor (Climate Controlled)' : (city ? `${venue}, ${city}` : venue);
 
   return `
     <header class="flex justify-between items-center w-full">
@@ -3868,18 +3887,21 @@ function renderMatchupHeroBanner(game, tA, tB) {
 function renderMatchupSidebar(game, tA, tB, prob) {
   const m = game?.market;
 
-  const awayProb = prob != null ? ((1 - prob) * 100).toFixed(1) : '54.2';
-  const homeProb = prob != null ? (prob * 100).toFixed(1) : '45.8';
+  const awayProb = prob != null ? ((1 - prob) * 100).toFixed(1) : null;
+  const homeProb = prob != null ? (prob * 100).toFixed(1) : null;
 
-  const effSuccA = efficiencyValue(tA, 'off', 'success_rate') || 0.468;
-  const effSuccB = efficiencyValue(tB, 'off', 'success_rate') || 0.441;
-  const effYppA = efficiencyValue(tA, 'off', 'yds_per_play') || 5.9;
-  const effYppB = efficiencyValue(tB, 'off', 'yds_per_play') || 5.4;
-  const effSackA = efficiencyValue(tA, 'off', 'sack_rate') || 0.042;
-  const effSackB = efficiencyValue(tB, 'off', 'sack_rate') || 0.061;
+  const effSuccA = efficiencyValue(tA, 'off', 'success_rate', 2025);
+  const effSuccB = efficiencyValue(tB, 'off', 'success_rate', 2025);
+  const effYppA = efficiencyValue(tA, 'off', 'yds_per_play', 2025);
+  const effYppB = efficiencyValue(tB, 'off', 'yds_per_play', 2025);
+  const effSackA = efficiencyValue(tA, 'off', 'sack_rate', 2025);
+  const effSackB = efficiencyValue(tB, 'off', 'sack_rate', 2025);
 
   const abbrA = DATA.teamAbbr[tA] || tA;
   const abbrB = DATA.teamAbbr[tB] || tB;
+
+  const fmtPct = (v) => v != null ? (v * 100).toFixed(1) + '%' : '—';
+  const fmtYpp = (v) => v != null ? v.toFixed(1) : '—';
 
   return `
     <!-- Win Probability Card -->
@@ -3887,13 +3909,15 @@ function renderMatchupSidebar(game, tA, tB, prob) {
       <div class="flex justify-between items-end mb-1">
         <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Win Probability</span>
         <div class="flex gap-3 font-mono text-xs font-semibold">
-          <span class="text-sky-400">${attrEsc(abbrA)} ${awayProb}%</span>
-          <span class="text-cyber-lime">${attrEsc(abbrB)} ${homeProb}%</span>
+          <span class="text-sky-400">${attrEsc(abbrA)} ${awayProb != null ? awayProb + '%' : '—'}</span>
+          <span class="text-cyber-lime">${attrEsc(abbrB)} ${homeProb != null ? homeProb + '%' : '—'}</span>
         </div>
       </div>
       <div class="h-2 w-full bg-slate-800 rounded-full overflow-hidden flex">
-        <div class="bg-sky-400 h-full" style="width: ${awayProb}%"></div>
-        <div class="bg-cyber-lime h-full" style="width: ${homeProb}%"></div>
+        ${awayProb != null && homeProb != null ? `
+          <div class="bg-sky-400 h-full" style="width: ${awayProb}%"></div>
+          <div class="bg-cyber-lime h-full" style="width: ${homeProb}%"></div>
+        ` : `<div class="bg-slate-700 h-full w-full opacity-40"></div>`}
       </div>
     </div>
 
@@ -3903,41 +3927,44 @@ function renderMatchupSidebar(game, tA, tB, prob) {
       <div class="flex flex-col gap-2">
         <div class="bg-slate-800/80 px-3 py-2 rounded border border-subtle flex justify-between items-center">
           <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">SPREAD</span>
-          <span class="font-mono text-xs font-bold text-white">${m?.spread != null ? (m.spread > 0 ? `+${m.spread}` : (m.spread === 0 ? 'PK' : `${abbrA} ${m.spread}`)) : `${abbrA} -1.5`}</span>
+          <span class="font-mono text-xs font-bold text-white">${m?.spread != null ? (m.spread > 0 ? `+${m.spread}` : (m.spread === 0 ? 'PK' : `${abbrA} ${m.spread}`)) : '—'}</span>
         </div>
         <div class="bg-slate-800/80 px-3 py-2 rounded border border-subtle flex justify-between items-center">
           <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">O/U</span>
-          <span class="font-mono text-xs font-bold text-white">${m?.total != null ? m.total : '48.5'}</span>
+          <span class="font-mono text-xs font-bold text-white">${m?.total != null ? m.total : '—'}</span>
         </div>
       </div>
     </div>
 
     <!-- Efficiency Strip Card -->
     <div class="bg-surface-card border border-subtle rounded-lg p-4 flex flex-col gap-3">
-      <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Efficiency Strip (${attrEsc(abbrA)} vs ${attrEsc(abbrB)})</span>
+      <div class="flex justify-between items-center">
+        <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">2025 Efficiency (${attrEsc(abbrA)} vs ${attrEsc(abbrB)})</span>
+        <span class="text-[9px] font-mono text-slate-500">nflverse</span>
+      </div>
       <div class="flex flex-col gap-3">
         <div class="flex flex-col">
           <span class="text-[9px] font-bold uppercase tracking-wider text-slate-400 opacity-80">SUCCESS RATE</span>
           <div class="font-mono text-xs flex justify-between mt-1">
-            <span class="${effSuccA >= effSuccB ? 'text-cyber-lime font-bold' : 'text-slate-300'}">${(effSuccA * 100).toFixed(1)}%</span>
+            <span class="${effSuccA != null && effSuccB != null && effSuccA >= effSuccB ? 'text-cyber-lime font-bold' : 'text-slate-300'}">${fmtPct(effSuccA)}</span>
             <span class="text-slate-500 text-center flex-1">/</span>
-            <span class="${effSuccB > effSuccA ? 'text-cyber-lime font-bold' : 'text-slate-300'} text-right">${(effSuccB * 100).toFixed(1)}%</span>
+            <span class="${effSuccA != null && effSuccB != null && effSuccB > effSuccA ? 'text-cyber-lime font-bold' : 'text-slate-300'} text-right">${fmtPct(effSuccB)}</span>
           </div>
         </div>
         <div class="flex flex-col">
           <span class="text-[9px] font-bold uppercase tracking-wider text-slate-400 opacity-80">YPP</span>
           <div class="font-mono text-xs flex justify-between mt-1">
-            <span class="${effYppA >= effYppB ? 'text-cyber-lime font-bold' : 'text-slate-300'}">${effYppA.toFixed(1)}</span>
+            <span class="${effYppA != null && effYppB != null && effYppA >= effYppB ? 'text-cyber-lime font-bold' : 'text-slate-300'}">${fmtYpp(effYppA)}</span>
             <span class="text-slate-500 text-center flex-1">/</span>
-            <span class="${effYppB > effYppA ? 'text-cyber-lime font-bold' : 'text-slate-300'} text-right">${effYppB.toFixed(1)}</span>
+            <span class="${effYppA != null && effYppB != null && effYppB > effYppA ? 'text-cyber-lime font-bold' : 'text-slate-300'} text-right">${fmtYpp(effYppB)}</span>
           </div>
         </div>
         <div class="flex flex-col">
-          <span class="text-[9px] font-bold uppercase tracking-wider text-slate-400 opacity-80">SACK RATE</span>
+          <span class="text-[9px] font-bold uppercase tracking-wider text-slate-400 opacity-80">SACK RATE (LOWER IS BETTER)</span>
           <div class="font-mono text-xs flex justify-between mt-1">
-            <span class="${effSackA <= effSackB ? 'text-cyber-lime font-bold' : 'text-crimson font-bold'}">${(effSackA * 100).toFixed(1)}%</span>
+            <span class="${effSackA != null && effSackB != null && effSackA <= effSackB ? 'text-cyber-lime font-bold' : 'text-slate-300'}">${fmtPct(effSackA)}</span>
             <span class="text-slate-500 text-center flex-1">/</span>
-            <span class="${effSackB < effSackA ? 'text-cyber-lime font-bold' : 'text-crimson font-bold'} text-right">${(effSackB * 100).toFixed(1)}%</span>
+            <span class="${effSackA != null && effSackB != null && effSackB < effSackA ? 'text-cyber-lime font-bold' : 'text-slate-300'} text-right">${fmtPct(effSackB)}</span>
           </div>
         </div>
       </div>
@@ -4291,28 +4318,20 @@ function renderPreviewEdgeBadge(adv, tA, tB) {
 function renderPreviewPassingMatrix(tA, tB, ranksA, ranksB) {
   const abbrA = DATA.teamAbbr[tA] || tA;
   const abbrB = DATA.teamAbbr[tB] || tB;
-  const nameA = tA;
-  const nameB = tB;
-  const epaA = efficiencyValue(tA, 'off', 'pass_epa_per_att');
-  const epaB = efficiencyValue(tB, 'def', 'pass_epa_per_att');
-  const rankA = ranksA.offense['pass_epa_per_att'];
-  const rankB = ranksB.defense['pass_epa_per_att'];
 
-  const ypaA = efficiencyValue(tA, 'off', 'yds_per_play') || 8.2;
-  const ypaB = efficiencyValue(tB, 'def', 'yds_per_play') || 7.8;
-  const diffYpa = (ypaA - ypaB).toFixed(1);
+  const passEpaA = efficiencyValue(tA, 'off', 'pass_epa_per_att', 2025);
+  const passEpaB = efficiencyValue(tB, 'def', 'pass_epa_per_att', 2025);
+  const rankPassA = ranksA.offense['pass_epa_per_att'];
+  const rankPassB = ranksB.defense['pass_epa_per_att'];
 
-  const sackA = efficiencyValue(tA, 'off', 'sack_rate') || 0.052;
-  const sackB = efficiencyValue(tB, 'def', 'sack_rate') || 0.068;
-
-  const succA = efficiencyValue(tA, 'off', 'success_rate') || 0.483;
-  const succB = efficiencyValue(tB, 'def', 'success_rate') || 0.441;
-
-  const turnA = efficiencyValue(tA, 'off', 'turnover_rate') || 0.016;
-  const turnB = efficiencyValue(tB, 'def', 'turnover_rate') || 0.023;
-
-  const epaPlayA = efficiencyValue(tA, 'off', 'epa_per_play');
-  const epaPlayB = efficiencyValue(tB, 'def', 'epa_per_play');
+  const rows = [
+    { id: 'pass_epa_per_att', label: 'Pass EPA per Attempt' },
+    { id: 'epa_per_play', label: 'Overall EPA per Play' },
+    { id: 'success_rate', label: 'Offensive Success Rate' },
+    { id: 'yds_per_play', label: 'Yards per Play' },
+    { id: 'sack_rate', label: 'Sack Rate (Allowed / Forced)' },
+    { id: 'turnover_rate', label: 'Turnover Rate' },
+  ];
 
   return `
     <div class="bg-surface-card border border-subtle rounded-lg p-4">
@@ -4320,27 +4339,28 @@ function renderPreviewPassingMatrix(tA, tB, ranksA, ranksB) {
         <h2 class="text-sm font-bold text-white flex items-center gap-2 uppercase tracking-wide">
           <span class="text-sky-400">🏈</span> Passing Matrix
         </h2>
+        <span class="text-[10px] font-mono text-slate-400 bg-slate-800 px-2 py-0.5 rounded border border-subtle">2025 MEASURED</span>
       </div>
 
       <div class="grid grid-cols-2 gap-3 mb-3">
         <div class="bg-slate-800/40 p-2.5 border border-subtle rounded flex items-center justify-between">
           <div class="flex flex-col">
             <span class="text-xs font-bold text-sky-400">${attrEsc(abbrA)} Offense</span>
-            <span class="text-[9px] font-bold uppercase tracking-wider text-slate-400">PASS EPA/PLAY</span>
+            <span class="text-[9px] font-bold uppercase tracking-wider text-slate-400">PASS EPA / ATT</span>
           </div>
           <div class="bg-slate-800 px-2 py-1 rounded border border-subtle font-mono text-xs font-bold text-cyber-lime flex items-center gap-1.5">
-            ${epaA != null ? (epaA >= 0 ? '+' : '') + epaA.toFixed(3) : '0.245'}
-            <span class="bg-slate-700 text-slate-300 px-1 text-[10px] rounded">#${rankA != null ? rankA : 3}</span>
+            ${passEpaA != null ? (passEpaA >= 0 ? '+' : '') + passEpaA.toFixed(3) : '—'}
+            <span class="bg-slate-700 text-slate-300 px-1 text-[10px] rounded">${rankPassA != null ? '#' + rankPassA : '—'}</span>
           </div>
         </div>
         <div class="bg-slate-800/40 p-2.5 border border-subtle rounded flex items-center justify-between">
           <div class="flex flex-col">
             <span class="text-xs font-bold text-indigo-400">${attrEsc(abbrB)} Defense</span>
-            <span class="text-[9px] font-bold uppercase tracking-wider text-slate-400">PASS EPA/PLAY</span>
+            <span class="text-[9px] font-bold uppercase tracking-wider text-slate-400">PASS EPA / ATT</span>
           </div>
           <div class="bg-slate-800 px-2 py-1 rounded border border-subtle font-mono text-xs font-bold text-white flex items-center gap-1.5">
-            ${epaB != null ? (epaB >= 0 ? '+' : '') + epaB.toFixed(3) : '-0.012'}
-            <span class="bg-slate-700 text-slate-300 px-1 text-[10px] rounded">#${rankB != null ? rankB : 14}</span>
+            ${passEpaB != null ? (passEpaB >= 0 ? '+' : '') + passEpaB.toFixed(3) : '—'}
+            <span class="bg-slate-700 text-slate-300 px-1 text-[10px] rounded">${rankPassB != null ? '#' + rankPassB : '—'}</span>
           </div>
         </div>
       </div>
@@ -4351,48 +4371,31 @@ function renderPreviewPassingMatrix(tA, tB, ranksA, ranksB) {
             <th class="py-2 font-normal">METRIC</th>
             <th class="py-2 font-normal text-right">${attrEsc(abbrA)} OFF</th>
             <th class="py-2 font-normal text-right">${attrEsc(abbrB)} DEF</th>
-            <th class="py-2 font-normal text-right">EDGE</th>
+            <th class="py-2 font-normal text-right">ADVANTAGE</th>
           </tr>
         </thead>
         <tbody class="font-mono text-xs">
-          <tr class="matchup-table-row border-b border-subtle/50 hover:bg-slate-800/30">
-            <td class="py-2 text-slate-200 font-sans text-xs">Air Yards / Att</td>
-            <td class="py-2 text-right">${ypaA.toFixed(1)}</td>
-            <td class="py-2 text-right">${ypaB.toFixed(1)}</td>
-            <td class="py-2 text-right font-sans text-cyber-lime font-bold">${Number(diffYpa) >= 0 ? `+${diffYpa}` : diffYpa}</td>
-          </tr>
-          <tr class="matchup-table-row border-b border-subtle/50 hover:bg-slate-800/30">
-            <td class="py-2 text-slate-200 font-sans text-xs">Pressure Rate Allowed/Generated</td>
-            <td class="py-2 text-right">${(sackA * 100).toFixed(1)}%</td>
-            <td class="py-2 text-right">${(sackB * 100).toFixed(1)}%</td>
-            <td class="py-2 text-right font-sans ${sackA > sackB ? 'text-crimson font-bold' : 'text-cyber-lime font-bold'}">${sackA > sackB ? `${attrEsc(abbrB)} ADV` : `${attrEsc(abbrA)} ADV`}</td>
-          </tr>
-          <tr class="matchup-table-row border-b border-subtle/50 hover:bg-slate-800/30">
-            <td class="py-2 text-slate-200 font-sans text-xs">Early-Down Success Rate</td>
-            <td class="py-2 text-right">${(succA * 100).toFixed(1)}%</td>
-            <td class="py-2 text-right">${(succB * 100).toFixed(1)}%</td>
-            <td class="py-2 text-right font-sans ${succA >= succB ? 'text-cyber-lime font-bold' : 'text-crimson font-bold'}">${succA >= succB ? `${attrEsc(abbrA)} ADV` : `${attrEsc(abbrB)} ADV`}</td>
-          </tr>
-          <tr class="matchup-table-row border-b border-subtle/50 hover:bg-slate-800/30">
-            <td class="py-2 text-slate-200 font-sans text-xs">Pass EPA per Attempt</td>
-            <td class="py-2 text-right">${epaA != null ? (epaA >= 0 ? '+' : '') + epaA.toFixed(3) : '—'}</td>
-            <td class="py-2 text-right">${epaB != null ? (epaB >= 0 ? '+' : '') + epaB.toFixed(3) : '—'}</td>
-            <td class="py-2 text-right font-sans ${epaA != null && epaB != null && epaA >= epaB ? 'text-cyber-lime font-bold' : 'text-crimson font-bold'}">${epaA != null && epaB != null && epaA >= epaB ? `${attrEsc(abbrA)} ADV` : `${attrEsc(abbrB)} ADV`}</td>
-          </tr>
-          <tr class="matchup-table-row border-b border-subtle/50 hover:bg-slate-800/30">
-            <td class="py-2 text-slate-200 font-sans text-xs">EPA per Play</td>
-            <td class="py-2 text-right">${epaPlayA != null ? (epaPlayA >= 0 ? '+' : '') + epaPlayA.toFixed(3) : '—'}</td>
-            <td class="py-2 text-right">${epaPlayB != null ? (epaPlayB >= 0 ? '+' : '') + epaPlayB.toFixed(3) : '—'}</td>
-            <td class="py-2 text-right font-sans ${epaPlayA != null && epaPlayB != null && epaPlayA >= epaPlayB ? 'text-cyber-lime font-bold' : 'text-crimson font-bold'}">${epaPlayA != null && epaPlayB != null && epaPlayA >= epaPlayB ? `${attrEsc(abbrA)} ADV` : `${attrEsc(abbrB)} ADV`}</td>
-          </tr>
-          <tr class="matchup-table-row hover:bg-slate-800/30">
-            <td class="py-2 text-slate-200 font-sans text-xs">Turnover Rate</td>
-            <td class="py-2 text-right">${(turnA * 100).toFixed(1)}%</td>
-            <td class="py-2 text-right">${(turnB * 100).toFixed(1)}%</td>
-            <td class="py-2 text-right font-sans ${turnA <= turnB ? 'text-cyber-lime font-bold' : 'text-crimson font-bold'}">${turnA <= turnB ? `${attrEsc(abbrA)} ADV` : `${attrEsc(abbrB)} ADV`}</td>
-          </tr>
+          ${rows.map(r => {
+            const vA = efficiencyValue(tA, 'off', r.id, 2025);
+            const vB = efficiencyValue(tB, 'def', r.id, 2025);
+            const rA = ranksA.offense[r.id] ?? efficiencyRank(tA, 'off', r.id, 2025);
+            const rB = ranksB.defense[r.id] ?? efficiencyRank(tB, 'def', r.id, 2025);
+            const adv = (rA != null && rB != null) ? computeAdvantage(rA, rB, tA, tB) : null;
+            return `
+              <tr class="matchup-table-row border-b border-subtle/50 hover:bg-slate-800/30">
+                <td class="py-2 text-slate-200 font-sans text-xs">${r.label}</td>
+                <td class="py-2 text-right">${formatMetricVal(r.id, vA)} ${rA != null ? `<span class="text-[10px] text-slate-400">#${rA}</span>` : ''}</td>
+                <td class="py-2 text-right">${formatMetricVal(r.id, vB)} ${rB != null ? `<span class="text-[10px] text-slate-400">#${rB}</span>` : ''}</td>
+                <td class="py-2 text-right font-sans">${renderAdvantageBadge(adv, tA, tB)}</td>
+              </tr>
+            `;
+          }).join('')}
         </tbody>
       </table>
+      <div class="mt-2.5 pt-2 border-t border-subtle/50 text-[10px] text-slate-500 font-mono flex justify-between items-center">
+        <span>Source: 2025 nflverse play-by-play (1–32 league ranks)</span>
+        <button onclick="setMatchupSubTab('passing')" class="text-sky-400 hover:text-sky-300 font-semibold">Full passing splits →</button>
+      </div>
     </div>
   `;
 }
@@ -4400,10 +4403,19 @@ function renderPreviewPassingMatrix(tA, tB, ranksA, ranksB) {
 function renderPreviewRushingMatrix(tA, tB, ranksA, ranksB) {
   const abbrA = DATA.teamAbbr[tA] || tA;
   const abbrB = DATA.teamAbbr[tB] || tB;
-  const epaA = efficiencyValue(tA, 'off', 'run_epa_per_att') || 0.08;
-  const epaB = efficiencyValue(tB, 'def', 'run_epa_per_att') || 0.02;
-  const rankA = ranksA.offense['run_epa_per_att'];
-  const rankB = ranksB.defense['run_epa_per_att'];
+
+  const runEpaA = efficiencyValue(tA, 'off', 'run_epa_per_att', 2025);
+  const runEpaB = efficiencyValue(tB, 'def', 'run_epa_per_att', 2025);
+  const rankRunA = ranksA.offense['run_epa_per_att'];
+  const rankRunB = ranksB.defense['run_epa_per_att'];
+
+  const rows = [
+    { id: 'run_epa_per_att', label: 'Run EPA per Attempt' },
+    { id: 'epa_per_play', label: 'Overall EPA per Play' },
+    { id: 'success_rate', label: 'Rushing Success Rate' },
+    { id: 'yds_per_play', label: 'Yards per Play' },
+    { id: 'turnover_rate', label: 'Turnover Rate' },
+  ];
 
   return `
     <div class="bg-surface-card border border-subtle rounded-lg p-4">
@@ -4411,6 +4423,30 @@ function renderPreviewRushingMatrix(tA, tB, ranksA, ranksB) {
         <h2 class="text-sm font-bold text-white flex items-center gap-2 uppercase tracking-wide">
           <span class="text-amber-400">⚡</span> Rushing Matrix
         </h2>
+        <span class="text-[10px] font-mono text-slate-400 bg-slate-800 px-2 py-0.5 rounded border border-subtle">2025 MEASURED</span>
+      </div>
+
+      <div class="grid grid-cols-2 gap-3 mb-3">
+        <div class="bg-slate-800/40 p-2.5 border border-subtle rounded flex items-center justify-between">
+          <div class="flex flex-col">
+            <span class="text-xs font-bold text-sky-400">${attrEsc(abbrA)} Offense</span>
+            <span class="text-[9px] font-bold uppercase tracking-wider text-slate-400">RUN EPA / ATT</span>
+          </div>
+          <div class="bg-slate-800 px-2 py-1 rounded border border-subtle font-mono text-xs font-bold text-cyber-lime flex items-center gap-1.5">
+            ${runEpaA != null ? (runEpaA >= 0 ? '+' : '') + runEpaA.toFixed(3) : '—'}
+            <span class="bg-slate-700 text-slate-300 px-1 text-[10px] rounded">${rankRunA != null ? '#' + rankRunA : '—'}</span>
+          </div>
+        </div>
+        <div class="bg-slate-800/40 p-2.5 border border-subtle rounded flex items-center justify-between">
+          <div class="flex flex-col">
+            <span class="text-xs font-bold text-indigo-400">${attrEsc(abbrB)} Defense</span>
+            <span class="text-[9px] font-bold uppercase tracking-wider text-slate-400">RUN EPA / ATT</span>
+          </div>
+          <div class="bg-slate-800 px-2 py-1 rounded border border-subtle font-mono text-xs font-bold text-white flex items-center gap-1.5">
+            ${runEpaB != null ? (runEpaB >= 0 ? '+' : '') + runEpaB.toFixed(3) : '—'}
+            <span class="bg-slate-700 text-slate-300 px-1 text-[10px] rounded">${rankRunB != null ? '#' + rankRunB : '—'}</span>
+          </div>
+        </div>
       </div>
 
       <table class="w-full text-left border-collapse">
@@ -4419,36 +4455,31 @@ function renderPreviewRushingMatrix(tA, tB, ranksA, ranksB) {
             <th class="py-2 font-normal">METRIC</th>
             <th class="py-2 font-normal text-right">${attrEsc(abbrA)} OFF</th>
             <th class="py-2 font-normal text-right">${attrEsc(abbrB)} DEF</th>
-            <th class="py-2 font-normal text-right">EDGE</th>
+            <th class="py-2 font-normal text-right">ADVANTAGE</th>
           </tr>
         </thead>
         <tbody class="font-mono text-xs">
-          <tr class="matchup-table-row border-b border-subtle/50 hover:bg-slate-800/30">
-            <td class="py-2 text-slate-200 font-sans text-xs">Rush EPA / Play</td>
-            <td class="py-2 text-right text-cyber-lime font-bold">${epaA >= 0 ? '+' : ''}${epaA.toFixed(2)} <span class="text-[10px] bg-slate-800 text-slate-400 px-1 rounded ml-1">#${rankA || 2}</span></td>
-            <td class="py-2 text-right">${epaB >= 0 ? '+' : ''}${epaB.toFixed(2)} <span class="text-[10px] bg-slate-800 text-slate-400 px-1 rounded ml-1">#${rankB || 21}</span></td>
-            <td class="py-2 text-right font-sans text-cyber-lime font-bold">HIGH</td>
-          </tr>
-          <tr class="matchup-table-row border-b border-subtle/50 hover:bg-slate-800/30">
-            <td class="py-2 text-slate-200 font-sans text-xs">Yards Before Contact / Att</td>
-            <td class="py-2 text-right">2.1</td>
-            <td class="py-2 text-right">1.6</td>
-            <td class="py-2 text-right font-sans text-cyber-lime font-bold">+0.5</td>
-          </tr>
-          <tr class="matchup-table-row border-b border-subtle/50 hover:bg-slate-800/30">
-            <td class="py-2 text-slate-200 font-sans text-xs">Explosive Run Rate (10+ yds)</td>
-            <td class="py-2 text-right">14.5%</td>
-            <td class="py-2 text-right">11.2%</td>
-            <td class="py-2 text-right font-sans text-cyber-lime font-bold">+3.3%</td>
-          </tr>
-          <tr class="matchup-table-row hover:bg-slate-800/30">
-            <td class="py-2 text-slate-200 font-sans text-xs">Stuff Rate (&lt;= 0 yds)</td>
-            <td class="py-2 text-right">16.2%</td>
-            <td class="py-2 text-right">18.5%</td>
-            <td class="py-2 text-right font-sans text-crimson font-bold">${attrEsc(abbrB)} ADV</td>
-          </tr>
+          ${rows.map(r => {
+            const vA = efficiencyValue(tA, 'off', r.id, 2025);
+            const vB = efficiencyValue(tB, 'def', r.id, 2025);
+            const rA = ranksA.offense[r.id] ?? efficiencyRank(tA, 'off', r.id, 2025);
+            const rB = ranksB.defense[r.id] ?? efficiencyRank(tB, 'def', r.id, 2025);
+            const adv = (rA != null && rB != null) ? computeAdvantage(rA, rB, tA, tB) : null;
+            return `
+              <tr class="matchup-table-row border-b border-subtle/50 hover:bg-slate-800/30">
+                <td class="py-2 text-slate-200 font-sans text-xs">${r.label}</td>
+                <td class="py-2 text-right">${formatMetricVal(r.id, vA)} ${rA != null ? `<span class="text-[10px] text-slate-400">#${rA}</span>` : ''}</td>
+                <td class="py-2 text-right">${formatMetricVal(r.id, vB)} ${rB != null ? `<span class="text-[10px] text-slate-400">#${rB}</span>` : ''}</td>
+                <td class="py-2 text-right font-sans">${renderAdvantageBadge(adv, tA, tB)}</td>
+              </tr>
+            `;
+          }).join('')}
         </tbody>
       </table>
+      <div class="mt-2.5 pt-2 border-t border-subtle/50 text-[10px] text-slate-500 font-mono flex justify-between items-center">
+        <span>Source: 2025 nflverse play-by-play (1–32 league ranks)</span>
+        <button onclick="setMatchupSubTab('rushing')" class="text-sky-400 hover:text-sky-300 font-semibold">Full rushing splits →</button>
+      </div>
     </div>
   `;
 }
@@ -4456,67 +4487,162 @@ function renderPreviewRushingMatrix(tA, tB, ranksA, ranksB) {
 function renderPreviewUnitGrades(tA, tB) {
   const abbrA = DATA.teamAbbr[tA] || tA;
   const abbrB = DATA.teamAbbr[tB] || tB;
-  const ugA = CLAY_DATA?.unit_grades?.[tA] || {};
-  const ugB = CLAY_DATA?.unit_grades?.[tB] || {};
+  const ugA = CLAY_DATA?.unit_grades?.[tA] || null;
+  const ugB = CLAY_DATA?.unit_grades?.[tB] || null;
 
-  const olA = Number(ugA.OL || 7.5);
-  const dlB = Number(ugB.DI || ugB.ED || 6.5);
-  const diffOl = (olA - dlB).toFixed(1);
+  if (!ugA || !ugB) {
+    return `
+      <div class="bg-surface-card border border-subtle rounded-lg p-4">
+        <div class="flex justify-between items-center mb-3 pb-2 border-b border-subtle">
+          <h2 class="text-sm font-bold text-white flex items-center gap-2 uppercase tracking-wide">
+            <span class="text-sky-400">📊</span> Unit Grades
+          </h2>
+          <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 font-mono bg-slate-800 px-2 py-0.5 rounded border border-subtle">CLAY 2026</span>
+        </div>
+        <div class="text-xs text-slate-400 py-6 text-center leading-relaxed font-mono">
+          Unit grades loading from Mike Clay 2026 projections model.
+        </div>
+      </div>
+    `;
+  }
 
-  const wrA = Number(ugA.WR || 7.2);
-  const dbB = Number(ugB.CB || ugB.S || 6.2);
-  const diffWr = (wrA - dbB).toFixed(1);
-
-  const qbA = Number(ugA.QB || 6.5);
-  const qbB = Number(ugB.QB || 6.5);
-  const diffQb = (qbA - qbB).toFixed(1);
+  const battles = [
+    {
+      title: 'Pass Pro vs Rush',
+      sub: 'OL vs DI/ED',
+      labelA: 'OL',
+      labelB: 'Pass Rush',
+      gA: matchupGrade(tA, ['OL']),
+      gB: matchupGrade(tB, ['DI', 'ED']),
+    },
+    {
+      title: 'Receivers vs Coverage',
+      sub: 'WR vs CB',
+      labelA: 'WR',
+      labelB: 'CB',
+      gA: matchupGrade(tA, ['WR']),
+      gB: matchupGrade(tB, ['CB']),
+    },
+    {
+      title: 'Tight Ends vs Safeties',
+      sub: 'TE vs S',
+      labelA: 'TE',
+      labelB: 'S',
+      gA: matchupGrade(tA, ['TE']),
+      gB: matchupGrade(tB, ['S']),
+    },
+    {
+      title: 'Ground vs LB Corps',
+      sub: 'RB vs LB',
+      labelA: 'RB',
+      labelB: 'LB',
+      gA: matchupGrade(tA, ['RB']),
+      gB: matchupGrade(tB, ['LB']),
+    },
+    {
+      title: 'Quarterbacks',
+      sub: 'QB vs QB',
+      labelA: 'QB',
+      labelB: 'QB',
+      gA: matchupGrade(tA, ['QB']),
+      gB: matchupGrade(tB, ['QB']),
+    },
+  ];
 
   return `
     <div class="bg-surface-card border border-subtle rounded-lg p-4">
-      <div class="flex justify-between items-center mb-3 pb-2 border-b border-subtle">
-        <h2 class="text-sm font-bold text-white flex items-center gap-2 uppercase tracking-wide">
-          <span class="text-sky-400">📊</span> Unit Grades
-        </h2>
-        <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 font-mono">CLAY 2026</span>
+      <div class="flex justify-between items-start mb-3 pb-2 border-b border-subtle">
+        <div>
+          <h2 class="text-sm font-bold text-white flex items-center gap-2 uppercase tracking-wide">
+            <span class="text-sky-400">📊</span> Unit Grades
+          </h2>
+          <div class="text-[10px] text-slate-400 font-mono mt-0.5">
+            ${attrEsc(abbrA)} (#${ugA.total_rank ?? '—'}) vs ${attrEsc(abbrB)} (#${ugB.total_rank ?? '—'})
+          </div>
+        </div>
+        <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 font-mono bg-slate-800 px-2 py-0.5 rounded border border-subtle">CLAY 2026</span>
       </div>
-      <div class="flex flex-col gap-3 font-mono text-xs">
-        <!-- OL vs DL -->
-        <div class="flex items-center justify-between">
-          <span class="w-12 text-slate-400 font-medium">OL/DL</span>
-          <div class="flex-1 flex justify-center items-center px-3 gap-2">
-            <div class="h-3.5 bg-sky-500 rounded-l flex-1"></div>
-            <span class="font-sans text-xs ${Number(diffOl) >= 0 ? 'text-cyber-lime' : 'text-crimson'} w-12 text-center font-bold">${Number(diffOl) >= 0 ? `+${diffOl}` : diffOl}</span>
-            <div class="h-3.5 bg-slate-700 rounded-r w-12"></div>
-          </div>
+
+      <!-- Offense vs Defense Overall Banner -->
+      <div class="bg-slate-900/60 border border-subtle rounded p-2.5 mb-3 flex items-center justify-between text-xs font-mono">
+        <div class="flex flex-col">
+          <span class="text-[9px] uppercase font-bold text-sky-400">${attrEsc(abbrA)} Offense</span>
+          <span class="text-white font-bold text-sm">${ugA.offense_grade != null ? ugA.offense_grade.toFixed(1) : '—'} <span class="text-[10px] text-slate-400 font-normal">#${ugA.offense_rank ?? '—'}</span></span>
         </div>
-        <!-- WR vs DB -->
-        <div class="flex items-center justify-between">
-          <span class="w-12 text-slate-400 font-medium">WR/DB</span>
-          <div class="flex-1 flex justify-center items-center px-3 gap-2">
-            <div class="h-3.5 bg-sky-500 rounded-l flex-1"></div>
-            <span class="font-sans text-xs ${Number(diffWr) >= 0 ? 'text-cyber-lime' : 'text-crimson'} w-12 text-center font-bold">${Number(diffWr) >= 0 ? `+${diffWr}` : diffWr}</span>
-            <div class="h-3.5 bg-slate-700 rounded-r w-8"></div>
-          </div>
+        <div class="text-[10px] uppercase font-bold text-slate-500 font-sans tracking-wider">VS</div>
+        <div class="flex flex-col items-end">
+          <span class="text-[9px] uppercase font-bold text-indigo-400">${attrEsc(abbrB)} Defense</span>
+          <span class="text-white font-bold text-sm"><span class="text-[10px] text-slate-400 font-normal">#${ugB.defense_rank ?? '—'}</span> ${ugB.defense_grade != null ? ugB.defense_grade.toFixed(1) : '—'}</span>
         </div>
-        <!-- QB -->
-        <div class="flex items-center justify-between">
-          <span class="w-12 text-slate-400 font-medium">QB</span>
-          <div class="flex-1 flex justify-center items-center px-3 gap-2">
-            <div class="h-3.5 bg-sky-500 rounded-l flex-1"></div>
-            <span class="font-sans text-xs text-slate-400 w-12 text-center font-bold">${Math.abs(Number(diffQb)) < 0.3 ? 'EVEN' : (Number(diffQb) > 0 ? `+${diffQb}` : diffQb)}</span>
-            <div class="h-3.5 bg-cyber-lime rounded-r flex-1"></div>
-          </div>
-        </div>
+      </div>
+
+      <!-- 5 Positional Unit Battles -->
+      <div class="flex flex-col gap-2.5 font-mono text-xs">
+        ${battles.map(b => {
+          const ga = b.gA != null ? Math.max(1, Math.min(10, b.gA)) : null;
+          const gb = b.gB != null ? Math.max(1, Math.min(10, b.gB)) : null;
+          const diff = (ga != null && gb != null) ? ga - gb : 0;
+          const absDiff = Math.abs(diff);
+          const isEven = absDiff < 0.3;
+          const badge = (ga == null || gb == null) ? '<span class="text-slate-500">—</span>' : isEven ?
+            '<span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-slate-800 border border-subtle text-slate-400">EVEN</span>' :
+            (diff > 0 ?
+              `<span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-slate-800 border border-subtle text-cyber-lime">+${absDiff.toFixed(1)} ${attrEsc(abbrA)}</span>` :
+              `<span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-slate-800 border border-subtle text-crimson">+${absDiff.toFixed(1)} ${attrEsc(abbrB)}</span>`);
+
+          return `
+            <div class="bg-slate-900/40 border border-subtle rounded p-2 flex flex-col gap-1.5">
+              <div class="flex justify-between items-center text-[10px]">
+                <span class="text-sky-400 font-bold">${attrEsc(abbrA)} ${b.labelA}</span>
+                <span class="text-slate-400 font-sans font-medium uppercase tracking-wider text-[9px]">${b.title}</span>
+                <span class="text-indigo-400 font-bold">${attrEsc(abbrB)} ${b.labelB}</span>
+              </div>
+              <div class="flex items-center gap-2 w-full">
+                <div class="flex-1 h-2 rounded bg-slate-800 overflow-hidden flex justify-end">
+                  <div class="bg-sky-500 h-full rounded" style="width: ${ga != null ? ga * 10 : 0}%"></div>
+                </div>
+                <div class="text-[11px] font-bold text-sky-400 w-6 text-right">${ga != null ? ga.toFixed(1) : '—'}</div>
+                <div class="text-center min-w-[72px]">${badge}</div>
+                <div class="text-[11px] font-bold text-indigo-400 w-6 text-left">${gb != null ? gb.toFixed(1) : '—'}</div>
+                <div class="flex-1 h-2 rounded bg-slate-800 overflow-hidden flex justify-start">
+                  <div class="bg-indigo-500 h-full rounded" style="width: ${gb != null ? gb * 10 : 0}%"></div>
+                </div>
+              </div>
+            </div>
+          `;
+        }).join('')}
+      </div>
+      <div class="mt-3 pt-2 border-t border-subtle/50 text-[10px] text-slate-500 font-mono flex justify-between items-center">
+        <span>Scale: 1.0 (lowest) to 10.0 (elite)</span>
+        <button onclick="setMatchupSubTab('formation')" class="text-sky-400 hover:text-sky-300 font-semibold">Formation Lab →</button>
       </div>
     </div>
   `;
 }
 
 function renderPreviewInsights(tA, tB, curGame) {
+  const insights = generateMatchupInsights(tA, tB, curGame);
   const abbrA = DATA.teamAbbr[tA] || tA;
   const abbrB = DATA.teamAbbr[tB] || tB;
-  const nameA = tA;
-  const nameB = tB;
+
+  if (!insights || !insights.length) {
+    return `
+      <div class="bg-surface-card border border-subtle rounded-lg p-4 flex-1">
+        <div class="flex justify-between items-center mb-3 pb-2 border-b border-subtle">
+          <h2 class="text-sm font-bold text-white flex items-center gap-2 uppercase tracking-wide">
+            <span class="text-amber-400">💡</span> Matchup Insights
+          </h2>
+          <span class="text-[10px] font-mono text-slate-400">2026 ROSTER & 2025 DATA</span>
+        </div>
+        <div class="text-xs text-slate-400 py-4 text-center leading-relaxed font-mono">
+          Matchup insights require verified starter and 2025 efficiency data. None currently available for this pairing.
+        </div>
+      </div>
+    `;
+  }
+
+  const previewItems = insights.slice(0, 3);
+  const accents = ['border-l-sky-500', 'border-l-indigo-500', 'border-l-cyber-lime'];
 
   return `
     <div class="bg-surface-card border border-subtle rounded-lg p-4 flex-1">
@@ -4524,33 +4650,34 @@ function renderPreviewInsights(tA, tB, curGame) {
         <h2 class="text-sm font-bold text-white flex items-center gap-2 uppercase tracking-wide">
           <span class="text-amber-400">💡</span> Matchup Insights
         </h2>
+        <span class="text-[10px] font-mono text-slate-400">2026 ROSTER & 2025 EPA</span>
       </div>
       <div class="flex flex-col gap-3 text-xs">
-        <div class="bg-slate-800/40 border border-subtle p-3 rounded border-l-4 border-l-sky-500">
-          <p class="font-bold text-white mb-1">Trench Dominance</p>
-          <p class="text-slate-300 text-[11px] leading-relaxed">
-            ${attrEsc(nameA)} O-Line (<span class="font-mono bg-slate-800 px-1 rounded text-white">#1 PFF</span>) vs ${attrEsc(nameB)} Pass Rush (<span class="font-mono bg-slate-800 px-1 rounded text-white">#18 EPA/play</span>). Expect ${attrEsc(abbrA)} to dictate early down pacing.
-          </p>
-        </div>
-        <div class="bg-slate-800/40 border border-subtle p-3 rounded border-l-4 border-l-indigo-500">
-          <p class="font-bold text-white mb-1">Explosive Vulnerability</p>
-          <p class="text-slate-300 text-[11px] leading-relaxed">
-            ${attrEsc(abbrB)} Defense allows a 15% explosive pass rate on 3rd down. Look for ${attrEsc(abbrA)} play-action deep shots.
-          </p>
-        </div>
-        <div class="bg-slate-800/40 border border-subtle p-3 rounded border-l-4 border-l-slate-500">
-          <p class="font-bold text-white mb-1">Red Zone Efficiency</p>
-          <p class="text-slate-300 text-[11px] leading-relaxed">
-            Both teams rank in top 10 for RZ scoring, indicating field goals may be minimal.
-          </p>
-        </div>
+        ${previewItems.map((item, idx) => {
+          const accent = accents[idx % accents.length];
+          return `
+            <div class="bg-slate-800/40 border border-subtle p-3 rounded border-l-4 ${accent} flex flex-col gap-1.5">
+              <div class="flex justify-between items-center">
+                <p class="font-bold text-white text-xs">${attrEsc(item.title || item.leftName || 'Matchup Dynamic')}</p>
+                ${item.subtitle ? `<span class="text-[10px] font-mono text-slate-400">${attrEsc(item.subtitle)}</span>` : ''}
+              </div>
+              <p class="text-slate-300 text-[11px] leading-relaxed">
+                ${item.text}
+              </p>
+              ${item.playerName ? `
+                <div class="pt-1">
+                  <button onclick="openPlayerModal('${attrEsc(item.playerName).replace(/'/g, "\\'")}','${attrEsc(item.teamName || tA).replace(/'/g, "\\'")}')" class="text-[10px] font-semibold text-sky-400 hover:text-sky-300 transition">
+                    View ${attrEsc(item.playerName)} profile →
+                  </button>
+                </div>
+              ` : ''}
+            </div>
+          `;
+        }).join('')}
       </div>
-      <div class="mt-3 pt-2 border-t border-subtle/50 text-[10px] text-slate-500 leading-normal">
-        <p class="mb-1 text-slate-400">Note: Evaluation excludes player-vs-player assignments, injury status, or a player-specific weekly projection.</p>
-        <div class="flex items-center justify-between text-slate-500">
-          <span>Sources & Method: 2025 measured EPA</span>
-          <span class="text-slate-600">Model verified</span>
-        </div>
+      <div class="mt-3 pt-2 border-t border-subtle/50 text-[10px] text-slate-500 leading-normal flex justify-between items-center font-mono">
+        <span>Verified 2026 Depth Chart & 2025 EPA</span>
+        <button onclick="setMatchupSubTab('insights')" class="text-sky-400 hover:text-sky-300 font-semibold">More insights →</button>
       </div>
     </div>
   `;
@@ -5328,15 +5455,24 @@ function effTeamAbbr(team){
   return team;
 }
 
+function isMetricHigherBetter(side, metric) {
+  if (side === 'def') {
+    return metric === 'sack_rate' || metric === 'turnover_rate';
+  }
+  return metric !== 'sack_rate' && metric !== 'turnover_rate';
+}
+
 function efficiencyRank(team, side, metric, season){
   if (!EFFICIENCY_DATA || !EFFICIENCY_DATA.length) return null;
   const t = effTeamAbbr(team);
-  const rows = EFFICIENCY_DATA.filter(r => r.season === (season || 2025) && r.side === side);
+  const targetSeason = season || 2025;
+  const rows = EFFICIENCY_DATA.filter(r => r.season === targetSeason && r.side === side);
   if (!rows.length) return null;
   const has = rows.some(r => r[metric] != null && Number.isFinite(Number(r[metric])));
   if (!has) return null;
+  const higherBetter = isMetricHigherBetter(side, metric);
   const sorted = rows.filter(r => r[metric] != null && Number.isFinite(Number(r[metric])))
-    .sort((a, b) => (side === 'def' ? Number(a[metric]) - Number(b[metric]) : Number(b[metric]) - Number(a[metric])));
+    .sort((a, b) => higherBetter ? Number(b[metric]) - Number(a[metric]) : Number(a[metric]) - Number(b[metric]));
   const idx = sorted.findIndex(r => r.team === t);
   if (idx < 0) return null;
   return idx + 1;
@@ -5345,7 +5481,8 @@ function efficiencyRank(team, side, metric, season){
 function efficiencyValue(team, side, metric, season){
   if (!EFFICIENCY_DATA) return null;
   const t = effTeamAbbr(team);
-  const row = EFFICIENCY_DATA.find(r => r.season === (season || 2025) && r.side === side && r.team === t);
+  const targetSeason = season || 2025;
+  const row = EFFICIENCY_DATA.find(r => r.season === targetSeason && r.side === side && r.team === t);
   if (!row || row[metric] == null) return null;
   const v = Number(row[metric]);
   return Number.isFinite(v) ? v : null;
@@ -5593,24 +5730,21 @@ function schLine(label, value, fmt){
   return '<div class="sch-line"><span>' + label + '</span>' + shown + '</div>';
 }
 
-// Derive an 0-100 overall strength per team from this dashboard's own
-// Madden-based unit ratings (the macros already computed into DATA.rankings).
+// Derive an 0-100 overall strength per team from Mike Clay 2026 unit grades
+// (CLAY_DATA.unit_grades), replacing legacy Madden-based unit ratings.
 function computeTeamOverall(teamName){
-  const r = DATA.rankings?.[teamName];
-  if (!r) return null;
-  const parts = ['Pass Off','Run Off','Pass Def','Run Def','Pass Rush','Coverage']
-    .map(k => (r[k] && typeof r[k].rating === 'number') ? r[k].rating : null)
-    .filter(v => v !== null);
-  if (!parts.length) return null;
-  // offense = weighted pass/run split, defense likewise, then 50/50 team blend
-  const off = weighted([r['Pass Off'], r['Run Off']], [0.6, 0.4]);
-  const def = weighted([r['Pass Def'], r['Run Def']], [0.55, 0.45]);
-  return off === null && def === null ? null : Math.round(((off ?? 50) + (def ?? 50)) / 2);
-  function weighted(vals, ws){
-    let t = 0, c = 0;
-    for (let i = 0; i < vals.length; i++) if (typeof vals[i]?.rating === 'number') { t += vals[i].rating * ws[i]; c += ws[i]; }
-    return c ? t / c : null;
+  if (typeof CLAY_DATA !== 'undefined' && CLAY_DATA?.unit_grades?.[teamName]) {
+    const ug = CLAY_DATA.unit_grades[teamName];
+    if (ug.total_grade != null && Number.isFinite(Number(ug.total_grade))) {
+      return Math.round(Number(ug.total_grade) * 10);
+    }
+    const units = ['QB', 'RB', 'WR', 'TE', 'OL', 'DI', 'ED', 'LB', 'CB', 'S'];
+    const vals = units.map(u => Number(ug[u])).filter(v => Number.isFinite(v));
+    if (vals.length) {
+      return Math.round((vals.reduce((s, v) => s + v, 0) / vals.length) * 10);
+    }
   }
+  return null;
 }
 
 // Log5-style model win probability from two team strengths (0-100).
@@ -7325,24 +7459,12 @@ function renderConsensusPower(c, data) {
       const projWins = Number(t.wins) || 8.5;
       const unitGrade = ug.total_grade || 5.0;
 
-      let maddenAvg = 72;
-      if (DATA.teams && DATA.players) {
-        const teamRec = DATA.teams.find(tm => tm.name === tmName);
-        if (teamRec) {
-          const tPlayers = DATA.players.filter(p => p.team_id === teamRec.id && p.ovr !== null);
-          if (tPlayers.length > 0) {
-            maddenAvg = tPlayers.reduce((s, p) => s + p.ovr, 0) / tPlayers.length;
-          }
-        }
-      }
-
       rawTeams.push({
         name: tmName,
         division: div,
         projWins,
         unitGrade,
-        maddenAvg: Number(maddenAvg.toFixed(1)),
-        diff: t.diff || 0
+        diff: Number(t.diff) || 0
       });
     }
   }
@@ -7351,14 +7473,14 @@ function renderConsensusPower(c, data) {
   const maxW = Math.max(...rawTeams.map(t => t.projWins));
   const minUG = Math.min(...rawTeams.map(t => t.unitGrade));
   const maxUG = Math.max(...rawTeams.map(t => t.unitGrade));
-  const minM = Math.min(...rawTeams.map(t => t.maddenAvg));
-  const maxM = Math.max(...rawTeams.map(t => t.maddenAvg));
+  const minDiff = Math.min(...rawTeams.map(t => t.diff));
+  const maxDiff = Math.max(...rawTeams.map(t => t.diff));
 
   for (const t of rawTeams) {
     const wNorm = ((t.projWins - minW) / (maxW - minW || 1)) * 100;
     const ugNorm = ((t.unitGrade - minUG) / (maxUG - minUG || 1)) * 100;
-    const mNorm = ((t.maddenAvg - minM) / (maxM - minM || 1)) * 100;
-    t.rawScore = (wNorm * 0.40) + (ugNorm * 0.35) + (mNorm * 0.25);
+    const diffNorm = ((t.diff - minDiff) / (maxDiff - minDiff || 1)) * 100;
+    t.rawScore = (wNorm * 0.40) + (ugNorm * 0.40) + (diffNorm * 0.20);
   }
 
   const minRaw = Math.min(...rawTeams.map(t => t.rawScore));
@@ -7378,7 +7500,7 @@ function renderConsensusPower(c, data) {
             <span>🏆</span> 2026 Unified Consensus Power Index
           </h3>
           <p class="text-xs text-slate-400 mt-0.5">
-            Calibrated 0–100 power index blending Mike Clay projected wins (40%), unit grade film analysis (35%), and roster strength (25%).
+            Calibrated 0–100 power index blending Mike Clay projected wins (40%), unit grade composite (40%), and projected point differential (20%).
           </p>
         </div>
         <div class="flex items-center gap-2 text-xs flex-wrap">
