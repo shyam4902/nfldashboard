@@ -283,245 +283,114 @@ function validateDryRunEnvelope(envelope) {
   return { valid: errors.length === 0, errors };
 }
 
-async function updateRostersFromESPN() {
-  console.log(`[${new Date().toISOString()}] Checking ESPN transactions (https://www.espn.com/nfl/transactions)...`);
+// ── CLI / pipeline ─────────────────────────────────────────────────────────
+// Default mode is DRY-RUN: normalize, validate, and write only the inspect
+// artifact espn_transactions_2026.json (atomically). No roster file, no
+// processed-log file, and no service is contacted. Persistence to the Supabase
+// nfl_transactions table happens only with the explicit --write flag, which
+// requires SUPABASE_URL / SUPABASE_ANON_KEY in the environment and the tx_id
+// migration applied (supabase/migrations/20260903_espn_transactions_tx_id.sql).
+const { DEFAULT_SUPABASE_URL, makeSupabaseClient, persistTransactions } = require('./espn_transaction_persistence.js');
 
-  const rostersPath = path.join(__dirname, 'nfl_rosters_2026.json');
-  if (!fs.existsSync(rostersPath)) {
-    console.error("Error: nfl_rosters_2026.json not found.");
-    return;
+function flagValue(argv, flag) {
+  const i = argv.indexOf(flag);
+  return i !== -1 && argv[i + 1] ? argv[i + 1] : null;
+}
+
+async function loadEspnItems({ inputPath, fetchImpl = fetch }) {
+  if (inputPath) {
+    const data = JSON.parse(fs.readFileSync(inputPath, 'utf8'));
+    const items = Array.isArray(data) ? data : data.transactions;
+    if (!Array.isArray(items)) {
+      throw new Error(`--input ${inputPath} must be an array or { "transactions": [...] }`);
+    }
+    return items;
   }
+  const res = await fetchImpl(ESPN_TRANSACTIONS_URL, { headers: { 'User-Agent': 'Mozilla/5.0' } });
+  if (!res.ok) throw new Error(`ESPN fetch failed: HTTP ${res.status}`);
+  const data = await res.json();
+  return data.transactions || [];
+}
 
-  const players = JSON.parse(fs.readFileSync(rostersPath, 'utf8'));
-
-  // Load history of processed transaction signatures to avoid duplicate moves
-  const processedPath = path.join(__dirname, 'processed_transactions.json');
-  let processedIds = new Set();
-  if (fs.existsSync(processedPath)) {
-    try {
-      const existing = JSON.parse(fs.readFileSync(processedPath, 'utf8'));
-      processedIds = new Set(existing.ids || []);
-    } catch (e) {}
-  }
-
-  // Fetch transactions from ESPN
-  let espnTransactions = [];
-  try {
-    const res = await fetch(ESPN_TRANSACTIONS_URL, {
-      headers: { "User-Agent": "Mozilla/5.0" }
-    });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const data = await res.json();
-    espnTransactions = data.transactions || [];
-  } catch (err) {
-    console.error("Failed to fetch ESPN transactions:", err.message);
-    return;
-  }
-
-  console.log(`Fetched ${espnTransactions.length} transactions from ESPN.`);
-
-  const normalizedTransactions = normalizeEspnTransactions(espnTransactions);
-  const validation = validateTransactions(normalizedTransactions);
+// Normalize + validate + (dry) write artifact or (write) persist. Pure side
+// effects are limited to the atomic dry-run artifact, so a partial persistence
+// failure can never replace a valid local roster or transaction artifact.
+async function processTransactions({ items, mode = 'dry', client = null, outputPath = NORMALIZED_TRANSACTIONS_PATH, sourceUrl = ESPN_TRANSACTIONS_URL }) {
+  const rows = normalizeEspnTransactions(items);
+  const validation = validateTransactions(rows);
   if (!validation.valid) {
-    console.error('Normalized ESPN transaction validation failed:', validation.errors.join('; '));
-    return;
-  }
-  if (process.argv.includes('--dry-run')) {
-    const envelope = {
-      source: 'ESPN',
-      source_url: ESPN_TRANSACTIONS_URL,
-      fetched_at: new Date().toISOString(),
-      record_count: normalizedTransactions.length,
-      transactions: normalizedTransactions
-    };
-    const envelopeValidation = validateDryRunEnvelope(envelope);
-    if (!envelopeValidation.valid) {
-      console.error('ESPN dry-run envelope validation failed:', envelopeValidation.errors.join('; '));
-      return;
-    }
-    fs.writeFileSync(NORMALIZED_TRANSACTIONS_PATH, JSON.stringify(envelope, null, 2), 'utf8');
-    console.log(`Dry run wrote ${normalizedTransactions.length} normalized transactions to ${NORMALIZED_TRANSACTIONS_PATH}`);
-    return;
+    throw new Error(`refusing to proceed with malformed rows: ${validation.errors.join('; ')}`);
   }
 
-  let moveCount = 0;
-  // Transactions are sorted newest first; iterate in chronological order (oldest to newest)
-  const chronological = [...espnTransactions].reverse();
+  if (mode === 'write') {
+    if (!client) throw new Error('write mode requires a persistence client');
+    const summary = await persistTransactions(rows, client, { sourceUrl });
+    return { mode: 'write', ...summary };
+  }
 
-  for (const item of chronological) {
-    const teamName = canonicalTeamName(item.team?.displayName || '');
-    const desc = item.description || '';
-    const txKey = `${item.date || ''}_${teamName}_${desc}`;
+  const envelope = {
+    source: 'ESPN',
+    source_url: sourceUrl,
+    fetched_at: new Date().toISOString(),
+    record_count: rows.length,
+    transactions: rows,
+  };
+  const envelopeValidation = validateDryRunEnvelope(envelope);
+  if (!envelopeValidation.valid) {
+    throw new Error(`dry-run envelope failed validation: ${envelopeValidation.errors.join('; ')}`);
+  }
+  atomicWriteFileSync(outputPath, JSON.stringify(envelope, null, 2), 'utf8');
+  return { mode: 'dry', record_count: rows.length, output_path: outputPath };
+}
 
-    if (processedIds.has(txKey)) continue;
+async function main(argv = process.argv.slice(2)) {
+  const write = argv.includes('--write');
+  const mode = write ? 'write' : 'dry'; // dry-run is the default
+  const inputPath = flagValue(argv, '--input') || process.env.ESPN_TRANSACTIONS_INPUT || null;
+  const outputPath = process.env.ESPN_OUT_PATH || NORMALIZED_TRANSACTIONS_PATH;
 
-    const moves = parseTransactionSentence(desc, teamName);
-    for (const move of moves) {
-      const destinationTeam = canonicalTeamName(move.team);
-      const norm = normalizeName(move.player);
-      let p = players.find(x => normalizeName(x.name) === norm);
-
-      if (p) {
-        // Move existing player
-        const oldTeam = p.team_name;
-        if (destinationTeam === "Free Agent") {
-          p.team_name = "Free Agent";
-          p.team_abbr = "FA";
-          p.division = "N/A";
-          p.acquisition_type = "fa";
-          console.log(` -> [WAIVED/RELEASED] ${p.name} from ${oldTeam} to Free Agency`);
-        } else {
-          const meta = TEAM_METADATA[destinationTeam] || { abbr: destinationTeam.slice(0, 3).toUpperCase(), division: "N/A" };
-          p.team_name = destinationTeam;
-          p.team_abbr = meta.abbr;
-          p.division = meta.division;
-          p.acquisition_type = (move.type === 'trade') ? 'trade' : 'fa';
-          console.log(` -> [MOVED] ${p.name} (${p.pos}) from ${oldTeam} -> ${destinationTeam}`);
-        }
-        moveCount++;
-      } else if (destinationTeam !== "Free Agent") {
-        // Add newly signed player to the team
-        const meta = TEAM_METADATA[destinationTeam] || { abbr: destinationTeam.slice(0, 3).toUpperCase(), division: "N/A" };
-        const unit = POS_TO_UNIT[move.pos] || 'OFFENSE';
-        players.push({
-          team_name: destinationTeam,
-          team_abbr: meta.abbr,
-          division: meta.division,
-          name: move.player,
-          pos: move.pos || 'N/A',
-          unit: unit,
-          ovr: '',
-          age: '',
-          jersey: '',
-          is_rookie: 'No',
-          acquisition_type: move.type === 'trade' ? 'trade' : 'fa'
-        });
-        console.log(` -> [ADDED] ${move.player} (${move.pos || 'N/A'}) to ${destinationTeam}`);
-        moveCount++;
+  console.log(`[${new Date().toISOString()}] update_rosters_from_espn: ${mode} mode (ESPN transactions feed)`);
+  try {
+    const items = await loadEspnItems({ inputPath });
+    console.log(`Loaded ${items.length} ESPN transaction items.`);
+    let client = null;
+    if (mode === 'write') {
+      const url = process.env.SUPABASE_URL || DEFAULT_SUPABASE_URL;
+      const anonKey = process.env.SUPABASE_ANON_KEY;
+      if (!anonKey) {
+        throw new Error('SUPABASE_ANON_KEY is required for --write; set it in the environment, not in source.');
       }
+      client = makeSupabaseClient({ url, anonKey });
     }
-
-    processedIds.add(txKey);
+    const result = await processTransactions({ items, mode, client, outputPath });
+    if (mode === 'write') {
+      console.log(`Persisted ESPN transactions: total ${result.total}, inserted ${result.inserted}, already present ${result.already_present}, intra-batch duplicates skipped ${result.duplicates_skipped}.`);
+    } else {
+      console.log(`Dry run: wrote ${result.record_count} normalized transactions to ${result.output_path} (no roster or database writes).`);
+      console.log('Use --write to persist to Supabase (requires SUPABASE_URL, SUPABASE_ANON_KEY, and the tx_id migration).');
+    }
+  } catch (err) {
+    console.error(`update_rosters_from_espn failed: ${err.message}`);
+    process.exitCode = 1;
   }
-
-  // Save updated roster files
-  if (moveCount > 0) {
-    console.log(`Applying ${moveCount} updates to roster files...`);
-
-    // Sort by Team Name, then Unit, then OVR
-    const unitOrder = { 'OFFENSE': 1, 'DEFENSE': 2, 'SPECIAL': 3 };
-    players.sort((a, b) => {
-      if (a.team_name !== b.team_name) return a.team_name.localeCompare(b.team_name);
-      const uA = unitOrder[a.unit] || 4;
-      const uB = unitOrder[b.unit] || 4;
-      if (uA !== uB) return uA - uB;
-      return (Number(b.ovr) || 0) - (Number(a.ovr) || 0);
-    });
-
-    // 1. JSON
-    atomicWriteFileSync(rostersPath, JSON.stringify(players, null, 2), 'utf8');
-
-    // 2. CSV
-    const csvHeaders = ['Team Name', 'Abbr', 'Division', 'Player Name', 'Position', 'Unit', 'Overall Rating (OVR)', 'Age', 'Jersey #', 'Is Rookie', 'Acquisition Type'];
-    const csvRows = [csvHeaders.join(',')];
-    for (const p of players) {
-      csvRows.push([
-        `"${p.team_name.replace(/"/g, '""')}"`,
-        `"${p.team_abbr}"`,
-        `"${p.division}"`,
-        `"${p.name.replace(/"/g, '""')}"`,
-        `"${p.pos}"`,
-        `"${p.unit}"`,
-        p.ovr !== null && p.ovr !== undefined ? p.ovr : '',
-        p.age !== null && p.age !== undefined ? p.age : '',
-        p.jersey !== null && p.jersey !== undefined ? p.jersey : '',
-        p.is_rookie,
-        `"${p.acquisition_type}"`
-      ].join(','));
-    }
-    const csvPath = path.join(__dirname, 'nfl_rosters_2026.csv');
-    atomicWriteFileSync(csvPath, csvRows.join('\n'), 'utf8');
-
-    // 3. TXT
-    let txtContent = `================================================================================\n`;
-    txtContent += `                      2026 NFL ROSTERS REFERENCE DIRECTORY                       \n`;
-    txtContent += `================================================================================\n`;
-    txtContent += `Total Players: ${players.length}\n`;
-    txtContent += `Last Updated: ${new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}\n`;
-    txtContent += `================================================================================\n\n`;
-
-    const divOrder = ['AFC East','AFC North','AFC South','AFC West','NFC East','NFC North','NFC South','NFC West'];
-    const divTeamsMap = {};
-    for (const team of Object.keys(TEAM_METADATA)) {
-      const div = TEAM_METADATA[team].division;
-      if (!divTeamsMap[div]) divTeamsMap[div] = [];
-      divTeamsMap[div].push(team);
-    }
-
-    for (const div of divOrder) {
-      if (!divTeamsMap[div]) continue;
-      txtContent += `################################################################################\n`;
-      txtContent += `DIVISION: ${div.toUpperCase()}\n`;
-      txtContent += `################################################################################\n\n`;
-
-      const sortedTeams = divTeamsMap[div].sort();
-      for (const team of sortedTeams) {
-        const abbr = TEAM_METADATA[team]?.abbr || '';
-        txtContent += `--------------------------------------------------------------------------------\n`;
-        txtContent += `TEAM: ${team} (${abbr})\n`;
-        txtContent += `--------------------------------------------------------------------------------\n`;
-
-        const teamPlayers = players.filter(p => p.team_name === team);
-        ['OFFENSE', 'DEFENSE', 'SPECIAL'].forEach(unitName => {
-          const unitPlayers = teamPlayers.filter(p => p.unit === unitName);
-          if (unitPlayers.length === 0) return;
-          txtContent += `  [${unitName}]\n`;
-          for (const p of unitPlayers) {
-            const numStr = (p.jersey !== '' && p.jersey !== null && p.jersey !== undefined) ? `#${String(p.jersey).padStart(2, ' ')}` : '   ';
-            const posStr = (p.pos || '').padEnd(5, ' ');
-            const nameStr = (p.name || '').padEnd(25, ' ');
-            const ovrStr = (p.ovr !== '' && p.ovr !== null && p.ovr !== undefined) ? `OVR: ${p.ovr}` : '       ';
-            const ageStr = (p.age !== '' && p.age !== null && p.age !== undefined) ? `Age: ${p.age}` : '      ';
-            const rkStr = p.is_rookie === 'Yes' ? '[ROOKIE]' : '';
-            const acqStr = p.acquisition_type && p.acquisition_type !== 'veteran' ? `(${p.acquisition_type.toUpperCase()})` : '';
-            txtContent += `    ${numStr}  ${posStr} ${nameStr}  ${ovrStr}  ${ageStr}  ${rkStr} ${acqStr}\n`;
-          }
-          txtContent += `\n`;
-        });
-        txtContent += `\n`;
-      }
-    }
-    const txtPath = path.join(__dirname, 'nfl_rosters_2026.txt');
-    atomicWriteFileSync(txtPath, txtContent, 'utf8');
-
-    console.log(`Updated nfl_rosters_2026.json, .csv, and .txt successfully!`);
-  } else {
-    console.log("No new roster changes found.");
-  }
-
-  // Save processed IDs
-  fs.writeFileSync(processedPath, JSON.stringify({
-    last_sync: new Date().toISOString(),
-    ids: Array.from(processedIds)
-  }, null, 2), 'utf8');
-
-  console.log(`Sync complete at ${new Date().toLocaleTimeString()}.`);
 }
 
 if (require.main === module) {
-// Check for --schedule or --daemon flag
-const isScheduled = process.argv.includes('--schedule') || process.argv.includes('--daemon');
-
-if (isScheduled) {
-  console.log("Starting 24-hour scheduled roster updater daemon...");
-  updateRostersFromESPN();
-  const TWENTY_FOUR_HOURS = 24 * 60 * 60 * 1000;
-  setInterval(() => {
-    updateRostersFromESPN();
-  }, TWENTY_FOUR_HOURS);
-} else {
-  updateRostersFromESPN();
-}
+  main().catch(err => {
+    console.error(err.message);
+    process.exitCode = 1;
+  });
 }
 
-module.exports = { normalizeName, canonicalTeamName, parseTransactionSentence, normalizeEspnTransaction, normalizeEspnTransactions, validateTransactions, validateDryRunEnvelope };
+module.exports = {
+  normalizeName,
+  canonicalTeamName,
+  parseTransactionSentence,
+  normalizeEspnTransaction,
+  normalizeEspnTransactions,
+  validateTransactions,
+  validateDryRunEnvelope,
+  processTransactions,
+  loadEspnItems,
+  main,
+};
