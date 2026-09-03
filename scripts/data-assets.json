@@ -30,9 +30,9 @@
       "kind": "object",
       "required_fields": ["team_projections", "metadata", "strength_of_schedule"],
       "freshness_key": "clay_projections",
-      "freshness_mode": "file",
+      "freshness_mode": "internal",
       "max_age_hours": 720,
-      "note": "Root file is the extractor's direct output and the canonical source; data/shared copy ships with the deploy."
+      "note": "Root file is the extractor's direct output and the canonical source; data/shared copy ships with the deploy. No embedded timestamp: the manifest's as_of comes from the original file's mtime at sync time, which Git does not preserve on checkout — so this repo verifies internal manifest consistency only. Exact source-vintage verification lives producer-side (fantasyfootball freshness-provenance test)."
     },
     {
       "id": "schedule",
@@ -49,9 +49,9 @@
         "games": { "min": 272, "item_fields": ["game_id", "away_team", "home_team", "kickoff_utc", "week"] }
       },
       "freshness_key": "schedule",
-      "freshness_mode": "file",
+      "freshness_mode": "internal",
       "max_age_hours": 168,
-      "note": "Root file is the builder's direct output; deep invariants (team counts, week windows) are covered by test_schedule_data.py."
+      "note": "Root file is the builder's direct output; deep invariants (team counts, week windows) are covered by test_schedule_data.py. No embedded timestamp (mtime provenance is not checkout-safe), so the dashboard validates internal manifest consistency only; exact vintage is verified producer-side."
     },
     {
       "id": "rosters",
@@ -66,9 +66,9 @@
       "min_length": 1000,
       "item_fields": ["team_name", "name", "pos", "unit"],
       "freshness_key": "rosters",
-      "freshness_mode": "file",
+      "freshness_mode": "internal",
       "max_age_hours": 168,
-      "note": "The browser loads rosters live from Supabase; this committed file is the versioned snapshot used as the ESPN-updater baseline and deploy artifact. The CSV download is generated client-side."
+      "note": "The browser loads rosters live from Supabase; this committed file is the versioned snapshot used as the ESPN-updater baseline, deploy artifact, and hermetic-test player fixture. No embedded timestamp (mtime provenance is not checkout-safe), so the dashboard validates internal manifest consistency only; exact vintage is verified producer-side."
     },
     {
       "id": "team_efficiency",
@@ -179,6 +179,66 @@
       "freshness_mode": "internal",
       "max_age_hours": 262980,
       "note": "Not deployed to the dashboard; freshness-tracked in the manifest only."
+    },
+    {
+      "id": "supabase_nfl_teams",
+      "file": null,
+      "label": "Supabase table: nfl_teams (live runtime)",
+      "kind": "runtime",
+      "required": true,
+      "canonical": null,
+      "copies": [],
+      "fallbacks": [],
+      "freshness_key": null,
+      "failure_behavior": "loadAllData() awaits nfl_teams alongside players and transactions; on any error the page replaces the body with a red error screen and logs to console — no view renders.",
+      "fallback_policy": "None in the browser. Team colors/abbrs feed the committed nfl_rosters_2026.json snapshot and the in-page ABBR_TO_TEAM map for line lookups; there is no live-team fallback.",
+      "test_fixture": "Hermetic browser tests intercept the Supabase REST endpoint and synthesize 32 team rows (id/name/abbr/division/primary_color, no cap fields) from the committed roster snapshot — see test-fixtures/README.md.",
+      "note": "Runtime dependency, not a repo file: inventory records its contract so the validator can enforce the documentation. The validator never contacts the network."
+    },
+    {
+      "id": "supabase_nfl_players",
+      "file": null,
+      "label": "Supabase table: nfl_players (live runtime)",
+      "kind": "runtime",
+      "required": true,
+      "canonical": null,
+      "copies": [],
+      "fallbacks": [],
+      "freshness_key": null,
+      "failure_behavior": "loadAllData() awaits nfl_players (paginated at 1000 rows); on any error the page replaces the body with a red error screen and logs to console — no view renders.",
+      "fallback_policy": "None in the browser. The committed nfl_rosters_2026.json is a deploy snapshot of this table used as the ESPN-updater baseline and test fixture, not a live fallback.",
+      "test_fixture": "Hermetic browser tests intercept the Supabase REST endpoint and serve the committed nfl_rosters_2026.json rows (with team_id linkage added) — see test-fixtures/README.md.",
+      "note": "Runtime dependency, not a repo file; documented contract only."
+    },
+    {
+      "id": "supabase_nfl_transactions",
+      "file": null,
+      "label": "Supabase table: nfl_transactions (live runtime)",
+      "kind": "runtime",
+      "required": true,
+      "canonical": null,
+      "copies": [],
+      "fallbacks": [],
+      "freshness_key": null,
+      "failure_behavior": "loadAllData() awaits nfl_transactions (ordered by sort_date desc); on any error the page replaces the body with a red error screen — same path as the other two tables.",
+      "fallback_policy": "None in the browser. Normalized ESPN dry-run output (update_rosters_from_espn.js --dry-run) is inspectable but is not persisted to this table and is not a live fallback.",
+      "test_fixture": "Hermetic browser tests intercept the Supabase REST endpoint and serve the static, clearly-labeled synthetic fixture test-fixtures/nfl_transactions.json — see test-fixtures/README.md.",
+      "note": "Runtime dependency, not a repo file; documented contract only. The Moves newswire, team gains/losses, and home stats all read this table."
+    },
+    {
+      "id": "nflverse_games_feed",
+      "file": null,
+      "label": "nflverse games.csv (live market lines)",
+      "kind": "runtime",
+      "required": false,
+      "canonical": null,
+      "copies": [],
+      "fallbacks": [],
+      "freshness_key": null,
+      "failure_behavior": "loadGameLines() catches and records MARKET_LINES_ERR; game cards render without spread/total/moneyline badges (schedule tab shows an empty line slot) instead of erroring the page.",
+      "fallback_policy": "None: there is no committed market-line source. The committed schedule.json carries kickoffs/venues only. build_full_schedule.py is the offline builder for schedule shape, not for live odds.",
+      "test_fixture": "Hermetic browser tests intercept raw.githubusercontent.com/nflverse/** and synthesize a deterministic 2026 REG games.csv (lines derived per game) from the committed schedule.json — see test-fixtures/README.md.",
+      "note": "Fetched at runtime by the schedule tab and home marquee; graceful degradation on failure."
     }
   ]
 }

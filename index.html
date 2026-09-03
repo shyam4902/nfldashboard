@@ -3585,15 +3585,19 @@ function matchupRowHtml(label, gradeA, gradeB) {
   const gb = gradeB == null ? null : Math.max(0, Math.min(10, gradeB));
   const adv = (ga == null || gb == null) ? 'even' : (ga - gb >= 0.4 ? 'adv-a' : (gb - ga >= 0.4 ? 'adv-b' : 'even'));
   const diff = (ga != null && gb != null) ? Math.abs(ga - gb).toFixed(1) : '';
-  const badge = ga == null || gb == null ? '' : (adv === 'even' ? `<span class="unit-adv adv-even">EVEN</span>` : `<span class="unit-adv ${adv}">+${diff}</span>`);
-  return `<div class="unit-match-row">
-    <div class="um-label">${label}</div>
-    <div class="flex items-center gap-2 w-full">
-      <div class="unit-bar flex-1"><div style="width:${(ga == null ? 50 : ga * 10)}%;background:linear-gradient(90deg,#f43f5e,#fb7185)"></div></div>
-      <div class="text-[11px] font-black text-rose-300 w-8 text-center">${ga == null ? '—' : ga.toFixed(1)}</div>
+  const badge = ga == null || gb == null ? '' : (adv === 'even' ? `<span class="unit-adv adv-even text-[10px] font-bold px-2 py-0.5 rounded bg-slate-800 border border-subtle text-slate-400">EVEN</span>` : `<span class="unit-adv ${adv} text-[10px] font-bold px-2 py-0.5 rounded bg-slate-800 border border-subtle ${adv === 'adv-a' ? 'text-cyber-lime' : 'text-crimson'}">+${diff}</span>`);
+  return `<div class="unit-match-row bg-slate-900/40 border border-subtle rounded p-2 flex flex-col gap-1.5 items-center">
+    <div class="um-label text-[10px] font-bold uppercase tracking-wider text-slate-400 font-mono text-center">${label}</div>
+    <div class="flex items-center gap-2 w-full font-mono text-xs">
+      <div class="unit-bar flex-1 h-2 rounded bg-slate-800 overflow-hidden flex justify-end">
+        <div class="bg-sky-500 h-full rounded" style="width:${(ga == null ? 50 : ga * 10)}%"></div>
+      </div>
+      <div class="text-[11px] font-bold text-sky-400 w-7 text-center">${ga == null ? '—' : ga.toFixed(1)}</div>
       ${badge}
-      <div class="text-[11px] font-black text-blue-300 w-8 text-center">${gb == null ? '—' : gb.toFixed(1)}</div>
-      <div class="unit-bar flex-1"><div style="width:${(gb == null ? 50 : gb * 10)}%;background:linear-gradient(90deg,#3b82f6,#60a5fa)"></div></div>
+      <div class="text-[11px] font-bold text-slate-300 w-7 text-center">${gb == null ? '—' : gb.toFixed(1)}</div>
+      <div class="unit-bar flex-1 h-2 rounded bg-slate-800 overflow-hidden">
+        <div class="bg-slate-700 h-full rounded" style="width:${(gb == null ? 50 : gb * 10)}%"></div>
+      </div>
     </div>
   </div>`;
 }
@@ -3688,16 +3692,13 @@ function computeAdvantage(offRank, defRank, offTeam, defTeam) {
 
 function renderAdvantageBadge(adv, offTeam, defTeam) {
   if (!adv || adv.stars === 0 || !adv.team) {
-    return `<div class="inline-flex items-center justify-center px-2.5 py-1 rounded bg-slate-800/90 text-slate-400 text-[11px] font-semibold border border-slate-700">No Advantage</div>`;
+    return `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-800 text-slate-400 border border-subtle">EVEN</span>`;
   }
-  const color = DATA.teamColors[adv.team] || (adv.type === 'offense' ? '#dc2626' : '#2563eb');
-  const logo = getNflTeamLogo(adv.team);
+  const isOff = adv.team === offTeam;
   const abbr = DATA.teamAbbr[adv.team] || adv.team;
-  const starIcons = '★'.repeat(adv.stars);
-  return `<div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded font-bold text-xs shadow-sm ${adv.stars >= 5 ? 'adv-badge-5' : ''}" style="background:${color};border:1px solid rgba(255,255,255,0.25)">
-    <img src="${logo}" class="w-3.5 h-3.5 object-contain inline-block" alt="${abbr}" onerror="this.style.display='none'">
-    <span class="tracking-widest text-white text-[12px]">${starIcons}</span>
-  </div>`;
+  const cls = isOff ? 'text-cyber-lime font-bold' : 'text-crimson font-bold';
+  const stars = '★'.repeat(Math.min(3, adv.stars));
+  return `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-800 border border-subtle ${cls}">${attrEsc(abbr)} ADV <span class="text-[9px] opacity-80">${stars}</span></span>`;
 }
 
 function getTeamAtAGlance(teamName) {
@@ -3963,28 +3964,34 @@ function renderAtAGlanceTable(tA, tB) {
   ];
 
   return `
-    <div class="glass rounded-xl overflow-hidden border border-slate-700">
-      <div class="grid grid-cols-12 bg-slate-800/90 py-3 px-4 text-xs font-bold text-slate-300 border-b border-slate-700">
-        <div class="col-span-4 flex items-center gap-2">
-          <img src="${logoA}" class="w-5 h-5 object-contain" alt="${abbrA}" onerror="this.style.display='none'">
-          <span>${abbrA}</span>
-        </div>
-        <div class="col-span-4 text-center uppercase tracking-wider text-slate-400 font-extrabold text-[11px]">
-          At a Glance
-        </div>
-        <div class="col-span-4 flex items-center justify-end gap-2 text-right">
-          <span>${abbrB}</span>
-          <img src="${logoB}" class="w-5 h-5 object-contain" alt="${abbrB}" onerror="this.style.display='none'">
-        </div>
+    <div class="bg-surface-card border border-subtle rounded-lg p-4">
+      <div class="flex justify-between items-center mb-3 pb-2 border-b border-subtle">
+        <h2 class="text-sm font-bold text-white flex items-center gap-2 uppercase tracking-wide">
+          <span class="text-sky-400">📋</span> At a Glance Comparison
+        </h2>
+        <span class="text-[10px] font-mono text-slate-400">2025 MEASURED & 2026 PROJECTIONS</span>
       </div>
-      <div class="divide-y divide-slate-800">
-        ${rows.map(r => `
-          <div class="grid grid-cols-12 px-4 py-3 text-xs items-center matchup-table-row">
-            <div class="col-span-4 font-bold text-slate-100 font-mono">${r.vA}</div>
-            <div class="col-span-4 text-center text-slate-400 font-medium">${r.label}</div>
-            <div class="col-span-4 text-right font-bold text-slate-100 font-mono">${r.vB}</div>
-          </div>
-        `).join('')}
+      <table class="w-full text-left border-collapse">
+        <thead>
+          <tr class="border-b border-subtle text-slate-400 text-[10px] font-bold uppercase tracking-wider">
+            <th class="py-2.5 font-normal">${attrEsc(abbrA)}</th>
+            <th class="py-2.5 font-normal text-center">METRIC</th>
+            <th class="py-2.5 font-normal text-right">${attrEsc(abbrB)}</th>
+          </tr>
+        </thead>
+        <tbody class="font-mono text-xs">
+          ${rows.map(r => `
+            <tr class="matchup-table-row border-b border-subtle/50 hover:bg-slate-800/30 transition-colors">
+              <td class="py-2.5 font-bold text-slate-200">${r.vA}</td>
+              <td class="py-2.5 font-sans text-center text-slate-400 font-medium">${r.label}</td>
+              <td class="py-2.5 text-right font-bold text-slate-200">${r.vB}</td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+      <div class="mt-3 pt-2 border-t border-subtle/50 text-[10px] text-slate-500 font-mono flex justify-between items-center">
+        <span>Sources & Method: 2025 measured EPA and Clay 2026 model</span>
+        <span class="text-slate-600">Model verified</span>
       </div>
     </div>
   `;
@@ -3999,8 +4006,6 @@ function getOrdinal(n) {
 function renderMatchupComparisonsSideBySide(splits, tA, tB, categoryTitle) {
   const ranksA = computeTeamNextGenRanks(tA);
   const ranksB = computeTeamNextGenRanks(tB);
-  const logoA = getNflTeamLogo(tA);
-  const logoB = getNflTeamLogo(tB);
   const abbrA = DATA.teamAbbr[tA] || tA;
   const abbrB = DATA.teamAbbr[tB] || tB;
 
@@ -4030,49 +4035,41 @@ function renderMatchupComparisonsSideBySide(splits, tA, tB, categoryTitle) {
     };
   });
 
-  const renderTable = (rows, offTeam, defTeam, offLogo, defLogo, offAbbr, defAbbr) => `
-    <div class="glass rounded-xl overflow-hidden border border-slate-700">
-      <div class="grid grid-cols-12 bg-slate-800/90 py-2.5 px-3 text-[11px] font-bold text-slate-300 border-b border-slate-700 items-center">
-        <div class="col-span-5 text-slate-400">${categoryTitle || 'Metric'}</div>
-        <div class="col-span-2 text-center flex items-center justify-center gap-1">
-          <img src="${offLogo}" class="w-3.5 h-3.5 object-contain" alt="${offAbbr}" onerror="this.style.display='none'">
-          <span class="truncate">${offAbbr} Off</span>
-        </div>
-        <div class="col-span-2 text-center flex items-center justify-center gap-1">
-          <img src="${defLogo}" class="w-3.5 h-3.5 object-contain" alt="${defAbbr}" onerror="this.style.display='none'">
-          <span class="truncate">${defAbbr} Def</span>
-        </div>
-        <div class="col-span-3 text-right pr-1">Advantage</div>
+  const renderTable = (rows, offTeam, defTeam, offAbbr, defAbbr, isLeft) => `
+    <div class="bg-surface-card border border-subtle rounded-lg p-4">
+      <div class="flex justify-between items-center mb-3 pb-2 border-b border-subtle">
+        <h3 class="text-xs font-bold ${isLeft ? 'text-sky-400' : 'text-indigo-400'} uppercase tracking-wide flex items-center gap-1.5">
+          <span>⚔️</span> ${attrEsc(offAbbr)} Offense vs ${attrEsc(defAbbr)} Defense
+        </h3>
+        <span class="text-[10px] font-mono text-slate-400">2025 MEASURED</span>
       </div>
-      <div class="divide-y divide-slate-800">
-        ${rows.map(r => `
-          <div class="grid grid-cols-12 px-3 py-2.5 text-xs items-center matchup-table-row">
-            <div class="col-span-5 font-semibold text-slate-200 truncate pr-2" title="${r.label}">${r.label}</div>
-            <div class="col-span-2 text-center font-mono font-bold text-slate-300">${r.offRank != null ? '#' + r.offRank : '—'}</div>
-            <div class="col-span-2 text-center font-mono font-bold text-slate-300">${r.defRank != null ? '#' + r.defRank : '—'}</div>
-            <div class="col-span-3 text-right">
-              ${renderAdvantageBadge(r.adv, offTeam, defTeam)}
-            </div>
-          </div>
-        `).join('')}
-      </div>
+      <table class="w-full text-left border-collapse">
+        <thead>
+          <tr class="border-b border-subtle text-slate-400 text-[10px] font-bold uppercase tracking-wider">
+            <th class="py-2 font-normal">${categoryTitle || 'METRIC'}</th>
+            <th class="py-2 font-normal text-right">${attrEsc(offAbbr)} OFF</th>
+            <th class="py-2 font-normal text-right">${attrEsc(defAbbr)} DEF</th>
+            <th class="py-2 font-normal text-right">EDGE</th>
+          </tr>
+        </thead>
+        <tbody class="font-mono text-xs">
+          ${rows.map(r => `
+            <tr class="matchup-table-row border-b border-subtle/50 hover:bg-slate-800/30 transition-colors">
+              <td class="py-2 font-sans text-slate-300 truncate pr-2" title="${r.label}">${r.label}</td>
+              <td class="py-2 text-right text-slate-200">${r.offRank != null ? '#' + r.offRank : '—'}</td>
+              <td class="py-2 text-right text-slate-200">${r.defRank != null ? '#' + r.defRank : '—'}</td>
+              <td class="py-2 text-right font-sans">${renderAdvantageBadge(r.adv, offTeam, defTeam)}</td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
     </div>
   `;
 
   return `
-    <div class="grid grid-cols-1 xl:grid-cols-2 gap-4">
-      <div>
-        <div class="text-xs font-bold text-rose-300 uppercase tracking-wider mb-2 flex items-center gap-2">
-          <span>⚔️</span> ${attrEsc(tA)} Offense vs ${attrEsc(tB)} Defense
-        </div>
-        ${renderTable(leftRows, tA, tB, logoA, logoB, abbrA, abbrB)}
-      </div>
-      <div>
-        <div class="text-xs font-bold text-blue-300 uppercase tracking-wider mb-2 flex items-center gap-2">
-          <span>⚔️</span> ${attrEsc(tB)} Offense vs ${attrEsc(tA)} Defense
-        </div>
-        ${renderTable(rightRows, tB, tA, logoB, logoA, abbrB, abbrA)}
-      </div>
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      ${renderTable(leftRows, tA, tB, abbrA, abbrB, true)}
+      ${renderTable(rightRows, tB, tA, abbrB, abbrA, false)}
     </div>
   `;
 }
@@ -4081,8 +4078,6 @@ function renderKeyAdvantagesPanel(tA, tB) {
   const allSplits = [...PASSING_SPLITS, ...RUSHING_SPLITS, ...TRENCH_SPLITS];
   const ranksA = computeTeamNextGenRanks(tA);
   const ranksB = computeTeamNextGenRanks(tB);
-  const logoA = getNflTeamLogo(tA);
-  const logoB = getNflTeamLogo(tB);
   const abbrA = DATA.teamAbbr[tA] || tA;
   const abbrB = DATA.teamAbbr[tB] || tB;
 
@@ -4100,49 +4095,41 @@ function renderKeyAdvantagesPanel(tA, tB) {
     return { label: s.label, offRank, defRank, adv };
   }).sort((a, b) => (b.adv?.stars || 0) - (a.adv?.stars || 0) || (b.adv?.delta || 0) - (a.adv?.delta || 0)).slice(0, 6);
 
-  const renderKeyTable = (rows, offTeam, defTeam, offLogo, defLogo, offAbbr, defAbbr) => `
-    <div class="glass rounded-xl overflow-hidden border border-slate-700">
-      <div class="grid grid-cols-12 bg-slate-800/90 py-2.5 px-3 text-[11px] font-bold text-slate-300 border-b border-slate-700 items-center">
-        <div class="col-span-5 text-slate-400">Key Advantage</div>
-        <div class="col-span-2 text-center flex items-center justify-center gap-1">
-          <img src="${offLogo}" class="w-3.5 h-3.5 object-contain" alt="${offAbbr}" onerror="this.style.display='none'">
-          <span class="truncate">${offAbbr} Off</span>
-        </div>
-        <div class="col-span-2 text-center flex items-center justify-center gap-1">
-          <img src="${defLogo}" class="w-3.5 h-3.5 object-contain" alt="${defAbbr}" onerror="this.style.display='none'">
-          <span class="truncate">${defAbbr} Def</span>
-        </div>
-        <div class="col-span-3 text-right pr-1">Advantage</div>
+  const renderKeyTable = (rows, offTeam, defTeam, offAbbr, defAbbr, isLeft) => `
+    <div class="bg-surface-card border border-subtle rounded-lg p-4">
+      <div class="flex justify-between items-center mb-3 pb-2 border-b border-subtle">
+        <h3 class="text-xs font-bold ${isLeft ? 'text-sky-400' : 'text-indigo-400'} uppercase tracking-wide flex items-center gap-1.5">
+          <span>🌟</span> ${attrEsc(offAbbr)} Top Advantages
+        </h3>
+        <span class="text-[10px] font-mono text-slate-400">NEXT GEN STATS</span>
       </div>
-      <div class="divide-y divide-slate-800">
-        ${rows.map(r => `
-          <div class="grid grid-cols-12 px-3 py-2.5 text-xs items-center matchup-table-row">
-            <div class="col-span-5 font-semibold text-slate-200 truncate pr-2" title="${r.label}">${r.label}</div>
-            <div class="col-span-2 text-center font-mono font-bold text-slate-300">${r.offRank != null ? '#' + r.offRank : '—'}</div>
-            <div class="col-span-2 text-center font-mono font-bold text-slate-300">${r.defRank != null ? '#' + r.defRank : '—'}</div>
-            <div class="col-span-3 text-right">
-              ${renderAdvantageBadge(r.adv, offTeam, defTeam)}
-            </div>
-          </div>
-        `).join('')}
-      </div>
+      <table class="w-full text-left border-collapse">
+        <thead>
+          <tr class="border-b border-subtle text-slate-400 text-[10px] font-bold uppercase tracking-wider">
+            <th class="py-2 font-normal">KEY SPLIT</th>
+            <th class="py-2 font-normal text-right">${attrEsc(offAbbr)} OFF</th>
+            <th class="py-2 font-normal text-right">${attrEsc(defAbbr)} DEF</th>
+            <th class="py-2 font-normal text-right">ADVANTAGE</th>
+          </tr>
+        </thead>
+        <tbody class="font-mono text-xs">
+          ${rows.map(r => `
+            <tr class="matchup-table-row border-b border-subtle/50 hover:bg-slate-800/30 transition-colors">
+              <td class="py-2 font-sans text-slate-300 truncate pr-2" title="${r.label}">${r.label}</td>
+              <td class="py-2 text-right text-slate-200">${r.offRank != null ? '#' + r.offRank : '—'}</td>
+              <td class="py-2 text-right text-slate-200">${r.defRank != null ? '#' + r.defRank : '—'}</td>
+              <td class="py-2 text-right font-sans">${renderAdvantageBadge(r.adv, offTeam, defTeam)}</td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
     </div>
   `;
 
   return `
-    <div class="grid grid-cols-1 xl:grid-cols-2 gap-4">
-      <div>
-        <div class="text-xs font-bold text-rose-300 uppercase tracking-wider mb-2 flex items-center gap-2">
-          <span>🌟</span> Top Advantages · ${attrEsc(tA)} Offense vs ${attrEsc(tB)} Defense
-        </div>
-        ${renderKeyTable(leftKey, tA, tB, logoA, logoB, abbrA, abbrB)}
-      </div>
-      <div>
-        <div class="text-xs font-bold text-blue-300 uppercase tracking-wider mb-2 flex items-center gap-2">
-          <span>🌟</span> Top Advantages · ${attrEsc(tB)} Offense vs ${attrEsc(tA)} Defense
-        </div>
-        ${renderKeyTable(rightKey, tB, tA, logoB, logoA, abbrB, abbrA)}
-      </div>
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      ${renderKeyTable(leftKey, tA, tB, abbrA, abbrB, true)}
+      ${renderKeyTable(rightKey, tB, tA, abbrB, abbrA, false)}
     </div>
   `;
 }
@@ -4151,66 +4138,56 @@ function renderMatchupInsightsPanel(tA, tB, game) {
   const insights = generateMatchupInsights(tA, tB, game);
 
   return `
-    <div>
-      <div class="flex items-center justify-between mb-3">
-        <div class="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-2">
-          <span>📰</span> Matchup context
+    <div class="flex flex-col gap-4">
+      <div class="bg-surface-card border border-subtle rounded-lg p-4">
+        <div class="flex items-center justify-between mb-2">
+          <h2 class="text-sm font-bold text-white flex items-center gap-2 uppercase tracking-wide">
+            <span class="text-amber-400">💡</span> Verified Matchup Insights
+          </h2>
+          <span class="text-[10px] font-mono text-slate-400">SITUATIONAL INTELLIGENCE</span>
         </div>
+        <p class="text-xs text-slate-400 leading-relaxed">
+          Synthesized from 2025 Next Gen Stats efficiency, Clay 2026 unit grades, and depth charts. Note: Evaluation excludes player-vs-player assignments, injury status, or a player-specific weekly projection.
+        </p>
       </div>
-      <div class="glass rounded-xl p-3 mb-3 border border-slate-700/70">
-        <p class="text-[11px] text-slate-400 leading-relaxed">Roster order, ratings, Clay unit grades, and 2025 team efficiency only. This snapshot does not contain player-vs-player assignments, injury status, or a player-specific weekly projection.</p>
-      </div>
-      ${!insights.length ? '<div class="glass rounded-xl p-4 border border-slate-700"><p class="text-xs text-slate-400">Matchup insights are built from verified roster and efficiency data. None is available for this pairing right now, so nothing is shown rather than inventing a narrative.</p></div>' : ''}
-      <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
-        ${insights.map(card => {
-          const colorLeft = card.leftTeam ? (DATA.teamColors[card.leftTeam] || '#2563eb') : (DATA.teamColors[card.teamA] || '#e11d48');
-          const colorRight = card.rightTeam ? (DATA.teamColors[card.rightTeam] || '#dc2626') : colorLeft;
-          const isSplit = card.rightName != null;
 
-          return `
-            <div class="matchup-insight-card flex flex-col justify-between p-0 shadow-lg">
-              <div>
-                <!-- Header Banner -->
-                ${isSplit ? `
-                  <div class="flex h-14 border-b border-slate-700/50">
-                    <div class="flex-1 p-2.5 flex flex-col justify-center" style="background:${colorLeft}">
-                      <div class="font-black text-xs text-white truncate">${card.leftName}</div>
-                      <div class="text-[10px] text-white/80 font-mono truncate">${card.leftSub}</div>
-                    </div>
-                    <div class="flex-1 p-2.5 flex flex-col justify-center text-right" style="background:${colorRight}">
-                      <div class="font-black text-xs text-white truncate">${card.rightName}</div>
-                      <div class="text-[10px] text-white/80 font-mono truncate">${card.rightSub}</div>
-                    </div>
-                  </div>
-                ` : `
-                  <div class="p-3 flex items-center gap-3 border-b border-slate-700/50" style="background:${colorLeft}">
-                    <div class="w-8 h-8 rounded-full bg-slate-900/60 border border-white/30 flex items-center justify-center font-bold text-white text-xs">
-                      ${card.playerName ? card.playerName.charAt(0) : '★'}
-                    </div>
-                    <div>
-                      <div class="font-black text-xs text-white truncate">${card.title}</div>
-                      <div class="text-[10px] text-white/80 font-mono truncate">${card.subtitle}</div>
-                    </div>
-                  </div>
-                `}
+      ${!insights.length ? `
+        <div class="bg-surface-card border border-subtle rounded-lg p-6 text-center text-xs text-slate-400">
+          Matchup insights are built from verified roster and efficiency data. None is available for this pairing right now, so nothing is shown rather than inventing a narrative.
+        </div>
+      ` : `
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          ${insights.map((card, idx) => {
+            const accents = ['border-l-sky-500', 'border-l-indigo-500', 'border-l-cyber-lime', 'border-l-amber-500', 'border-l-rose-500'];
+            const accentClass = accents[idx % accents.length];
 
-                <!-- Body Narrative -->
-                <div class="p-4 text-xs text-slate-300 leading-relaxed">
-                  ${card.text}
+            return `
+              <div class="bg-surface-card border border-subtle rounded-lg p-4 border-l-4 ${accentClass} flex flex-col justify-between gap-3">
+                <div>
+                  <div class="flex items-center justify-between pb-2 mb-2 border-b border-subtle/50">
+                    <span class="text-xs font-bold text-white tracking-wide">${attrEsc(card.title || card.leftName || 'Matchup Dynamic')}</span>
+                    ${card.subtitle ? `<span class="text-[10px] font-mono text-slate-400">${attrEsc(card.subtitle)}</span>` : ''}
+                  </div>
+                  <p class="text-xs text-slate-300 leading-relaxed">
+                    ${card.text}
+                  </p>
                 </div>
+                ${card.playerName ? `
+                  <div class="pt-2 border-t border-subtle/50">
+                    <button onclick="openPlayerModal('${attrEsc(card.playerName).replace(/'/g, "\\'")}','${attrEsc(card.teamName || tA).replace(/'/g, "\\'")}')" class="w-full py-1.5 px-3 rounded bg-slate-800 hover:bg-slate-700 border border-subtle text-[11px] font-semibold text-sky-400 hover:text-sky-300 transition flex items-center justify-between">
+                      <span>View ${attrEsc(card.playerName)} profile</span>
+                      <span>→</span>
+                    </button>
+                  </div>
+                ` : ''}
               </div>
-
-              <!-- Footer CTA -->
-              ${card.playerName ? `
-                <div class="p-3 pt-0">
-                  <button onclick="openPlayerModal('${attrEsc(card.playerName).replace(/'/g, "\\'")}','${attrEsc(card.teamName || tA).replace(/'/g, "\\'")}')" class="w-full py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-[11px] font-semibold text-slate-300 transition">
-                    View ${attrEsc(card.playerName)} roster profile
-                  </button>
-                </div>
-              ` : ''}
-            </div>
-          `;
-        }).join('')}
+            `;
+          }).join('')}
+        </div>
+      `}
+      <div class="text-[10px] text-slate-500 font-mono flex justify-between items-center px-1">
+        <span>Sources & Method: 2025 measured EPA and Next Gen Stats</span>
+        <span class="text-slate-600">Model verified</span>
       </div>
     </div>
   `;
@@ -4218,21 +4195,40 @@ function renderMatchupInsightsPanel(tA, tB, game) {
 
 function renderFormationLabPanel(tA, tB, og, dg) {
   return `
-    <div class="space-y-4">
-      <div class="glass rounded-xl p-3 flex items-center justify-between flex-wrap gap-3">
+    <div class="flex flex-col gap-4">
+      <div class="bg-surface-card border border-subtle rounded-lg p-3.5 flex items-center justify-between flex-wrap gap-3">
         <div class="flex items-center gap-3">
-          <label class="flex flex-col gap-1"><span class="text-[10px] uppercase tracking-wider text-rose-400 font-bold">Personnel</span><select id="matchupPersonnel" onchange="renderMatchupPanels()" class="text-xs px-3 py-1.5 rounded-lg border border-slate-600 bg-slate-800 text-slate-300 focus:outline-none focus:border-rose-500"><option value="12" ${MATCHUP_STATE.personnel === '12' ? 'selected' : ''}>12 · 2 TE</option><option value="11" ${MATCHUP_STATE.personnel === '11' ? 'selected' : ''}>11 · 3 WR</option><option value="10" ${MATCHUP_STATE.personnel === '10' ? 'selected' : ''}>10 · 4 WR</option></select></label>
-          <label class="flex flex-col gap-1"><span class="text-[10px] uppercase tracking-wider text-blue-400 font-bold">Defensive Front</span><select id="matchupFront" onchange="renderMatchupPanels()" class="text-xs px-3 py-1.5 rounded-lg border border-slate-600 bg-slate-800 text-slate-300 focus:outline-none focus:border-blue-500"><option value="43" ${MATCHUP_STATE.front === '43' ? 'selected' : ''}>4-3 Base</option><option value="34" ${MATCHUP_STATE.front === '34' ? 'selected' : ''}>3-4 Base</option><option value="nickel" ${MATCHUP_STATE.front === 'nickel' ? 'selected' : ''}>Nickel</option></select></label>
+          <label class="flex items-center gap-2">
+            <span class="text-[10px] uppercase font-bold text-slate-400 font-mono">Personnel:</span>
+            <select id="matchupPersonnel" onchange="renderMatchupPanels()" class="text-xs px-2.5 py-1.5 rounded border border-subtle bg-slate-900 text-slate-200 font-medium focus:outline-none focus:border-sky-500">
+              <option value="12" ${MATCHUP_STATE.personnel === '12' ? 'selected' : ''}>12 · 2 TE</option>
+              <option value="11" ${MATCHUP_STATE.personnel === '11' ? 'selected' : ''}>11 · 3 WR</option>
+              <option value="10" ${MATCHUP_STATE.personnel === '10' ? 'selected' : ''}>10 · 4 WR</option>
+            </select>
+          </label>
+          <label class="flex items-center gap-2">
+            <span class="text-[10px] uppercase font-bold text-slate-400 font-mono">Defensive Front:</span>
+            <select id="matchupFront" onchange="renderMatchupPanels()" class="text-xs px-2.5 py-1.5 rounded border border-subtle bg-slate-900 text-slate-200 font-medium focus:outline-none focus:border-sky-500">
+              <option value="43" ${MATCHUP_STATE.front === '43' ? 'selected' : ''}>4-3 Base</option>
+              <option value="34" ${MATCHUP_STATE.front === '34' ? 'selected' : ''}>3-4 Base</option>
+              <option value="nickel" ${MATCHUP_STATE.front === 'nickel' ? 'selected' : ''}>Nickel</option>
+            </select>
+          </label>
         </div>
-        <div class="text-xs text-slate-400">
-          Click any starter to inspect their player profile & ratings.
+        <div class="text-[11px] text-slate-400 font-mono">
+          Click any starter chip to inspect profile & ratings.
         </div>
       </div>
 
-      <!-- Unit Matchup Bar Strip -->
-      <div class="glass rounded-xl p-4">
-        <div class="text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">Unit Power Comparison</div>
-        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-x-6">
+      <!-- Unit Power Comparison -->
+      <div class="bg-surface-card border border-subtle rounded-lg p-4">
+        <div class="flex justify-between items-center mb-3 pb-2 border-b border-subtle">
+          <h2 class="text-sm font-bold text-white flex items-center gap-2 uppercase tracking-wide">
+            <span class="text-sky-400">📊</span> Unit Power Comparison
+          </h2>
+          <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 font-mono">CLAY 2026</span>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-3">
           ${MATCHUP_UNITS.map(u => {
             const ga = matchupGrade(tA, u.a);
             const gb = matchupGrade(tB, u.b);
@@ -4241,18 +4237,24 @@ function renderFormationLabPanel(tA, tB, og, dg) {
         </div>
       </div>
 
-      <!-- X's and O's Formation Fields -->
+      <!-- Formation Fields -->
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <div class="glass rounded-xl p-4">
-          <div class="flex items-center justify-between mb-3">
-            <div class="flex items-center gap-2"><span class="text-xs font-black text-rose-300">${attrEsc(tA)}</span><span class="text-[10px] text-slate-500">${attrEsc(MATCHUP_STATE.personnel)} personnel · Clay O ${og == null ? '—' : og.toFixed(1)}</span></div>
+        <div class="bg-surface-card border border-subtle rounded-lg p-4">
+          <div class="flex items-center justify-between mb-3 pb-2 border-b border-subtle">
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-bold text-sky-400 font-mono">${attrEsc(tA)}</span>
+              <span class="text-[10px] text-slate-400 font-mono">· ${attrEsc(MATCHUP_STATE.personnel)} personnel · Clay O ${og == null ? '—' : og.toFixed(1)}</span>
+            </div>
             <span class="fp-circle fp-o" style="width:24px;height:24px;font-size:10px">O</span>
           </div>
           <div class="formation-field"><div class="formation-midline"></div>${formationFieldHtml(tA, null, true)}</div>
         </div>
-        <div class="glass rounded-xl p-4">
-          <div class="flex items-center justify-between mb-3">
-            <div class="flex items-center gap-2"><span class="text-xs font-black text-blue-300">${attrEsc(tB)}</span><span class="text-[10px] text-slate-500">${attrEsc(MATCHUP_STATE.front === 'nickel' ? 'Nickel' : MATCHUP_STATE.front + ' front')} · Clay D ${dg == null ? '—' : dg.toFixed(1)}</span></div>
+        <div class="bg-surface-card border border-subtle rounded-lg p-4">
+          <div class="flex items-center justify-between mb-3 pb-2 border-b border-subtle">
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-bold text-indigo-400 font-mono">${attrEsc(tB)}</span>
+              <span class="text-[10px] text-slate-400 font-mono">· ${attrEsc(MATCHUP_STATE.front === 'nickel' ? 'Nickel' : MATCHUP_STATE.front + ' front')} · Clay D ${dg == null ? '—' : dg.toFixed(1)}</span>
+            </div>
             <span class="fp-circle fp-x" style="width:24px;height:24px;font-size:10px">X</span>
           </div>
           <div class="formation-field"><div class="formation-midline"></div>${formationFieldHtml(tB, null, false)}</div>

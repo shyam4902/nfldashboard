@@ -7,13 +7,22 @@
 //   * required top-level fields / array length / item fields are present
 //   * every listed deploy copy is byte-identical to the canonical file
 //   * every browser fallback path exists
-//   * the freshness manifest entry matches the asset's true data vintage
-//     (embedded generated_at, canonical file mtime, or internal consistency
-//     for research-sourced assets whose origin lives outside this repo)
+//   * the freshness manifest entry is internally consistent: as_of parses and
+//     never postdates generated_at, age_hours/status are derived from as_of at
+//     stamp time, and max_age_hours matches the inventory
+//   * where the asset carries an embedded generated_at (props-board.json),
+//     the manifest as_of equals that embedded value
 //   * manifest sources and inventory freshness_keys cover each other
+//   * runtime assets (Supabase tables, the nflverse feed) record required
+//     status, failure behavior, and fallback policy — the validator never
+//     contacts the network
 //
-// Time-independent: all vintage comparisons derive from fixed file contents
-// and the two timestamps already stored in freshness.json, never from "now".
+// Time-independent and checkout-independent: file contents and manifest
+// timestamps are the only inputs, never file mtimes. Git does not preserve
+// mtimes on clone/checkout, so file mtime is deliberately NOT provenance here;
+// exact source-vintage verification lives producer-side
+// (fantasyfootball/test/freshness-provenance.test.js, which stamps the real
+// sync script against fixtures with controlled mtimes).
 //
 // Usage: node scripts/validate-data.js [--root <path>]
 // Exit 0 = all checks pass; 1 = any check failed.
@@ -25,18 +34,12 @@ const crypto = require('crypto');
 
 const DEFAULT_ROOT = path.join(__dirname, '..');
 
-function sha256(file) {
-  return crypto.createHash('sha256').update(fs.readFileSync(file)).digest('hex');
+function isPlainObject(v) {
+  return v !== null && typeof v === 'object' && !Array.isArray(v);
 }
 
-// Mirror of the sync script's vintage rule: an embedded top-level
-// `generated_at` wins (survives any copy); otherwise the file's mtime,
-// floored to whole seconds and rendered as UTC ISO without milliseconds
-// (matches `stat -f %m` + `date -u -r` in sync-shared-data.sh).
-function fileVintage(file) {
-  const stat = fs.statSync(file);
-  return new Date(Math.floor(stat.mtimeMs / 1000) * 1000)
-    .toISOString().replace(/\.000Z$/, 'Z');
+function sha256(file) {
+  return crypto.createHash('sha256').update(fs.readFileSync(file)).digest('hex');
 }
 
 // Floor((genSec - asOfSec) / 3600) — identical arithmetic to the bash
@@ -55,8 +58,56 @@ function loadJson(file) {
   return JSON.parse(fs.readFileSync(file, 'utf8'));
 }
 
+// ── shape checks ────────────────────────────────────────────────────────────
+// Every malformed input (null, primitives, arrays where objects are required,
+// non-object array entries, non-object manifest entries) becomes a normal
+// validation message — never an uncaught exception.
+
+function requirePlainObject(value, label, problems) {
+  if (!isPlainObject(value)) {
+    problems.push(`${label} must be a JSON object`);
+    return false;
+  }
+  return true;
+}
+
+function requireFieldIn(data, field, label, problems) {
+  if (!(field in data)) problems.push(`${label} is missing required field "${field}"`);
+}
+
+function checkArrayItems(arr, itemFields, label, problems) {
+  arr.forEach((item, i) => {
+    if (!isPlainObject(item)) {
+      problems.push(`${label} item ${i} must be an object`);
+      return;
+    }
+    for (const f of itemFields || []) {
+      if (!(f in item)) problems.push(`${label} item ${i} is missing field "${f}"`);
+    }
+  });
+}
+
 function checkAsset(asset, root, manifest, problems, notes) {
   const tag = asset.id;
+
+  // ── inventory entry shape ──
+  if (!isPlainObject(asset)) {
+    problems.push('inventory contains a non-object asset entry');
+    return;
+  }
+
+  // ── runtime assets: documented contract only, never touched over the network ──
+  if (asset.kind === 'runtime') {
+    for (const f of ['required', 'failure_behavior', 'fallback_policy']) {
+      const v = asset[f];
+      if (typeof v !== 'boolean' && typeof v !== 'string') {
+        problems.push(`[${tag}] runtime asset must record "${f}" (boolean required, string behavior)`);
+      } else if (f !== 'required' && !String(v).trim()) {
+        problems.push(`[${tag}] runtime asset "${f}" must not be empty`);
+      }
+    }
+    return;
+  }
 
   // ── freshness contract (manifest entry must exist for every key) ──
   if (asset.freshness_key && manifest) {
@@ -66,7 +117,7 @@ function checkAsset(asset, root, manifest, problems, notes) {
     }
   }
 
-  if (asset.kind === 'none') {
+  if (asset.kind === 'none' || !asset.canonical) {
     // Research handoff: no repo file; freshness consistency only.
     checkFreshnessInternal(asset, manifest, problems);
     return;
@@ -93,8 +144,9 @@ function checkAsset(asset, root, manifest, problems, notes) {
   }
 
   if (asset.kind === 'object') {
+    if (!requirePlainObject(data, asset.canonical, problems)) return;
     for (const key of asset.required_fields || []) {
-      if (!(key in data)) problems.push(`${asset.canonical} is missing required field "${key}"`);
+      requireFieldIn(data, key, asset.canonical, problems);
     }
     for (const [field, spec] of Object.entries(asset.nested_arrays || {})) {
       const arr = data[field];
@@ -102,14 +154,10 @@ function checkAsset(asset, root, manifest, problems, notes) {
         problems.push(`${asset.canonical}.${field} must be an array`);
         continue;
       }
-      if (arr.length < spec.min) {
+      if (arr.length < (spec.min || 0)) {
         problems.push(`${asset.canonical}.${field} has ${arr.length} rows, expected >= ${spec.min}`);
       }
-      for (const item of arr) {
-        for (const f of spec.item_fields || []) {
-          if (!(f in item)) problems.push(`${asset.canonical}.${field} item missing field "${f}"`);
-        }
-      }
+      checkArrayItems(arr, spec.item_fields, `${asset.canonical}.${field}`, problems);
     }
   } else if (asset.kind === 'array') {
     if (!Array.isArray(data)) {
@@ -119,11 +167,7 @@ function checkAsset(asset, root, manifest, problems, notes) {
     if (data.length < (asset.min_length || 0)) {
       problems.push(`${asset.canonical} has ${data.length} rows, expected >= ${asset.min_length}`);
     }
-    for (const item of data) {
-      for (const f of asset.item_fields || []) {
-        if (!(f in item)) problems.push(`${asset.canonical} item missing field "${f}"`);
-      }
-    }
+    checkArrayItems(data, asset.item_fields, asset.canonical, problems);
   }
 
   // ── duplicate deploy copies must be byte-identical ──
@@ -149,18 +193,19 @@ function checkAsset(asset, root, manifest, problems, notes) {
   // ── freshness provenance ──
   if (asset.freshness_key && manifest) {
     const entry = manifest.sources[asset.freshness_key];
-    let vintage = null;
     if (asset.freshness_mode === 'embedded') {
-      vintage = data && typeof data === 'object' && data.generated_at ? data.generated_at : null;
-      if (!vintage) problems.push(`${asset.canonical} has no embedded generated_at for vintage check`);
-    } else if (asset.freshness_mode === 'file') {
-      vintage = fileVintage(canonicalPath);
-    }
-    if (vintage) {
-      if (entry.as_of !== vintage) {
+      // Content-based: an embedded top-level generated_at survives any copy and
+      // any checkout, so it can be compared exactly against the manifest.
+      const vintage = isPlainObject(data) ? data.generated_at : null;
+      if (!vintage) {
+        problems.push(`${asset.canonical} has no embedded generated_at for vintage check`);
+      } else if (entry.as_of !== vintage) {
         problems.push(`${asset.freshness_key}: manifest as_of ${entry.as_of} != true vintage ${vintage}`);
       }
     }
+    // 'file' mtime is intentionally NOT a freshness mode here: Git discards
+    // mtimes on checkout, so a clean clone would never validate. All other
+    // assets are checked for internal manifest consistency only.
     checkFreshnessInternal(asset, manifest, problems);
   }
 }
@@ -168,6 +213,10 @@ function checkAsset(asset, root, manifest, problems, notes) {
 function checkFreshnessInternal(asset, manifest, problems) {
   if (!asset.freshness_key || !manifest) return;
   const entry = manifest.sources[asset.freshness_key];
+  if (!isPlainObject(entry)) {
+    problems.push(`${asset.freshness_key}: manifest source is not an object`);
+    return;
+  }
   const generatedAt = manifest.generated_at;
   const maxAge = asset.max_age_hours;
 
@@ -208,7 +257,10 @@ function validate(root = DEFAULT_ROOT) {
   } catch (err) {
     return { ok: false, problems: [`cannot read inventory ${inventoryPath}: ${err.message}`], results: [] };
   }
-  const assets = inventory.assets || [];
+  if (!isPlainObject(inventory) || !Array.isArray(inventory.assets)) {
+    return { ok: false, problems: [`inventory ${inventoryPath} must be an object with an "assets" array`], results: [] };
+  }
+  const assets = inventory.assets;
 
   // freshness.json is optional by design; when present, hold it to the contract.
   const manifestPath = path.join(root, 'data', 'shared', 'freshness.json');
@@ -220,11 +272,19 @@ function validate(root = DEFAULT_ROOT) {
       problems.push(`freshness manifest is not valid JSON: ${err.message}`);
     }
   }
+  if (manifest !== null && !isPlainObject(manifest)) {
+    problems.push('freshness manifest must be a JSON object');
+    manifest = null;
+  }
+  if (manifest && !isPlainObject(manifest.sources)) {
+    problems.push('freshness manifest has no "sources" object');
+    manifest = null;
+  }
 
   // Bidirectional contract: every inventory freshness_key has a manifest
   // source, and every manifest source is a known inventory asset.
-  const inventoryKeys = assets.filter(a => a.freshness_key).map(a => a.freshness_key);
-  if (manifest && manifest.sources) {
+  const inventoryKeys = assets.filter(a => isPlainObject(a) && a.freshness_key).map(a => a.freshness_key);
+  if (manifest && isPlainObject(manifest.sources)) {
     const manifestKeys = Object.keys(manifest.sources);
     for (const k of inventoryKeys) {
       if (!manifestKeys.includes(k)) problems.push(`freshness manifest is missing source "${k}"`);
@@ -232,16 +292,15 @@ function validate(root = DEFAULT_ROOT) {
     for (const k of manifestKeys) {
       if (!inventoryKeys.includes(k)) problems.push(`freshness manifest has unknown source "${k}" not in inventory`);
     }
-  } else if (manifest) {
-    problems.push('freshness manifest has no "sources" object');
   }
 
   for (const asset of assets) {
     const assetProblems = [];
     const assetNotes = [];
     checkAsset(asset, root, manifest, assetProblems, assetNotes);
-    results.push({ id: asset.id, ok: assetProblems.length === 0, problems: assetProblems, notes: assetNotes });
-    problems.push(...assetProblems.map(p => `[${asset.id}] ${p}`));
+    const id = isPlainObject(asset) ? asset.id : '(malformed)';
+    results.push({ id, ok: assetProblems.length === 0, problems: assetProblems, notes: assetNotes });
+    problems.push(...assetProblems.map(p => `[${id}] ${p}`));
   }
 
   return { ok: problems.length === 0, problems, results };
