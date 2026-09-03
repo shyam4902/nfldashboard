@@ -1,13 +1,13 @@
 {
-  "generated_at": "2026-09-03T11:24:18Z",
+  "generated_at": "2026-09-03T11:56:42Z",
   "sources": {
   "props_board": { "as_of": "2026-09-03T11:02:50.575Z", "status": "fresh", "age_hours": 0, "max_age_hours": 24 },
-  "rosters": { "as_of": "2026-09-01T08:48:31Z", "status": "fresh", "age_hours": 50, "max_age_hours": 168 },
+  "rosters": { "as_of": "2026-09-01T08:48:31Z", "status": "fresh", "age_hours": 51, "max_age_hours": 168 },
   "schedule": { "as_of": "2026-08-26T05:09:28Z", "status": "stale", "age_hours": 198, "max_age_hours": 168 },
-  "clay_projections": { "as_of": "2026-08-26T00:53:55Z", "status": "fresh", "age_hours": 202, "max_age_hours": 720 },
-  "team_efficiency": { "as_of": "2026-08-30T19:28:25Z", "status": "fresh", "age_hours": 87, "max_age_hours": 262980 },
-  "stickiness": { "as_of": "2026-08-30T19:28:41Z", "status": "fresh", "age_hours": 87, "max_age_hours": 262980 },
-  "win_projection": { "as_of": "2026-08-30T19:28:42Z", "status": "fresh", "age_hours": 87, "max_age_hours": 262980 },
-  "market_comparison": { "as_of": "2026-08-30T19:28:50Z", "status": "fresh", "age_hours": 87, "max_age_hours": 262980 }
+  "clay_projections": { "as_of": "2026-08-26T00:53:55Z", "status": "fresh", "age_hours": 203, "max_age_hours": 720 },
+  "team_efficiency": { "as_of": "2026-08-30T19:28:25Z", "status": "fresh", "age_hours": 88, "max_age_hours": 262980 },
+  "stickiness": { "as_of": "2026-08-30T19:28:41Z", "status": "fresh", "age_hours": 88, "max_age_hours": 262980 },
+  "win_projection": { "as_of": "2026-08-30T19:28:42Z", "status": "fresh", "age_hours": 88, "max_age_hours": 262980 },
+  "market_comparison": { "as_of": "2026-08-30T19:28:50Z", "status": "fresh", "age_hours": 88, "max_age_hours": 262980 }
   }
 }
