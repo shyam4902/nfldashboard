@@ -9,6 +9,7 @@
 // Usage: node sync_supabase_rosters.js        (writes nfl_rosters_2026.json)
 const fs = require('fs');
 const path = require('path');
+const { atomicWriteFileSync } = require('./scripts/atomic-write.js');
 
 const SUPABASE_URL = process.env.SUPABASE_URL || "https://nedyoydylpbjvihaoexy.supabase.co/rest/v1/";
 const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY;
@@ -147,7 +148,7 @@ async function main() {
   });
 
   const outPath = path.join(__dirname, 'nfl_rosters_2026.json');
-  fs.writeFileSync(outPath, JSON.stringify(processed, null, 2), 'utf8');
+  atomicWriteFileSync(outPath, JSON.stringify(processed, null, 2), 'utf8');
   console.log(`sync_supabase_rosters: wrote ${processed.length} players to ${outPath}`);
   console.log(`  teams: ${processed.filter(p => p.team_name !== 'Free Agent').length ? teams.length : 'n/a'}`);
 }

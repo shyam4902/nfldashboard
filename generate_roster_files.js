@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const { atomicWriteFileSync } = require('./scripts/atomic-write.js');
 
 const SUPABASE_URL = "https://nedyoydylpbjvihaoexy.supabase.co/rest/v1/";
 const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY;
@@ -190,7 +191,7 @@ async function main() {
 
   const csvContent = csvRows.join('\n');
   const csvPath = path.join(__dirname, 'nfl_rosters_2026.csv');
-  fs.writeFileSync(csvPath, csvContent, 'utf8');
+  atomicWriteFileSync(csvPath, csvContent, 'utf8');
   console.log(`Saved CSV to ${csvPath} (${(fs.statSync(csvPath).size / 1024).toFixed(1)} KB)`);
 
   // 2. Generate Clean Plain Text Document (.txt)
@@ -250,13 +251,13 @@ async function main() {
   }
 
   const txtPath = path.join(__dirname, 'nfl_rosters_2026.txt');
-  fs.writeFileSync(txtPath, txtContent, 'utf8');
+  atomicWriteFileSync(txtPath, txtContent, 'utf8');
   console.log(`Saved TXT to ${txtPath} (${(fs.statSync(txtPath).size / 1024).toFixed(1)} KB)`);
 
   // 3. Generate JSON File
   console.log("Generating JSON...");
   const jsonPath = path.join(__dirname, 'nfl_rosters_2026.json');
-  fs.writeFileSync(jsonPath, JSON.stringify(processedPlayers, null, 2), 'utf8');
+  atomicWriteFileSync(jsonPath, JSON.stringify(processedPlayers, null, 2), 'utf8');
   console.log(`Saved JSON to ${jsonPath} (${(fs.statSync(jsonPath).size / 1024).toFixed(1)} KB)`);
 
   console.log("All roster files generated successfully!");

@@ -11,6 +11,7 @@ Usage: python3 scripts/build_full_schedule.py   (run from repo root)
 import csv
 import io
 import json
+import os
 import urllib.request
 from datetime import datetime, timedelta
 from pathlib import Path
@@ -114,7 +115,11 @@ def main():
         "source": "nflverse games.csv (matchups, kickoffs, stadiums); Week 1 enriched with TV/city",
         "games": games,
     }
-    path.write_text(json.dumps(out, indent=2) + "\n")
+    # atomic publish: write a same-dir temp then rename so an interrupted
+    # build can never leave a truncated tracked artifact in place
+    tmp = path.with_suffix(path.suffix + ".tmp")
+    tmp.write_text(json.dumps(out, indent=2) + "\n")
+    os.replace(tmp, path)
     weeks = sorted({g["week"] for g in games})
     print(f"Wrote {path}: {len(games)} games, weeks {weeks[0]}-{weeks[-1]}, current week {out['week']}")
 

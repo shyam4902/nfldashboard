@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const { atomicWriteFileSync } = require('./scripts/atomic-write.js');
 
 const ESPN_TRANSACTIONS_URL = "https://site.api.espn.com/apis/site/v2/sports/football/nfl/transactions?limit=250";
 const NORMALIZED_TRANSACTIONS_PATH = path.join(__dirname, 'espn_transactions_2026.json');
@@ -404,7 +405,7 @@ async function updateRostersFromESPN() {
     });
 
     // 1. JSON
-    fs.writeFileSync(rostersPath, JSON.stringify(players, null, 2), 'utf8');
+    atomicWriteFileSync(rostersPath, JSON.stringify(players, null, 2), 'utf8');
 
     // 2. CSV
     const csvHeaders = ['Team Name', 'Abbr', 'Division', 'Player Name', 'Position', 'Unit', 'Overall Rating (OVR)', 'Age', 'Jersey #', 'Is Rookie', 'Acquisition Type'];
@@ -425,7 +426,7 @@ async function updateRostersFromESPN() {
       ].join(','));
     }
     const csvPath = path.join(__dirname, 'nfl_rosters_2026.csv');
-    fs.writeFileSync(csvPath, csvRows.join('\n'), 'utf8');
+    atomicWriteFileSync(csvPath, csvRows.join('\n'), 'utf8');
 
     // 3. TXT
     let txtContent = `================================================================================\n`;
@@ -477,7 +478,7 @@ async function updateRostersFromESPN() {
       }
     }
     const txtPath = path.join(__dirname, 'nfl_rosters_2026.txt');
-    fs.writeFileSync(txtPath, txtContent, 'utf8');
+    atomicWriteFileSync(txtPath, txtContent, 'utf8');
 
     console.log(`Updated nfl_rosters_2026.json, .csv, and .txt successfully!`);
   } else {

@@ -7,9 +7,14 @@ import pdfplumber
 import json
 import re
 import os
+from pathlib import Path
 
-PDF_PATH = "/Users/shyampatel/Desktop/NFL_Main/NFLDK2026_CS_ClayProjections2026.pdf"
-OUTPUT_DIR = "/Users/shyampatel/Desktop/NFL_Main"
+# Resolve paths from this script's location so the extractor works from any
+# checkout, not just this machine's Desktop/NFL_Main path.
+_SCRIPT_DIR = Path(__file__).resolve().parent
+WORKSPACE_ROOT = _SCRIPT_DIR.parent  # NFL_Main workspace root
+PDF_PATH = WORKSPACE_ROOT / "NFLDK2026_CS_ClayProjections2026.pdf"
+OUTPUT_DIR = WORKSPACE_ROOT
 
 TEAM_MAP = {
     'ARZ': 'Arizona Cardinals', 'ATL': 'Atlanta Falcons', 'BLT': 'Baltimore Ravens',
@@ -593,8 +598,12 @@ def main():
     }
 
     output_path = os.path.join(OUTPUT_DIR, 'nfldashboard', 'clay_projections_2026.json')
-    with open(output_path, 'w') as f:
+    # atomic publish: write a same-dir temp then rename so an interrupted
+    # extraction can never leave a truncated tracked artifact in place
+    tmp_path = output_path + '.tmp'
+    with open(tmp_path, 'w') as f:
         json.dump(all_data, f, indent=2)
+    os.replace(tmp_path, output_path)
     print(f"\nSaved to {output_path}")
     print(f"Size: {os.path.getsize(output_path) / 1024:.1f} KB")
     print("Done!")

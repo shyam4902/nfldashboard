@@ -17,6 +17,7 @@ Conventions:
 Usage: python3 scripts/build_draft_capital.py   (run from repo root)
 """
 import json
+import os
 from pathlib import Path
 
 YEARS = [2027, 2028, 2029]
@@ -95,7 +96,11 @@ def main():
     }
 
     path = Path(__file__).resolve().parent.parent / "draft-capital.json"
-    path.write_text(json.dumps(out, indent=2) + "\n")
+    # atomic publish: write a same-dir temp then rename so an interrupted
+    # build can never leave a truncated tracked artifact in place
+    tmp = path.with_suffix(path.suffix + ".tmp")
+    tmp.write_text(json.dumps(out, indent=2) + "\n")
+    os.replace(tmp, path)
     print(f"Wrote {path}")
     for t in TEAMS:
         c = out["capital"][t]
