@@ -210,6 +210,7 @@ function normalizeEspnTransaction(item) {
     source: 'ESPN',
     source_id: item.id || null,
     source_key: sourceKey,
+    source_date: String(item.date || ''),
     type: CANONICAL_MOVE_TYPES[move.type] || move.type,
     blockbuster: false,
     player_name: move.player,
@@ -235,7 +236,7 @@ function normalizeEspnTransactions(items) {
 
 function validateTransactions(rows) {
   const errors = [];
-  const requiredStrings = ['id', 'source', 'source_key', 'type', 'player_name', 'from_team', 'to_team', 'detail', 'sort_date'];
+  const requiredStrings = ['id', 'source', 'source_key', 'source_date', 'type', 'player_name', 'from_team', 'to_team', 'detail', 'sort_date'];
   const ids = new Set();
   if (!Array.isArray(rows)) return { valid: false, errors: ['transactions must be an array'] };
   rows.forEach((row, index) => {
@@ -254,6 +255,9 @@ function validateTransactions(rows) {
     if (!NORMALIZED_TRANSACTION_TYPES.has(row.type)) errors.push(`row ${index}: type is unsupported`);
     if (typeof row.sort_date === 'string' && !isValidIsoDate(row.sort_date)) {
       errors.push(`row ${index}: sort_date must be YYYY-MM-DD`);
+    }
+    if (typeof row.source_date === 'string' && Number.isNaN(Date.parse(row.source_date))) {
+      errors.push(`row ${index}: source_date must be a valid timestamp`);
     }
     if (row.pos !== undefined && typeof row.pos !== 'string') errors.push(`row ${index}: pos must be a string`);
   });
@@ -285,16 +289,23 @@ function validateDryRunEnvelope(envelope) {
 
 // ── CLI / pipeline ─────────────────────────────────────────────────────────
 // Default mode is DRY-RUN: normalize, validate, and write only the inspect
-// artifact espn_transactions_2026.json (atomically). No roster file, no
-// processed-log file, and no service is contacted. Persistence to the Supabase
+// artifact espn_transactions_2026.json (atomically). No roster file or
+// processed-log file is touched. Without --input it fetches the ESPN feed;
+// persistence to the Supabase
 // nfl_transactions table happens only with the explicit --write flag, which
-// requires SUPABASE_URL / SUPABASE_ANON_KEY in the environment and the tx_id
+// requires SUPABASE_URL / SUPABASE_SECRET_KEY in the environment and the tx_id
 // migration applied (supabase/migrations/20260903_espn_transactions_tx_id.sql).
-const { DEFAULT_SUPABASE_URL, makeSupabaseClient, persistTransactions } = require('./espn_transaction_persistence.js');
+const { makeSupabaseClient, persistTransactions } = require('./espn_transaction_persistence.js');
 
 function flagValue(argv, flag) {
   const i = argv.indexOf(flag);
   return i !== -1 && argv[i + 1] ? argv[i + 1] : null;
+}
+
+function filterItemsSince(items, since) {
+  if (!since) return items;
+  if (!isValidIsoDate(since)) throw new Error('--since must be a valid YYYY-MM-DD date');
+  return items.filter(item => typeof item.date === 'string' && item.date.slice(0, 10) >= since);
 }
 
 async function loadEspnItems({ inputPath, fetchImpl = fetch }) {
@@ -347,27 +358,34 @@ async function main(argv = process.argv.slice(2)) {
   const write = argv.includes('--write');
   const mode = write ? 'write' : 'dry'; // dry-run is the default
   const inputPath = flagValue(argv, '--input') || process.env.ESPN_TRANSACTIONS_INPUT || null;
+  const since = flagValue(argv, '--since');
   const outputPath = process.env.ESPN_OUT_PATH || NORMALIZED_TRANSACTIONS_PATH;
 
   console.log(`[${new Date().toISOString()}] update_rosters_from_espn: ${mode} mode (ESPN transactions feed)`);
   try {
-    const items = await loadEspnItems({ inputPath });
+    if (mode === 'write' && !process.env.SUPABASE_URL) {
+      throw new Error('SUPABASE_URL is required for --write; set the project URL in the environment.');
+    }
+    if (mode === 'write' && !process.env.SUPABASE_SECRET_KEY) {
+      throw new Error('SUPABASE_SECRET_KEY is required for --write; set it in the environment, not in source.');
+    }
+    if (mode === 'write' && !since) {
+      throw new Error('--since YYYY-MM-DD is required for --write; choose the first date after the 352 legacy rows to avoid overlap.');
+    }
+    const items = filterItemsSince(await loadEspnItems({ inputPath }), since);
     console.log(`Loaded ${items.length} ESPN transaction items.`);
     let client = null;
     if (mode === 'write') {
-      const url = process.env.SUPABASE_URL || DEFAULT_SUPABASE_URL;
-      const anonKey = process.env.SUPABASE_ANON_KEY;
-      if (!anonKey) {
-        throw new Error('SUPABASE_ANON_KEY is required for --write; set it in the environment, not in source.');
-      }
-      client = makeSupabaseClient({ url, anonKey });
+      const url = process.env.SUPABASE_URL;
+      const secretKey = process.env.SUPABASE_SECRET_KEY;
+      client = makeSupabaseClient({ url, secretKey });
     }
     const result = await processTransactions({ items, mode, client, outputPath });
     if (mode === 'write') {
       console.log(`Persisted ESPN transactions: total ${result.total}, inserted ${result.inserted}, already present ${result.already_present}, intra-batch duplicates skipped ${result.duplicates_skipped}.`);
     } else {
       console.log(`Dry run: wrote ${result.record_count} normalized transactions to ${result.output_path} (no roster or database writes).`);
-      console.log('Use --write to persist to Supabase (requires SUPABASE_URL, SUPABASE_ANON_KEY, and the tx_id migration).');
+      console.log('Use --write to persist to Supabase (requires SUPABASE_URL, SUPABASE_SECRET_KEY, and the tx_id migration).');
     }
   } catch (err) {
     console.error(`update_rosters_from_espn failed: ${err.message}`);

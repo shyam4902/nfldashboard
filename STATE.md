@@ -22,12 +22,12 @@
 
 - Supabase-backed `nfl_teams`, player pages, and `nfl_transactions` supply the live dashboard data path.
 - Repository artifacts provide schedule, Clay projections, draft capital, official Madden ratings, props-board integration, and shared freshness metadata.
-- `update_rosters_from_espn.js` normalizes supported ESPN transaction descriptions, canonicalizes unambiguous team names, validates normalized records, and skips unsupported descriptions. Dry run is the default and writes only the atomic inspection artifact; it never mutates the roster snapshot or contacts a service.
-- `node update_rosters_from_espn.js --write` persists normalized rows to Supabase `nfl_transactions` idempotently: each row carries a stable `tx_id` (sha256 over the canonical normalized tuple), rows already present are skipped, and the partial unique index from `supabase/migrations/20260903_espn_transactions_tx_id.sql` enforces the same contract in the database. Requires `SUPABASE_URL` / `SUPABASE_ANON_KEY`; a failed write exits nonzero and touches no local artifact.
+- `update_rosters_from_espn.js` normalizes supported ESPN transaction descriptions, canonicalizes unambiguous team names, validates normalized records, and skips unsupported descriptions. Dry run is the default, fetches ESPN unless `--input` is supplied, and writes only the atomic inspection artifact; it never mutates the roster snapshot.
+- `node update_rosters_from_espn.js --write --since YYYY-MM-DD` persists normalized rows to Supabase `nfl_transactions` with a stable `tx_id` (sha256 over source, exact ESPN timestamp, move type, player, and both teams). The first-run boundary is `2026-04-23`, so the operator must use `--since 2026-04-24` or a later date to keep the 352 legacy rows with null `tx_id` out of the import overlap. Requires `SUPABASE_URL` / `SUPABASE_SECRET_KEY`; a failed write exits nonzero and touches no local artifact.
 
 ## ESPN transaction persistence (2026-09-03)
 
-- `espn_transaction_persistence.js` is the persistence boundary: validates rows, attaches `tx_id`/`source_url`/`ingested_at`, drops intra-batch duplicates, checks existing `tx_id`s, then inserts only the missing rows. The Supabase client is injectable (fetch-based), so the whole path is tested hermetically against a fake client and a closed-localhost CLI failure.
+- `espn_transaction_persistence.js` is the persistence boundary: validates rows, attaches `tx_id`/`source_date`/`source_url`/`ingested_at`, drops intra-batch duplicates, and sends one conflict-ignore bulk insert. The Supabase client is injectable (fetch-based), so the whole path is tested hermetically, including concurrent duplicate writes and request headers.
 - `update_rosters_from_espn.js` no longer mutates `nfl_rosters_2026.json`: the legacy roster-mutation/daemon tail (processed-transaction log, CSV/TXT regeneration) was removed in favor of dry-run default plus explicit `--write` persistence. Dry-run output remains inspectable; the dashboard continues to read its live transaction view from Supabase.
 
 ## Schedule freshness fix (2026-09-04)
@@ -53,7 +53,7 @@
 - Browser tests are deterministic data-feed tests: Supabase REST, nflverse games.csv, and espncdn logos are intercepted with fixtures derived from committed data (`test-fixtures/README.md`). They still load CDN libraries (Tailwind, supabase-js, fonts) over the network. Real-network runs are explicit opt-ins (`DASH_LIVE_NETWORK=1`, `LIVE_SMOKE=1`).
 - The sync script is the sole writer of every nfldashboard deploy copy, including the root `props-board.json` and `team_season_efficiency.json` browser fallbacks whose sources live outside the dashboard — the root props fallback had silently drifted one export behind; the validator now catches any future drift.
 - `props-smoke.mjs` serves the versioned `data/shared/` deploy copies (not the unversioned workspace handoff), so the browser test exercises the same bytes the Pages deploy ships.
-- Removed dead `scripts/inseason_sync.py` (zero consumers, fabricated `last_updated`) and the legacy `com.nfldashboard.rosterupdate.plist` template (job never installed; only `props-scan` and `rostersync` are loaded). `update_rosters_from_espn.js` stays as the dry-run normalization tool.
+- Removed dead `scripts/inseason_sync.py` (zero consumers, fabricated `last_updated`) and the legacy `com.nfldashboard.rosterupdate.plist` template (job never installed; only `props-scan` and `rostersync` are loaded). `update_rosters_from_espn.js` is the normalization tool with an explicit, cutoff-protected Supabase write mode.
 - `extract_clay_projections.py` derives its PDF/output paths from the script location instead of hardcoded `/Users/shyampatel/Desktop/NFL_Main` paths.
 
 ## Shipped cleanup
@@ -99,6 +99,7 @@ node --check generate_roster_files.js
 node --check sync_supabase_rosters.js
 node --check update_rosters_from_espn.js
 node --test update_rosters_from_espn.test.js
+node --test persist_espn_transactions.test.js
 node --test validate_data.test.js
 node --test concurrent_publish.test.js
 PLAYWRIGHT_MODULE=/path/to/installed/playwright node props-smoke.mjs
@@ -113,7 +114,6 @@ python3 -m py_compile test_all_extensions.py test_projections.py test_schedule_d
 ## Known limitations
 
 - ESPN normalization supports the transaction forms covered by the parser fixtures; unsupported descriptions are intentionally omitted.
-- ESPN dry-run output is inspectable but is not yet persisted to the Supabase transaction table.
 - Some Clay extraction sections remain available only in JSON, including returners, kickers, unit ranks, and projected starters.
 - Launchd plists are portable templates and require a machine-specific checkout path and credentials before installation.
 - The app remains intentionally single-file and has no build step; a module split would be a separate migration requiring browser regression coverage.
@@ -121,7 +121,6 @@ python3 -m py_compile test_all_extensions.py test_projections.py test_schedule_d
 
 ## Next work
 
-- Decide and implement the server-side persistence path for normalized ESPN transactions.
 - Continue the source-backed trust audit as new unsupported claims or fallbacks are identified.
 - Revisit freshness coverage and module extraction only when they can be changed without weakening the static deployment contract.
 
