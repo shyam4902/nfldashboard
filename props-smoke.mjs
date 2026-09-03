@@ -42,11 +42,12 @@ const types = { '.html': 'text/html', '.js': 'text/javascript', '.json': 'applic
 const server = createServer(async (req, res) => {
   try {
     const path = req.url === '/' ? '/index.html' : req.url.split('?')[0];
-    // Ticket 01: serve the unified data layer from the repo root (../data/shared)
+    // Serve the VERSIONED data/shared copies (nfldashboard/data/shared) — the
+    // same bytes the git-connected Cloudflare Pages deploy ships. The
+    // unversioned ../data/shared workspace handoff is the sync script's input,
+    // not the deploy payload, so it is deliberately not what the smoke test
+    // exercises; scripts/validate-data.js is the consistency gate instead.
     let full = join(root, path);
-    if (path.startsWith('/data/shared/')) {
-      full = join(root, '..', path);
-    }
     const body = await readFile(full);
     res.writeHead(200, { 'content-type': types[extname(path)] || 'application/octet-stream' });
     res.end(body);
