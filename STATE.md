@@ -40,6 +40,8 @@
 
 ## Shipped cleanup
 
+- Enhanced Passing, Rushing, and Trenches matchup comparison tables with formatted 2025 metric values alongside league ranks, honest missing-data handling (`—` instead of `EVEN`), and data source provenance footers.
+- Filtered Overview Key Advantages panel to each team's genuine statistical advantages, replacing empty/mismatched rows with an honest empty state.
 - Switched team unit overall ratings and position group ratings to Mike Clay 2026 model grades (`CLAY_DATA.unit_grades`), eliminating Madden ratings from `computeTeamOverall`, `computeTeamPositionRating`, `computeMacroRating`, and `renderConsensusPower`.
 - `computeTeamOverall` now computes an authentic 0–100 overall team strength directly from Mike Clay's composite unit grades, driving win probability across Matchup Center and Schedule cards.
 - Teams tab Power Rankings heatmap and macro leaders now display verified Mike Clay 2026 unit ratings (scaled 10–100).
