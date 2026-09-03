@@ -51,6 +51,10 @@ const POS_TO_UNIT = {
 
 const POSITIONS = Object.keys(POS_TO_UNIT);
 const NORMALIZED_TRANSACTION_TYPES = new Set(['signing', 'waiver', 'trade', 'draft']);
+// parseTransactionSentence speaks in verbs; the stored contract is the four
+// NORMALIZED_TRANSACTION_TYPES above. A claim is a waiver-wire move, so it
+// stores as 'waiver' and from_team/to_team carry which way the player went.
+const CANONICAL_MOVE_TYPES = { sign: 'signing', waive: 'waiver', claim: 'waiver' };
 
 const TEAM_SHORT_NAMES = {
   Arizona: 'Arizona Cardinals', Atlanta: 'Atlanta Falcons', Baltimore: 'Baltimore Ravens',
@@ -203,7 +207,7 @@ function normalizeEspnTransaction(item) {
     source: 'ESPN',
     source_id: item.id || null,
     source_key: sourceKey,
-    type: move.type === 'sign' ? 'signing' : move.type === 'waive' ? 'waiver' : move.type,
+    type: CANONICAL_MOVE_TYPES[move.type] || move.type,
     blockbuster: false,
     player_name: move.player,
     pos: move.pos || '',
@@ -216,7 +220,14 @@ function normalizeEspnTransaction(item) {
 }
 
 function normalizeEspnTransactions(items) {
-  return items.flatMap(normalizeEspnTransaction);
+  // ESPN repeats players inside a single release sentence (the 2026-08-29
+  // Steelers row lists two DBs twice), which would break the unique-id rule.
+  const seen = new Set();
+  return items.flatMap(normalizeEspnTransaction).filter(row => {
+    if (seen.has(row.id)) return false;
+    seen.add(row.id);
+    return true;
+  });
 }
 
 function validateTransactions(rows) {

@@ -136,3 +136,31 @@ test('validates the dry-run envelope metadata and record count', () => {
 test('skips descriptions with no supported player transaction instead of inventing a row', () => {
   assert.deepEqual(parser('Announced a coaching change.', 'Dallas Cowboys'), []);
 });
+
+test('maps waiver claims onto the supported waiver type and keeps the direction', () => {
+  const rows = normalizer({
+    id: 'espn-claim-1',
+    date: '2026-08-27T07:00Z',
+    team: { displayName: 'Seattle Seahawks' },
+    description: 'Claimed DB Ty Okada off waivers from Chicago Bears.'
+  });
+  assert.equal(rows.length, 1);
+  assert.equal(rows[0].type, 'waiver');
+  assert.equal(rows[0].from_team, 'Chicago Bears');
+  assert.equal(rows[0].to_team, 'Seattle Seahawks');
+  assert.deepEqual(validator(rows), { valid: true, errors: [] });
+});
+
+test('drops players ESPN repeats inside one transaction sentence', () => {
+  // Verbatim from the live feed: the 2026-08-29 Steelers release lists
+  // "DBs Tamon Lynum, Daryl Porter" twice, which broke the unique-id rule.
+  const rows = collectionNormalizer([{
+    id: 'espn-dup-1',
+    date: '2026-08-29T07:00Z',
+    team: { displayName: 'Pittsburgh Steelers' },
+    description: 'Released LB Jahmin Davis, TE Jaheim Bell, C Greg Crippen, DBs Jaylon Guilbeau, Jack Henderson, Brandon Hill, Tamon Lynum, Daryl Porter, WRs Jakobie Keeney-James, Cornell Powell, Levi Wentz, Isaiah Winstead, DBs Tamon Lynum, Daryl Porter and RB Alex Tecza.'
+  }]);
+  assert.equal(rows.filter(r => r.player_name === 'Tamon Lynum').length, 1);
+  assert.equal(new Set(rows.map(r => r.id)).size, rows.length);
+  assert.deepEqual(validator(rows), { valid: true, errors: [] });
+});
