@@ -4365,52 +4365,80 @@ function renderPreviewEdgeBadge(adv, tA, tB) {
   return `<span class="text-[11px] font-bold ${cls}">${attrEsc(abbr)} ADV</span>`;
 }
 
-function renderPreviewPassingMatrix(tA, tB, ranksA, ranksB) {
-  const abbrA = DATA.teamAbbr[tA] || tA;
-  const abbrB = DATA.teamAbbr[tB] || tB;
+function renderPreviewOffVsDefMatrix(offTeam, defTeam, ranksOff, ranksDef, isLeft) {
+  const offAbbr = DATA.teamAbbr[offTeam] || offTeam;
+  const defAbbr = DATA.teamAbbr[defTeam] || defTeam;
 
-  const passEpaA = efficiencyValue(tA, 'off', 'pass_epa_per_att', 2025);
-  const passEpaB = efficiencyValue(tB, 'def', 'pass_epa_per_att', 2025);
-  const rankPassA = ranksA.offense['pass_epa_per_att'];
-  const rankPassB = ranksB.defense['pass_epa_per_att'];
+  const passEpaOff = efficiencyValue(offTeam, 'off', 'pass_epa_per_att', 2025);
+  const passEpaDef = efficiencyValue(defTeam, 'def', 'pass_epa_per_att', 2025);
+  const rankPassOff = ranksOff.offense['pass_epa_per_att'];
+  const rankPassDef = ranksDef.defense['pass_epa_per_att'];
+
+  const runEpaOff = efficiencyValue(offTeam, 'off', 'run_epa_per_att', 2025);
+  const runEpaDef = efficiencyValue(defTeam, 'def', 'run_epa_per_att', 2025);
+  const rankRunOff = ranksOff.offense['run_epa_per_att'];
+  const rankRunDef = ranksDef.defense['run_epa_per_att'];
 
   const rows = [
-    { id: 'pass_epa_per_att', label: 'Pass EPA per Attempt' },
-    { id: 'epa_per_play', label: 'Overall EPA per Play' },
-    { id: 'success_rate', label: 'Offensive Success Rate' },
-    { id: 'yds_per_play', label: 'Yards per Play' },
-    { id: 'sack_rate', label: 'Sack Rate (Allowed / Forced)' },
-    { id: 'turnover_rate', label: 'Turnover Rate' },
+    { id: 'pass_epa_per_att', label: 'Pass EPA per Attempt', tag: 'PASS' },
+    { id: 'run_epa_per_att', label: 'Run EPA per Attempt', tag: 'RUSH' },
+    { id: 'epa_per_play', label: 'Overall EPA per Play', tag: 'TOTAL' },
+    { id: 'success_rate', label: 'Offensive Success Rate', tag: 'TOTAL' },
+    { id: 'yds_per_play', label: 'Yards per Play', tag: 'TOTAL' },
+    { id: 'sack_rate', label: 'Sack Rate (Allowed / Forced)', tag: 'PASS' },
+    { id: 'turnover_rate', label: 'Turnover Rate', tag: 'TOTAL' },
   ];
+
+  const offColor = isLeft ? 'text-sky-400' : 'text-indigo-400';
+  const defColor = isLeft ? 'text-indigo-400' : 'text-sky-400';
 
   return `
     <div class="bg-surface-card border border-subtle rounded-lg p-4">
       <div class="flex justify-between items-center mb-3 pb-2 border-b border-subtle">
         <h2 class="text-sm font-bold text-white flex items-center gap-2 uppercase tracking-wide">
-          <span class="text-sky-400">🏈</span> Passing Matrix
+          <span>⚔️</span> <span class="${offColor}">${attrEsc(offAbbr)} Offense</span> <span class="text-slate-500 font-normal">vs</span> <span class="${defColor}">${attrEsc(defAbbr)} Defense</span>
         </h2>
         <span class="text-[10px] font-mono text-slate-400 bg-slate-800 px-2 py-0.5 rounded border border-subtle">2025 MEASURED</span>
       </div>
 
-      <div class="grid grid-cols-2 gap-3 mb-3">
-        <div class="bg-slate-800/40 p-2.5 border border-subtle rounded flex items-center justify-between">
-          <div class="flex flex-col">
-            <span class="text-xs font-bold text-sky-400">${attrEsc(abbrA)} Offense</span>
-            <span class="text-[9px] font-bold uppercase tracking-wider text-slate-400">PASS EPA / ATT</span>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 mb-3">
+        <div class="bg-slate-800/40 p-2.5 border border-subtle rounded flex flex-col gap-1">
+          <div class="flex items-center justify-between">
+            <span class="text-[9px] font-bold uppercase tracking-wider text-sky-400 font-mono">PASS ATTACK (EPA/ATT)</span>
+            <span class="text-[9px] font-mono text-slate-500">2025</span>
           </div>
-          <div class="bg-slate-800 px-2 py-1 rounded border border-subtle font-mono text-xs font-bold text-cyber-lime flex items-center gap-1.5">
-            ${passEpaA != null ? (passEpaA >= 0 ? '+' : '') + passEpaA.toFixed(3) : '—'}
-            <span class="bg-slate-700 text-slate-300 px-1 text-[10px] rounded">${rankPassA != null ? '#' + rankPassA : '—'}</span>
+          <div class="flex items-center justify-between font-mono text-xs">
+            <div class="flex items-center gap-1.5">
+              <span class="text-[10px] text-slate-400">${attrEsc(offAbbr)}:</span>
+              <span class="font-bold ${passEpaOff != null && passEpaOff >= 0 ? 'text-cyber-lime' : 'text-slate-200'}">${passEpaOff != null ? (passEpaOff >= 0 ? '+' : '') + passEpaOff.toFixed(3) : '—'}</span>
+              <span class="text-[10px] text-slate-400 font-normal">(${rankPassOff != null ? '#' + rankPassOff : '—'})</span>
+            </div>
+            <span class="text-slate-600 text-[10px]">vs</span>
+            <div class="flex items-center gap-1.5">
+              <span class="text-[10px] text-slate-400">${attrEsc(defAbbr)} DEF:</span>
+              <span class="font-bold text-slate-200">${passEpaDef != null ? (passEpaDef >= 0 ? '+' : '') + passEpaDef.toFixed(3) : '—'}</span>
+              <span class="text-[10px] text-slate-400 font-normal">(${rankPassDef != null ? '#' + rankPassDef : '—'})</span>
+            </div>
           </div>
         </div>
-        <div class="bg-slate-800/40 p-2.5 border border-subtle rounded flex items-center justify-between">
-          <div class="flex flex-col">
-            <span class="text-xs font-bold text-indigo-400">${attrEsc(abbrB)} Defense</span>
-            <span class="text-[9px] font-bold uppercase tracking-wider text-slate-400">PASS EPA / ATT</span>
+
+        <div class="bg-slate-800/40 p-2.5 border border-subtle rounded flex flex-col gap-1">
+          <div class="flex items-center justify-between">
+            <span class="text-[9px] font-bold uppercase tracking-wider text-amber-400 font-mono">RUSH ATTACK (EPA/ATT)</span>
+            <span class="text-[9px] font-mono text-slate-500">2025</span>
           </div>
-          <div class="bg-slate-800 px-2 py-1 rounded border border-subtle font-mono text-xs font-bold text-white flex items-center gap-1.5">
-            ${passEpaB != null ? (passEpaB >= 0 ? '+' : '') + passEpaB.toFixed(3) : '—'}
-            <span class="bg-slate-700 text-slate-300 px-1 text-[10px] rounded">${rankPassB != null ? '#' + rankPassB : '—'}</span>
+          <div class="flex items-center justify-between font-mono text-xs">
+            <div class="flex items-center gap-1.5">
+              <span class="text-[10px] text-slate-400">${attrEsc(offAbbr)}:</span>
+              <span class="font-bold ${runEpaOff != null && runEpaOff >= 0 ? 'text-cyber-lime' : 'text-slate-200'}">${runEpaOff != null ? (runEpaOff >= 0 ? '+' : '') + runEpaOff.toFixed(3) : '—'}</span>
+              <span class="text-[10px] text-slate-400 font-normal">(${rankRunOff != null ? '#' + rankRunOff : '—'})</span>
+            </div>
+            <span class="text-slate-600 text-[10px]">vs</span>
+            <div class="flex items-center gap-1.5">
+              <span class="text-[10px] text-slate-400">${attrEsc(defAbbr)} DEF:</span>
+              <span class="font-bold text-slate-200">${runEpaDef != null ? (runEpaDef >= 0 ? '+' : '') + runEpaDef.toFixed(3) : '—'}</span>
+              <span class="text-[10px] text-slate-400 font-normal">(${rankRunDef != null ? '#' + rankRunDef : '—'})</span>
+            </div>
           </div>
         </div>
       </div>
@@ -4419,116 +4447,36 @@ function renderPreviewPassingMatrix(tA, tB, ranksA, ranksB) {
         <thead>
           <tr class="border-b border-subtle text-slate-400 text-[10px] font-bold uppercase tracking-wider">
             <th class="py-2 font-normal">METRIC</th>
-            <th class="py-2 font-normal text-right">${attrEsc(abbrA)} OFF</th>
-            <th class="py-2 font-normal text-right">${attrEsc(abbrB)} DEF</th>
-            <th class="py-2 font-normal text-right">ADVANTAGE</th>
+            <th class="py-2 font-normal text-right">${attrEsc(offAbbr)} OFF</th>
+            <th class="py-2 font-normal text-right">${attrEsc(defAbbr)} DEF</th>
+            <th class="py-2 font-normal text-right">EDGE</th>
           </tr>
         </thead>
         <tbody class="font-mono text-xs">
           ${rows.map(r => {
-            const vA = efficiencyValue(tA, 'off', r.id, 2025);
-            const vB = efficiencyValue(tB, 'def', r.id, 2025);
-            const rA = ranksA.offense[r.id] ?? efficiencyRank(tA, 'off', r.id, 2025);
-            const rB = ranksB.defense[r.id] ?? efficiencyRank(tB, 'def', r.id, 2025);
-            const adv = (rA != null && rB != null) ? computeAdvantage(rA, rB, tA, tB) : null;
+            const vOff = efficiencyValue(offTeam, 'off', r.id, 2025);
+            const vDef = efficiencyValue(defTeam, 'def', r.id, 2025);
+            const rOff = ranksOff.offense[r.id] ?? efficiencyRank(offTeam, 'off', r.id, 2025);
+            const rDef = ranksDef.defense[r.id] ?? efficiencyRank(defTeam, 'def', r.id, 2025);
+            const adv = computeAdvantage(rOff, rDef, offTeam, defTeam);
             return `
-              <tr class="matchup-table-row border-b border-subtle/50 hover:bg-slate-800/30">
-                <td class="py-2 text-slate-200 font-sans text-xs">${r.label}</td>
-                <td class="py-2 text-right">${formatMetricVal(r.id, vA)} ${rA != null ? `<span class="text-[10px] text-slate-400">#${rA}</span>` : ''}</td>
-                <td class="py-2 text-right">${formatMetricVal(r.id, vB)} ${rB != null ? `<span class="text-[10px] text-slate-400">#${rB}</span>` : ''}</td>
-                <td class="py-2 text-right font-sans">${renderAdvantageBadge(adv, tA, tB)}</td>
+              <tr class="matchup-table-row border-b border-subtle/50 hover:bg-slate-800/30 transition-colors">
+                <td class="py-2 text-slate-200 font-sans text-xs flex items-center gap-1.5">
+                  <span class="text-[9px] font-mono px-1 py-0.5 rounded ${r.tag === 'PASS' ? 'bg-sky-950/70 text-sky-400 border border-sky-800/50' : r.tag === 'RUSH' ? 'bg-amber-950/70 text-amber-400 border border-amber-800/50' : 'bg-slate-800 text-slate-400 border border-subtle'}">${r.tag}</span>
+                  <span class="truncate" title="${r.label}">${r.label}</span>
+                </td>
+                <td class="py-2 text-right font-bold text-slate-200">${formatMetricVal(r.id, vOff)} <span class="text-[10px] font-normal text-slate-400">(${rOff != null ? '#' + rOff : '—'})</span></td>
+                <td class="py-2 text-right font-bold text-slate-200">${formatMetricVal(r.id, vDef)} <span class="text-[10px] font-normal text-slate-400">(${rDef != null ? '#' + rDef : '—'})</span></td>
+                <td class="py-2 text-right font-sans">${renderAdvantageBadge(adv, offTeam, defTeam)}</td>
               </tr>
             `;
           }).join('')}
         </tbody>
       </table>
+
       <div class="mt-2.5 pt-2 border-t border-subtle/50 text-[10px] text-slate-500 font-mono flex justify-between items-center">
         <span>Source: 2025 nflverse play-by-play (1–32 league ranks)</span>
-        <button onclick="setMatchupSubTab('passing')" class="text-sky-400 hover:text-sky-300 font-semibold">Full passing splits →</button>
-      </div>
-    </div>
-  `;
-}
-
-function renderPreviewRushingMatrix(tA, tB, ranksA, ranksB) {
-  const abbrA = DATA.teamAbbr[tA] || tA;
-  const abbrB = DATA.teamAbbr[tB] || tB;
-
-  const runEpaA = efficiencyValue(tA, 'off', 'run_epa_per_att', 2025);
-  const runEpaB = efficiencyValue(tB, 'def', 'run_epa_per_att', 2025);
-  const rankRunA = ranksA.offense['run_epa_per_att'];
-  const rankRunB = ranksB.defense['run_epa_per_att'];
-
-  const rows = [
-    { id: 'run_epa_per_att', label: 'Run EPA per Attempt' },
-    { id: 'epa_per_play', label: 'Overall EPA per Play' },
-    { id: 'success_rate', label: 'Rushing Success Rate' },
-    { id: 'yds_per_play', label: 'Yards per Play' },
-    { id: 'turnover_rate', label: 'Turnover Rate' },
-  ];
-
-  return `
-    <div class="bg-surface-card border border-subtle rounded-lg p-4">
-      <div class="flex justify-between items-center mb-3 pb-2 border-b border-subtle">
-        <h2 class="text-sm font-bold text-white flex items-center gap-2 uppercase tracking-wide">
-          <span class="text-amber-400">⚡</span> Rushing Matrix
-        </h2>
-        <span class="text-[10px] font-mono text-slate-400 bg-slate-800 px-2 py-0.5 rounded border border-subtle">2025 MEASURED</span>
-      </div>
-
-      <div class="grid grid-cols-2 gap-3 mb-3">
-        <div class="bg-slate-800/40 p-2.5 border border-subtle rounded flex items-center justify-between">
-          <div class="flex flex-col">
-            <span class="text-xs font-bold text-sky-400">${attrEsc(abbrA)} Offense</span>
-            <span class="text-[9px] font-bold uppercase tracking-wider text-slate-400">RUN EPA / ATT</span>
-          </div>
-          <div class="bg-slate-800 px-2 py-1 rounded border border-subtle font-mono text-xs font-bold text-cyber-lime flex items-center gap-1.5">
-            ${runEpaA != null ? (runEpaA >= 0 ? '+' : '') + runEpaA.toFixed(3) : '—'}
-            <span class="bg-slate-700 text-slate-300 px-1 text-[10px] rounded">${rankRunA != null ? '#' + rankRunA : '—'}</span>
-          </div>
-        </div>
-        <div class="bg-slate-800/40 p-2.5 border border-subtle rounded flex items-center justify-between">
-          <div class="flex flex-col">
-            <span class="text-xs font-bold text-indigo-400">${attrEsc(abbrB)} Defense</span>
-            <span class="text-[9px] font-bold uppercase tracking-wider text-slate-400">RUN EPA / ATT</span>
-          </div>
-          <div class="bg-slate-800 px-2 py-1 rounded border border-subtle font-mono text-xs font-bold text-white flex items-center gap-1.5">
-            ${runEpaB != null ? (runEpaB >= 0 ? '+' : '') + runEpaB.toFixed(3) : '—'}
-            <span class="bg-slate-700 text-slate-300 px-1 text-[10px] rounded">${rankRunB != null ? '#' + rankRunB : '—'}</span>
-          </div>
-        </div>
-      </div>
-
-      <table class="w-full text-left border-collapse">
-        <thead>
-          <tr class="border-b border-subtle text-slate-400 text-[10px] font-bold uppercase tracking-wider">
-            <th class="py-2 font-normal">METRIC</th>
-            <th class="py-2 font-normal text-right">${attrEsc(abbrA)} OFF</th>
-            <th class="py-2 font-normal text-right">${attrEsc(abbrB)} DEF</th>
-            <th class="py-2 font-normal text-right">ADVANTAGE</th>
-          </tr>
-        </thead>
-        <tbody class="font-mono text-xs">
-          ${rows.map(r => {
-            const vA = efficiencyValue(tA, 'off', r.id, 2025);
-            const vB = efficiencyValue(tB, 'def', r.id, 2025);
-            const rA = ranksA.offense[r.id] ?? efficiencyRank(tA, 'off', r.id, 2025);
-            const rB = ranksB.defense[r.id] ?? efficiencyRank(tB, 'def', r.id, 2025);
-            const adv = (rA != null && rB != null) ? computeAdvantage(rA, rB, tA, tB) : null;
-            return `
-              <tr class="matchup-table-row border-b border-subtle/50 hover:bg-slate-800/30">
-                <td class="py-2 text-slate-200 font-sans text-xs">${r.label}</td>
-                <td class="py-2 text-right">${formatMetricVal(r.id, vA)} ${rA != null ? `<span class="text-[10px] text-slate-400">#${rA}</span>` : ''}</td>
-                <td class="py-2 text-right">${formatMetricVal(r.id, vB)} ${rB != null ? `<span class="text-[10px] text-slate-400">#${rB}</span>` : ''}</td>
-                <td class="py-2 text-right font-sans">${renderAdvantageBadge(adv, tA, tB)}</td>
-              </tr>
-            `;
-          }).join('')}
-        </tbody>
-      </table>
-      <div class="mt-2.5 pt-2 border-t border-subtle/50 text-[10px] text-slate-500 font-mono flex justify-between items-center">
-        <span>Source: 2025 nflverse play-by-play (1–32 league ranks)</span>
-        <button onclick="setMatchupSubTab('rushing')" class="text-sky-400 hover:text-sky-300 font-semibold">Full rushing splits →</button>
+        <button onclick="setMatchupSubTab('${isLeft ? 'passing' : 'rushing'}')" class="text-sky-400 hover:text-sky-300 font-semibold">${isLeft ? 'Passing splits →' : 'Rushing splits →'}</button>
       </div>
     </div>
   `;
@@ -4755,10 +4703,10 @@ function renderMatchupPanels() {
 
     main.innerHTML = `
       <div class="grid grid-cols-1 lg:grid-cols-9 gap-4">
-        <!-- CENTER RAIL: Passing & Rushing Matrices (lg:col-span-6) -->
+        <!-- CENTER RAIL: Team A Off vs Team B Def & Team B Off vs Team A Def (lg:col-span-6) -->
         <div class="lg:col-span-6 flex flex-col gap-4">
-          ${renderPreviewPassingMatrix(tA, tB, ranksA, ranksB)}
-          ${renderPreviewRushingMatrix(tA, tB, ranksA, ranksB)}
+          ${renderPreviewOffVsDefMatrix(tA, tB, ranksA, ranksB, true)}
+          ${renderPreviewOffVsDefMatrix(tB, tA, ranksB, ranksA, false)}
         </div>
 
         <!-- RIGHT RAIL: Unit Grades & Insights (lg:col-span-3) -->

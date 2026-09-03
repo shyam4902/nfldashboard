@@ -40,6 +40,7 @@
 
 ## Shipped cleanup
 
+- Combined separate Passing Matrix and Rushing Matrix into symmetrical Offense vs Defense matchup boxes on the Pro Preview page: Box 1 covers Team A Offense vs Team B Defense (spanning passing, rushing, and overall efficiency), and Box 2 covers Team B Offense vs Team A Defense with identical metrics, 2025 measured rates, league ranks, and situational advantages.
 - Enhanced Passing, Rushing, and Trenches matchup comparison tables with formatted 2025 metric values alongside league ranks, honest missing-data handling (`—` instead of `EVEN`), and data source provenance footers.
 - Filtered Overview Key Advantages panel to each team's genuine statistical advantages, replacing empty/mismatched rows with an honest empty state.
 - Switched team unit overall ratings and position group ratings to Mike Clay 2026 model grades (`CLAY_DATA.unit_grades`), eliminating Madden ratings from `computeTeamOverall`, `computeTeamPositionRating`, `computeMacroRating`, and `renderConsensusPower`.
