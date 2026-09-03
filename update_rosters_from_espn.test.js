@@ -164,3 +164,17 @@ test('drops players ESPN repeats inside one transaction sentence', () => {
   assert.equal(new Set(rows.map(r => r.id)).size, rows.length);
   assert.deepEqual(validator(rows), { valid: true, errors: [] });
 });
+
+test('strips practice-squad and active-roster clauses from player names', () => {
+  // Verbatim from the live feed. Without this, the roster gained rows named
+  // "Jammie Robinson to the practice squad" with no ovr/age/jersey.
+  const rows = normalizer({
+    id: 'espn-ps-1',
+    date: '2026-09-02T07:00Z',
+    team: { displayName: 'Atlanta Falcons' },
+    description: 'Signed DEs Zach Harrison and Khalid Kareem and S Jammie Robinson to the practice squad. Promoted LB Josh Woods from the practice squad to the active roster.'
+  });
+  const names = rows.map(r => r.player_name);
+  assert.ok(names.includes('Jammie Robinson'), `got ${JSON.stringify(names)}`);
+  assert.ok(!names.some(n => /practice squad|active roster/i.test(n)), `got ${JSON.stringify(names)}`);
+});

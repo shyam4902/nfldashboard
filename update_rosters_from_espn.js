@@ -93,7 +93,10 @@ function canonicalTeamName(name) {
 
 function cleanName(raw) {
   return raw
-    .replace(/\s+(with an injury designation|from injured reserve|with a settlement|to a contract|to a \d+-year[^\.]*|\(injured\)|ending his season|after they cleared waivers|to practice squad|from practice squad).*$/i, "")
+    // Roster-status clauses trail the name in the live feed ("to the practice
+    // squad", "from the active/PUP list", "on injured reserve"). No player name
+    // contains roster/squad/list/reserve/exempt, so cutting at the first one is safe.
+    .replace(/\s+(?:with an injury designation|with a settlement|to a contract|to a \d+-year[^\.]*|\(injured\)|ending his season|after they cleared waivers|(?:to|from|on)\s+(?:the\s+)?[\w\/\- ]*?\b(?:roster|squad|list|reserve|exempt)\b).*$/i, "")
     .replace(/^and\s+/i, "")
     .replace(/,\s*and\s+/i, ", ")
     .replace(/\s*\([^)]*\)/g, "")
