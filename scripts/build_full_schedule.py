@@ -116,8 +116,9 @@ def main():
         "games": games,
     }
     # atomic publish: write a same-dir temp then rename so an interrupted
-    # build can never leave a truncated tracked artifact in place
-    tmp = path.with_suffix(path.suffix + ".tmp")
+    # build can never leave a truncated tracked artifact in place. The pid
+    # suffix keeps concurrent builds from sharing (and corrupting) one temp.
+    tmp = path.with_name(path.name + f".tmp.{os.getpid()}")
     tmp.write_text(json.dumps(out, indent=2) + "\n")
     os.replace(tmp, path)
     weeks = sorted({g["week"] for g in games})

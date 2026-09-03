@@ -599,8 +599,9 @@ def main():
 
     output_path = os.path.join(OUTPUT_DIR, 'nfldashboard', 'clay_projections_2026.json')
     # atomic publish: write a same-dir temp then rename so an interrupted
-    # extraction can never leave a truncated tracked artifact in place
-    tmp_path = output_path + '.tmp'
+    # extraction can never leave a truncated tracked artifact in place. The pid
+    # suffix keeps concurrent extractions from sharing one temp path.
+    tmp_path = f"{output_path}.tmp.{os.getpid()}"
     with open(tmp_path, 'w') as f:
         json.dump(all_data, f, indent=2)
     os.replace(tmp_path, output_path)
