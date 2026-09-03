@@ -193,6 +193,10 @@ function checkAsset(asset, root, manifest, problems, notes) {
   // ── freshness provenance ──
   if (asset.freshness_key && manifest) {
     const entry = manifest.sources[asset.freshness_key];
+    if (!isPlainObject(entry)) {
+      problems.push(`${asset.freshness_key}: manifest source is not an object`);
+      return;
+    }
     if (asset.freshness_mode === 'embedded') {
       // Content-based: an embedded top-level generated_at survives any copy and
       // any checkout, so it can be compared exactly against the manifest.
