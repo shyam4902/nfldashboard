@@ -151,8 +151,10 @@ with sync_playwright() as p:
         successes.append("Week 2 cards carry live market lines")
     else:
         failures.append("Week 2 cards missing market lines")
+    page.screenshot(path=f"{SCREENSHOT_DIR}/11_schedule_week2.png")
     page.click('[data-tab="teams"]')
     page.wait_for_timeout(500)
+    page.screenshot(path=f"{SCREENSHOT_DIR}/12_teams_overview.png")
     move_tabs = page.locator('#teamsSubTabs .teams-subtab')
     if move_tabs.count() == 3 and page.locator('#teamsSubTabs', has_text='Moves').count():
         successes.append("Teams sub-tabs expose Overview, Moves, and Power Index")
@@ -160,6 +162,7 @@ with sync_playwright() as p:
         failures.append("Teams sub-tabs incomplete")
     page.locator('#teamsSubTabs .teams-subtab', has_text='Moves').click()
     page.wait_for_timeout(400)
+    page.screenshot(path=f"{SCREENSHOT_DIR}/13_teams_moves.png")
     moves_text = page.inner_text('#movesContainer')
     if 'league activity wire' in moves_text.lower() and 'moves' in moves_text.lower() and page.locator('#movesNewswire .move-row').count() > 0:
         successes.append("Moves date-grouped newswire rendered with live transactions")
@@ -319,6 +322,19 @@ with sync_playwright() as p:
 
     page.keyboard.press("Escape")
     page.wait_for_timeout(500)
+
+    # 8. Test Matchup Center & Pro Preview
+    print("Testing Matchup Center & Pro Preview...")
+    page.click('[data-tab="matchup"]')
+    page.wait_for_timeout(600)
+    page.screenshot(path=f"{SCREENSHOT_DIR}/14_matchup_center.png")
+    # Click Pro Preview subtab
+    pro_tab = page.locator('#matchupViewMode button, [onclick*="preview"], [onclick*="pro"]')
+    if pro_tab.count() > 0:
+        page.locator('button', has_text='Pro Preview').first.click()
+        page.wait_for_timeout(600)
+        page.screenshot(path=f"{SCREENSHOT_DIR}/15_matchup_pro_preview.png")
+        successes.append("Matchup Pro Preview subpage rendered and captured")
 
     browser.close()
 

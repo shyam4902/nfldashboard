@@ -1610,9 +1610,9 @@ async function loadAllData() {
       pos: p.pos,
       age: p.age,
       ovr: p.ovr,
-      isRookie: p.is_rookie,
+      isRookie: p.is_rookie === true || p.is_rookie === 'Yes',
       acquisitionType: p.acquisition_type,
-      isNew: p.is_rookie || p.acquisition_type === 'fa' || p.acquisition_type === 'trade'
+      isNew: (p.is_rookie === true || p.is_rookie === 'Yes') || p.acquisition_type === 'fa' || p.acquisition_type === 'trade'
     });
   }
 }
@@ -2752,16 +2752,24 @@ function renderTeams(){
   }).join(' · ');
 }
 
-const renderTile=(team)=>{
+  const renderTile=(team)=>{
     const abbr=DATA.teamAbbr[team];
     const color=DATA.teamColors[team];
-    const cap=DATA.capData[team];
+    const cap=DATA.capData[team]||{};
     const tEsc=team.replace(/'/g,"\\'");
+    let standing = null;
+    if (CLAY_DATA && CLAY_DATA.standings && CLAY_DATA.standings.divisions) {
+      for (const teams of Object.values(CLAY_DATA.standings.divisions)) {
+        const found = teams.find(t => t.name === team);
+        if (found) { standing = found; break; }
+      }
+    }
+    const winsLabel = standing?.wins != null ? `${standing.wins} Proj W` : (cap.status || '');
     return `<div class="team-tile" id="tile-${abbr}" onclick="compareModeActive?selectForCompare('${tEsc}'):openRoster('${tEsc}')" style="border-top:3px solid ${color};">
-      <div style="font-size:17px;font-weight:900;color:#e2e8f0;letter-spacing:-0.5px">${abbr}</div>
-      <div style="font-size:9px;color:#64748b;margin-top:2px;line-height:1.2">${team}</div>
-      <div style="font-size:8px;font-weight:700;margin-top:3px" class="${getStatusColor(cap.status)}">${cap.status}</div>
-      <div style="font-size:8px;color:#a78bfa;margin-top:3px;font-weight:700" title="Future draft capital — open the team and click Draft Capital for detail">${draftCapitalSummary(team)}</div>
+      <div style="font-size:16px;font-weight:700;color:#f8fafc;letter-spacing:-0.5px" class="font-mono">${abbr}</div>
+      <div style="font-size:10px;color:#94a3b8;margin-top:2px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${team}</div>
+      ${winsLabel ? `<div style="font-size:9px;font-weight:600;margin-top:3px;color:#38bdf8" class="font-mono">${winsLabel}</div>` : ''}
+      <div style="font-size:9px;color:#a78bfa;margin-top:2px;font-weight:500" class="font-mono" title="Future draft capital — open the team and click Draft Capital for detail">${draftCapitalSummary(team)}</div>
     </div>`;
   };
 
@@ -5030,7 +5038,7 @@ loadAllData().then(() => {
     teams: DATA.teams.length,
     players: DATA.players.length,
     transactions: DATA.transactions.length,
-    rookies: DATA.players.filter(p => p.is_rookie).length,
+    rookies: DATA.players.filter(p => p.is_rookie === true || p.is_rookie === 'Yes').length,
     rated: DATA.players.filter(p => p.ovr !== null).length
   });
   DATA.rankings = computeAllRankings();
@@ -6391,18 +6399,21 @@ async function openPlayerModal(name, teamHint = '') {
   const ovr = p.ovr !== null && p.ovr !== undefined ? p.ovr : null;
   const ratingBadgeClass = ovr ? (ovr >= 90 ? 'rating-elite' : ovr >= 80 ? 'rating-star' : ovr >= 70 ? 'rating-solid' : 'rating-dev') : '';
 
+  const isRookie = p.is_rookie === true || p.is_rookie === 'Yes';
+  const isNew = p.isNew || isRookie || p.acquisition_type === 'fa' || p.acquisition_type === 'trade';
+
   let html = `
     <div class="flex items-start justify-between border-b border-slate-700/50 pb-4 mb-4">
       <div class="flex items-center gap-3">
         <div class="w-14 h-14 rounded-xl bg-slate-800 border border-slate-700 flex flex-col items-center justify-center text-center">
-          <span class="text-xs font-bold text-slate-400">${pos}</span>
-          <span class="text-sm font-black text-white">${jersey || '–'}</span>
+          <span class="text-xs font-bold text-slate-400 font-mono">${pos}</span>
+          <span class="text-sm font-semibold text-white font-mono">${jersey || '–'}</span>
         </div>
         <div>
           <div class="flex items-center gap-2">
-            <h2 class="text-2xl font-black text-white">${name}</h2>
-            ${p.is_rookie ? '<span class="badge-rook">ROOKIE</span>' : ''}
-            ${p.isNew ? '<span class="badge-new">NEW</span>' : ''}
+            <h2 class="text-2xl font-bold text-white tracking-tight">${name}</h2>
+            ${isRookie ? '<span class="badge-rook">ROOKIE</span>' : ''}
+            ${isNew && !isRookie ? '<span class="badge-new">NEW</span>' : ''}
           </div>
           <div class="text-xs text-slate-400 mt-0.5 flex items-center gap-2">
             <span class="font-semibold text-slate-300">${team}</span>
@@ -6535,13 +6546,13 @@ async function openPlayerModal(name, teamHint = '') {
       const evColor = pr.ev_pct > 0 ? 'text-emerald-400 font-bold' : 'text-slate-400';
       html += `
         <tr class="border-b border-slate-800/50 hover:bg-slate-800/30">
-          <td class="py-1.5 px-2 font-semibold text-slate-300">${propsMarketLabels[pr.market] || pr.market}</td>
-          <td class="py-1.5 px-2 text-center uppercase font-bold text-[10px] ${pr.side==='over'?'text-emerald-400':'text-cyan-400'}">${pr.side}</td>
-          <td class="py-1.5 px-2 text-center font-bold text-white">${pr.line}</td>
-          <td class="py-1.5 px-2 text-center text-slate-400">${pr.venue}</td>
-          <td class="py-1.5 px-2 text-center text-slate-300">${pr.odds || '—'}</td>
+          <td class="py-1.5 px-2 font-medium text-slate-300">${propsMarketLabels[pr.market] || pr.market}</td>
+          <td class="py-1.5 px-2 text-center uppercase font-medium font-mono text-[10px] ${pr.side==='over'?'text-emerald-400':'text-sky-400'}">${pr.side}</td>
+          <td class="py-1.5 px-2 text-center font-mono font-medium text-white">${pr.line}</td>
+          <td class="py-1.5 px-2 text-center font-mono text-[11px] text-slate-400">${pr.venue}</td>
+          <td class="py-1.5 px-2 text-center font-mono font-medium text-slate-300">${pr.odds || '—'}</td>
           <td class="py-1.5 px-2 text-center">${valueLabelHtml(pr.edge_pct, pr.ev_pct)}</td>
-          <td class="py-1.5 px-2 text-center"><button onclick="event.stopPropagation();toggleOddsCompare('${pr.player_id}|${pr.market}|${pr.side}', 0)" class="text-[10px] px-1.5 py-0.5 rounded border border-slate-600 text-slate-300 hover:border-cyan-400 hover:text-cyan-300" title="Compare this line across all venues">⊞</button></td>
+          <td class="py-1.5 px-2 text-center"><button onclick="event.stopPropagation();toggleOddsCompare('${pr.player_id}|${pr.market}|${pr.side}', 0)" class="text-[10px] font-mono px-1.5 py-0.5 rounded border border-slate-600 text-slate-300 hover:border-sky-400 hover:text-sky-300" title="Compare this line across all venues">⊞</button></td>
         </tr>
       `;
     }
@@ -6609,14 +6620,14 @@ async function openPlayerModal(name, teamHint = '') {
       }
       html += `
       <div class="mb-5 glass rounded-xl p-4">
-        <div class="text-xs font-bold uppercase tracking-wider text-cyan-400 mb-3 flex items-center gap-2">
+        <div class="text-xs font-bold uppercase tracking-wider text-sky-400 mb-3 flex items-center gap-2">
           <span>📊</span> 2024 Form — ${propsMarketLabels[withLog.market] || withLog.market}
         </div>
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-3 text-xs">
-          <div class="bg-slate-800/60 p-2 rounded border border-slate-700/50 text-center"><div class="text-[9px] text-slate-400">2024 total (${ins.games_2024} games)</div><div class="text-sm font-bold text-white">${ins.season_total_2024}</div></div>
-          <div class="bg-slate-800/60 p-2 rounded border border-slate-700/50 text-center"><div class="text-[9px] text-slate-400">Per-game avg</div><div class="text-sm font-bold text-cyan-400">${Math.round(ins.season_total_2024 / ins.games_2024)}</div></div>
-          <div class="bg-slate-800/60 p-2 rounded border border-slate-700/50 text-center"><div class="text-[9px] text-slate-400">Weekly over rate</div><div class="text-sm font-bold text-emerald-400">${ins.weekly_over_rate}%</div></div>
-          <div class="bg-slate-800/60 p-2 rounded border border-slate-700/50 text-center"><div class="text-[9px] text-slate-400">Last-10 over rate</div><div class="text-sm font-bold text-amber-400">${ins.weekly_over_rate_l10 != null ? ins.weekly_over_rate_l10 + '%' : '—'}</div></div>
+          <div class="bg-slate-800/60 p-2 rounded border border-slate-700/50 text-center"><div class="text-[9px] text-slate-400">2024 total (${ins.games_2024} games)</div><div class="text-sm font-semibold font-mono text-white">${ins.season_total_2024}</div></div>
+          <div class="bg-slate-800/60 p-2 rounded border border-slate-700/50 text-center"><div class="text-[9px] text-slate-400">Per-game avg</div><div class="text-sm font-semibold font-mono text-sky-400">${Math.round(ins.season_total_2024 / ins.games_2024)}</div></div>
+          <div class="bg-slate-800/60 p-2 rounded border border-slate-700/50 text-center"><div class="text-[9px] text-slate-400">Weekly over rate</div><div class="text-sm font-semibold font-mono text-emerald-400">${ins.weekly_over_rate}%</div></div>
+          <div class="bg-slate-800/60 p-2 rounded border border-slate-700/50 text-center"><div class="text-[9px] text-slate-400">Last-10 over rate</div><div class="text-sm font-semibold font-mono text-amber-400">${ins.weekly_over_rate_l10 != null ? ins.weekly_over_rate_l10 + '%' : '—'}</div></div>
         </div>
         <div class="text-[11px] text-slate-400">Current ${propsMarketLabels[withLog.market] || withLog.market} line: <b class="text-white">${withLog.line}</b> — in 2024 this player totalled ${ins.season_total_2024}, so the season line would have ${verdict}. Per-game equivalent of the line: <b class="text-slate-200">${ins.per_game_equivalent}</b>${ins.streak && ins.streak.count > 1 ? ` · finished 2024 on a ${ins.streak.count}-game ${ins.streak.type} streak` : ''}.</div>
         ${gameLogTable}
@@ -6941,18 +6952,18 @@ function renderPlayerCompare() {
         const absDiff = Math.abs(diff);
         const pctDiff = st.k2 !== 0 ? Math.abs((absDiff / st.k2) * 100).toFixed(1) : '–';
         if (p1Wins) {
-          advHtml = `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-cyan-600/30 text-cyan-300 border border-cyan-500/40">${d1.name} +${absDiff}${st.unit} (${pctDiff}%)</span>`;
+          advHtml = `<span class="px-2 py-0.5 rounded text-[10px] font-medium font-mono bg-sky-600/20 text-sky-300 border border-sky-500/30">${d1.name} +${absDiff}${st.unit} (${pctDiff}%)</span>`;
         } else {
-          advHtml = `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-600/30 text-amber-300 border border-amber-500/40">${d2.name} +${absDiff}${st.unit} (${pctDiff}%)</span>`;
+          advHtml = `<span class="px-2 py-0.5 rounded text-[10px] font-medium font-mono bg-amber-600/20 text-amber-300 border border-amber-500/30">${d2.name} +${absDiff}${st.unit} (${pctDiff}%)</span>`;
         }
       }
     }
 
     html += `
       <tr class="border-b border-slate-800/40 hover:bg-slate-800/30 transition">
-        <td class="py-2 px-3 font-semibold text-slate-300">${st.label}</td>
-        <td class="py-2 px-3 text-center font-bold text-cyan-300">${st.k1}${st.unit || ''}</td>
-        <td class="py-2 px-3 text-center font-bold text-amber-300">${st.k2}${st.unit || ''}</td>
+        <td class="py-2 px-3 font-medium text-slate-300">${st.label}</td>
+        <td class="py-2 px-3 text-center font-mono font-medium text-sky-400">${st.k1}${st.unit || ''}</td>
+        <td class="py-2 px-3 text-center font-mono font-medium text-amber-300">${st.k2}${st.unit || ''}</td>
         <td class="py-2 px-3 text-center">${advHtml}</td>
       </tr>
     `;
