@@ -9,6 +9,7 @@
 ## Current state
 
 - The dashboard is a five-view static app: Home, Schedule, Matchup, Teams, and Projections.
+- Matchup Center uses a three-column modular quant layout (Variant B): Left rail displays win probability, consensus market lines (NFLverse), 2025 situational efficiency strip, and game kickoff telemetry. Center rail renders Passing and Rushing efficiency matrices with live EPA/att rankings and edge indicators. Right rail renders Clay 2026 unit matchup power, dual skill radar, verified matchup insights, and tactical launchers.
 - Teams contains Overview, Moves, and Power Index. The former top-level Transactions route redirects to Teams → Moves for compatibility.
 - Props and win totals are linked to the Edge Analytics app; they are not dashboard tabs.
 - Clay projected starters remain in the extraction artifact but are not a dashboard view. Current roster depth is shown through Teams.
