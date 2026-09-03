@@ -11,6 +11,12 @@ DASHBOARD_DIR = os.path.dirname(os.path.abspath(__file__))
 SCREENSHOT_DIR = os.path.join(DASHBOARD_DIR, "screenshots")
 os.makedirs(SCREENSHOT_DIR, exist_ok=True)
 
+# Hermetic data fixtures (default): intercept Supabase + nflverse with
+# committed-data stand-ins. DASH_LIVE_NETWORK=1 opts into real services.
+FIXTURES_DIR = os.path.join(DASHBOARD_DIR, "test-fixtures")
+sys.path.insert(0, FIXTURES_DIR)
+import browser_fixtures  # noqa: E402
+
 
 class Handler(http.server.SimpleHTTPRequestHandler):
     def __init__(self, *args, **kwargs):
@@ -43,6 +49,7 @@ try:
         page = browser.new_page(viewport={"width": 1600, "height": 900})
         console_msgs = []
         page.on("console", lambda msg: console_msgs.append(f"[{msg.type}] {msg.text}"))
+        browser_fixtures.install(page, DASHBOARD_DIR)
 
         page.goto("http://127.0.0.1:8766/index.html")
         page.wait_for_load_state("networkidle")

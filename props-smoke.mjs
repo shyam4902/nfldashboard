@@ -20,6 +20,7 @@ try {
 import { createServer } from 'node:http';
 import { readFile } from 'node:fs/promises';
 import { extname, join } from 'node:path';
+import { installFixtures } from './test-fixtures/supabase-fixtures.mjs';
 
 const root = process.cwd();
 await access(join(root, 'index.html'));
@@ -61,6 +62,13 @@ let browser;
 try {
   browser = await chromium.launch();
   const page = await browser.newPage();
+// Hermetic by default: intercept Supabase + nflverse with committed-data
+// fixtures. LIVE_SMOKE=1 opts into real-network smoke (see test-fixtures/README.md).
+if (process.env.LIVE_SMOKE === '1') {
+  console.log('[browser fixtures] LIVE_SMOKE=1 — live network mode, no interception');
+} else {
+  await installFixtures(page, root);
+}
 const errors = [];
 page.on('pageerror', e => errors.push(String(e)));
 page.on('console', m => { if (m.type() === 'error') errors.push(m.text()); });

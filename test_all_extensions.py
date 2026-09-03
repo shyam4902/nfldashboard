@@ -14,6 +14,12 @@ DASHBOARD_DIR = os.path.dirname(os.path.abspath(__file__))
 SCREENSHOT_DIR = os.path.join(DASHBOARD_DIR, "screenshots_expansion")
 os.makedirs(SCREENSHOT_DIR, exist_ok=True)
 
+# Hermetic data fixtures (default): intercept Supabase + nflverse with
+# committed-data stand-ins. DASH_LIVE_NETWORK=1 opts into real services.
+FIXTURES_DIR = os.path.join(DASHBOARD_DIR, "test-fixtures")
+sys.path.insert(0, FIXTURES_DIR)
+import browser_fixtures  # noqa: E402
+
 class Handler(http.server.SimpleHTTPRequestHandler):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, directory=DASHBOARD_DIR, **kwargs)
@@ -39,6 +45,7 @@ with sync_playwright() as p:
         if msg.type == "error":
             console_errors.append(msg.text)
     page.on("console", handle_console)
+    browser_fixtures.install(page, DASHBOARD_DIR)
 
     page.goto(f"http://127.0.0.1:{PORT}/index.html")
     page.wait_for_load_state("networkidle")
