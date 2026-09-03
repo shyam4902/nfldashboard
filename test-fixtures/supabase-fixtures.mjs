@@ -2,7 +2,7 @@
 //
 // Intercepts the dashboard's runtime DATA feeds (Supabase REST, nflverse
 // games.csv, espncdn logos) with deterministic fixtures derived from committed
-// repo data — see test-fixtures/README.md. CDN libraries still load from the
+// repo data - see test-fixtures/README.md. CDN libraries still load from the
 // network. Set LIVE_SMOKE=1 before running props-smoke.mjs to skip
 // interception and hit real services.
 import { readFile } from 'node:fs/promises';

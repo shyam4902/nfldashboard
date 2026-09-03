@@ -1,15 +1,15 @@
 // Hermetic concurrent-publisher regression.
 //
 // Every tracked-artifact writer must publish via a same-dir temp + atomic
-// rename, with a temp name UNIQUE per process — otherwise two concurrent
+// rename, with a temp name UNIQUE per process - otherwise two concurrent
 // publishers (two syncs, two builds) share one fixed temp path, interleave
 // writes, and can publish truncated or mixed bytes.
 //
 // This test exercises the REAL writers against throwaway targets:
-//   1. scripts/atomic-write.js — two concurrent node processes write the same
+//   1. scripts/atomic-write.js - two concurrent node processes write the same
 //      target with different large payloads; the survivor must be one complete
 //      payload, never a mix, and no temp files may remain.
-//   2. scripts/build_draft_capital.py — two concurrent python3 runs (copied to
+//   2. scripts/build_draft_capital.py - two concurrent python3 runs (copied to
 //      a temp tree so their output path stays inside the tempdir); both must
 //      exit 0 and produce output byte-identical to a serial reference run.
 //
@@ -95,7 +95,7 @@ test('two concurrent python draft-capital builds complete with identical, valid 
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'concurrent-python-fixture-'));
   try {
     // The builder derives its output path from __file__ (parent.parent), so a
-    // copied script writes inside the temp tree — fully hermetic.
+    // copied script writes inside the temp tree - fully hermetic.
     fs.mkdirSync(path.join(dir, 'scripts'));
     fs.copyFileSync(DRAFT_CAPITAL, path.join(dir, 'scripts', 'build_draft_capital.py'));
 

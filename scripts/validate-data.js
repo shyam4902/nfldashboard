@@ -88,22 +88,22 @@ function checkArrayItems(arr, itemFields, label, problems) {
 }
 
 function checkAsset(asset, root, manifest, problems, notes) {
-  const tag = asset.id;
-
-  // ── inventory entry shape ──
+  // ── inventory entry shape: guard first, dereference ids only after ──
   if (!isPlainObject(asset)) {
     problems.push('inventory contains a non-object asset entry');
     return;
   }
+  const tag = asset.id;
 
   // ── runtime assets: documented contract only, never touched over the network ──
   if (asset.kind === 'runtime') {
-    for (const f of ['required', 'failure_behavior', 'fallback_policy']) {
+    if (typeof asset.required !== 'boolean') {
+      problems.push(`[${tag}] runtime asset "required" must be a boolean`);
+    }
+    for (const f of ['failure_behavior', 'fallback_policy']) {
       const v = asset[f];
-      if (typeof v !== 'boolean' && typeof v !== 'string') {
-        problems.push(`[${tag}] runtime asset must record "${f}" (boolean required, string behavior)`);
-      } else if (f !== 'required' && !String(v).trim()) {
-        problems.push(`[${tag}] runtime asset "${f}" must not be empty`);
+      if (typeof v !== 'string' || !v.trim()) {
+        problems.push(`[${tag}] runtime asset "${f}" must be a non-empty string`);
       }
     }
     return;

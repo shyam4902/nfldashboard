@@ -3,12 +3,12 @@
 // Builds a throwaway dashboard-shaped fixture workspace under the OS tmpdir,
 // writes controlled JSON artifacts, and runs the REAL validator module against
 // it. No live data, App Support, Supabase, network access, or current-workspace
-// state is read — everything lives in the temp fixture. The real inventory
+// state is read - everything lives in the temp fixture. The real inventory
 // (scripts/data-assets.json) is copied so the schema contract under test is
 // the shipped one.
 //
 // Provenance model under test: file mtimes are NOT provenance (Git discards
-// them on checkout — a clean clone must validate). The manifest is checked for
+// them on checkout - a clean clone must validate). The manifest is checked for
 // internal consistency only (as_of <= generated_at, age/status derived from
 // as_of, max_age matches the inventory) plus the exact embedded generated_at
 // comparison for props-board.json, whose timestamp lives in file content and
@@ -105,7 +105,7 @@ function buildWorkspace(dir) {
   fs.writeFileSync(path.join(dir, 'draft-capital.json'), JSON.stringify({ capital: {} }));
 
   // freshness manifest: all 8 sources, internally consistent by construction.
-  // No file mtime was set — the manifest must hold on its own.
+  // No file mtime was set - the manifest must hold on its own.
   const sources = {};
   for (const [key, asOf] of Object.entries(VINTAGES)) {
     const max = key === 'props_board' ? 24
@@ -190,7 +190,7 @@ test('missing required asset fails; missing optional asset passes', () => {
   const dir = makeWorkspace();
   try {
     fs.rmSync(path.join(dir, 'data', 'shared', 'clay_projections_2026.json'));
-    fs.rmSync(path.join(dir, 'draft-capital.json')); // optional — must not fail
+    fs.rmSync(path.join(dir, 'draft-capital.json')); // optional - must not fail
     const result = validate(dir);
     assert.equal(result.ok, false);
     assert.ok(problemsFor(result, 'clay_projections').some(p => /copy .* is missing/.test(p)), JSON.stringify(problemsFor(result, 'clay_projections')));
@@ -261,7 +261,7 @@ test('absent freshness manifest is acceptable (optional by design)', () => {
 });
 
 // ── malformed shapes: null / primitives / arrays where objects are required,
-//    and non-object array entries — all must be normal validation messages,
+//    and non-object array entries - all must be normal validation messages,
 //    never uncaught exceptions. ─────────────────────────────────────────────
 
 test('null, primitive, and wrong-container data are rejected cleanly', () => {
@@ -365,18 +365,44 @@ test('runtime assets are inventoried with required status, failure behavior, and
   } finally { cleanup(dir); }
 });
 
-test('runtime asset missing failure behavior is a normal validation problem', () => {
+test('non-object entries inside inventory.assets are rejected cleanly', () => {
   const dir = makeWorkspace();
   try {
     const invPath = path.join(dir, 'scripts', 'data-assets.json');
     const inv = JSON.parse(fs.readFileSync(invPath, 'utf8'));
-    delete inv.assets.find(a => a.id === 'supabase_nfl_teams').failure_behavior;
+    inv.assets.push(null);
+    inv.assets.push('a string entry');
     fs.writeFileSync(invPath, JSON.stringify(inv));
-    const result = validate(dir); // must not throw
+    const result = validate(dir); // must not throw (asset.id dereference is guarded)
     assert.equal(result.ok, false);
-    assert.ok(result.problems.some(p =>
-      /supabase_nfl_teams.*must record "failure_behavior"/.test(p)), result.problems.join('; '));
+    const malformed = result.results.filter(r => r.id === '(malformed)');
+    assert.equal(malformed.length, 2);
+    for (const m of malformed) {
+      assert.ok(m.problems.some(p => /non-object asset entry/.test(p)), JSON.stringify(m.problems));
+    }
   } finally { cleanup(dir); }
+});
+
+test('runtime asset schema mutations (required not boolean, empty behavior) are normal problems', () => {
+  const mutations = [
+    { mutate: a => { a.required = 'yes'; }, expect: /supabase_nfl_teams.*"required" must be a boolean/ },
+    { mutate: a => { a.failure_behavior = ''; }, expect: /supabase_nfl_teams.*"failure_behavior" must be a non-empty string/ },
+    { mutate: a => { a.fallback_policy = '   '; }, expect: /supabase_nfl_teams.*"fallback_policy" must be a non-empty string/ },
+    { mutate: a => { delete a.failure_behavior; }, expect: /supabase_nfl_teams.*"failure_behavior" must be a non-empty string/ },
+  ];
+  for (const m of mutations) {
+    const dir = makeWorkspace();
+    try {
+      const invPath = path.join(dir, 'scripts', 'data-assets.json');
+      const inv = JSON.parse(fs.readFileSync(invPath, 'utf8'));
+      m.mutate(inv.assets.find(a => a.id === 'supabase_nfl_teams'));
+      fs.writeFileSync(invPath, JSON.stringify(inv));
+      const result = validate(dir); // must not throw
+      assert.equal(result.ok, false, m.expect.toString());
+      assert.ok(result.problems.some(p => m.expect.test(p)),
+        `expected ${m.expect}, got ${result.problems.join('; ')}`);
+    } finally { cleanup(dir); }
+  }
 });
 
 test('CLI exits 0 on a clean workspace and 1 on a broken one', () => {

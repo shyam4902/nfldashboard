@@ -9,7 +9,7 @@
     "sort_date": "2026-08-24",
     "date_str": "Aug 24, 2026",
     "blockbuster": true,
-    "detail": "Restructured contract (test fixture row — not live Supabase data)."
+    "detail": "Restructured contract (test fixture row - not live Supabase data)."
   },
   {
     "id": "fixture-tx-002",

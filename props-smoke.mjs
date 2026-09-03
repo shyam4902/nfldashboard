@@ -65,7 +65,7 @@ try {
 // Hermetic by default: intercept Supabase + nflverse with committed-data
 // fixtures. LIVE_SMOKE=1 opts into real-network smoke (see test-fixtures/README.md).
 if (process.env.LIVE_SMOKE === '1') {
-  console.log('[browser fixtures] LIVE_SMOKE=1 — live network mode, no interception');
+  console.log('[browser fixtures] LIVE_SMOKE=1: live network mode, no interception');
 } else {
   await installFixtures(page, root);
 }

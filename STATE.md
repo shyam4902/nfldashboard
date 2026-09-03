@@ -29,10 +29,10 @@
 ## Backend hardening (2026-09-03)
 
 - `scripts/data-assets.json` is the single inventory of dashboard data assets: canonical copy, duplicated deploy copies, required/optional status, freshness key and threshold, browser fallbacks, and producer for each asset (including the research handoffs that are freshness-tracked but not deployed).
-- `scripts/validate-data.js` is the one boring validator: `node scripts/validate-data.js` checks JSON parsing, required fields and shapes, byte-identity of every duplicated deploy copy, browser-fallback presence, freshness provenance (props-board's embedded `generated_at` matched exactly; everything else verified for internal manifest consistency), and the bidirectional manifest ⇄ inventory contract. File mtimes are not provenance — Git discards them on checkout, so a clean clone must validate; exact source vintages are verified producer-side (fantasyfootball freshness-provenance test). `validate_data.test.js` covers it hermetically, including clean-checkout semantics and malformed-shape fixtures.
+- `scripts/validate-data.js` is the one boring validator: `node scripts/validate-data.js` checks JSON parsing, required fields and shapes, byte-identity of every duplicated deploy copy, browser-fallback presence, freshness provenance (props-board's embedded `generated_at` matched exactly; everything else verified for internal manifest consistency), and the bidirectional manifest ⇄ inventory contract. File mtimes are not provenance: Git discards them on checkout, so a clean clone must validate. Exact source vintages are verified producer-side (fantasyfootball freshness-provenance test). `validate_data.test.js` covers it hermetically, including clean-checkout semantics and malformed-shape fixtures.
 - Publishing writes are atomic with temp names unique per process: `scripts/atomic-write.js` (pid + counter) backs the roster writers; the schedule/draft-capital/Clay builders use pid-suffixed temps + `os.replace`; `fantasyfootball/scripts/sync-shared-data.sh` uses `$$`-suffixed temps. Concurrent publishers cannot collide, and an interrupted run cannot leave a truncated tracked artifact. `concurrent_publish.test.js` runs two concurrent publishers of each kind hermetically.
 - The inventory records the runtime dependencies (Supabase `nfl_teams`/`nfl_players`/`nfl_transactions`, the nflverse games feed) with required status, failure behavior, fallback policy, and test-fixture mapping. The validator never contacts the network.
-- Browser tests are hermetic against project data: Supabase REST, nflverse games.csv, and espncdn logos are intercepted with deterministic fixtures derived from committed data (`test-fixtures/README.md`). Real-network runs are explicit opt-ins (`DASH_LIVE_NETWORK=1`, `LIVE_SMOKE=1`).
+- Browser tests are deterministic data-feed tests: Supabase REST, nflverse games.csv, and espncdn logos are intercepted with fixtures derived from committed data (`test-fixtures/README.md`). They still load CDN libraries (Tailwind, supabase-js, fonts) over the network. Real-network runs are explicit opt-ins (`DASH_LIVE_NETWORK=1`, `LIVE_SMOKE=1`).
 - The sync script is the sole writer of every nfldashboard deploy copy, including the root `props-board.json` and `team_season_efficiency.json` browser fallbacks whose sources live outside the dashboard — the root props fallback had silently drifted one export behind; the validator now catches any future drift.
 - `props-smoke.mjs` serves the versioned `data/shared/` deploy copies (not the unversioned workspace handoff), so the browser test exercises the same bytes the Pages deploy ships.
 - Removed dead `scripts/inseason_sync.py` (zero consumers, fabricated `last_updated`) and the legacy `com.nfldashboard.rosterupdate.plist` template (job never installed; only `props-scan` and `rostersync` are loaded). `update_rosters_from_espn.js` stays as the dry-run normalization tool.
@@ -40,6 +40,10 @@
 
 ## Shipped cleanup
 
+- Matchup Center Pro Preview subpage overhauled: restricted all EPA and efficiency metrics strictly to 2025 measured nflverse data (seasons 2012–2024 reserved for research).
+- Inversion fix applied to defensive efficiency ranking: defensive `sack_rate` and `turnover_rate` now sort descending so league-leading sack and turnover units rank #1 in the NFL.
+- Unit Grades calculation and UI overhauled: multi-unit positions properly averaged (`[DI, ED]` for Pass Rush, `[CB, S]` for Secondary), expanded to 5 positional matchups, and visual bars now scale dynamically to true percentage widths (`ga * 10%`, `gb * 10%`).
+- Eliminated all hardcoded mock data and fake fallbacks from Pro Preview Passing Matrix, Rushing Matrix, Unit Grades, and Preview Insights.
 - Browser-side summer roster, transaction, cap-space, and synthetic-player overrides were removed.
 - The stale global “Top WR” walkthrough claim was relabeled as a source-scoped Clay example.
 - Dashboard tests use repository-relative paths for their dashboard files and runtime transaction data rather than a named player fixture.
@@ -77,7 +81,7 @@ python3 -m py_compile test_all_extensions.py test_projections.py test_schedule_d
 - Some Clay extraction sections remain available only in JSON, including returners, kickers, unit ranks, and projected starters.
 - Launchd plists are portable templates and require a machine-specific checkout path and credentials before installation.
 - The app remains intentionally single-file and has no build step; a module split would be a separate migration requiring browser regression coverage.
-- Browser tests are hermetic against project data feeds but still load third-party CDN libraries (Tailwind, supabase-js, fonts) from the network; full offline hermeticity would require vendoring those.
+- Browser tests are deterministic data-feed tests, not fully offline tests: third-party CDN libraries (Tailwind, supabase-js, fonts) still load from the network; full offline isolation would require vendoring them.
 
 ## Next work
 

@@ -3,19 +3,19 @@
 Intercepts exactly three request families so the Python Playwright suites do
 not depend on live services or today's database contents:
 
-  * Supabase REST (nedyoydylpbjvihaoexy.supabase.co) — nfl_teams,
+  * Supabase REST (nedyoydylpbjvihaoexy.supabase.co) - nfl_teams,
     nfl_players, nfl_transactions. Players come from the COMMITTED
     nfl_rosters_2026.json snapshot (the deploy artifact of the same table,
     with team_id linkage added); teams are derived from it; transactions come
     from the static, clearly-labeled test fixture nfl_transactions.json.
-  * nflverse games.csv (raw.githubusercontent.com/nflverse/**) — synthesized
+  * nflverse games.csv (raw.githubusercontent.com/nflverse/**) - synthesized
     deterministically from the COMMITTED schedule.json so market-line
     assertions hold without the live file.
-  * espncdn team-logos — served as a 1x1 PNG so image loads never touch the
+  * espncdn team-logos - served as a 1x1 PNG so image loads never touch the
     network or log console errors.
 
 Third-party CDN libraries (Tailwind, supabase-js, fonts) still load from the
-network — those are stable artifacts, not project data. For a genuinely
+network - those are stable artifacts, not project data. For a genuinely
 live-data run, set DASH_LIVE_NETWORK=1 and none of these routes install.
 
 Usage (from a Playwright test):
@@ -151,7 +151,7 @@ def install(page, dashboard_dir):
     Set DASH_LIVE_NETWORK=1 beforehand to skip interception entirely.
     """
     if os.environ.get("DASH_LIVE_NETWORK") == "1":
-        print("[browser fixtures] DASH_LIVE_NETWORK=1 — live network mode, no interception")
+        print("[browser fixtures] DASH_LIVE_NETWORK=1 - live network mode, no interception")
         return
     data = FixtureData(dashboard_dir)
 
