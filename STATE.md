@@ -22,9 +22,13 @@
 
 - Supabase-backed `nfl_teams`, player pages, and `nfl_transactions` supply the live dashboard data path.
 - Repository artifacts provide schedule, Clay projections, draft capital, official Madden ratings, props-board integration, and shared freshness metadata.
-- `update_rosters_from_espn.js` normalizes supported ESPN transaction descriptions, canonicalizes unambiguous team names, validates normalized records, and skips unsupported descriptions.
-- `node update_rosters_from_espn.js --dry-run` produces a source-tagged normalized inspection artifact without roster-file or database writes.
-- Normalized ESPN transaction persistence to Supabase is not implemented; the dashboard continues to read transactions from Supabase.
+- `update_rosters_from_espn.js` normalizes supported ESPN transaction descriptions, canonicalizes unambiguous team names, validates normalized records, and skips unsupported descriptions. Dry run is the default and writes only the atomic inspection artifact; it never mutates the roster snapshot or contacts a service.
+- `node update_rosters_from_espn.js --write` persists normalized rows to Supabase `nfl_transactions` idempotently: each row carries a stable `tx_id` (sha256 over the canonical normalized tuple), rows already present are skipped, and the partial unique index from `supabase/migrations/20260903_espn_transactions_tx_id.sql` enforces the same contract in the database. Requires `SUPABASE_URL` / `SUPABASE_ANON_KEY`; a failed write exits nonzero and touches no local artifact.
+
+## ESPN transaction persistence (2026-09-03)
+
+- `espn_transaction_persistence.js` is the persistence boundary: validates rows, attaches `tx_id`/`source_url`/`ingested_at`, drops intra-batch duplicates, checks existing `tx_id`s, then inserts only the missing rows. The Supabase client is injectable (fetch-based), so the whole path is tested hermetically against a fake client and a closed-localhost CLI failure.
+- `update_rosters_from_espn.js` no longer mutates `nfl_rosters_2026.json`: the legacy roster-mutation/daemon tail (processed-transaction log, CSV/TXT regeneration) was removed in favor of dry-run default plus explicit `--write` persistence. Dry-run output remains inspectable; the dashboard continues to read its live transaction view from Supabase.
 
 ## Schedule freshness fix (2026-09-04)
 

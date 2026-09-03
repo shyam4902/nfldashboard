@@ -46,15 +46,22 @@ Every nfldashboard copy of the shared layer is written by one path: `fantasyfoot
 
 ## ESPN transaction ingestion
 
-`update_rosters_from_espn.js` parses supported ESPN signings, releases, waiver claims, and trades into the dashboard transaction shape. It canonicalizes unambiguous full, abbreviated, and ESPN short team names, validates normalized record fields and dry-run metadata, preserves source identifiers and descriptions, and skips unsupported descriptions rather than converting them into invented rows.
+`update_rosters_from_espn.js` parses supported ESPN signings, releases, waiver claims, and trades into the dashboard transaction shape. It canonicalizes unambiguous full, abbreviated, and ESPN short team names, validates normalized record fields, preserves source identifiers and descriptions, and skips unsupported descriptions rather than converting them into invented rows.
 
-Use the dry-run path for inspection only:
+Dry run is the default and never writes roster files or contacts a service:
 
 ```bash
-node update_rosters_from_espn.js --dry-run
+node update_rosters_from_espn.js --dry-run                    # live ESPN feed to espn_transactions_2026.json
+node update_rosters_from_espn.js --input <saved-feed.json>    # same, from a saved feed (no network)
 ```
 
-This writes `espn_transactions_2026.json` with source metadata and normalized records. It does not write roster files or Supabase. The dashboard still reads its live transaction view from Supabase; persistence of normalized ESPN transactions is a separate follow-up.
+Persistence to Supabase is explicit and opt-in:
+
+```bash
+node update_rosters_from_espn.js --write                      # requires SUPABASE_URL and SUPABASE_ANON_KEY
+```
+
+Writes are idempotent: every row carries a stable `tx_id` (hash of the canonical normalized tuple), rows already present are skipped, and the partial unique index from `supabase/migrations/20260903_espn_transactions_tx_id.sql` enforces the same contract in the database. Apply the migration once before the first `--write` run. A failed write exits nonzero and never touches a local artifact.
 
 The roster generator and Supabase roster export no longer inject synthetic summer moves. Do not run live sync commands unless the task explicitly requires a remote write.
 

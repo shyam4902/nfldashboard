@@ -62,8 +62,9 @@ let browser;
 try {
   browser = await chromium.launch();
   const page = await browser.newPage();
-// Hermetic by default: intercept Supabase + nflverse with committed-data
-// fixtures. LIVE_SMOKE=1 opts into real-network smoke (see test-fixtures/README.md).
+// Deterministic data-feed fixtures by default: intercept Supabase + nflverse
+// with committed-data fixtures. LIVE_SMOKE=1 opts into real-network smoke
+// (see test-fixtures/README.md).
 if (process.env.LIVE_SMOKE === '1') {
   console.log('[browser fixtures] LIVE_SMOKE=1: live network mode, no interception');
 } else {
