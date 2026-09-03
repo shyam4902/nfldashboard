@@ -7,10 +7,156 @@
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=Geist+Mono:wght@400;500;600;700&display=swap');
+
+:root {
+  --font-sans: 'Geist', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: 'Geist Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+  /* Default Theme: Obsidian Slate */
+  --bg-body: #090d16;
+  --bg-card: #0f172a;
+  --bg-card-hover: #1e293b;
+  --bg-elevated: #1e293b;
+  --bg-header: rgba(9, 13, 22, 0.88);
+  --border-card: rgba(148, 163, 184, 0.14);
+  --border-muted: rgba(148, 163, 184, 0.08);
+  --border-strong: rgba(148, 163, 184, 0.28);
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  --text-faint: #64748b;
+  --accent-brand: #38bdf8;
+  --accent-brand-subtle: rgba(56, 189, 248, 0.12);
+  --accent-positive: #34d399;
+  --accent-positive-bg: rgba(16, 185, 129, 0.12);
+  --accent-negative: #f87171;
+  --accent-negative-bg: rgba(239, 68, 68, 0.12);
+  --accent-warning: #fbbf24;
+  --accent-warning-bg: rgba(245, 158, 11, 0.12);
+  --card-shadow: 0 1px 3px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  --tab-active-bg: linear-gradient(135deg, #1e40af, #3b82f6);
+  --tab-active-text: #ffffff;
+}
+
+body.theme-stadium {
+  --bg-body: #050a17;
+  --bg-card: #0b1426;
+  --bg-card-hover: #101c36;
+  --bg-elevated: #12203d;
+  --bg-header: rgba(5, 10, 23, 0.92);
+  --border-card: rgba(245, 158, 11, 0.22);
+  --border-muted: rgba(245, 158, 11, 0.1);
+  --border-strong: rgba(245, 158, 11, 0.4);
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  --text-faint: #64748b;
+  --accent-brand: #f59e0b;
+  --accent-brand-subtle: rgba(245, 158, 11, 0.15);
+  --accent-positive: #34d399;
+  --accent-positive-bg: rgba(52, 211, 153, 0.12);
+  --accent-negative: #f87171;
+  --accent-negative-bg: rgba(248, 113, 113, 0.12);
+  --accent-warning: #fbbf24;
+  --accent-warning-bg: rgba(245, 158, 11, 0.15);
+  --card-shadow: 0 2px 8px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(245, 158, 11, 0.12);
+  --tab-active-bg: linear-gradient(135deg, #d97706, #f59e0b);
+  --tab-active-text: #050a17;
+}
+
+body.theme-espn {
+  --bg-body: #0a0e14;
+  --bg-card: #121722;
+  --bg-card-hover: #1a2232;
+  --bg-elevated: #1a2232;
+  --bg-header: rgba(10, 14, 20, 0.94);
+  --border-card: rgba(220, 38, 38, 0.22);
+  --border-muted: rgba(75, 85, 99, 0.2);
+  --border-strong: rgba(220, 38, 38, 0.45);
+  --text-main: #f9fafb;
+  --text-muted: #9ca3af;
+  --text-faint: #6b7280;
+  --accent-brand: #ef4444;
+  --accent-brand-subtle: rgba(239, 68, 68, 0.12);
+  --accent-positive: #10b981;
+  --accent-positive-bg: rgba(16, 185, 129, 0.12);
+  --accent-negative: #ef4444;
+  --accent-negative-bg: rgba(239, 68, 68, 0.12);
+  --accent-warning: #f59e0b;
+  --accent-warning-bg: rgba(245, 158, 11, 0.12);
+  --card-shadow: 0 2px 10px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  --tab-active-bg: linear-gradient(135deg, #b91c1c, #dc2626);
+  --tab-active-text: #ffffff;
+}
+
+body.theme-retro {
+  --bg-body: #030d07;
+  --bg-card: #06160c;
+  --bg-card-hover: #0c2616;
+  --bg-elevated: #0c2616;
+  --bg-header: rgba(3, 13, 7, 0.94);
+  --border-card: rgba(16, 185, 129, 0.25);
+  --border-muted: rgba(16, 185, 129, 0.12);
+  --border-strong: rgba(16, 185, 129, 0.45);
+  --text-main: #ecfdf5;
+  --text-muted: #6ee7b7;
+  --text-faint: #059669;
+  --accent-brand: #10b981;
+  --accent-brand-subtle: rgba(16, 185, 129, 0.15);
+  --accent-positive: #34d399;
+  --accent-positive-bg: rgba(16, 185, 129, 0.18);
+  --accent-negative: #f87171;
+  --accent-negative-bg: rgba(239, 68, 68, 0.18);
+  --accent-warning: #fbbf24;
+  --accent-warning-bg: rgba(245, 158, 11, 0.18);
+  --card-shadow: 0 0 14px rgba(16, 185, 129, 0.08), inset 0 1px 0 rgba(16, 185, 129, 0.15);
+  --tab-active-bg: #10b981;
+  --tab-active-text: #02140b;
+}
+
+body.theme-analyst {
+  --bg-body: #f8fafc;
+  --bg-card: #ffffff;
+  --bg-card-hover: #f1f5f9;
+  --bg-elevated: #f1f5f9;
+  --bg-header: rgba(255, 255, 255, 0.94);
+  --border-card: rgba(203, 213, 225, 0.7);
+  --border-muted: rgba(226, 232, 240, 0.8);
+  --border-strong: #94a3b8;
+  --text-main: #0f172a;
+  --text-muted: #475569;
+  --text-faint: #64748b;
+  --accent-brand: #0284c7;
+  --accent-brand-subtle: rgba(2, 132, 199, 0.08);
+  --accent-positive: #059669;
+  --accent-positive-bg: rgba(16, 185, 129, 0.08);
+  --accent-negative: #dc2626;
+  --accent-negative-bg: rgba(220, 38, 38, 0.08);
+  --accent-warning: #d97706;
+  --accent-warning-bg: rgba(217, 119, 6, 0.08);
+  --card-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(0, 0, 0, 0.02);
+  --tab-active-bg: #0f172a;
+  --tab-active-text: #ffffff;
+}
+
 * { box-sizing: border-box; }
-body { font-family: 'Inter', sans-serif; background: #0a0e17; color: #e2e8f0; }
-.font-mono, .data-font { font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }
+html, body {
+  font-family: var(--font-sans);
+  background-color: var(--bg-body) !important;
+  color: var(--text-main) !important;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+.font-mono, .data-font, [class*="font-mono"] {
+  font-family: var(--font-mono) !important;
+  font-feature-settings: 'tnum' 1, 'zero' 1, 'ss01' 1;
+  font-variant-numeric: tabular-nums lining-nums;
+  letter-spacing: -0.015em;
+  font-weight: 500;
+}
+/* Re-calibrate bold and black weights so metrics never bloat */
+.font-black { font-weight: 700 !important; }
+.font-bold { font-weight: 600 !important; }
 .grid-lines { background-color: #0F172A; background-image: linear-gradient(to right, #1E293B 1px, transparent 1px), linear-gradient(to bottom, #1E293B 1px, transparent 1px); background-size: 20px 20px; }
 .text-cyber-lime { color: #bcefc8; }
 .bg-cyber-lime-muted { background: rgba(188, 239, 200, 0.12); color: #bcefc8; border: 1px solid rgba(188, 239, 200, 0.3); }
@@ -269,181 +415,52 @@ body { font-family: 'Inter', sans-serif; background: #0a0e17; color: #e2e8f0; }
 /* ── THEMES ── */
 
 /* 1. STADIUM LIGHTS (Deep Navy & Golden Field Amber) */
-body.theme-stadium {
-  background: radial-gradient(circle at 50% 0%, #0d224d 0%, #030814 100%) fixed !important;
-  color: #f8fafc !important;
-}
-body.theme-stadium .glass {
-  background: rgba(10, 25, 54, 0.88) !important;
-  border: 1px solid rgba(245, 158, 11, 0.35) !important;
-  box-shadow: 0 8px 32px rgba(245, 158, 11, 0.08) !important;
-}
 body.theme-stadium header {
-  background: rgba(4, 11, 25, 0.98) !important;
-  border-bottom: 2px solid rgba(245, 158, 11, 0.5) !important;
+  border-bottom: 2px solid rgba(245, 158, 11, 0.45) !important;
 }
 body.theme-stadium .tab-btn.active {
   background: linear-gradient(135deg, #d97706, #f59e0b) !important;
-  color: #000000 !important;
-  font-weight: 800 !important;
-  box-shadow: 0 0 12px rgba(245, 158, 11, 0.5) !important;
-}
-body.theme-stadium .bg-slate-800, 
-body.theme-stadium .bg-slate-800\/80, 
-body.theme-stadium .bg-slate-800\/60, 
-body.theme-stadium .bg-slate-800\/50, 
-body.theme-stadium .bg-slate-800\/40 {
-  background-color: rgba(14, 32, 68, 0.75) !important;
-  border-color: rgba(245, 158, 11, 0.25) !important;
-}
-body.theme-stadium .text-cyan-400, 
-body.theme-stadium .text-blue-400 {
-  color: #fbbf24 !important;
-}
-body.theme-stadium .text-cyan-300 {
-  color: #fde68a !important;
-}
-body.theme-stadium .border-slate-700, 
-body.theme-stadium .border-slate-600 {
-  border-color: rgba(245, 158, 11, 0.3) !important;
-}
-body.theme-stadium .team-tile {
-  background: rgba(10, 25, 54, 0.9) !important;
-  border-color: rgba(245, 158, 11, 0.3) !important;
-}
-body.theme-stadium .player-link:hover {
-  color: #f59e0b !important;
-}
-body.theme-stadium .roster-modal, 
-body.theme-stadium .cmd-palette-modal {
-  background: #071530 !important;
-  border-color: rgba(245, 158, 11, 0.4) !important;
+  color: #050a17 !important;
+  font-weight: 700 !important;
 }
 
 /* 2. ESPN BROADCAST (Charcoal Steel & Crimson Red) */
-body.theme-espn {
-  background: #0d1117 fixed !important;
-  color: #f3f4f6 !important;
-}
-body.theme-espn .glass {
-  background: rgba(22, 27, 34, 0.94) !important;
-  border: 1px solid rgba(239, 68, 68, 0.3) !important;
-  border-left: 4px solid #dc2626 !important;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5) !important;
-}
 body.theme-espn header {
-  background: #161b22 !important;
   border-bottom: 3px solid #dc2626 !important;
 }
 body.theme-espn .tab-btn.active {
   background: linear-gradient(135deg, #b91c1c, #dc2626) !important;
   color: #ffffff !important;
-  font-weight: 800 !important;
-  text-transform: uppercase !important;
-}
-body.theme-espn .bg-slate-800, 
-body.theme-espn .bg-slate-800\/80, 
-body.theme-espn .bg-slate-800\/60, 
-body.theme-espn .bg-slate-800\/50, 
-body.theme-espn .bg-slate-800\/40 {
-  background-color: rgba(28, 33, 40, 0.85) !important;
-  border-color: rgba(75, 85, 99, 0.4) !important;
-}
-body.theme-espn .text-cyan-400, 
-body.theme-espn .text-blue-400 {
-  color: #f87171 !important;
-}
-body.theme-espn .text-cyan-300 {
-  color: #fca5a5 !important;
-}
-body.theme-espn .text-amber-400 {
-  color: #ef4444 !important;
-}
-body.theme-espn .team-tile {
-  background: rgba(22, 27, 34, 0.95) !important;
-  border-left: 3px solid #dc2626 !important;
-}
-body.theme-espn .player-link:hover {
-  color: #ef4444 !important;
-}
-body.theme-espn .roster-modal, 
-body.theme-espn .cmd-palette-modal {
-  background: #161b22 !important;
-  border-color: rgba(220, 38, 38, 0.4) !important;
+  font-weight: 700 !important;
 }
 
-/* 3. RETRO SCOREBOARD (Monospace Terminal Green & Phosphor Amber) */
-body.theme-retro {
-  background: #02140b fixed !important;
-  color: #fef08a !important;
-  font-family: 'Courier New', Courier, monospace !important;
-}
-body.theme-retro .glass {
-  background: rgba(4, 32, 18, 0.92) !important;
-  border: 1px solid rgba(16, 185, 129, 0.45) !important;
-  box-shadow: 0 0 16px rgba(16, 185, 129, 0.15) !important;
-}
+/* 3. RETRO SCOREBOARD (Phosphor CRT) */
 body.theme-retro header {
-  background: #031c10 !important;
   border-bottom: 2px solid #10b981 !important;
 }
 body.theme-retro .tab-btn.active {
-  background: #f59e0b !important;
-  color: #000000 !important;
-  font-weight: 900 !important;
-  font-family: 'Courier New', monospace !important;
-}
-body.theme-retro .bg-slate-800, 
-body.theme-retro .bg-slate-800\/80, 
-body.theme-retro .bg-slate-800\/60, 
-body.theme-retro .bg-slate-800\/50, 
-body.theme-retro .bg-slate-800\/40 {
-  background-color: rgba(6, 44, 25, 0.85) !important;
-  border-color: rgba(16, 185, 129, 0.35) !important;
-}
-body.theme-retro .text-cyan-400, 
-body.theme-retro .text-blue-400, 
-body.theme-retro .text-slate-200 {
-  color: #a7f3d0 !important;
-}
-body.theme-retro .text-slate-400 {
-  color: #6ee7b7 !important;
-  opacity: 0.85;
-}
-body.theme-retro .text-amber-400 {
-  color: #fbbf24 !important;
-  font-weight: bold;
-}
-body.theme-retro .team-tile {
-  background: rgba(4, 32, 18, 0.9) !important;
-  border: 1px solid #10b981 !important;
-}
-body.theme-retro input, 
-body.theme-retro select {
-  background: #02140b !important;
-  color: #fef08a !important;
-  border-color: #10b981 !important;
-  font-family: 'Courier New', monospace !important;
-}
-body.theme-retro .roster-modal, 
-body.theme-retro .cmd-palette-modal {
-  background: #031c10 !important;
-  border-color: #10b981 !important;
+  background: #10b981 !important;
+  color: #02140b !important;
+  font-weight: 700 !important;
 }
 
 /* 4. CLEAN ANALYST (High-Contrast Light Workstation) */
-body.theme-analyst {
-  background: #f8fafc fixed !important;
-  color: #0f172a !important;
+body.theme-analyst header {
+  background: #ffffff !important;
+  border-bottom: 1px solid #e2e8f0 !important;
 }
 body.theme-analyst .glass {
   background: #ffffff !important;
   border: 1px solid #e2e8f0 !important;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.03) !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.02) !important;
 }
-body.theme-analyst header {
-  background: #ffffff !important;
-  border-bottom: 1px solid #e2e8f0 !important;
+body.theme-analyst .bg-surface-card {
+  background-color: #ffffff !important;
+  border-color: #e2e8f0 !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.02) !important;
+}
+body.theme-analyst .border-subtle {
+  border-color: #e2e8f0 !important;
 }
 body.theme-analyst .tab-btn {
   background: #f1f5f9 !important;
@@ -458,7 +475,7 @@ body.theme-analyst .tab-btn.active {
   background: #0f172a !important;
   color: #ffffff !important;
   border-color: #0f172a !important;
-  font-weight: 700 !important;
+  font-weight: 600 !important;
 }
 body.theme-analyst .bg-slate-800, 
 body.theme-analyst .bg-slate-800\/90, 
@@ -468,7 +485,8 @@ body.theme-analyst .bg-slate-800\/50,
 body.theme-analyst .bg-slate-800\/40, 
 body.theme-analyst .bg-slate-900,
 body.theme-analyst .bg-slate-900\/60,
-body.theme-analyst .bg-slate-900\/80 {
+body.theme-analyst .bg-slate-900\/80,
+body.theme-analyst .bg-slate-950 {
   background-color: #f1f5f9 !important;
   border-color: #e2e8f0 !important;
 }
@@ -476,7 +494,6 @@ body.theme-analyst .text-white,
 body.theme-analyst .text-slate-100,
 body.theme-analyst .text-slate-200 {
   color: #0f172a !important;
-  font-weight: 600;
 }
 body.theme-analyst .text-slate-300, 
 body.theme-analyst .text-slate-400 {
@@ -488,28 +505,24 @@ body.theme-analyst .text-slate-500 {
 body.theme-analyst .text-cyan-400, 
 body.theme-analyst .text-blue-400 {
   color: #0284c7 !important;
-  font-weight: 700;
 }
 body.theme-analyst .text-emerald-400 {
   color: #15803d !important;
-  font-weight: 700;
 }
 body.theme-analyst .text-amber-400 {
   color: #b45309 !important;
-  font-weight: 700;
 }
 body.theme-analyst .text-red-400 {
   color: #b91c1c !important;
-  font-weight: 700;
 }
 body.theme-analyst table th {
-  background-color: #f1f5f9 !important;
+  background-color: #f8fafc !important;
   color: #475569 !important;
   border-color: #e2e8f0 !important;
 }
 body.theme-analyst table td {
   color: #1e293b !important;
-  border-color: #e2e8f0 !important;
+  border-color: #f1f5f9 !important;
 }
 body.theme-analyst table tr:hover {
   background-color: #f8fafc !important;
@@ -554,8 +567,37 @@ body.theme-analyst .cmd-item:hover,
 body.theme-analyst .cmd-item.selected {
   background: #f1f5f9 !important;
 }
-
-/* Schedule cards on light analyst theme */
+body.theme-analyst .moves-wire {
+  background: #ffffff !important;
+  border-color: #e2e8f0 !important;
+}
+body.theme-analyst .moves-date-heading {
+  background: #f1f5f9 !important;
+  color: #0f172a !important;
+}
+body.theme-analyst .move-row {
+  border-color: #f1f5f9 !important;
+}
+body.theme-analyst .move-row:hover {
+  background: #f8fafc !important;
+}
+body.theme-analyst .move-player {
+  color: #0f172a !important;
+}
+body.theme-analyst .move-detail,
+body.theme-analyst .move-route {
+  color: #475569 !important;
+}
+body.theme-analyst .moves-filter {
+  background: #f1f5f9 !important;
+  border-color: #e2e8f0 !important;
+  color: #475569 !important;
+}
+body.theme-analyst .moves-filter.active {
+  background: #0284c7 !important;
+  color: #ffffff !important;
+  border-color: #0284c7 !important;
+}
 body.theme-analyst .sch-card {
   background: #ffffff !important;
   border: 1px solid #e2e8f0 !important;
@@ -574,18 +616,9 @@ body.theme-analyst .sch-head strong {
 }
 body.theme-analyst .sch-team .sch-name {
   color: #0f172a !important;
-  font-weight: 800 !important;
 }
 body.theme-analyst .sch-team .sch-info small {
   color: #64748b !important;
-  font-weight: 700 !important;
-}
-body.theme-analyst .sch-team .sch-abbr {
-  box-shadow: 0 1px 2px rgba(0,0,0,0.06) !important;
-}
-body.theme-analyst .sch-team .sch-prob {
-  color: #059669 !important;
-  font-weight: 800 !important;
 }
 body.theme-analyst .sch-lines {
   background: transparent !important;
@@ -597,11 +630,9 @@ body.theme-analyst .sch-line {
 }
 body.theme-analyst .sch-line span {
   color: #64748b !important;
-  font-weight: 700 !important;
 }
 body.theme-analyst .sch-line b {
   color: #0f172a !important;
-  font-weight: 800 !important;
 }
 body.theme-analyst .sch-foot {
   border-top: 1px solid #f1f5f9 !important;
@@ -609,7 +640,6 @@ body.theme-analyst .sch-foot {
 }
 body.theme-analyst .sch-cta {
   color: #0284c7 !important;
-  font-weight: 700 !important;
 }
 body.theme-analyst .macro-chip {
   background: #ffffff !important;
@@ -637,6 +667,67 @@ body.theme-analyst .pos-group-header {
   background: #f1f5f9 !important;
   border-color: #e2e8f0 !important;
   color: #0f172a !important;
+}
+body.theme-analyst .teams-subtab {
+  background: #f1f5f9 !important;
+  border-color: #e2e8f0 !important;
+  color: #475569 !important;
+}
+body.theme-analyst .teams-subtab.active {
+  background: #0284c7 !important;
+  color: #ffffff !important;
+  border-color: #0284c7 !important;
+}
+body.theme-analyst .div-nav-btn {
+  background: #ffffff !important;
+  border-color: #e2e8f0 !important;
+}
+body.theme-analyst .div-nav-btn .dv-short {
+  color: #0f172a !important;
+}
+body.theme-analyst .tx-dp {
+  background: #f1f5f9 !important;
+  border-color: #e2e8f0 !important;
+}
+body.theme-analyst .tx-dp .dp-team {
+  color: #0f172a !important;
+}
+body.theme-analyst .dc-year-block {
+  background: #f8fafc !important;
+  border-color: #e2e8f0 !important;
+}
+body.theme-analyst .roster-summary .rs-card {
+  background: #f8fafc !important;
+  border-color: #e2e8f0 !important;
+}
+body.theme-analyst .roster-summary .rs-value {
+  color: #0f172a !important;
+}
+
+/* Fix checkbox in moves-toolbar so it never stretches */
+.moves-toolbar input[type="text"],
+.moves-toolbar input:not([type="checkbox"]) {
+  flex: 1 1 220px;
+  min-width: 180px;
+}
+.moves-check {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+  user-select: none;
+}
+.moves-check input {
+  width: 15px !important;
+  height: 15px !important;
+  min-width: 15px !important;
+  flex: 0 0 15px !important;
+  accent-color: var(--accent-brand);
+  cursor: pointer;
+  margin: 0;
 }
 
 /* Player links */
@@ -949,6 +1040,7 @@ body.theme-analyst .pos-group-header {
 /* Modal model win probability numbers — bright with a glow for contrast on dark bg */
 #matchupModal .mp-num {
   text-shadow: 0 0 16px rgba(125, 211, 252, 0.5), 0 0 3px rgba(255, 255, 255, 0.45);
+}
 /* ── PRO MATCHUP CENTER & NEXT GEN STATS STYLES ── */
 .matchup-hero-banner {
   background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(30, 41, 59, 0.85) 50%, rgba(15, 23, 42, 0.95) 100%);
@@ -1349,6 +1441,7 @@ async function loadAllData() {
   }
   DATA.teams = teams.data;
   DATA.players = players;
+  DATA.transactions = transactions.data || [];
   try {
     await loadClayProjections();
   } catch { /* ignore */ }
@@ -4410,13 +4503,13 @@ function renderPreviewOffVsDefMatrix(offTeam, defTeam, ranksOff, ranksDef, isLef
           <div class="flex items-center justify-between font-mono text-xs">
             <div class="flex items-center gap-1.5">
               <span class="text-[10px] text-slate-400">${attrEsc(offAbbr)}:</span>
-              <span class="font-bold ${passEpaOff != null && passEpaOff >= 0 ? 'text-cyber-lime' : 'text-slate-200'}">${passEpaOff != null ? (passEpaOff >= 0 ? '+' : '') + passEpaOff.toFixed(3) : '—'}</span>
+              <span class="font-medium ${passEpaOff != null && passEpaOff >= 0 ? 'text-cyber-lime' : 'text-slate-200'}">${passEpaOff != null ? (passEpaOff >= 0 ? '+' : '') + passEpaOff.toFixed(3) : '—'}</span>
               <span class="text-[10px] text-slate-400 font-normal">(${rankPassOff != null ? '#' + rankPassOff : '—'})</span>
             </div>
             <span class="text-slate-600 text-[10px]">vs</span>
             <div class="flex items-center gap-1.5">
               <span class="text-[10px] text-slate-400">${attrEsc(defAbbr)} DEF:</span>
-              <span class="font-bold text-slate-200">${passEpaDef != null ? (passEpaDef >= 0 ? '+' : '') + passEpaDef.toFixed(3) : '—'}</span>
+              <span class="font-medium text-slate-200">${passEpaDef != null ? (passEpaDef >= 0 ? '+' : '') + passEpaDef.toFixed(3) : '—'}</span>
               <span class="text-[10px] text-slate-400 font-normal">(${rankPassDef != null ? '#' + rankPassDef : '—'})</span>
             </div>
           </div>
@@ -4430,13 +4523,13 @@ function renderPreviewOffVsDefMatrix(offTeam, defTeam, ranksOff, ranksDef, isLef
           <div class="flex items-center justify-between font-mono text-xs">
             <div class="flex items-center gap-1.5">
               <span class="text-[10px] text-slate-400">${attrEsc(offAbbr)}:</span>
-              <span class="font-bold ${runEpaOff != null && runEpaOff >= 0 ? 'text-cyber-lime' : 'text-slate-200'}">${runEpaOff != null ? (runEpaOff >= 0 ? '+' : '') + runEpaOff.toFixed(3) : '—'}</span>
+              <span class="font-medium ${runEpaOff != null && runEpaOff >= 0 ? 'text-cyber-lime' : 'text-slate-200'}">${runEpaOff != null ? (runEpaOff >= 0 ? '+' : '') + runEpaOff.toFixed(3) : '—'}</span>
               <span class="text-[10px] text-slate-400 font-normal">(${rankRunOff != null ? '#' + rankRunOff : '—'})</span>
             </div>
             <span class="text-slate-600 text-[10px]">vs</span>
             <div class="flex items-center gap-1.5">
               <span class="text-[10px] text-slate-400">${attrEsc(defAbbr)} DEF:</span>
-              <span class="font-bold text-slate-200">${runEpaDef != null ? (runEpaDef >= 0 ? '+' : '') + runEpaDef.toFixed(3) : '—'}</span>
+              <span class="font-medium text-slate-200">${runEpaDef != null ? (runEpaDef >= 0 ? '+' : '') + runEpaDef.toFixed(3) : '—'}</span>
               <span class="text-[10px] text-slate-400 font-normal">(${rankRunDef != null ? '#' + rankRunDef : '—'})</span>
             </div>
           </div>
@@ -4465,8 +4558,8 @@ function renderPreviewOffVsDefMatrix(offTeam, defTeam, ranksOff, ranksDef, isLef
                   <span class="text-[9px] font-mono px-1 py-0.5 rounded ${r.tag === 'PASS' ? 'bg-sky-950/70 text-sky-400 border border-sky-800/50' : r.tag === 'RUSH' ? 'bg-amber-950/70 text-amber-400 border border-amber-800/50' : 'bg-slate-800 text-slate-400 border border-subtle'}">${r.tag}</span>
                   <span class="truncate" title="${r.label}">${r.label}</span>
                 </td>
-                <td class="py-2 text-right font-bold text-slate-200">${formatMetricVal(r.id, vOff)} <span class="text-[10px] font-normal text-slate-400">(${rOff != null ? '#' + rOff : '—'})</span></td>
-                <td class="py-2 text-right font-bold text-slate-200">${formatMetricVal(r.id, vDef)} <span class="text-[10px] font-normal text-slate-400">(${rDef != null ? '#' + rDef : '—'})</span></td>
+                <td class="py-2 text-right font-medium text-slate-200">${formatMetricVal(r.id, vOff)} <span class="text-[10px] font-normal text-slate-400">(${rOff != null ? '#' + rOff : '—'})</span></td>
+                <td class="py-2 text-right font-medium text-slate-200">${formatMetricVal(r.id, vDef)} <span class="text-[10px] font-normal text-slate-400">(${rDef != null ? '#' + rDef : '—'})</span></td>
                 <td class="py-2 text-right font-sans">${renderAdvantageBadge(adv, offTeam, defTeam)}</td>
               </tr>
             `;
@@ -7202,9 +7295,9 @@ function renderMatchupMatrix(c, data) {
     const teamEsc = row.team.replace(/'/g, "\\'");
     html += `
       <tr class="border-b border-slate-800/40 hover:bg-slate-800/30 transition">
-        <td class="py-2 px-2 text-center font-bold ${idx < 5 ? 'text-emerald-400' : idx > 26 ? 'text-red-400' : 'text-slate-400'}">${idx + 1}</td>
-        <td class="py-2 px-3 font-semibold text-slate-200 proj-link-team whitespace-nowrap" onclick="openRoster('${teamEsc}', 'projections')">${row.team}</td>
-        <td class="py-2 px-2 text-center font-black ${row.avgOppGrade <= 5.0 ? 'text-emerald-400' : row.avgOppGrade >= 6.8 ? 'text-red-400' : 'text-cyan-300'}">${row.avgOppGrade}</td>
+        <td class="py-2 px-2 text-center font-mono font-medium ${idx < 5 ? 'text-emerald-400' : idx > 26 ? 'text-red-400' : 'text-slate-400'}">${idx + 1}</td>
+        <td class="py-2 px-3 font-medium text-slate-200 proj-link-team whitespace-nowrap" onclick="openRoster('${teamEsc}', 'projections')">${row.team}</td>
+        <td class="py-2 px-2 text-center font-mono font-semibold ${row.avgOppGrade <= 5.0 ? 'text-emerald-400' : row.avgOppGrade >= 6.8 ? 'text-red-400' : 'text-sky-400'}">${row.avgOppGrade}</td>
     `;
 
     for (const wg of row.weeklyGrades) {
@@ -7420,18 +7513,18 @@ function renderClayMarketDelta(c, data) {
 
     html += `
       <tr class="border-b border-slate-800/40 hover:bg-slate-800/30 transition">
-        <td class="py-2 px-3 font-semibold text-slate-200 whitespace-nowrap">${playerLinkHtml(d.player, d.team)}</td>
-        <td class="py-2 px-2 text-center font-bold text-slate-400">${d.pos}</td>
-        <td class="py-2 px-2 text-center text-slate-400 proj-link-team" onclick="openRosterFromAbbr('${d.team}')">${d.team}</td>
+        <td class="py-2 px-3 font-medium text-slate-200 whitespace-nowrap">${playerLinkHtml(d.player, d.team)}</td>
+        <td class="py-2 px-2 text-center font-mono font-medium text-slate-400 text-[11px]">${d.pos}</td>
+        <td class="py-2 px-2 text-center font-mono text-slate-400 text-[11px] proj-link-team" onclick="openRosterFromAbbr('${d.team}')">${d.team}</td>
         <td class="py-2 px-2 font-medium text-slate-300 whitespace-nowrap">${propsMarketLabels[d.market] || d.market}</td>
-        <td class="py-2 px-2 text-center text-slate-400">${d.venue}</td>
-        <td class="py-2 px-2 text-center font-bold text-white">${d.line}</td>
-        <td class="py-2 px-2 text-center text-slate-400">${d.rawProj}</td>
-        <td class="py-2 px-2 text-center font-bold text-cyan-300">${d.adjProj}</td>
-        <td class="py-2 px-2 text-center font-bold ${deltaColor}">${d.diff > 0 ? '+' : ''}${d.diff}</td>
-        <td class="py-2 px-2 text-center font-black ${deltaColor}">${d.deltaPct > 0 ? '+' : ''}${d.deltaPct}%</td>
-        <td class="py-2 px-2 text-center"><span class="px-2 py-0.5 rounded text-[10px] font-black border ${pickBadge}">${d.impliedPick}</span></td>
-        <td class="py-2 px-2 text-center ${evColor}">${d.modelEv > 0 ? '+' : ''}${d.modelEv.toFixed(1)}%</td>
+        <td class="py-2 px-2 text-center font-mono text-slate-400 text-[11px]">${d.venue}</td>
+        <td class="py-2 px-2 text-center font-mono font-medium text-white">${d.line}</td>
+        <td class="py-2 px-2 text-center font-mono text-slate-400">${d.rawProj}</td>
+        <td class="py-2 px-2 text-center font-mono font-semibold text-sky-300">${d.adjProj}</td>
+        <td class="py-2 px-2 text-center font-mono font-semibold ${deltaColor}">${d.diff > 0 ? '+' : ''}${d.diff}</td>
+        <td class="py-2 px-2 text-center font-mono font-semibold ${deltaColor}">${d.deltaPct > 0 ? '+' : ''}${d.deltaPct}%</td>
+        <td class="py-2 px-2 text-center"><span class="px-2 py-0.5 rounded text-[10px] font-semibold font-mono tracking-wider border ${pickBadge}">${d.impliedPick}</span></td>
+        <td class="py-2 px-2 text-center font-mono font-medium ${evColor}">${d.modelEv > 0 ? '+' : ''}${d.modelEv.toFixed(1)}%</td>
       </tr>
     `;
   }
@@ -7535,15 +7628,15 @@ function renderConsensusPower(c, data) {
 
     if (t.compositeScore >= 75) {
       tier = 'Tier 1: Elite';
-      tierColor = 'bg-amber-500/25 text-amber-300 border-amber-500/50 font-black shadow-sm';
+      tierColor = 'bg-amber-500/20 text-amber-300 border-amber-500/40 font-semibold shadow-sm';
       tierIcon = '👑';
     } else if (t.compositeScore >= 60) {
       tier = 'Tier 2: Contender';
-      tierColor = 'bg-emerald-500/25 text-emerald-300 border-emerald-500/50 font-bold';
+      tierColor = 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40 font-semibold';
       tierIcon = '🛡';
     } else if (t.compositeScore >= 42) {
       tier = 'Tier 3: Playoff Hunt';
-      tierColor = 'bg-cyan-500/25 text-cyan-300 border-cyan-500/50 font-bold';
+      tierColor = 'bg-sky-500/20 text-sky-300 border-sky-500/40 font-semibold';
       tierIcon = '🎯';
     }
 
@@ -7551,14 +7644,14 @@ function renderConsensusPower(c, data) {
 
     html += `
       <tr class="border-b border-slate-800/40 hover:bg-slate-800/30 transition ${idx <= 5 ? 'bg-amber-950/10' : ''}">
-        <td class="py-2 px-3 text-center font-bold ${idx <= 5 ? 'text-amber-400 font-black' : 'text-slate-400'}">${idx}</td>
-        <td class="py-2 px-3 font-semibold text-slate-200 proj-link-team whitespace-nowrap" onclick="openRoster('${teamEsc}', 'projections')">${t.name}</td>
-        <td class="py-2 px-2 text-center text-slate-400">${t.division}</td>
-        <td class="py-2 px-2 text-center font-black text-cyan-400 text-sm">${t.compositeScore}</td>
+        <td class="py-2 px-3 text-center font-mono font-medium ${idx <= 5 ? 'text-amber-400 font-semibold' : 'text-slate-400'}">${idx}</td>
+        <td class="py-2 px-3 font-medium text-slate-200 proj-link-team whitespace-nowrap" onclick="openRoster('${teamEsc}', 'projections')">${t.name}</td>
+        <td class="py-2 px-2 text-center font-mono text-[11px] text-slate-400">${t.division}</td>
+        <td class="py-2 px-2 text-center font-mono font-semibold text-sky-400 text-sm">${t.compositeScore}</td>
         <td class="py-2 px-2 text-center"><span class="px-2 py-0.5 rounded text-[10px] border ${tierColor}">${tierIcon} ${tier}</span></td>
-        <td class="py-2 px-2 text-center font-bold ${t.projWins >= 10 ? 'text-emerald-400' : 'text-slate-300'}">${t.projWins} W</td>
-        <td class="py-2 px-2 text-center text-slate-300">${t.unitGrade}</td>
-        <td class="py-2 px-2 text-center font-bold ${t.diff > 0 ? 'text-emerald-400' : 'text-red-400'}">${t.diff > 0 ? '+' : ''}${t.diff}</td>
+        <td class="py-2 px-2 text-center font-mono font-medium ${t.projWins >= 10 ? 'text-emerald-400' : 'text-slate-300'}">${t.projWins} W</td>
+        <td class="py-2 px-2 text-center font-mono font-medium text-slate-300">${t.unitGrade}</td>
+        <td class="py-2 px-2 text-center font-mono font-medium ${t.diff > 0 ? 'text-emerald-400' : 'text-red-400'}">${t.diff > 0 ? '+' : ''}${t.diff}</td>
       </tr>
     `;
     idx++;

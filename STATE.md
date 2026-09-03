@@ -40,6 +40,14 @@
 
 ## Shipped cleanup
 
+- Global Visual & Typography Overhaul (`/goal` pass):
+  - Migrated core typography to `Geist` and `Geist Mono` with global antialiasing (`-webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; text-rendering: optimizeLegibility;`) and tabular figures (`font-variant-numeric: tabular-nums lining-nums`).
+  - Recalibrated metrics font weight across all data tables (Clay Delta, Matchup Matrix, Consensus Power, Pro Preview), replacing thick, bloated `font-black` (900) and heavy bold numbers with crisp `font-medium` (500) and `font-semibold` (600) monospace figures.
+  - Re-architected all 5 dashboard themes (Obsidian Slate, Stadium Lights, ESPN Broadcast, Retro CRT, Clean Analyst) onto centralized CSS custom properties (`--bg-body`, `--bg-card`, `--border-card`, `--text-main`, `--accent-brand`).
+  - Completely repaired the Clean Analyst light workstation theme: eliminated dark slate background retention on `.bg-surface-card`, `.moves-wire`, and controls; now renders pure white cards, crisp `#e2e8f0` hairline borders, and dark charcoal text with WCAG AAA contrast.
+  - Repaired Retro Scoreboard theme: removed broken, stretched `Courier New` font overrides and replaced with modern phosphor CRT monospace typography (`Geist Mono`).
+  - Fixed rogue checkbox in `.moves-toolbar`: eliminated 180px width stretching that caused a blank white rectangle across themes.
+  - Assigned missing `DATA.transactions = transactions.data || []` in `loadAllData()`, resolving transaction feed loading and feature card counts.
 - Combined separate Passing Matrix and Rushing Matrix into symmetrical Offense vs Defense matchup boxes on the Pro Preview page: Box 1 covers Team A Offense vs Team B Defense (spanning passing, rushing, and overall efficiency), and Box 2 covers Team B Offense vs Team A Defense with identical metrics, 2025 measured rates, league ranks, and situational advantages.
 - Enhanced Passing, Rushing, and Trenches matchup comparison tables with formatted 2025 metric values alongside league ranks, honest missing-data handling (`—` instead of `EVEN`), and data source provenance footers.
 - Filtered Overview Key Advantages panel to each team's genuine statistical advantages, replacing empty/mismatched rows with an honest empty state.
