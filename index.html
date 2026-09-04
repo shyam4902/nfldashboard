@@ -7,7 +7,7 @@
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=Geist+Mono:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800;900&family=Geist+Mono:wght@400;500;600;700&family=Archivo:wght@600;700;800;900&display=swap');
 
 :root {
   --font-sans: 'Geist', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -2406,6 +2406,328 @@ function biggestMovesHtml(){
   </div>`;
 }
 
+// ═══════════════════════════════════════════════════════════
+// HOME REDESIGN 2a — "Pregame studio" hero carousel + scorestrip
+// + storylines + power index. Data-driven pieces (featured matchup,
+// scorestrip, power index) read live repo data; the lead-story and
+// Edge-promo slides plus the two storyline cards are editorial copy
+// by design (they are promo/story slots in the mockup). No fabricated
+// rank-movement arrows — there's no prior-week ranking in the data.
+// ═══════════════════════════════════════════════════════════
+function home2aWeekGames(){
+  const games = (SCHEDULE_DATA && SCHEDULE_DATA.games) ? SCHEDULE_DATA.games : [];
+  const wk = typeof currentScheduleWeek === 'number' ? currentScheduleWeek : 1;
+  const inWeek = games.filter(g => (g.week || 1) === wk);
+  const pool = inWeek.length ? inWeek : games;
+  return pool.slice().sort((a, b) => String(a.kickoff_utc || '').localeCompare(String(b.kickoff_utc || '')));
+}
+
+function home2aFeaturedSlide(feat){
+  if (!feat) return `<div class="h2a-slide-pad" style="display:flex;align-items:center;justify-content:center;min-height:200px"><span style="font:500 13px var(--font-sans);color:#8f9299">Featured matchup loads with the schedule…</span></div>`;
+  feat.market = gameMarketLines(feat);
+  const m = feat.market;
+  const homeStr = computeTeamOverall(feat.home_team);
+  const awayStr = computeTeamOverall(feat.away_team);
+  const prob = winProb(homeStr, awayStr);
+  const hPct = prob === null ? 50 : Math.round(prob * 100);
+  const aPct = 100 - hPct;
+  const aColor = DATA.teamColors[feat.away_team] || '#b23a35';
+  const hColor = DATA.teamColors[feat.home_team] || '#69BE28';
+  const aAbbr = teamAbbrFor(feat.away_team) || feat.away_team;
+  const hAbbr = teamAbbrFor(feat.home_team) || feat.home_team;
+  const d = new Date(feat.kickoff_utc);
+  const dateLine = [
+    isNaN(d.getTime()) ? 'KICKOFF TBD' : d.toLocaleString([], { weekday:'short', month:'short', day:'numeric', hour:'numeric', minute:'2-digit' }).toUpperCase(),
+    feat.venue ? feat.venue.toUpperCase() : null,
+    feat.tv ? feat.tv.toUpperCase() : null,
+  ].filter(Boolean).join(' · ');
+  const aSpread = m && m.spread !== null ? ((m.spread > 0 ? '+' : '') + m.spread) : '—';
+  const hSpread = m && m.spread !== null ? ((-m.spread > 0 ? '+' : '') + (-m.spread)) : '—';
+  const aMl = m && m.away_ml != null ? (m.away_ml > 0 ? '+' + m.away_ml : String(m.away_ml)) : '—';
+  const hMl = m && m.home_ml != null ? (m.home_ml > 0 ? '+' + m.home_ml : String(m.home_ml)) : '—';
+  const total = m && m.total != null ? m.total : '—';
+  const cut = (color, side) => `<svg viewBox="0 0 118 150" width="118" height="150" style="display:block;flex:none"><rect width="118" height="150" rx="6" fill="url(#h2aPh2)" stroke="${color}55"></rect><text x="59" y="78" text-anchor="middle" fill="${color}" font-family="Geist Mono, monospace" font-size="9" opacity=".8">${homeEsc(side)}</text></svg>`;
+  return `<div class="h2a-slide-pad">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px;flex-wrap:wrap">
+      <span class="h2a-kicker" style="color:#fff;background:${aColor}">FEATURED MATCHUP</span>
+      <span class="h2a-mono" style="font:600 11px var(--font-mono);color:#b4b7bc">${homeEsc(dateLine)}</span>
+    </div>
+    <div class="h2a-matchup" style="display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:24px">
+      <div style="display:flex;align-items:center;gap:18px">
+        ${cut(aColor, aAbbr)}
+        <div>
+          <div class="h2a-mono" style="font:800 10px var(--font-mono);letter-spacing:.14em;color:${aColor}">AWAY</div>
+          <div class="h2a-arch" style="font:800 30px/1 'Archivo',sans-serif;letter-spacing:-.02em;color:#fff;margin-top:7px">${homeEsc((aAbbr||'').toUpperCase())}</div>
+          <div style="font:500 13px var(--font-sans);color:#c8ccd2;margin-top:4px">${homeEsc(feat.away_team)}</div>
+          <div style="display:flex;align-items:baseline;gap:8px;margin-top:14px">
+            <span class="h2a-mono" style="font:900 40px/1 var(--font-mono);color:#fff">${aPct}<span style="font-size:19px">%</span></span>
+            <span style="font:500 11px var(--font-sans);color:#9aa0a8">model win<br>probability</span>
+          </div>
+          <div class="h2a-mono" style="font:600 12px var(--font-mono);color:#dbd9d4;margin-top:10px;border:1px solid ${aColor}66;border-radius:5px;padding:5px 9px;display:inline-block">${homeEsc(aSpread)} &nbsp;·&nbsp; ML ${homeEsc(aMl)}</div>
+        </div>
+      </div>
+      <div style="text-align:center">
+        <div class="h2a-mono" style="font:800 11px var(--font-mono);letter-spacing:.2em;color:#8f9299">AT</div>
+        <div style="width:1px;height:76px;background:linear-gradient(180deg,transparent,rgba(255,255,255,.2),transparent);margin:10px auto"></div>
+        <div class="h2a-mono" style="font:600 11px var(--font-mono);color:#b4b7bc">O/U ${homeEsc(total)}</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:18px;justify-content:flex-end;text-align:right">
+        <div>
+          <div class="h2a-mono" style="font:800 10px var(--font-mono);letter-spacing:.14em;color:${hColor}">HOME</div>
+          <div class="h2a-arch" style="font:800 30px/1 'Archivo',sans-serif;letter-spacing:-.02em;color:#fff;margin-top:7px">${homeEsc((hAbbr||'').toUpperCase())}</div>
+          <div style="font:500 13px var(--font-sans);color:#c8ccd2;margin-top:4px">${homeEsc(feat.home_team)}</div>
+          <div style="display:flex;align-items:baseline;gap:8px;margin-top:14px;justify-content:flex-end">
+            <span style="font:500 11px var(--font-sans);color:#9aa0a8">model win<br>probability</span>
+            <span class="h2a-mono" style="font:900 40px/1 var(--font-mono);color:${hColor}">${hPct}<span style="font-size:19px">%</span></span>
+          </div>
+          <div class="h2a-mono" style="font:600 12px var(--font-mono);color:#dbd9d4;margin-top:10px;border:1px solid ${hColor}66;border-radius:5px;padding:5px 9px;display:inline-block">${homeEsc(hSpread)} &nbsp;·&nbsp; ML ${homeEsc(hMl)}</div>
+        </div>
+        ${cut(hColor, hAbbr)}
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:2px;margin-top:20px;height:8px;border-radius:4px;overflow:hidden;background:rgba(255,255,255,.06)">
+      <div style="width:${aPct}%;height:100%;background:${aColor}"></div><div style="width:${hPct}%;height:100%;background:${hColor}"></div>
+    </div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-top:14px;flex-wrap:wrap;gap:10px">
+      <div style="display:flex;gap:10px">
+        <span class="h2a-btn-amber" onclick="openMatchup('${homeEsc(feat.game_id)}')">View matchup →</span>
+        <span class="h2a-btn-ghost" onclick="openMatchup('${homeEsc(feat.game_id)}')">Both depth charts</span>
+      </div>
+      <span class="h2a-mono" style="font:500 10px var(--font-mono);color:#8fa6bf">LOG5 SIM · COMPOSITE POWER + HOME EDGE</span>
+    </div>
+  </div>`;
+}
+
+function home2aScorestrip(games){
+  const strip = games.slice(0, 7);
+  if (!strip.length) return '';
+  const cells = strip.map(g => {
+    g.market = gameMarketLines(g);
+    const m = g.market;
+    const homeStr = computeTeamOverall(g.home_team);
+    const awayStr = computeTeamOverall(g.away_team);
+    const prob = winProb(homeStr, awayStr);
+    const hPct = prob === null ? 50 : Math.round(prob * 100);
+    const aPct = 100 - hPct;
+    const aColor = DATA.teamColors[g.away_team] || '#64748b';
+    const hColor = DATA.teamColors[g.home_team] || '#64748b';
+    const aAbbr = teamAbbrFor(g.away_team) || g.away_team;
+    const hAbbr = teamAbbrFor(g.home_team) || g.home_team;
+    const d = new Date(g.kickoff_utc);
+    const when = isNaN(d.getTime()) ? 'TBD' : d.toLocaleString([], { weekday:'short', hour:'numeric', minute:'2-digit' }).toUpperCase();
+    const tv = g.tv ? (' · ' + g.tv.split('/')[0].trim().toUpperCase()) : '';
+    const aSpread = m && m.spread !== null ? ((m.spread > 0 ? '+' : '') + m.spread) : '';
+    const homeFav = hPct >= aPct;
+    return `<div class="h2a-game" onclick="showTab('schedule')">
+      <div class="h2a-game-time">${homeEsc(when)}${homeEsc(tv)}</div>
+      <div class="h2a-team-row"><span class="h2a-team-name"><span class="h2a-cbar" style="background:${aColor}"></span><span style="font:700 12px var(--font-sans);color:${homeFav ? '#c9ccd1' : '#fff'}">${homeEsc(aAbbr)}</span></span><span class="h2a-mono" style="font:600 11px var(--font-mono);color:${homeFav ? '#868a91' : '#7cc49b'}">${homeFav ? homeEsc(aSpread) : aPct + '%'}</span></div>
+      <div class="h2a-team-row"><span class="h2a-team-name"><span class="h2a-cbar" style="background:${hColor}"></span><span style="font:700 12px var(--font-sans);color:${homeFav ? '#fff' : '#c9ccd1'}">${homeEsc(hAbbr)}</span></span><span class="h2a-mono" style="font:700 11px var(--font-mono);color:${homeFav ? '#7cc49b' : '#868a91'}">${homeFav ? hPct + '%' : ''}</span></div>
+    </div>`;
+  }).join('');
+  return `<div class="h2a-strip">
+    <div class="h2a-strip-lead">
+      <div class="h2a-mono" style="font:800 9px var(--font-mono);letter-spacing:.12em;color:#d9a441">WEEK ${typeof currentScheduleWeek === 'number' ? currentScheduleWeek : 1}</div>
+      <div style="font:600 11px var(--font-sans);color:#e9e7e3;white-space:nowrap">${games.length} games</div>
+    </div>
+    <div class="h2a-strip-games"><div class="h2a-strip-inner">${cells}
+      <div class="h2a-game" style="flex:0 0 126px;display:flex;flex-direction:column;justify-content:center;gap:4px;border-right:0" onclick="showTab('schedule')">
+        <div style="font:700 11px var(--font-sans);color:#d9a441">All ${games.length} games →</div>
+        <div style="font:400 10px var(--font-sans);color:#868a91">Model win % + live lines</div>
+      </div>
+    </div></div>
+  </div>`;
+}
+
+function home2aPowerIndex(){
+  if (!CLAY_DATA || !CLAY_DATA.team_projections) {
+    return `<div style="font:500 12px var(--font-sans);color:#8f9299">Power index loads with projections…</div>`;
+  }
+  const rows = Object.values(CLAY_DATA.team_projections)
+    .sort((a, b) => (b.projected_wins || 0) - (a.projected_wins || 0))
+    .slice(0, 6);
+  const list = rows.map((t, i) => {
+    const color = DATA.teamColors[t.name] || '#3b4261';
+    const abbr = DATA.teamAbbr[t.name] || t.abbr || t.name;
+    const wins = (t.projected_wins || 0).toFixed(1);
+    return `<div class="h2a-pi-row" onclick="showTab('projections')">
+      <span class="h2a-mono" style="font:700 11px var(--font-mono);color:#fff;width:16px">${i + 1}</span>
+      <span class="h2a-pi-badge" style="background:${color}">${homeEsc(abbr)}</span>
+      <span style="flex:1;font:700 12px var(--font-sans);color:#fff">${homeEsc(t.name)}</span>
+      <span class="h2a-mono" style="font:700 12px var(--font-mono);color:#e9e7e3;width:38px;text-align:right">${wins}</span>
+    </div>`;
+  }).join('');
+  return `<div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:14px"><div style="font:800 13px var(--font-sans);color:#fff">Power index</div><span style="font:600 10px var(--font-sans);color:#d9a441;cursor:pointer" onclick="showTab('projections')">All 32 →</span></div><div>${list}</div><div style="margin-top:12px;font:400 10px var(--font-mono);color:#5f6772">Mike Clay 2026 · projected wins</div>`;
+}
+
+function homeRedesign2aHtml(){
+  const games = home2aWeekGames();
+  const feat = games[0];
+  const moveCount = (DATA.transactions || []).length;
+  return `<style>
+    .h2a-wrap{background:#14161a;border:1px solid #2b3037;border-radius:16px;overflow:hidden}
+    .h2a-mono{font-family:var(--font-mono)}.h2a-arch{font-family:'Archivo',sans-serif}
+    .h2a-hero{position:relative;overflow:hidden;border-bottom:1px solid #2b3037;height:436px}
+    .h2a-track{display:flex;width:300%;height:100%;transition:transform .8s cubic-bezier(.16,1,.3,1)}
+    .h2a-slide{flex:0 0 33.3333%;position:relative;overflow:hidden}
+    .h2a-slide-pad{position:relative;padding:26px 28px}
+    .h2a-kicker{font:800 10px var(--font-mono);letter-spacing:.16em;border-radius:3px;padding:4px 8px}
+    .h2a-btn-amber{font:700 12px var(--font-sans);color:#17140f;background:#d9a441;border-radius:6px;padding:10px 18px;cursor:pointer}
+    .h2a-btn-amber:hover{background:#e6b556}
+    .h2a-btn-ghost{font:700 12px var(--font-sans);color:#e9e7e3;border:1px solid rgba(255,255,255,.18);border-radius:6px;padding:10px 18px;cursor:pointer}
+    .h2a-btn-ghost:hover{border-color:rgba(255,255,255,.4)}
+    .h2a-dots{position:absolute;left:28px;bottom:14px;display:flex;align-items:center;gap:10px;z-index:2}
+    .h2a-dot{width:8px;height:8px;border-radius:4px;cursor:pointer;transition:width .3s ease,background-color .3s ease;background:rgba(255,255,255,.22)}
+    .h2a-dot.on{width:26px;background:#d9a441}
+    .h2a-dot-label{font:500 10px var(--font-mono);color:#8f9299;margin-left:6px}
+    .h2a-arrows{position:absolute;right:24px;bottom:12px;display:flex;gap:8px;z-index:2}
+    .h2a-arrow{width:30px;height:30px;border-radius:6px;border:1px solid rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center;cursor:pointer;background:rgba(0,0,0,.25)}
+    .h2a-arrow:hover{border-color:rgba(255,255,255,.45)}
+    .h2a-strip{display:flex;align-items:center;background:#1a1d22;border-bottom:1px solid #2b3037}
+    .h2a-strip-lead{display:flex;flex-direction:column;justify-content:center;padding:0 16px;border-right:1px solid #2b3037;height:66px;flex:none}
+    .h2a-strip-games{flex:1;overflow-x:auto}
+    .h2a-strip-inner{display:flex;width:100%;min-width:760px}
+    .h2a-game{flex:1 1 0;min-width:0;padding:10px 14px;border-right:1px solid #262a31;cursor:pointer}
+    .h2a-game:hover{background:rgba(255,255,255,.02)}
+    .h2a-game-time{font:600 9px var(--font-mono);color:#868a91;margin-bottom:5px}
+    .h2a-team-row{display:flex;justify-content:space-between;align-items:center}
+    .h2a-team-row+.h2a-team-row{margin-top:3px}
+    .h2a-team-name{display:flex;align-items:center;gap:6px}
+    .h2a-cbar{width:3px;height:12px;border-radius:1px}
+    .h2a-lower{display:grid;grid-template-columns:1.45fr 1fr;gap:0}
+    .h2a-lower-l{padding:24px 26px;border-right:1px solid #2b3037}
+    .h2a-lower-r{padding:24px 26px}
+    .h2a-stories{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+    .h2a-pi-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid #262a31;cursor:pointer}
+    .h2a-pi-row:last-child{border-bottom:0}
+    .h2a-pi-row:hover{background:rgba(255,255,255,.02)}
+    .h2a-pi-badge{width:22px;height:22px;border-radius:4px;display:flex;align-items:center;justify-content:center;font:800 9px var(--font-mono);color:#fff}
+    @media (max-width:960px){
+      .h2a-hero{height:auto}.h2a-slide-pad{padding:20px 16px}
+      .h2a-lower{grid-template-columns:1fr}.h2a-lower-l{border-right:0;border-bottom:1px solid #2b3037}
+      .h2a-matchup{grid-template-columns:1fr!important;gap:16px!important}
+      .h2a-split{grid-template-columns:1fr!important;gap:20px!important}
+      .h2a-stories{grid-template-columns:1fr}
+    }
+  </style>
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+    <pattern id="h2aPh1" width="8" height="8" patternTransform="rotate(45)" patternUnits="userSpaceOnUse"><rect width="8" height="8" fill="#0f1826"></rect><rect width="3" height="8" fill="#152234"></rect></pattern>
+    <pattern id="h2aPh2" width="7" height="7" patternTransform="rotate(60)" patternUnits="userSpaceOnUse"><rect width="7" height="7" fill="rgba(255,255,255,.03)"></rect><rect width="2.5" height="7" fill="rgba(255,255,255,.07)"></rect></pattern>
+  </defs></svg>
+  <div class="h2a-wrap">
+    <div class="h2a-hero" id="h2aHero">
+      <div class="h2a-track" id="h2aTrack">
+        <!-- SLIDE 1 — FEATURED MATCHUP (data-driven) -->
+        <div class="h2a-slide" style="background:linear-gradient(105deg,#2a1a1c 0%,#1e1b20 44%,#1b201c 100%)">
+          <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 20% 0%,rgba(198,12,48,.16) 0%,transparent 55%),radial-gradient(ellipse at 82% 12%,rgba(105,190,40,.10) 0%,transparent 52%)"></div>
+          ${home2aFeaturedSlide(feat)}
+        </div>
+        <!-- SLIDE 2 — LEAD STORY (editorial) -->
+        <div class="h2a-slide" style="background:linear-gradient(118deg,#1f242c 0%,#1a1e24 46%,#232830 100%)">
+          <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 80% 8%,rgba(120,148,196,.10) 0%,transparent 62%)"></div>
+          <div class="h2a-slide-pad h2a-split" style="display:grid;grid-template-columns:1fr 520px;gap:32px;align-items:center;height:100%">
+            <div>
+              <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap">
+                <span class="h2a-kicker" style="color:#17140f;background:#d9a441">LEAD STORY</span>
+                <span class="h2a-mono" style="font:600 11px var(--font-mono);color:#a2a5ab">TRANSACTIONS · ${moveCount} MOVES SINCE SUPER BOWL LX</span>
+              </div>
+              <h2 class="h2a-arch" style="margin:0;font:800 40px/1.07 'Archivo',sans-serif;letter-spacing:-.028em;color:#fff;max-width:640px;text-wrap:pretty">Every offseason move, graded against the model</h2>
+              <p style="margin:14px 0 0;font:400 14px/1.65 var(--font-sans);color:#a2a5ab;max-width:560px;text-wrap:pretty">${moveCount} trades, signings and draft pickups since Super Bowl LX, blockbusters flagged, each one re-scored against 2026 projected win totals.</p>
+              <div style="display:flex;gap:10px;margin-top:20px">
+                <span class="h2a-btn-amber" onclick="showMovesTab()">Open the wire →</span>
+                <span class="h2a-btn-ghost" style="border-color:#363c44" onclick="showTab('projections')">Projected standings</span>
+              </div>
+            </div>
+            <svg viewBox="0 0 520 280" style="width:100%;max-width:520px;height:auto;display:block;border-radius:8px"><rect width="520" height="280" rx="8" fill="url(#h2aPh1)" stroke="#2b3037"></rect><text x="260" y="146" text-anchor="middle" fill="#4b5f7a" font-family="Geist Mono, monospace" font-size="11">TRANSACTION WIRE</text></svg>
+          </div>
+        </div>
+        <!-- SLIDE 3 — EDGE PROMO (editorial) -->
+        <div class="h2a-slide" style="background:linear-gradient(100deg,#1e241f 0%,#1b2126 52%,#191c21 100%)">
+          <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 14% 18%,rgba(217,164,65,.09) 0%,transparent 55%)"></div>
+          <div class="h2a-slide-pad h2a-split" style="display:grid;grid-template-columns:1fr 520px;gap:40px;align-items:center;height:100%">
+            <div>
+              <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap">
+                <span class="h2a-kicker" style="color:#b4b7bc;border:1px solid rgba(255,255,255,.18)">FROM OUR OTHER APP</span>
+                <span class="h2a-mono" style="font:600 11px var(--font-mono);color:#93a394">EDGE ANALYTICS · 6 SPORTSBOOKS</span>
+              </div>
+              <h2 class="h2a-arch" style="margin:0;font:800 38px/1.08 'Archivo',sans-serif;letter-spacing:-.028em;color:#fff;max-width:580px;text-wrap:pretty">Want the number behind the number? Edge grades every prop against the model.</h2>
+              <p style="margin:14px 0 0;font:400 14px/1.65 var(--font-sans);color:#a9aeaa;max-width:540px;text-wrap:pretty">Calibrated edge, per-market backtest evidence, line movement and win totals across Kalshi, DraftKings, BetMGM, FanDuel, Caesars and Polymarket. This hub stays the reading room; Edge is the terminal.</p>
+              <div style="display:flex;gap:10px;margin-top:20px">
+                <a class="h2a-btn-amber" href="https://edge.shyamsapps.qzz.io" target="_blank" rel="noopener">Open Edge Analytics ↗</a>
+                <span class="h2a-btn-ghost" onclick="window.open('https://edge.shyamsapps.qzz.io','_blank')">How the model is graded</span>
+              </div>
+            </div>
+            <div style="background:rgba(255,255,255,.03);border:1px solid #2b3037;border-radius:10px;padding:20px">
+              <div style="font:500 11px var(--font-sans);color:#9fb08d">Deep value lives in Edge</div>
+              <div class="h2a-arch" style="font:800 22px/1.2 'Archivo',sans-serif;color:#fff;margin-top:6px">Props · Win totals · Lines</div>
+              <div style="font:500 12px var(--font-sans);color:#a9aeaa;margin-top:2px">Model edge vs six books, backtested per market</div>
+              <div style="display:flex;align-items:flex-end;gap:4px;margin-top:18px;height:60px">
+                <span style="flex:1;height:34%;background:rgba(255,255,255,.1);border-radius:1px"></span><span style="flex:1;height:52%;background:rgba(255,255,255,.1);border-radius:1px"></span><span style="flex:1;height:44%;background:rgba(255,255,255,.12);border-radius:1px"></span><span style="flex:1;height:66%;background:rgba(124,196,155,.35);border-radius:1px"></span><span style="flex:1;height:58%;background:rgba(124,196,155,.5);border-radius:1px"></span><span style="flex:1;height:80%;background:#7cc49b;border-radius:1px"></span><span style="flex:1;height:100%;background:#7cc49b;border-radius:1px"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="h2a-dots">
+        <span class="h2a-dot on" data-go="0"></span>
+        <span class="h2a-dot" data-go="1"></span>
+        <span class="h2a-dot" data-go="2"></span>
+        <span class="h2a-dot-label" id="h2aDotLabel">1 / 3 · FEATURED MATCHUP</span>
+      </div>
+      <div class="h2a-arrows">
+        <span class="h2a-arrow" id="h2aPrev"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#e9e7e3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"></path></svg></span>
+        <span class="h2a-arrow" id="h2aNext"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#e9e7e3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"></path></svg></span>
+      </div>
+    </div>
+    ${home2aScorestrip(games)}
+    <div class="h2a-lower">
+      <div class="h2a-lower-l">
+        <div style="font:800 13px var(--font-sans);color:#fff;margin-bottom:16px">Storylines going into kickoff</div>
+        <div class="h2a-stories">
+          <div>
+            <svg viewBox="0 0 380 150" style="width:100%;height:auto;display:block;border-radius:6px"><rect width="380" height="150" rx="6" fill="#0c1320" stroke="#2b3037"></rect><rect x="1" y="1" width="378" height="148" rx="6" fill="url(#h2aPh1)" opacity=".7"></rect><text x="190" y="80" text-anchor="middle" fill="#4b5f7a" font-family="Geist Mono, monospace" font-size="10">STORY IMAGE 16:6</text></svg>
+            <div class="h2a-mono" style="font:800 9px var(--font-mono);letter-spacing:.14em;color:#69BE28;margin-top:10px">TRANSACTIONS</div>
+            <div style="font:700 17px/1.3 var(--font-sans);color:#fff;margin-top:6px;text-wrap:pretty">${moveCount} moves reshaped the board before Week 1</div>
+            <div style="font:400 11px/1.6 var(--font-sans);color:#a2a5ab;margin-top:6px">Every trade, signing and draft pickup since Super Bowl LX, blockbusters flagged and re-scored.</div>
+          </div>
+          <div>
+            <svg viewBox="0 0 380 150" style="width:100%;height:auto;display:block;border-radius:6px"><rect width="380" height="150" rx="6" fill="#0c1320" stroke="#2b3037"></rect><rect x="1" y="1" width="378" height="148" rx="6" fill="url(#h2aPh1)" opacity=".7"></rect><text x="190" y="80" text-anchor="middle" fill="#4b5f7a" font-family="Geist Mono, monospace" font-size="10">STORY IMAGE 16:6</text></svg>
+            <div class="h2a-mono" style="font:800 9px var(--font-mono);letter-spacing:.14em;color:#69BE28;margin-top:10px">SCHEDULE</div>
+            <div style="font:700 17px/1.3 var(--font-sans);color:#fff;margin-top:6px;text-wrap:pretty">The full Week 1 slate, with model win probabilities on every game</div>
+            <div style="font:400 11px/1.6 var(--font-sans);color:#a2a5ab;margin-top:6px">Composite power ratings, log5 and a home-field edge, priced against live nflverse lines.</div>
+          </div>
+        </div>
+      </div>
+      <div class="h2a-lower-r">${home2aPowerIndex()}</div>
+    </div>
+  </div>`;
+}
+
+function initHomeCarousel(){
+  const track = document.getElementById('h2aTrack');
+  const heroEl = document.getElementById('h2aHero');
+  if (!track || !heroEl) return;
+  if (window.__h2aTimer) { clearInterval(window.__h2aTimer); window.__h2aTimer = null; }
+  const dots = Array.prototype.slice.call(heroEl.querySelectorAll('.h2a-dot'));
+  const label = document.getElementById('h2aDotLabel');
+  const LABELS = ['FEATURED MATCHUP', 'LEAD STORY', 'EDGE ANALYTICS'];
+  let i = 0, paused = false;
+  const render = () => {
+    track.style.transform = 'translateX(-' + (i * 33.3333) + '%)';
+    dots.forEach((d, n) => d.classList.toggle('on', n === i));
+    if (label) label.textContent = (i + 1) + ' / 3 · ' + LABELS[i] + (paused ? ' · PAUSED' : '');
+  };
+  const go = n => { i = (n + 3) % 3; render(); };
+  const nextBtn = document.getElementById('h2aNext');
+  const prevBtn = document.getElementById('h2aPrev');
+  if (nextBtn) nextBtn.addEventListener('click', () => go(i + 1));
+  if (prevBtn) prevBtn.addEventListener('click', () => go(i + 2));
+  dots.forEach(d => d.addEventListener('click', () => go(+d.dataset.go)));
+  heroEl.addEventListener('mouseenter', () => { paused = true; render(); });
+  heroEl.addEventListener('mouseleave', () => { paused = false; render(); });
+  window.__h2aTimer = setInterval(() => { if (!paused) go(i + 1); }, 7000);
+  render();
+}
+
 async function renderHome(){
   const hero = document.getElementById('homeHero');
   const front = document.getElementById('homeFrontDoor');
@@ -2413,7 +2735,11 @@ async function renderHome(){
   const spots = document.getElementById('homeSpotlights');
   const stats = document.getElementById('homeStats');
   if (!hero || !show || !spots) return;
-  hero.innerHTML = homeHeroHtml();
+  // Home redesign 2a owns the hero, front door and showcase region.
+  hero.innerHTML = homeRedesign2aHtml();
+  initHomeCarousel();
+  if (front) front.innerHTML = '';
+  if (show) show.innerHTML = '';
   if (stats) {
     stats.innerHTML = `
     <div class="glass rounded-2xl p-5 border border-slate-700/60 shadow-xl">
@@ -2429,9 +2755,6 @@ async function renderHome(){
       </div>
     </div>`;
   }
-  // Front door needs schedule + props board data.
-  if (front) front.innerHTML = '<div class="text-xs text-slate-500 p-3">Loading today\u2026</div>';
-  show.innerHTML = homeShowcaseHtml();
   spots.innerHTML = '<div class="text-xs text-slate-500 p-4">Loading highlights\u2026</div>';
   // Spotlights fill in as their data arrives (all cached for their tabs too)
   await Promise.all([
@@ -2439,17 +2762,24 @@ async function renderHome(){
     loadPropsBoard().catch(() => null),
     loadSchedule().catch(() => null),
   ]);
-  // Render the front door once schedule + props data are loaded.
-  if (front) front.innerHTML = todayInNflHtml() || '';
+  // Re-render the 2a hero now that schedule + Clay data are in (featured
+  // matchup, scorestrip and power index all read live data).
+  hero.innerHTML = homeRedesign2aHtml();
+  initHomeCarousel();
+  // projPowerHtml dropped here — 2a's power index now owns that slot.
   const fill = () => {
-    const cards = [topConfidencePlaysHtml(), projPowerHtml(), marqueeHtml(), valuePlaysHtml(), biggestMovesHtml()].filter(Boolean);
+    const cards = [topConfidencePlaysHtml(), marqueeHtml(), valuePlaysHtml(), biggestMovesHtml()].filter(Boolean);
     if (!cards.length) return '<div class="text-xs text-slate-500">Highlights unavailable right now.</div>';
     return `<div class="grid grid-cols-1 lg:grid-cols-2 gap-5">${cards.join('')}</div>`;
   };
   spots.innerHTML = fill();
-  // Marquee lines are fetched after first paint so the home page renders fast
+  // Game lines arrive after first paint; refresh the hero (spreads/ML) and spotlights once.
   loadGameLines().then(() => {
-    if (SCHEDULE_DATA) spots.innerHTML = fill();
+    if (SCHEDULE_DATA) {
+      hero.innerHTML = homeRedesign2aHtml();
+      initHomeCarousel();
+      spots.innerHTML = fill();
+    }
   });
 }
 
