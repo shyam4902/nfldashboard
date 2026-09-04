@@ -1,129 +1,35 @@
-# NFL Dashboard — State
+# NFL Dashboard state
 
-- updated: 2026-09-04
-- live: https://nfldashboard.pages.dev/ (Cloudflare Pages; git-connected and published by `git push origin main`)
-- repo: https://github.com/shyam4902/nfldashboard
-- app: static `index.html` with repository JSON assets and Supabase-backed roster/transaction data
-- local preview copy: `~/Library/Application Support/nfldashboard-props/nfldashboard/` is used by launchd and is not the public deployment
+- Updated: 2026-09-04
+- Live: https://nfldashboard.pages.dev/
+- Repo: https://github.com/shyam4902/nfldashboard
+- App: static `index.html`, tracked JSON assets, and Supabase roster and transaction data
 
-## Current state
+## Shipped recently
 
-- The dashboard is a five-view static app: Home, Schedule, Matchup, Teams, and Projections.
-- Matchup Center uses a three-column modular quant layout (Variant B): Left rail displays win probability, consensus market lines (NFLverse), 2025 situational efficiency strip, and game kickoff telemetry. Center rail renders Passing and Rushing efficiency matrices with live EPA/att rankings and edge indicators. Right rail renders Clay 2026 unit matchup power, dual skill radar, verified matchup insights, and tactical launchers.
-- Teams contains Overview, Moves, and Power Index. The former top-level Transactions route redirects to Teams → Moves for compatibility.
-- Props and win totals are linked to the Edge Analytics app; they are not dashboard tabs.
-- Clay projected starters remain in the extraction artifact but are not a dashboard view. Current roster depth is shown through Teams.
-- The browser contains no summer roster, transaction, cap-space, or synthetic-player override.
-- Missing cap-space values render as `Unavailable`; missing or malformed weekly win probabilities render as `Unavailable` while explicit zero values remain valid.
-- Freshness badges use `data/shared/freshness.json` when available.
-- Madden ratings are used in the Matchup Lab only; they do not replace source roster data or appear as a general dashboard roster rating source.
+- Local `main` now includes merge commit `8b75641` for the ESPN transaction persistence batch.
+- `update_rosters_from_espn.js` defaults to dry run and writes to Supabase only with `--write`, `SUPABASE_URL`, `SUPABASE_SECRET_KEY`, and an explicit `--since` cutoff.
+- The writer uses stable `tx_id` values, one PostgREST conflict-ignore insert, uniform row keys, exact source timestamps, and no public credential.
+- Migration `20260903_espn_transactions_tx_id.sql` adds provenance columns, a unique `tx_id` index, RLS, public read-only access, and `service_role` writes.
+- The first safe import boundary is `--since 2026-04-24`; 352 older rows retain null `tx_id` values.
+- Backend validation covers 15 assets, duplicate deploy copies, freshness provenance, malformed inputs, and concurrent publishers.
+- The shared roster deploy copy matches `nfl_rosters_2026.json` again.
 
-## Data and ingestion
+## In flight
 
-- Supabase-backed `nfl_teams`, player pages, and `nfl_transactions` supply the live dashboard data path.
-- Repository artifacts provide schedule, Clay projections, draft capital, official Madden ratings, props-board integration, and shared freshness metadata.
-- `update_rosters_from_espn.js` normalizes supported ESPN transaction descriptions, canonicalizes unambiguous team names, validates normalized records, and skips unsupported descriptions. Dry run is the default, fetches ESPN unless `--input` is supplied, and writes only the atomic inspection artifact; it never mutates the roster snapshot.
-- `node update_rosters_from_espn.js --write --since YYYY-MM-DD` persists normalized rows to Supabase `nfl_transactions` with a stable `tx_id` (sha256 over source, exact ESPN timestamp, move type, player, and both teams). The first-run boundary is `2026-04-23`, so the operator must use `--since 2026-04-24` or a later date to keep the 352 legacy rows with null `tx_id` out of the import overlap. Requires `SUPABASE_URL` / `SUPABASE_SECRET_KEY`; a failed write exits nonzero and touches no local artifact.
+- Local `main` is six commits ahead of `origin/main`. Nothing from this batch has been pushed or deployed.
+- The Supabase migration has not been applied and no live transaction write has run.
+- Existing `screenshots_expansion/*.png` edits remain uncommitted and untouched.
+- The transaction worktree and merged feature branch remain available as rollback references.
 
-## ESPN transaction persistence (2026-09-03)
+## Next
 
-- `espn_transaction_persistence.js` is the persistence boundary: validates rows, attaches `tx_id`/`source_date`/`source_url`/`ingested_at`, drops intra-batch duplicates, and sends one conflict-ignore bulk insert. The Supabase client is injectable (fetch-based), so the whole path is tested hermetically, including concurrent duplicate writes and request headers.
-- `update_rosters_from_espn.js` no longer mutates `nfl_rosters_2026.json`: the legacy roster-mutation/daemon tail (processed-transaction log, CSV/TXT regeneration) was removed in favor of dry-run default plus explicit `--write` persistence. Dry-run output remains inspectable; the dashboard continues to read its live transaction view from Supabase.
-
-## Schedule freshness fix (2026-09-04)
-
-- `schedule.json` had not been regenerated since 2026-08-26: the builder
-  (`scripts/build_full_schedule.py`) is manual, and nothing in the daily
-  automation re-ran it — the producer pipeline only *copied* the artifact, so
-  `freshness.json` truthfully reported the schedule stale (~200h).
-- Rebuilt from nflverse (content unchanged — kickoffs/venues/matchups identical,
-  only the `generated` date moved) and re-synced, so `schedule.json` +
-  `data/shared/schedule.json` + `data/shared/freshness.json` now report the
-  schedule fresh (age 0h).
-- Root cause fix lives producer-side: `fantasyfootball/scripts/daily-pipeline.sh`
-  now rebuilds the schedule from nflverse before the shared-data sync, so this
-  cannot silently rot again. No dashboard code change was needed.
-
-## Backend hardening (2026-09-03)
-
-- `scripts/data-assets.json` is the single inventory of dashboard data assets: canonical copy, duplicated deploy copies, required/optional status, freshness key and threshold, browser fallbacks, and producer for each asset (including the research handoffs that are freshness-tracked but not deployed).
-- `scripts/validate-data.js` is the one boring validator: `node scripts/validate-data.js` checks JSON parsing, required fields and shapes, byte-identity of every duplicated deploy copy, browser-fallback presence, freshness provenance (props-board's embedded `generated_at` matched exactly; everything else verified for internal manifest consistency), and the bidirectional manifest ⇄ inventory contract. File mtimes are not provenance: Git discards them on checkout, so a clean clone must validate. Exact source vintages are verified producer-side (fantasyfootball freshness-provenance test). `validate_data.test.js` covers it hermetically, including clean-checkout semantics and malformed-shape fixtures.
-- Publishing writes are atomic with temp names unique per process: `scripts/atomic-write.js` (pid + counter) backs the roster writers; the schedule/draft-capital/Clay builders use pid-suffixed temps + `os.replace`; `fantasyfootball/scripts/sync-shared-data.sh` uses `$$`-suffixed temps. Concurrent publishers cannot collide, and an interrupted run cannot leave a truncated tracked artifact. `concurrent_publish.test.js` runs two concurrent publishers of each kind hermetically.
-- The inventory records the runtime dependencies (Supabase `nfl_teams`/`nfl_players`/`nfl_transactions`, the nflverse games feed) with required status, failure behavior, fallback policy, and test-fixture mapping. The validator never contacts the network.
-- Browser tests are deterministic data-feed tests: Supabase REST, nflverse games.csv, and espncdn logos are intercepted with fixtures derived from committed data (`test-fixtures/README.md`). They still load CDN libraries (Tailwind, supabase-js, fonts) over the network. Real-network runs are explicit opt-ins (`DASH_LIVE_NETWORK=1`, `LIVE_SMOKE=1`).
-- The sync script is the sole writer of every nfldashboard deploy copy, including the root `props-board.json` and `team_season_efficiency.json` browser fallbacks whose sources live outside the dashboard — the root props fallback had silently drifted one export behind; the validator now catches any future drift.
-- `props-smoke.mjs` serves the versioned `data/shared/` deploy copies (not the unversioned workspace handoff), so the browser test exercises the same bytes the Pages deploy ships.
-- Removed dead `scripts/inseason_sync.py` (zero consumers, fabricated `last_updated`) and the legacy `com.nfldashboard.rosterupdate.plist` template (job never installed; only `props-scan` and `rostersync` are loaded). `update_rosters_from_espn.js` is the normalization tool with an explicit, cutoff-protected Supabase write mode.
-- `extract_clay_projections.py` derives its PDF/output paths from the script location instead of hardcoded `/Users/shyampatel/Desktop/NFL_Main` paths.
-
-## Shipped cleanup
-
-- Global Visual & Typography Overhaul (`/goal` pass):
-  - Migrated core typography to `Geist` and `Geist Mono` with global antialiasing (`-webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; text-rendering: optimizeLegibility;`) and tabular figures (`font-variant-numeric: tabular-nums lining-nums`).
-  - Recalibrated metrics font weight across all data tables (Clay Delta, Matchup Matrix, Consensus Power, Pro Preview), replacing thick, bloated `font-black` (900) and heavy bold numbers with crisp `font-medium` (500) and `font-semibold` (600) monospace figures.
-  - Re-architected all 5 dashboard themes (Obsidian Slate, Stadium Lights, ESPN Broadcast, Retro CRT, Clean Analyst) onto centralized CSS custom properties (`--bg-body`, `--bg-card`, `--border-card`, `--text-main`, `--accent-brand`).
-  - Completely repaired the Clean Analyst light workstation theme: eliminated dark slate background retention on `.bg-surface-card`, `.moves-wire`, and controls; now renders pure white cards, crisp `#e2e8f0` hairline borders, and dark charcoal text with WCAG AAA contrast.
-  - Repaired Retro Scoreboard theme: removed broken, stretched `Courier New` font overrides and replaced with modern phosphor CRT monospace typography (`Geist Mono`).
-  - Fixed rogue checkbox in `.moves-toolbar`: eliminated 180px width stretching that caused a blank white rectangle across themes.
-  - Assigned missing `DATA.transactions = transactions.data || []` in `loadAllData()`, resolving transaction feed loading and feature card counts.
-- Combined separate Passing Matrix and Rushing Matrix into symmetrical Offense vs Defense matchup boxes on the Pro Preview page: Box 1 covers Team A Offense vs Team B Defense (spanning passing, rushing, and overall efficiency), and Box 2 covers Team B Offense vs Team A Defense with identical metrics, 2025 measured rates, league ranks, and situational advantages.
-- Enhanced Passing, Rushing, and Trenches matchup comparison tables with formatted 2025 metric values alongside league ranks, honest missing-data handling (`—` instead of `EVEN`), and data source provenance footers.
-- Filtered Overview Key Advantages panel to each team's genuine statistical advantages, replacing empty/mismatched rows with an honest empty state.
-- Switched team unit overall ratings and position group ratings to Mike Clay 2026 model grades (`CLAY_DATA.unit_grades`), eliminating Madden ratings from `computeTeamOverall`, `computeTeamPositionRating`, `computeMacroRating`, and `renderConsensusPower`.
-- `computeTeamOverall` now computes an authentic 0–100 overall team strength directly from Mike Clay's composite unit grades, driving win probability across Matchup Center and Schedule cards.
-- Teams tab Power Rankings heatmap and macro leaders now display verified Mike Clay 2026 unit ratings (scaled 10–100).
-- `getTeamAtAGlance` now computes real 1–32 league ranks for projected PPG (`pf`) and point differential (`diff`) from Mike Clay 2026 standings.
-- Eliminated Madden `OVR` references from dynamic matchup insights cards.
-- Removed arbitrary fallback in dual skill radar SVG and required verified Clay unit grades.
-- Changed stadium condition from a mock temperature (`Dome, 72°F`) to honest status (`Indoor (Climate Controlled)` vs venue/city).
-- Matchup Center Pro Preview subpage overhauled: restricted all EPA and efficiency metrics strictly to 2025 measured nflverse data (seasons 2012–2024 reserved for research).
-- Inversion fix applied to defensive efficiency ranking: defensive `sack_rate` and `turnover_rate` now sort descending so league-leading sack and turnover units rank #1 in the NFL.
-- Unit Grades calculation and UI overhauled: multi-unit positions properly averaged (`[DI, ED]` for Pass Rush, `[CB, S]` for Secondary), expanded to 5 positional matchups, and visual bars now scale dynamically to true percentage widths (`ga * 10%`, `gb * 10%`).
-- Eliminated all hardcoded mock data and fake fallbacks from Pro Preview Passing Matrix, Rushing Matrix, Unit Grades, and Preview Insights.
-- Browser-side summer roster, transaction, cap-space, and synthetic-player overrides were removed.
-- The stale global “Top WR” walkthrough claim was relabeled as a source-scoped Clay example.
-- Dashboard tests use repository-relative paths for their dashboard files and runtime transaction data rather than a named player fixture.
-- `check_html_scripts.mjs` validates inline JavaScript extracted from `index.html`; `node --check index.html` is not a valid command.
-- Browser tests now fail on content assertions and console errors instead of only printing them.
-- `props-smoke.mjs` uses normal Node module resolution or the explicit `PLAYWRIGHT_MODULE` environment override and cleans up its HTTP server in `finally`.
-- The dated Teams → Moves design and implementation plan remain under `docs/superpowers/` as historical records.
-
-## Verification
-
-The current checks are:
-
-```bash
-node scripts/validate-data.js
-node check_html_scripts.mjs
-node --check generate_roster_files.js
-node --check sync_supabase_rosters.js
-node --check update_rosters_from_espn.js
-node --test update_rosters_from_espn.test.js
-node --test persist_espn_transactions.test.js
-node --test validate_data.test.js
-node --test concurrent_publish.test.js
-PLAYWRIGHT_MODULE=/path/to/installed/playwright node props-smoke.mjs
-python3 test_all_extensions.py
-python3 test_projections.py
-python3 test_schedule_data.py
-python3 -m py_compile test_all_extensions.py test_projections.py test_schedule_data.py
-```
-
-`scripts/validate-data.js` is the data-layer gate (run it before any deploy that changes data). The HTML checker is required because Node does not syntax-check `.html` files directly. The review-finding implementation plan is complete; the remaining limitations below are separate follow-up work.
-
-## Known limitations
-
-- ESPN normalization supports the transaction forms covered by the parser fixtures; unsupported descriptions are intentionally omitted.
-- Some Clay extraction sections remain available only in JSON, including returners, kickers, unit ranks, and projected starters.
-- Launchd plists are portable templates and require a machine-specific checkout path and credentials before installation.
-- The app remains intentionally single-file and has no build step; a module split would be a separate migration requiring browser regression coverage.
-- Browser tests are deterministic data-feed tests, not fully offline tests: third-party CDN libraries (Tailwind, supabase-js, fonts) still load from the network; full offline isolation would require vendoring them.
-
-## Next work
-
-- Continue the source-backed trust audit as new unsupported claims or fallbacks are identified.
-- Revisit freshness coverage and module extraction only when they can be changed without weakening the static deployment contract.
+- Review and push local `main` when ready to deploy the dashboard changes.
+- Apply the transaction migration before enabling the writer.
+- Configure the server-only secret, run the first write with `--since 2026-04-24`, and inspect the inserted rows.
+- Continue backend work in reversible batches after the persistence path is live.
 
 ## Blockers
 
-- None recorded.
+- Live transaction persistence waits on the migration and a server-only Supabase secret.
+- No code blocker: 44 tests pass and `scripts/validate-data.js` reports all 15 assets healthy.
