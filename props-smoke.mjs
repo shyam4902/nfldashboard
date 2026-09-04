@@ -102,6 +102,7 @@ const homeMappings = await page.evaluate(() => {
   return {
     compareRosters: actionFor('Compare rosters').includes('openCompare('),
     scorestripGames: document.querySelectorAll('.h2a-strip-games .h2a-game[onclick^="openMatchup"]').length > 0,
+    marqueeGames: document.querySelectorAll('#homeSpotlights [onclick^="openMatchup"]').length > 0,
     allWeekOneGames: actionFor('All 16 games').includes('showScheduleWeek(1)'),
     projectedStandings: actionFor('Projected standings').includes("showProjectionsTab('standings')"),
     modelLab: actionFor('How the model is graded').includes('/model-lab')

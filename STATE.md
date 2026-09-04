@@ -45,20 +45,8 @@
   - Scoped studio controls bar with week selector carousel (WK 1 to WK 18), view mode switcher (Broadcast Slate vs 32x18 Matrix), and quick filters (Primetime, Divisional, Close Spreads <= 3.0, High Total >= 47.0).
   - Marquee kickoff hero banner with 110x140 team pods, radial glow backdrops, dual win-probability distribution bar, and direct link to Matchup Center.
   - Chronological broadcast windows (Thursday/Special Kickoff, Sunday 1:00 PM ET Early Slate, Sunday 4:25 PM National Slate, Primetime Showdowns) with team logos, spread, log5 win probability, and total lines.
-  - Mobile UI refactored for clean ergonomics across all devices (Galaxy S21 360px, iPhone SE 375px, iPhone 14/15 390px, Pixel 7 412px):
-  - Header & Nav: Two-tier responsive layout with compact brand/utility bar and dedicated mobile sub-nav strip exposing all 5 primary tabs (Home, Schedule, Matchup, Teams, Projections) with synchronized active pill styling.
-  - Teams View: Converted hard-coded 4-column division grid to responsive 2x2 grid on mobile (`grid-cols-2 sm:grid-cols-4`), eliminating 71px horizontal overflow. Added 3-segment mobile control for Overview, Moves, and Power Index.
-  - Matchup Center: Restructured controls into stacked mobile-friendly dropdowns with text truncation, swap button, and horizontal touch scrolling across all 7 matchup subtabs (`Pro Preview`, `At a Glance`, `Passing Splits`, `Rushing Data`, `Defense & Trenches`, `Matchup Insights`, `Formation Lab`). Wrapped all matchup data tables in `overflow-x-auto` with touch scrolling.
-  - Home 2a Studio: Fixed mobile scorestrip items to fixed 138px width inside a scrollable flex track with touch scrolling; removed tall vertical divider line on mobile in favor of centered O/U layout.
-  - Modals & Drawers:
-    - Roster modal: refactored summary tiles into compact 2x2 grid on mobile, added `pr-10 sm:pr-12` header clearance for close button (`.roster-close`).
-    - Compare modal: configured `88vh` height and stacked single-column layout on mobile (`.compare-modal-body`) with independent scroll.
-    - Move drawer: raised z-index to 100 above sticky header and applied `overflow-x: hidden` to overlay, preventing hidden offscreen drawer from exposing unclipped overflow.
-    - Player dossier: ensured props table and Clay projection cards scroll horizontally smoothly with `min-w-[500px]` without container distortion.
-  - Verification:
-    - Automated mobile audit suite (`audit_mobile.py`) passes 18/18 views and modals with 0 overflow issues and 0 console errors.
-    - Multi-viewport sweep confirms 0px page overflow across Galaxy S21 (360px), iPhone SE (375px), iPhone 14 (390px), and Pixel 7 (412px).
-    - Full desktop regression test suite (`test_all_extensions.py`) passes all 32/32 tests with 0 errors.
+  - Full-season 32x18 matrix view updated with studio dark aesthetics and sticky team column.
+  - Verified with `python3 test_all_extensions.py` (0 errors, 100% checks passing).
 
 ## Backup and rollback artifacts
 

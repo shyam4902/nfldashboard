@@ -393,22 +393,6 @@ html, body {
   .move-row { grid-template-columns:54px minmax(110px,1fr) 34px minmax(90px,.75fr); }
   .move-detail { grid-column:2 / -1; white-space:normal; line-height:1.35; margin-top:-2px; }
 }
-.move-drawer-team small { display:block; font-size:10px; font-weight:500; color:#94a3b8; margin-top:3px; }
-.compare-modal-body { grid-template-columns:1fr 1fr; }
-@media(max-width:640px){
-  .teams-subtabs { display:grid !important; grid-template-columns:repeat(3,1fr) !important; gap:6px !important; }
-  .teams-subtab { padding:8px 4px !important; font-size:11px !important; justify-content:center !important; gap:4px !important; border-radius:8px !important; }
-  .teams-subtab .subtab-icon { font-size:13px !important; }
-  .teams-subtab .subtab-badge { font-size:9px !important; padding:1px 4px !important; }
-  .roster-summary { grid-template-columns:repeat(2,1fr) !important; gap:6px !important; margin-bottom:12px !important; }
-  .roster-summary .rs-card { padding:8px 10px !important; }
-  .roster-summary .rs-value { font-size:15px !important; }
-  .roster-modal { width:95% !important; margin:10px auto !important; max-height:92vh !important; }
-  .roster-modal-content { padding:16px 40px 16px 14px !important; }
-  .roster-close { top:8px !important; right:10px !important; width:32px !important; height:32px !important; font-size:16px !important; }
-  .compare-modal-body { grid-template-columns:1fr !important; overflow-y:auto !important; }
-}
-
 
 .tx-pill { display:inline-block; padding:1px 6px; border-radius:3px; font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; }
 .tx-pill.trade { background:rgba(59,130,246,0.2); color:#93c5fd; }
@@ -2495,7 +2479,7 @@ function marqueeGameHtml(g){
   const hProbPct = 100 - aProbPct;
   const tvBadgeClass = (g.tv || '').includes('Netflix') ? 'bg-red-900/40 text-red-300 border border-red-700/50' : ((g.tv || '').includes('Peacock') || (g.tv || '').includes('NBC') ? 'bg-amber-900/40 text-amber-300 border border-amber-700/50' : 'bg-slate-800 text-slate-300 border border-slate-700');
 
-  return `<div class="glass rounded-xl p-3 cursor-pointer hover:border-blue-500/60 transition border border-slate-700/50" onclick="showTab('schedule')" title="Open the full Week 1 schedule">
+  return `<div class="glass rounded-xl p-3 cursor-pointer hover:border-blue-500/60 transition border border-slate-700/50" onclick="openMatchup('${homeEsc(g.game_id)}')" title="Open this selected matchup">
     <div class="flex items-center justify-between text-[10px] text-slate-400 mb-2">
       <span class="font-semibold text-slate-300">${homeEsc(when)}</span>
       <span class="text-[9px] font-black uppercase px-2 py-0.5 rounded ${tvBadgeClass}">${homeEsc(g.tv || 'TV')}</span>
