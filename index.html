@@ -1356,10 +1356,7 @@ body.theme-analyst .roster-summary .rs-value {
   overflow: hidden;
   background: rgba(51, 65, 85, 0.6);
 }
-/* Modal model win probability numbers — bright with a glow for contrast on dark bg */
-#matchupModal .mp-num {
-  text-shadow: 0 0 16px rgba(125, 211, 252, 0.5), 0 0 3px rgba(255, 255, 255, 0.45);
-}
+
 /* ── PRO MATCHUP CENTER & NEXT GEN STATS STYLES ── */
 .matchup-hero-banner {
   background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(30, 41, 59, 0.85) 50%, rgba(15, 23, 42, 0.95) 100%);
@@ -5728,7 +5725,8 @@ function showTab(tab){
     else{el.classList.add('hidden');el.style.animation='';}
   });
   document.querySelectorAll('.tab-btn').forEach(btn=>{btn.classList.remove('active');btn.classList.add('bg-slate-800','text-slate-400');});
-  const activeTab = document.querySelector(`[data-tab="${tab}"]`);
+  const navTab = tab === 'matchup' ? 'schedule' : tab;
+  const activeTab = document.querySelector(`[data-tab="${navTab}"]`);
   if (activeTab) {
     activeTab.classList.add('active');
     activeTab.classList.remove('bg-slate-800','text-slate-400');
@@ -5906,6 +5904,11 @@ function switchProjSubTab(id) {
   currentProjSubTab = id;
   renderProjSubTabs();
   renderProjContent();
+}
+
+function showProjectionsTab(id) {
+  currentProjSubTab = id;
+  showTab('projections');
 }
 
 async function renderProjContent() {
@@ -6402,6 +6405,15 @@ function setScheduleWeek(wk){
   renderSchedule();
 }
 
+function showScheduleWeek(week){
+  currentScheduleWeek = week;
+  scheduleActiveFilter = 'all';
+  scheduleView = 'cards';
+  document.querySelectorAll('#scheduleFilterRow .sch-f-chip').forEach((chip, index) => chip.classList.toggle('on', index === 0));
+  setScheduleView('cards');
+  showTab('schedule');
+}
+
 // Cards ⇄ Grid toggle for the Schedule tab. The grid is the classic
 // full-season matrix (32 teams × 18 weeks, BYE cells, home/away tint,
 // clickable matchups) — the view that used to be the only Schedule view.
@@ -6432,7 +6444,7 @@ function setScheduleView(v){
 
 // Full-season 32×18 matrix built from schedule.json's 272 games. Each cell
 // is the opponent's abbreviation (home games tinted), BYE cells are blank,
-// and every non-bye cell deep-links to the matchup modal.
+// and every non-bye cell deep-links to the Matchup page.
 function renderScheduleGrid(){
   const c = document.getElementById('scheduleGrid');
   if (!c) return;
@@ -6946,76 +6958,16 @@ async function renderSchedule(){
   });
 }
 
-function closeMatchupModal(){
-  const ov = document.getElementById('matchupModal');
-  if (ov) ov.classList.remove('active');
-}
-
-function marketBlock(m, awayName, homeName){
-  const e = (s) => String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-  const awayAbbr = teamAbbrFor(awayName) || awayName;
-  if (!m) return '<div class="mt-3 border-t border-slate-700/50 pt-3"><div class="text-[10px] uppercase tracking-wider text-slate-500 font-bold mb-2">Game Lines <span class="normal-case font-normal text-slate-600">— none yet</span></div></div>';
-  const cell = (label, val) =>
-    '<div class="rounded-lg bg-slate-800/60 border border-slate-700/50 px-3 py-2 text-center"><div class="text-[9px] text-slate-500 uppercase tracking-wider">' + label + '</div><div class="text-sm font-bold text-slate-100">' + (val === null || val === undefined ? '<span class="text-slate-600">—</span>' : e(val)) + '</div></div>';
-  // Spread keeps its displayed number and gains the team it belongs to in parens.
-  // nflverse's spread_line as displayed is the away team's spread (e.g. NE +3.5).
-  const spreadNum = m.spread === null ? null : ((m.spread > 0 ? '+' : '') + m.spread);
-  const spread = spreadNum === null ? null
-    : (m.spread === 0 ? 'PK' : '(' + e(awayAbbr) + ') ' + spreadNum);
-  return '<div class="mt-3 border-t border-slate-700/50 pt-3"><div class="text-[10px] uppercase tracking-wider text-slate-500 font-bold mb-2">Game Lines <span class="normal-case font-normal text-slate-600">(nflverse)</span></div>' +
-    '<div class="grid grid-cols-2 gap-2">' + cell('Spread', spread) + cell('Total', m.total) + '</div></div>';
-}
-
 function openMatchup(gameId){
-  if (!SCHEDULE_DATA) return;
-  const game = SCHEDULE_DATA.games.find(g => g.game_id === gameId);
-  if (!game) return;
-  let ov = document.getElementById('matchupModal');
-  if (!ov) {
-    ov = document.createElement('div');
-    ov.id = 'matchupModal';
-    ov.className = 'roster-modal-overlay';
-    ov.innerHTML = '<div class="roster-modal" style="max-width:640px">' +
-      '<button class="roster-close" onclick="closeMatchupModal()">&times;</button>' +
-      '<div id="matchupBody" class="roster-modal-content"></div></div>';
-    ov.addEventListener('click', e => { if (e.target === ov) closeMatchupModal(); });
-    document.body.appendChild(ov);
+  const game = SCHEDULE_DATA?.games?.find(candidate => candidate.game_id === gameId);
+  if (!game) {
+    console.error(`[openMatchup] Game not found: ${gameId}`);
+    return false;
   }
-  const homeStr = computeTeamOverall(game.home_team);
-  const awayStr = computeTeamOverall(game.away_team);
-  const prob = winProb(homeStr, awayStr);
-  const esc = (s) => String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-  const d = new Date(game.kickoff_utc);
-  const when = isNaN(d.getTime()) ? 'Kickoff TBD' : d.toLocaleString([], { weekday:'long', month:'long', day:'numeric', hour:'numeric', minute:'2-digit' });
-  const row = (name, role, str, probVal, otherStr) => {
-    const abbr = DATA.teamAbbr[name] || ABBR_TO_TEAM[name] || name;
-    const pct = probVal === null ? '—' : (probVal * 100).toFixed(1) + '%';
-    const color = DATA.teamColors[name] || '#3b4261';
-    return '<div class="sch-team" style="margin-bottom:14px">' +
-      '<div class="sch-abbr" style="background:' + color + '33;color:' + color + ';border:1px solid ' + color +'">' + esc(abbr) + '</div>' +
-      '<div class="sch-info"><span class="sch-name" style="font-size:15px">' + esc(name) + '</span><small>' + role + '</small></div>' +
-      '<div class="sch-prob">' + pct + '</div></div>';
-  };
-  document.getElementById('matchupBody').innerHTML =
-    '<div class="text-center mb-4"><div class="text-[10px] text-slate-500 uppercase tracking-wider mb-1">Week ' + (game.week || 1) + ' Matchup</div>' +
-    '<div class="text-lg font-black text-white">' + esc(when) + '</div>' +
-    '<div class="text-xs text-slate-500">' + esc(game.venue || '') + ' · ' + (game.tv ? esc(game.tv) : 'TV TBD') + '</div></div>' +
-    row(game.away_team, 'Away', awayStr, prob === null ? null : 1 - prob, homeStr) +
-    row(game.home_team, 'Home', homeStr, prob, awayStr) +
-    marketBlock(game.market, game.away_team, game.home_team) +
-    '<div class="border-t border-slate-700/50 pt-3"><div class="text-[10px] uppercase tracking-wider text-slate-400 font-bold mb-2">Model Win Probability</div>' +
-    '<div class="flex text-center"><div class="w-1/2 text-2xl font-black mp-num" style="color:' + (DATA.teamColors[game.home_team]||'#7dd3fc') +'">' + (prob === null ? '—' : (prob*100).toFixed(1) + '%') + '</div>' +
-    '<div class="w-1/2 text-2xl font-black mp-num" style="color:' + (DATA.teamColors[game.away_team]||'#7dd3fc') +'">' + (prob === null ? '—' : ((1-prob)*100).toFixed(1) + '%') + '</div></div>' +
-    '<div class="flex text-[10px] text-slate-500 mt-1"><div class="w-1/2 text-left">' + esc(game.home_team) + '</div><div class="w-1/2 text-right">' + esc(game.away_team) + '</div></div>' +
-    '<p class="text-[10px] text-slate-600 mt-2">Percentages are derived from the dashboard\'s composite power ratings via a log5 model with home-field edge. Spread/total/moneyline are live market lines (source: nflverse).</p></div>' +
-    '<div class="mt-4 pt-3 border-t border-slate-700/50 space-y-2">' +
-    '<button class="w-full text-xs font-bold py-2 px-3 rounded-lg bg-blue-600/20 text-blue-300 border border-blue-500/40 hover:bg-blue-500/30 transition flex items-center justify-center gap-1.5" onclick="MATCHUP_STATE.teamA=\'' + esc(game.away_team).replace(/'/g, "\\'") + '\';MATCHUP_STATE.teamB=\'' + esc(game.home_team).replace(/'/g, "\\'") + '\';showTab(\'matchup\');closeMatchupModal()">' +
-    '<span>⚡</span> Open in Pro Matchup Center</button>' +
-    '<div class="grid grid-cols-2 gap-2">' +
-    '<button class="text-xs font-bold px-3 py-2 rounded-lg border border-slate-600 bg-slate-800 text-slate-300 hover:bg-slate-700 transition" onclick="openRoster(\'' + esc(game.away_team).replace(/'/g,"\\'") + '\');closeMatchupModal()">' + esc(DATA.teamAbbr[game.away_team]||ABBR_TO_TEAM[game.away_team]||game.away_team) + ' — View Roster</button>' +
-    '<button class="text-xs font-bold px-3 py-2 rounded-lg border border-slate-600 bg-slate-800 text-slate-300 hover:bg-slate-700 transition" onclick="openRoster(\'' + esc(game.home_team).replace(/'/g,"\\'") + '\');closeMatchupModal()">' + esc(DATA.teamAbbr[game.home_team]||ABBR_TO_TEAM[game.home_team]||game.home_team) + ' — View Roster</button>' +
-    '</div></div>';
-  ov.classList.add('active');
+  MATCHUP_STATE.teamA = game.away_team;
+  MATCHUP_STATE.teamB = game.home_team;
+  showTab('matchup');
+  return true;
 }
 
 async function loadPropsBoard(){

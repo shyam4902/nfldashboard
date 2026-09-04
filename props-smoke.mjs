@@ -77,11 +77,9 @@ page.on('console', m => { if (m.type() === 'error') errors.push(m.text()); });
 await page.goto('http://localhost:8123/', { waitUntil: 'load' });
 await page.waitForTimeout(2500);
 
-// Ticket 03: Today in the NFL front door — game cards + one-line prop insight.
-const frontDoor = await page.locator('#homeFrontDoor').textContent().catch(() => '');
-const frontDoorGames = await page.locator('#homeFrontDoor .glass.rounded-lg').count().catch(() => 0);
-const frontDoorInsight = frontDoor.includes('looks generous') || frontDoor.includes('a lean') || frontDoor.includes('a slight edge');
-console.log('--- front door present:', frontDoor.length > 20, '| game cards:', frontDoorGames, '| has prop insight:', frontDoorInsight);
+const homeHero = await page.locator('#homeHero').textContent().catch(() => '');
+const homeScorestripGames = await page.locator('#homeHero .h2a-strip-games .h2a-game').count().catch(() => 0);
+console.log('--- current Home present:', homeHero.length > 20, '| scorestrip items:', homeScorestripGames);
 
 // Verify the Props & Value and Win Totals nav buttons are gone (Ticket 13).
 const propsNavBtn = await page.locator('button[data-tab="props"]').count().catch(() => 0);
@@ -108,17 +106,83 @@ const projGroups = await page.locator('#projSubTabs span').filter({ hasText: /Te
 freshnessOk = /data .* ago/.test(schedStamp) && /data .* ago/.test(projStamp) && projGroups >= 4;
 console.log('--- freshness stamps (schedule/proj):', /data .* ago/.test(schedStamp), /data .* ago/.test(projStamp), '| projections groups:', projGroups);
 
-// Matchup Lab: switch to the tab, assert 11 O + 11 X chips, unit strip rows,
-// verdict pill, and that switching personnel/defensive front re-renders.
+// Navigation regression: a game opens the full Matchup page directly, named
+// collection links reset their nested state, and a missing game preserves state.
+const navigationCheck = await page.evaluate(async () => {
+  const game = SCHEDULE_DATA?.games?.[0];
+  if (!game) return { opened: false, error: 'No schedule game was available' };
+
+  const opened = openMatchup(game.game_id);
+  await new Promise(resolve => setTimeout(resolve, 900));
+  const selectedTeams = MATCHUP_STATE.teamA === game.away_team && MATCHUP_STATE.teamB === game.home_team;
+  const matchupVisible = !document.getElementById('tab-matchup')?.classList.contains('hidden');
+  const scheduleOwnsActiveState = document.querySelector('[data-tab="schedule"]')?.classList.contains('active') === true;
+  const noSummaryModal = !document.getElementById('matchupModal');
+
+  const beforeMissing = {
+    teamA: MATCHUP_STATE.teamA,
+    teamB: MATCHUP_STATE.teamB,
+    matchupHidden: document.getElementById('tab-matchup')?.classList.contains('hidden')
+  };
+  const logged = [];
+  const originalError = console.error;
+  console.error = (...args) => logged.push(args.join(' '));
+  const missingResult = openMatchup('__missing_game__');
+  console.error = originalError;
+  const missingStayedPut = missingResult === false
+    && MATCHUP_STATE.teamA === beforeMissing.teamA
+    && MATCHUP_STATE.teamB === beforeMissing.teamB
+    && document.getElementById('tab-matchup')?.classList.contains('hidden') === beforeMissing.matchupHidden
+    && logged.length === 1
+    && logged[0].includes('__missing_game__');
+
+  currentScheduleWeek = 9;
+  scheduleView = 'grid';
+  scheduleActiveFilter = 'primetime';
+  showScheduleWeek(1);
+  await new Promise(resolve => setTimeout(resolve, 300));
+  const scheduleReset = currentScheduleWeek === 1
+    && scheduleView === 'cards'
+    && scheduleActiveFilter === 'all'
+    && !document.getElementById('tab-schedule')?.classList.contains('hidden');
+
+  currentProjSubTab = 'qb';
+  showProjectionsTab('standings');
+  await new Promise(resolve => setTimeout(resolve, 300));
+  const projectionsReset = currentProjSubTab === 'standings'
+    && !document.getElementById('tab-projections')?.classList.contains('hidden');
+
+  openMatchup(game.game_id);
+  await new Promise(resolve => setTimeout(resolve, 900));
+  return {
+    opened,
+    selectedTeams,
+    matchupVisible,
+    scheduleOwnsActiveState,
+    noSummaryModal,
+    missingStayedPut,
+    scheduleReset,
+    projectionsReset,
+    error: null
+  };
+});
+const navigationOk = navigationCheck.opened === true
+  && navigationCheck.selectedTeams
+  && navigationCheck.matchupVisible
+  && navigationCheck.scheduleOwnsActiveState
+  && navigationCheck.noSummaryModal
+  && navigationCheck.missingStayedPut
+  && navigationCheck.scheduleReset
+  && navigationCheck.projectionsReset;
+console.log('--- direct navigation:', navigationOk, navigationCheck.error || '');
+
+// Matchup Lab: assert the existing content still renders after contextual entry.
 let matchupOk = false;
 let gamePickOk = false;
 let trustOk = false;
 await page.evaluate(() => { try { closePlayerModal(); closeRoster(); } catch (e) {} }).catch(() => {});
 await page.waitForTimeout(300);
-const matchupBtn = page.locator('button[data-tab="matchup"]').first();
-if (await matchupBtn.count()) {
-  await matchupBtn.click();
-  await page.waitForTimeout(1500);
+if (navigationCheck.opened) {
 
   const heroText = await page.locator('#matchupHeroBanner').textContent().catch(() => '');
   const sidebarText = await page.locator('#matchupSidebar').textContent().catch(() => '');
@@ -244,8 +308,8 @@ const capOk = missingCapCheck.hasUnavailable && !missingCapCheck.hasZero;
 console.log('--- missing cap space renders unavailable:', capOk, missingCapCheck.error || '');
 console.log('--- page errors:', errors.length ? errors.slice(0, 5) : 'none');
 
-  const homeOk = frontDoor.length > 20 && (frontDoorGames > 0 || /no games|unavailable/i.test(frontDoor));
-  if (errors.length || hasBrowserSummerOverride || hasLegacyRosterOverride || !homeOk || !matchupOk || !gamePickOk || !trustOk || !freshnessOk || !rosterDepthOk || !probabilityOk || !capOk || propsNavBtn !== 0 || wtNavBtn !== 0) {
+  const homeOk = homeHero.length > 20 && homeScorestripGames > 0;
+  if (errors.length || hasBrowserSummerOverride || hasLegacyRosterOverride || !homeOk || !navigationOk || !matchupOk || !gamePickOk || !trustOk || !freshnessOk || !rosterDepthOk || !probabilityOk || !capOk || propsNavBtn !== 0 || wtNavBtn !== 0) {
     console.log('SMOKE TEST FAILED');
     process.exitCode = 1;
   } else {
