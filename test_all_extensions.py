@@ -319,7 +319,7 @@ with sync_playwright() as p:
 
     # 8. Test Matchup Center & Pro Preview
     print("Testing Matchup Center & Pro Preview...")
-    page.click('[data-tab="matchup"]')
+    page.evaluate("showTab('matchup')")
     page.wait_for_timeout(600)
     page.screenshot(path=f"{SCREENSHOT_DIR}/14_matchup_center.png")
     # Click Pro Preview subtab
