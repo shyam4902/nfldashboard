@@ -7,6 +7,39 @@
 
 ## Shipped recently
 
+- Extended the NFL26 pregame-studio theme from the hero and Schedule tab to the
+  rest of the app in one pass, replacing the legacy navy "Obsidian Slate" look:
+  - Added a `tailwind.config` palette remap right after the Tailwind CDN tag. The
+    `slate` ramp becomes warm studio charcoal (`#16191f` / `#2b3037` / `#8f9299`),
+    `amber` becomes studio gold `#d9a441`, and `blue`/`sky`/`cyan`/`emerald`/`red`/
+    `indigo` drop their neon chroma. This re-skins ~1,200 utility-class usages
+    across every tab at once. The assignment is guarded (`window.tailwind =
+    window.tailwind || {}`) so a blocked or offline CDN cannot abort page scripts.
+  - Retuned the default `:root` theme tokens to the studio surfaces and accents
+    (`--bg-body: #0b0d10`, `--bg-card: #14161a`, `--border-card: #2b3037`,
+    `--accent-brand: #d9a441`) and added `--bg-inset` to all five themes.
+  - Remapped hardcoded navy hexes/rgba in the generic CSS regions only; the
+    `body.theme-*` alternate-theme blocks were deliberately left intact, so
+    Stadium / ESPN / Retro / Analyst still switch correctly.
+  - Retuned 37 accent rules: chrome and interaction states (active tab, focus
+    ring, hovers, command palette, subtabs, moves filters) go gold; semantic
+    "team B / offense / trade / NFC" blues go muted broadcast steel `#8fa6bf`
+    so they stay distinguishable from the red side.
+  - Rebuilt the header as studio chrome (`.app-header` + `.hdr-*`): Archivo brand
+    lockup with gold `NFL`, gold active tab, charcoal search and utility buttons.
+    `.tab-btn` now owns its own styling, so `showTab()` no longer juggles
+    `bg-slate-800` / `text-slate-400` classes.
+  - Added a `.studio-card` / `.studio-tile` / `.studio-link` / `.studio-foot`
+    system and moved every remaining Home box onto it: Top Model Bets, Week N
+    Marquee, Top Value Plays, Biggest Offseason Moves, League Overview KPI tiles,
+    Today in the NFL, and the marquee game tiles. Home boxes now render on the
+    same `#14161a` surface with the same `#2b3037` hairline as the hero.
+  - Verified with `node props-smoke.mjs`, `python3 test_all_extensions.py`
+    (31 checks, 0 console errors, all 5 themes captured), `node --test` (36/36)
+    and `node scripts/validate-data.js` (15/15). NOTE: both browser suites load
+    Tailwind and supabase-js from CDNs that some sandboxes block; where that
+    happens they fail before any assertion, on unmodified `index.html` too.
+
 - Simplified dashboard navigation and page ownership:
   - Removed Matchup from the header while keeping the full Matchup page available through selected games and the command palette.
   - Routed Home and Schedule game actions directly to the selected Matchup with no summary modal.
