@@ -53,40 +53,34 @@ with sync_playwright() as p:
     page.screenshot(path=f"{SCREENSHOT_DIR}/01_home_default.png")
     successes.append("Home page loaded")
 
-    # 0. Test the new Home showcase page (hero, feature grid, live spotlights)
-    print("Testing Home showcase...")
+    # 0. Test the 2a Home redesign page (hero carousel, scorestrip, storylines, power index)
+    print("Testing Home 2a redesign...")
     home_text = page.inner_text("#tab-home")
-    if "League Command Center" in home_text and "What's Inside" in home_text:
-        successes.append("Home hero + showcase section rendered")
+    if page.locator("#h2aHero").is_visible() and page.locator(".h2a-strip").is_visible():
+        successes.append("Home 2a hero carousel + scorestrip rendered")
     else:
-        failures.append("Home hero/showcase missing")
-    feat_cards = page.locator(".feature-card").count()
-    if feat_cards >= 9:
-        successes.append(f"Feature grid rendered with {feat_cards} clickable cards")
+        failures.append("Home 2a hero or scorestrip missing")
+    logo_count = page.locator(".h2a-strip img, .h2a-pi-row img").count()
+    if logo_count >= 6:
+        successes.append(f"Team logos rendered in scorestrip and power index ({logo_count} logos)")
     else:
-        failures.append(f"Feature grid incomplete: {feat_cards} cards")
+        failures.append(f"Team logos missing or insufficient in home: {logo_count}")
     page.wait_for_timeout(1500)
     spots = page.inner_text("#homeSpotlights")
-    for sec in ["2026 Projected Power", "Week 1 Marquee", "Top Value Plays", "Biggest Offseason Moves"]:
+    for sec in ["Week 1 Marquee", "Top Value Plays", "Biggest Offseason Moves"]:
         if sec in spots:
             successes.append(f"Home spotlight '{sec}' rendered")
         else:
             failures.append(f"Home spotlight '{sec}' missing")
-    # Feature card navigation: click a card and verify it switches tabs
-    page.locator(".feature-card", has_text="Mike Clay Projections").click()
+    # Power index navigation: click a row and verify it switches to projections tab
+    page.locator(".h2a-pi-row").first.click()
     page.wait_for_timeout(500)
     if page.locator("#tab-projections").is_visible():
-        successes.append("Feature card navigates to its tab")
+        successes.append("Home power index navigates to projections tab")
     else:
-        failures.append("Feature card navigation broken")
+        failures.append("Home power index navigation broken")
     page.click('[data-tab="home"]')
     page.wait_for_timeout(400)
-    # Regression: dynamic feature-card stats must reflect loaded data (not 0)
-    feat_text = page.locator("#tab-home").inner_text()
-    if "0 TEAMS" in feat_text.upper() or "0 MOVES" in feat_text.upper() or "0 PICKS" in feat_text.upper():
-        failures.append("Feature-card stats baked at parse time (showing zeros)")
-    else:
-        successes.append("Feature-card stats reflect loaded data (no zero stubs)")
     # Regression: no horizontal overflow at mobile width
     page.set_viewport_size({"width": 390, "height": 844})
     page.wait_for_timeout(400)

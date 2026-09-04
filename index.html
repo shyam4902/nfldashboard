@@ -1550,8 +1550,6 @@ async function loadAllData() {
         if (match && match.ovr) {
           p.ovr = match.ovr;
           p.ratings_source = 'madden_official';
-          if (match.age) p.age = match.age;
-          if (match.jersey !== undefined && match.jersey !== null) p.jersey = match.jersey;
         }
       }
     }
@@ -2406,6 +2404,48 @@ function biggestMovesHtml(){
   </div>`;
 }
 
+const NFL_ABBR_ESPN_MAP = {
+  'ARI': 'ari', 'ARZ': 'ari', 'Arizona Cardinals': 'ari',
+  'ATL': 'atl', 'Atlanta Falcons': 'atl',
+  'BAL': 'bal', 'BLT': 'bal', 'Baltimore Ravens': 'bal',
+  'BUF': 'buf', 'Buffalo Bills': 'buf',
+  'CAR': 'car', 'Carolina Panthers': 'car',
+  'CHI': 'chi', 'Chicago Bears': 'chi',
+  'CIN': 'cin', 'Cincinnati Bengals': 'cin',
+  'CLE': 'cle', 'CLV': 'cle', 'Cleveland Browns': 'cle',
+  'DAL': 'dal', 'Dallas Cowboys': 'dal',
+  'DEN': 'den', 'Denver Broncos': 'den',
+  'DET': 'det', 'Detroit Lions': 'det',
+  'GB': 'gb', 'Green Bay Packers': 'gb',
+  'HOU': 'hou', 'HST': 'hou', 'Houston Texans': 'hou',
+  'IND': 'ind', 'Indianapolis Colts': 'ind',
+  'JAX': 'jax', 'Jacksonville Jaguars': 'jax',
+  'KC': 'kc', 'Kansas City Chiefs': 'kc',
+  'LV': 'lv', 'Las Vegas Raiders': 'lv',
+  'LAC': 'lac', 'Los Angeles Chargers': 'lac',
+  'LAR': 'lar', 'LA': 'lar', 'Los Angeles Rams': 'lar',
+  'MIA': 'mia', 'Miami Dolphins': 'mia',
+  'MIN': 'min', 'Minnesota Vikings': 'min',
+  'NE': 'ne', 'New England Patriots': 'ne',
+  'NO': 'no', 'New Orleans Saints': 'no',
+  'NYG': 'nyg', 'New York Giants': 'nyg',
+  'NYJ': 'nyj', 'New York Jets': 'nyj',
+  'PHI': 'phi', 'Philadelphia Eagles': 'phi',
+  'PIT': 'pit', 'Pittsburgh Steelers': 'pit',
+  'SF': 'sf', 'San Francisco 49ers': 'sf',
+  'SEA': 'sea', 'Seattle Seahawks': 'sea',
+  'TB': 'tb', 'Tampa Bay Buccaneers': 'tb',
+  'TEN': 'ten', 'Tennessee Titans': 'ten',
+  'WAS': 'wsh', 'WSH': 'wsh', 'Washington Commanders': 'wsh'
+};
+
+function getNflTeamLogo(teamOrAbbr) {
+  if (!teamOrAbbr) return 'https://a.espncdn.com/i/teamlogos/nfl/500/nfl.png';
+  const abbr = DATA.teamAbbr?.[teamOrAbbr] || teamOrAbbr;
+  const key = NFL_ABBR_ESPN_MAP[teamOrAbbr] || NFL_ABBR_ESPN_MAP[abbr] || String(abbr).toLowerCase();
+  return `https://a.espncdn.com/i/teamlogos/nfl/500/${key}.png`;
+}
+
 // ═══════════════════════════════════════════════════════════
 // HOME REDESIGN 2a — "Pregame studio" hero carousel + scorestrip
 // + storylines + power index. Data-driven pieces (featured matchup,
@@ -2446,7 +2486,14 @@ function home2aFeaturedSlide(feat){
   const aMl = m && m.away_ml != null ? (m.away_ml > 0 ? '+' + m.away_ml : String(m.away_ml)) : '—';
   const hMl = m && m.home_ml != null ? (m.home_ml > 0 ? '+' + m.home_ml : String(m.home_ml)) : '—';
   const total = m && m.total != null ? m.total : '—';
-  const cut = (color, side) => `<svg viewBox="0 0 118 150" width="118" height="150" style="display:block;flex:none"><rect width="118" height="150" rx="6" fill="url(#h2aPh2)" stroke="${color}55"></rect><text x="59" y="78" text-anchor="middle" fill="${color}" font-family="Geist Mono, monospace" font-size="9" opacity=".8">${homeEsc(side)}</text></svg>`;
+  const cut = (color, side, team) => {
+    const logo = getNflTeamLogo(team);
+    return `<div style="width:118px;height:150px;border-radius:10px;border:1px solid ${color}44;background:linear-gradient(180deg,rgba(255,255,255,.03) 0%,rgba(0,0,0,.35) 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;flex:none;position:relative;overflow:hidden">
+      <div style="position:absolute;inset:0;background:radial-gradient(circle at 50% 50%,${color}25 0%,transparent 70%);pointer-events:none"></div>
+      <img src="${logo}" alt="${homeEsc(team)}" style="width:68px;height:68px;object-fit:contain;position:relative;z-index:1;filter:drop-shadow(0 4px 10px rgba(0,0,0,.6))" loading="lazy">
+      <span class="h2a-mono" style="font:800 10px var(--font-mono);letter-spacing:.14em;color:${color};position:relative;z-index:1">${homeEsc(side)}</span>
+    </div>`;
+  };
   return `<div class="h2a-slide-pad">
     <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px;flex-wrap:wrap">
       <span class="h2a-kicker" style="color:#fff;background:${aColor}">FEATURED MATCHUP</span>
@@ -2454,10 +2501,13 @@ function home2aFeaturedSlide(feat){
     </div>
     <div class="h2a-matchup" style="display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:24px">
       <div style="display:flex;align-items:center;gap:18px">
-        ${cut(aColor, aAbbr)}
+        ${cut(aColor, aAbbr, feat.away_team)}
         <div>
           <div class="h2a-mono" style="font:800 10px var(--font-mono);letter-spacing:.14em;color:${aColor}">AWAY</div>
-          <div class="h2a-arch" style="font:800 30px/1 'Archivo',sans-serif;letter-spacing:-.02em;color:#fff;margin-top:7px">${homeEsc((aAbbr||'').toUpperCase())}</div>
+          <div style="display:flex;align-items:center;gap:10px;margin-top:7px">
+            <img src="${getNflTeamLogo(feat.away_team)}" alt="" style="width:28px;height:28px;object-fit:contain;filter:drop-shadow(0 2px 4px rgba(0,0,0,.4))" loading="lazy">
+            <span class="h2a-arch" style="font:800 30px/1 'Archivo',sans-serif;letter-spacing:-.02em;color:#fff">${homeEsc((aAbbr||'').toUpperCase())}</span>
+          </div>
           <div style="font:500 13px var(--font-sans);color:#c8ccd2;margin-top:4px">${homeEsc(feat.away_team)}</div>
           <div style="display:flex;align-items:baseline;gap:8px;margin-top:14px">
             <span class="h2a-mono" style="font:900 40px/1 var(--font-mono);color:#fff">${aPct}<span style="font-size:19px">%</span></span>
@@ -2474,7 +2524,10 @@ function home2aFeaturedSlide(feat){
       <div style="display:flex;align-items:center;gap:18px;justify-content:flex-end;text-align:right">
         <div>
           <div class="h2a-mono" style="font:800 10px var(--font-mono);letter-spacing:.14em;color:${hColor}">HOME</div>
-          <div class="h2a-arch" style="font:800 30px/1 'Archivo',sans-serif;letter-spacing:-.02em;color:#fff;margin-top:7px">${homeEsc((hAbbr||'').toUpperCase())}</div>
+          <div style="display:flex;align-items:center;gap:10px;margin-top:7px;justify-content:flex-end">
+            <span class="h2a-arch" style="font:800 30px/1 'Archivo',sans-serif;letter-spacing:-.02em;color:#fff">${homeEsc((hAbbr||'').toUpperCase())}</span>
+            <img src="${getNflTeamLogo(feat.home_team)}" alt="" style="width:28px;height:28px;object-fit:contain;filter:drop-shadow(0 2px 4px rgba(0,0,0,.4))" loading="lazy">
+          </div>
           <div style="font:500 13px var(--font-sans);color:#c8ccd2;margin-top:4px">${homeEsc(feat.home_team)}</div>
           <div style="display:flex;align-items:baseline;gap:8px;margin-top:14px;justify-content:flex-end">
             <span style="font:500 11px var(--font-sans);color:#9aa0a8">model win<br>probability</span>
@@ -2482,7 +2535,7 @@ function home2aFeaturedSlide(feat){
           </div>
           <div class="h2a-mono" style="font:600 12px var(--font-mono);color:#dbd9d4;margin-top:10px;border:1px solid ${hColor}66;border-radius:5px;padding:5px 9px;display:inline-block">${homeEsc(hSpread)} &nbsp;·&nbsp; ML ${homeEsc(hMl)}</div>
         </div>
-        ${cut(hColor, hAbbr)}
+        ${cut(hColor, hAbbr, feat.home_team)}
       </div>
     </div>
     <div style="display:flex;align-items:center;gap:2px;margin-top:20px;height:8px;border-radius:4px;overflow:hidden;background:rgba(255,255,255,.06)">
@@ -2520,8 +2573,8 @@ function home2aScorestrip(games){
     const homeFav = hPct >= aPct;
     return `<div class="h2a-game" onclick="showTab('schedule')">
       <div class="h2a-game-time">${homeEsc(when)}${homeEsc(tv)}</div>
-      <div class="h2a-team-row"><span class="h2a-team-name"><span class="h2a-cbar" style="background:${aColor}"></span><span style="font:700 12px var(--font-sans);color:${homeFav ? '#c9ccd1' : '#fff'}">${homeEsc(aAbbr)}</span></span><span class="h2a-mono" style="font:600 11px var(--font-mono);color:${homeFav ? '#868a91' : '#7cc49b'}">${homeFav ? homeEsc(aSpread) : aPct + '%'}</span></div>
-      <div class="h2a-team-row"><span class="h2a-team-name"><span class="h2a-cbar" style="background:${hColor}"></span><span style="font:700 12px var(--font-sans);color:${homeFav ? '#fff' : '#c9ccd1'}">${homeEsc(hAbbr)}</span></span><span class="h2a-mono" style="font:700 11px var(--font-mono);color:${homeFav ? '#7cc49b' : '#868a91'}">${homeFav ? hPct + '%' : ''}</span></div>
+      <div class="h2a-team-row"><span class="h2a-team-name"><img src="${getNflTeamLogo(g.away_team)}" alt="" style="width:16px;height:16px;object-fit:contain;flex:none;filter:drop-shadow(0 1px 2px rgba(0,0,0,.5))" loading="lazy"><span style="font:700 12px var(--font-sans);color:${homeFav ? '#c9ccd1' : '#fff'}">${homeEsc(aAbbr)}</span></span><span class="h2a-mono" style="font:600 11px var(--font-mono);color:${homeFav ? '#868a91' : '#7cc49b'}">${homeFav ? homeEsc(aSpread) : aPct + '%'}</span></div>
+      <div class="h2a-team-row"><span class="h2a-team-name"><img src="${getNflTeamLogo(g.home_team)}" alt="" style="width:16px;height:16px;object-fit:contain;flex:none;filter:drop-shadow(0 1px 2px rgba(0,0,0,.5))" loading="lazy"><span style="font:700 12px var(--font-sans);color:${homeFav ? '#fff' : '#c9ccd1'}">${homeEsc(hAbbr)}</span></span><span class="h2a-mono" style="font:700 11px var(--font-mono);color:${homeFav ? '#7cc49b' : '#868a91'}">${homeFav ? hPct + '%' : ''}</span></div>
     </div>`;
   }).join('');
   return `<div class="h2a-strip">
@@ -2550,8 +2603,10 @@ function home2aPowerIndex(){
     const abbr = DATA.teamAbbr[t.name] || t.abbr || t.name;
     const wins = (t.projected_wins || 0).toFixed(1);
     return `<div class="h2a-pi-row" onclick="showTab('projections')">
-      <span class="h2a-mono" style="font:700 11px var(--font-mono);color:#fff;width:16px">${i + 1}</span>
-      <span class="h2a-pi-badge" style="background:${color}">${homeEsc(abbr)}</span>
+      <span class="h2a-mono" style="font:700 11px var(--font-mono);color:#868a91;width:16px">${i + 1}</span>
+      <div style="width:24px;height:24px;border-radius:5px;background:rgba(255,255,255,.04);border:1px solid ${color}44;display:flex;align-items:center;justify-content:center;padding:2px;flex:none">
+        <img src="${getNflTeamLogo(t.name)}" alt="${homeEsc(abbr)}" style="width:18px;height:18px;object-fit:contain" loading="lazy">
+      </div>
       <span style="flex:1;font:700 12px var(--font-sans);color:#fff">${homeEsc(t.name)}</span>
       <span class="h2a-mono" style="font:700 12px var(--font-mono);color:#e9e7e3;width:38px;text-align:right">${wins}</span>
     </div>`;
@@ -2637,7 +2692,40 @@ function homeRedesign2aHtml(){
                 <span class="h2a-btn-ghost" style="border-color:#363c44" onclick="showTab('projections')">Projected standings</span>
               </div>
             </div>
-            <svg viewBox="0 0 520 280" style="width:100%;max-width:520px;height:auto;display:block;border-radius:8px"><rect width="520" height="280" rx="8" fill="url(#h2aPh1)" stroke="#2b3037"></rect><text x="260" y="146" text-anchor="middle" fill="#4b5f7a" font-family="Geist Mono, monospace" font-size="11">TRANSACTION WIRE</text></svg>
+            <div style="width:100%;max-width:520px;min-height:280px;border-radius:10px;border:1px solid #2b3037;background:linear-gradient(135deg,#0c1322 0%,#141a24 50%,#0e1117 100%);position:relative;overflow:hidden;padding:22px;display:flex;flex-direction:column;justify-content:space-between">
+              <div style="position:absolute;right:-20px;bottom:-20px;opacity:.09;pointer-events:none">
+                <img src="${getNflTeamLogo('Los Angeles Rams')}" alt="" style="width:260px;height:260px;object-fit:contain">
+              </div>
+              <div style="display:flex;align-items:center;justify-content:space-between;position:relative;z-index:1">
+                <div style="display:flex;align-items:center;gap:10px">
+                  <img src="${getNflTeamLogo('Cleveland Browns')}" alt="CLE" style="width:28px;height:28px;object-fit:contain">
+                  <span class="h2a-mono" style="font:700 11px var(--font-mono);color:#868a91">CLE</span>
+                  <span style="color:#d9a441;font-size:14px">→</span>
+                  <img src="${getNflTeamLogo('Los Angeles Rams')}" alt="LAR" style="width:32px;height:32px;object-fit:contain">
+                  <span class="h2a-mono" style="font:800 12px var(--font-mono);color:#fff">LAR</span>
+                </div>
+                <span class="h2a-mono" style="font:700 10px var(--font-mono);color:#7cc49b;background:rgba(124,196,155,.12);border:1px solid rgba(124,196,155,.3);border-radius:4px;padding:3px 8px">BLOCKBUSTER</span>
+              </div>
+              <div style="position:relative;z-index:1;margin:18px 0">
+                <div class="h2a-mono" style="font:800 11px var(--font-mono);letter-spacing:.12em;color:#ffc222">EDGE RUSHER · GRADE 98</div>
+                <div class="h2a-arch" style="font:800 24px/1.2 'Archivo',sans-serif;color:#fff;margin-top:4px">Myles Garrett</div>
+                <div style="font:500 12px var(--font-sans);color:#a2a5ab;margin-top:4px">Added to LAR Front-7 · Model impact: +1.4 projected wins</div>
+              </div>
+              <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;position:relative;z-index:1;border-top:1px solid rgba(255,255,255,.08);padding-top:12px">
+                <div>
+                  <div class="h2a-mono" style="font:500 9px var(--font-mono);color:#868a91">RAMS WIN PROJ</div>
+                  <div class="h2a-mono" style="font:800 16px var(--font-mono);color:#7cc49b;margin-top:2px">13.2 <span style="font-size:10px">#1 NFL</span></div>
+                </div>
+                <div>
+                  <div class="h2a-mono" style="font:500 9px var(--font-mono);color:#868a91">PRESSURE RATE</div>
+                  <div class="h2a-mono" style="font:800 16px var(--font-mono);color:#fff;margin-top:2px">19.4%</div>
+                </div>
+                <div>
+                  <div class="h2a-mono" style="font:500 9px var(--font-mono);color:#868a91">CAREER SACKS</div>
+                  <div class="h2a-mono" style="font:800 16px var(--font-mono);color:#fff;margin-top:2px">102.5</div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
         <!-- SLIDE 3 — EDGE PROMO (editorial) -->
@@ -2657,11 +2745,22 @@ function homeRedesign2aHtml(){
               </div>
             </div>
             <div style="background:rgba(255,255,255,.03);border:1px solid #2b3037;border-radius:10px;padding:20px">
-              <div style="font:500 11px var(--font-sans);color:#9fb08d">Deep value lives in Edge</div>
+              <div style="display:flex;align-items:center;justify-content:space-between">
+                <div style="font:500 11px var(--font-sans);color:#9fb08d">Deep value lives in Edge</div>
+                <div class="h2a-mono" style="font:700 9px var(--font-mono);color:#d9a441;background:rgba(217,164,65,.1);border:1px solid rgba(217,164,65,.25);border-radius:3px;padding:2px 6px">LIVE TERMINAL</div>
+              </div>
               <div class="h2a-arch" style="font:800 22px/1.2 'Archivo',sans-serif;color:#fff;margin-top:6px">Props · Win totals · Lines</div>
               <div style="font:500 12px var(--font-sans);color:#a9aeaa;margin-top:2px">Model edge vs six books, backtested per market</div>
-              <div style="display:flex;align-items:flex-end;gap:4px;margin-top:18px;height:60px">
+              <div style="display:flex;align-items:flex-end;gap:4px;margin-top:18px;height:52px">
                 <span style="flex:1;height:34%;background:rgba(255,255,255,.1);border-radius:1px"></span><span style="flex:1;height:52%;background:rgba(255,255,255,.1);border-radius:1px"></span><span style="flex:1;height:44%;background:rgba(255,255,255,.12);border-radius:1px"></span><span style="flex:1;height:66%;background:rgba(124,196,155,.35);border-radius:1px"></span><span style="flex:1;height:58%;background:rgba(124,196,155,.5);border-radius:1px"></span><span style="flex:1;height:80%;background:#7cc49b;border-radius:1px"></span><span style="flex:1;height:100%;background:#7cc49b;border-radius:1px"></span>
+              </div>
+              <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:14px">
+                <span class="h2a-mono" style="font:700 9px var(--font-mono);background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:4px;padding:2px 6px;color:#c9ccd1">KALSHI</span>
+                <span class="h2a-mono" style="font:700 9px var(--font-mono);background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:4px;padding:2px 6px;color:#c9ccd1">POLYMARKET</span>
+                <span class="h2a-mono" style="font:700 9px var(--font-mono);background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:4px;padding:2px 6px;color:#c9ccd1">DRAFTKINGS</span>
+                <span class="h2a-mono" style="font:700 9px var(--font-mono);background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:4px;padding:2px 6px;color:#c9ccd1">FANDUEL</span>
+                <span class="h2a-mono" style="font:700 9px var(--font-mono);background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:4px;padding:2px 6px;color:#c9ccd1">BETMGM</span>
+                <span class="h2a-mono" style="font:700 9px var(--font-mono);background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:4px;padding:2px 6px;color:#c9ccd1">CAESARS</span>
               </div>
             </div>
           </div>
@@ -2684,15 +2783,44 @@ function homeRedesign2aHtml(){
         <div style="font:800 13px var(--font-sans);color:#fff;margin-bottom:16px">Storylines going into kickoff</div>
         <div class="h2a-stories">
           <div>
-            <svg viewBox="0 0 380 150" style="width:100%;height:auto;display:block;border-radius:6px"><rect width="380" height="150" rx="6" fill="#0c1320" stroke="#2b3037"></rect><rect x="1" y="1" width="378" height="148" rx="6" fill="url(#h2aPh1)" opacity=".7"></rect><text x="190" y="80" text-anchor="middle" fill="#4b5f7a" font-family="Geist Mono, monospace" font-size="10">STORY IMAGE 16:6</text></svg>
+            <div style="height:150px;border-radius:8px;border:1px solid #2b3037;background:linear-gradient(135deg,#121620 0%,#191e28 100%);position:relative;overflow:hidden;padding:16px;display:flex;flex-direction:column;justify-content:space-between">
+              <div style="position:absolute;right:-15px;bottom:-15px;opacity:.12;pointer-events:none">
+                <img src="${getNflTeamLogo('New England Patriots')}" alt="" style="width:140px;height:140px;object-fit:contain">
+              </div>
+              <div style="display:flex;align-items:center;justify-content:space-between;position:relative;z-index:1">
+                <div style="display:flex;align-items:center;gap:8px">
+                  <img src="${getNflTeamLogo('Philadelphia Eagles')}" alt="PHI" style="width:20px;height:20px;object-fit:contain">
+                  <span style="color:#868a91;font-size:11px">→</span>
+                  <img src="${getNflTeamLogo('New England Patriots')}" alt="NE" style="width:22px;height:22px;object-fit:contain">
+                </div>
+                <span class="h2a-mono" style="font:700 9px var(--font-mono);color:#d9a441;background:rgba(217,164,65,.12);border:1px solid rgba(217,164,65,.3);border-radius:3px;padding:2px 6px">OFFSEASON WIRE</span>
+              </div>
+              <div style="position:relative;z-index:1">
+                <div class="h2a-mono" style="font:800 10px var(--font-mono);color:#fff">A.J. BROWN · WR1</div>
+                <div class="h2a-mono" style="font:500 11px var(--font-mono);color:#7cc49b;margin-top:2px">+4.0 NE win total shift</div>
+              </div>
+            </div>
             <div class="h2a-mono" style="font:800 9px var(--font-mono);letter-spacing:.14em;color:#69BE28;margin-top:10px">TRANSACTIONS</div>
-            <div style="font:700 17px/1.3 var(--font-sans);color:#fff;margin-top:6px;text-wrap:pretty">${moveCount} moves reshaped the board before Week 1</div>
+            <div style="font:700 16px/1.3 var(--font-sans);color:#fff;margin-top:6px;text-wrap:pretty">${moveCount} moves reshaped the board before Week 1</div>
             <div style="font:400 11px/1.6 var(--font-sans);color:#a2a5ab;margin-top:6px">Every trade, signing and draft pickup since Super Bowl LX, blockbusters flagged and re-scored.</div>
           </div>
           <div>
-            <svg viewBox="0 0 380 150" style="width:100%;height:auto;display:block;border-radius:6px"><rect width="380" height="150" rx="6" fill="#0c1320" stroke="#2b3037"></rect><rect x="1" y="1" width="378" height="148" rx="6" fill="url(#h2aPh1)" opacity=".7"></rect><text x="190" y="80" text-anchor="middle" fill="#4b5f7a" font-family="Geist Mono, monospace" font-size="10">STORY IMAGE 16:6</text></svg>
+            <div style="height:150px;border-radius:8px;border:1px solid #2b3037;background:linear-gradient(135deg,#1b1417 0%,#191e28 100%);position:relative;overflow:hidden;padding:16px;display:flex;flex-direction:column;justify-content:space-between">
+              <div style="display:flex;align-items:center;justify-content:space-between;position:relative;z-index:1">
+                <div style="display:flex;align-items:center;gap:8px">
+                  <img src="${getNflTeamLogo('San Francisco 49ers')}" alt="SF" style="width:22px;height:22px;object-fit:contain">
+                  <span class="h2a-mono" style="font:700 10px var(--font-mono);color:#868a91">AT</span>
+                  <img src="${getNflTeamLogo('Los Angeles Rams')}" alt="LAR" style="width:22px;height:22px;object-fit:contain">
+                </div>
+                <span class="h2a-mono" style="font:700 9px var(--font-mono);color:#e50914;background:rgba(229,9,20,.12);border:1px solid rgba(229,9,20,.3);border-radius:3px;padding:2px 6px">NETFLIX EXCLUSIVE</span>
+              </div>
+              <div style="position:relative;z-index:1">
+                <div class="h2a-arch" style="font:800 13px var(--font-sans);color:#fff">MELBOURNE CRICKET GROUND</div>
+                <div class="h2a-mono" style="font:500 11px var(--font-mono);color:#a2a5ab;margin-top:2px">THU SEP 10 · 8:35 PM ET · 100,000 CAP</div>
+              </div>
+            </div>
             <div class="h2a-mono" style="font:800 9px var(--font-mono);letter-spacing:.14em;color:#69BE28;margin-top:10px">SCHEDULE</div>
-            <div style="font:700 17px/1.3 var(--font-sans);color:#fff;margin-top:6px;text-wrap:pretty">The full Week 1 slate, with model win probabilities on every game</div>
+            <div style="font:700 16px/1.3 var(--font-sans);color:#fff;margin-top:6px;text-wrap:pretty">The full Week 1 slate, with model win probabilities on every game</div>
             <div style="font:400 11px/1.6 var(--font-sans);color:#a2a5ab;margin-top:6px">Composite power ratings, log5 and a home-field edge, priced against live nflverse lines.</div>
           </div>
         </div>
@@ -2810,7 +2938,7 @@ function ratingClass(r){if(r>=90)return'rating-elite';if(r>=80)return'rating-sta
 // Phase 4: transaction filter/sort state
 let txSortKey = 'sort_date';
 let txSortDir = 'desc';
-let txTypeFilter = 'all';   // 'all' | 'trade' | 'signing' | 'draft' | 'blockbuster'
+let txTypeFilter = 'moves';   // 'moves' | 'trade' | 'signing' | 'waiver' | 'draft' | 'blockbuster' | 'all'
 let txTeamFilter = '';
 let txSearchQuery = '';
 let txBlockbusterOnly = false;
@@ -2826,12 +2954,19 @@ function moveAbbr(team) {
 }
 
 function moveDateKey(t) {
+  if (t.source_date) {
+    return typeof t.source_date === 'string' ? t.source_date : new Date(t.source_date).toISOString();
+  }
   return t.sort_date || t.date_str || '';
 }
 
 function getMovesTransactions() {
   let list = DATA.transactions.slice();
-  if (txTypeFilter !== 'all' && txTypeFilter !== 'blockbuster') list = list.filter(t => t.type === txTypeFilter);
+  if (txTypeFilter === 'moves') {
+    list = list.filter(t => t.type !== 'draft');
+  } else if (txTypeFilter !== 'all' && txTypeFilter !== 'blockbuster') {
+    list = list.filter(t => t.type === txTypeFilter);
+  }
   if (txBlockbusterOnly || txTypeFilter === 'blockbuster') list = list.filter(t => t.blockbuster);
   if (txTeamFilter) list = list.filter(t => t.from_team === txTeamFilter || t.to_team === txTeamFilter);
   const q = (txSearchQuery || '').toLowerCase().trim();
@@ -2845,10 +2980,13 @@ function getMovesTransactions() {
 
 function moveSummaryHtml() {
   const all = DATA.transactions || [];
+  const rosterMoves = all.filter(t => t.type !== 'draft');
+  const draftPicks = all.filter(t => t.type === 'draft');
   const trades = all.filter(t => t.type === 'trade').length;
   const blockbusters = all.filter(t => t.blockbuster).length;
   const latest = all.slice().sort((a,b) => moveDateKey(b).localeCompare(moveDateKey(a)))[0];
-  return `<div class="moves-summary"><strong>${all.length}</strong> moves <span>·</span> <strong>${trades}</strong> trades <span>·</span> <strong class="summary-accent">${blockbusters}</strong> blockbusters <span>·</span> updated <strong>${homeEsc(latest?.date_str || '—')}</strong></div>`;
+  const latestDate = latest?.sort_date || latest?.date_str || '—';
+  return `<div class="moves-summary"><strong>${rosterMoves.length.toLocaleString()}</strong> roster moves <span>·</span> <strong>${draftPicks.length.toLocaleString()}</strong> draft picks <span>·</span> <strong>${trades}</strong> trades <span>·</span> <strong class="summary-accent">${blockbusters}</strong> blockbusters <span>·</span> updated <strong>${homeEsc(latestDate)}</strong></div>`;
 }
 
 function renderMovesFilters() {
@@ -2856,7 +2994,7 @@ function renderMovesFilters() {
   const typeButton = (key, label) => `<button class="moves-filter ${txTypeFilter === key ? 'active' : ''}" onclick="setMovesType('${key}')">${label}</button>`;
   return `<div class="moves-toolbar">
     <input id="movesSearch" value="${homeEsc(txSearchQuery)}" oninput="setMovesSearch(this.value)" placeholder="Search player, team, position, detail..." aria-label="Search transactions">
-    ${typeButton('all', 'All')} ${typeButton('trade', 'Trades')} ${typeButton('signing', 'Signings')} ${typeButton('draft', 'Draft')}
+    ${typeButton('moves', 'Roster Moves')} ${typeButton('trade', 'Trades')} ${typeButton('signing', 'Signings')} ${typeButton('waiver', 'Waivers')} ${typeButton('draft', 'Draft')}
     <select id="movesTeamFilter" onchange="setMovesTeam(this.value)" aria-label="Filter transactions by team"><option value="">All teams</option>${teams.map(t => `<option value="${homeEsc(t.name)}" ${txTeamFilter === t.name ? 'selected' : ''}>${homeEsc(t.abbr)} — ${homeEsc(t.name)}</option>`).join('')}</select>
     <label class="moves-check"><input type="checkbox" ${txBlockbusterOnly ? 'checked' : ''} onchange="setMovesBlockbusters(this.checked)"> Blockbusters</label>
     <select onchange="setMovesSort(this.value)" aria-label="Sort transactions"><option value="desc" ${txSortDir === 'desc' ? 'selected' : ''}>Newest first</option><option value="asc" ${txSortDir === 'asc' ? 'selected' : ''}>Oldest first</option></select>
@@ -2913,7 +3051,7 @@ function showMovesTab() { showTab('teams'); setTeamsSubTab('moves'); }
 function renderTeamsSubTabs() {
   const c = document.getElementById('teamsSubTabs');
   if (!c) return;
-  const movesCount = (DATA.transactions || []).length;
+  const movesCount = (DATA.transactions || []).filter(t => t.type !== 'draft').length;
   const tabs = [
     ['overview', 'Overview', '🏈', null],
     ['moves', 'Moves', '⚡', movesCount ? movesCount.toLocaleString() : null],
@@ -3795,48 +3933,6 @@ function renderRosterChanges(team){
 // ═══════════════════════════════════════════════════════════
 // PRO MATCHUP CENTER & NEXT GEN STATS ENGINE
 // ═══════════════════════════════════════════════════════════
-
-const NFL_ABBR_ESPN_MAP = {
-  'ARI': 'ari', 'ARZ': 'ari', 'Arizona Cardinals': 'ari',
-  'ATL': 'atl', 'Atlanta Falcons': 'atl',
-  'BAL': 'bal', 'BLT': 'bal', 'Baltimore Ravens': 'bal',
-  'BUF': 'buf', 'Buffalo Bills': 'buf',
-  'CAR': 'car', 'Carolina Panthers': 'car',
-  'CHI': 'chi', 'Chicago Bears': 'chi',
-  'CIN': 'cin', 'Cincinnati Bengals': 'cin',
-  'CLE': 'cle', 'CLV': 'cle', 'Cleveland Browns': 'cle',
-  'DAL': 'dal', 'Dallas Cowboys': 'dal',
-  'DEN': 'den', 'Denver Broncos': 'den',
-  'DET': 'det', 'Detroit Lions': 'det',
-  'GB': 'gb', 'Green Bay Packers': 'gb',
-  'HOU': 'hou', 'HST': 'hou', 'Houston Texans': 'hou',
-  'IND': 'ind', 'Indianapolis Colts': 'ind',
-  'JAX': 'jax', 'Jacksonville Jaguars': 'jax',
-  'KC': 'kc', 'Kansas City Chiefs': 'kc',
-  'LV': 'lv', 'Las Vegas Raiders': 'lv',
-  'LAC': 'lac', 'Los Angeles Chargers': 'lac',
-  'LAR': 'lar', 'LA': 'lar', 'Los Angeles Rams': 'lar',
-  'MIA': 'mia', 'Miami Dolphins': 'mia',
-  'MIN': 'min', 'Minnesota Vikings': 'min',
-  'NE': 'ne', 'New England Patriots': 'ne',
-  'NO': 'no', 'New Orleans Saints': 'no',
-  'NYG': 'nyg', 'New York Giants': 'nyg',
-  'NYJ': 'nyj', 'New York Jets': 'nyj',
-  'PHI': 'phi', 'Philadelphia Eagles': 'phi',
-  'PIT': 'pit', 'Pittsburgh Steelers': 'pit',
-  'SF': 'sf', 'San Francisco 49ers': 'sf',
-  'SEA': 'sea', 'Seattle Seahawks': 'sea',
-  'TB': 'tb', 'Tampa Bay Buccaneers': 'tb',
-  'TEN': 'ten', 'Tennessee Titans': 'ten',
-  'WAS': 'wsh', 'WSH': 'wsh', 'Washington Commanders': 'wsh'
-};
-
-function getNflTeamLogo(teamOrAbbr) {
-  if (!teamOrAbbr) return 'https://a.espncdn.com/i/teamlogos/nfl/500/nfl.png';
-  const abbr = DATA.teamAbbr?.[teamOrAbbr] || teamOrAbbr;
-  const key = NFL_ABBR_ESPN_MAP[teamOrAbbr] || NFL_ABBR_ESPN_MAP[abbr] || String(abbr).toLowerCase();
-  return `https://a.espncdn.com/i/teamlogos/nfl/500/${key}.png`;
-}
 
 function openMatchups101Modal() {
   document.getElementById('matchups101Modal')?.classList.add('active');
