@@ -1428,20 +1428,31 @@ async function fetchAllPlayers() {
   return all;
 }
 
+async function fetchAllTransactions() {
+  const PAGE = 1000;
+  let all = [], from = 0;
+  while (true) {
+    const { data, error } = await sb.from('nfl_transactions').select('*').order('sort_date', { ascending: false }).range(from, from + PAGE - 1);
+    if (error) throw new Error(error.message);
+    all = all.concat(data);
+    if (data.length < PAGE) break;
+    from += PAGE;
+  }
+  return all;
+}
+
 /* ESPN-ingested transactions and Supabase rosters are authoritative. */
 
 async function loadAllData() {
   const [teams, players, transactions] = await Promise.all([
     sb.from('nfl_teams').select('*'),
     fetchAllPlayers(),
-    sb.from('nfl_transactions').select('*').order('sort_date', { ascending: false })
+    fetchAllTransactions()
   ]);
-  for (const r of [teams, transactions]) {
-    if (r.error) throw new Error(r.error.message);
-  }
+  if (teams.error) throw new Error(teams.error.message);
   DATA.teams = teams.data;
   DATA.players = players;
-  DATA.transactions = transactions.data || [];
+  DATA.transactions = transactions || [];
   try {
     await loadClayProjections();
   } catch { /* ignore */ }
