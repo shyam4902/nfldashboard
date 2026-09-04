@@ -308,7 +308,7 @@ function filterItemsSince(items, since) {
   return items.filter(item => typeof item.date === 'string' && item.date.slice(0, 10) >= since);
 }
 
-async function loadEspnItems({ inputPath, fetchImpl = fetch }) {
+async function loadEspnItems({ inputPath, fetchImpl = fetch, since = null } = {}) {
   if (inputPath) {
     const data = JSON.parse(fs.readFileSync(inputPath, 'utf8'));
     const items = Array.isArray(data) ? data : data.transactions;
@@ -317,11 +317,29 @@ async function loadEspnItems({ inputPath, fetchImpl = fetch }) {
     }
     return items;
   }
-  const res = await fetchImpl(ESPN_TRANSACTIONS_URL, { headers: { 'User-Agent': 'Mozilla/5.0' } });
-  if (!res.ok) throw new Error(`ESPN fetch failed: HTTP ${res.status}`);
-  const data = await res.json();
-  return data.transactions || [];
+  const allItems = [];
+  let page = 1;
+  while (true) {
+    const pageUrl = `https://site.api.espn.com/apis/site/v2/sports/football/nfl/transactions?limit=250&page=${page}`;
+    const res = await fetchImpl(pageUrl, { headers: { 'User-Agent': 'Mozilla/5.0' } });
+    if (!res.ok) throw new Error(`ESPN fetch failed: HTTP ${res.status}`);
+    const data = await res.json();
+    const txs = data.transactions || [];
+    if (!txs.length) break;
+    allItems.push(...txs);
+    if (since) {
+      const oldestInPage = txs[txs.length - 1];
+      if (oldestInPage && typeof oldestInPage.date === 'string' && oldestInPage.date.slice(0, 10) < since) {
+        break;
+      }
+    }
+    const pageCount = data.pageCount || 1;
+    if (page >= pageCount) break;
+    page++;
+  }
+  return allItems;
 }
+
 
 // Normalize + validate + (dry) write artifact or (write) persist. Pure side
 // effects are limited to the atomic dry-run artifact, so a partial persistence
@@ -366,18 +384,18 @@ async function main(argv = process.argv.slice(2)) {
     if (mode === 'write' && !process.env.SUPABASE_URL) {
       throw new Error('SUPABASE_URL is required for --write; set the project URL in the environment.');
     }
-    if (mode === 'write' && !process.env.SUPABASE_SECRET_KEY) {
-      throw new Error('SUPABASE_SECRET_KEY is required for --write; set it in the environment, not in source.');
+    const secretKey = process.env.SUPABASE_SECRET_KEY || process.env.SUPABASE_SERVICE_KEY;
+    if (mode === 'write' && !secretKey) {
+      throw new Error('SUPABASE_SECRET_KEY or SUPABASE_SERVICE_KEY is required for --write; set it in the environment, not in source.');
     }
     if (mode === 'write' && !since) {
       throw new Error('--since YYYY-MM-DD is required for --write; choose the first date after the 352 legacy rows to avoid overlap.');
     }
-    const items = filterItemsSince(await loadEspnItems({ inputPath }), since);
+    const items = filterItemsSince(await loadEspnItems({ inputPath, since }), since);
     console.log(`Loaded ${items.length} ESPN transaction items.`);
     let client = null;
     if (mode === 'write') {
       const url = process.env.SUPABASE_URL;
-      const secretKey = process.env.SUPABASE_SECRET_KEY;
       client = makeSupabaseClient({ url, secretKey });
     }
     const result = await processTransactions({ items, mode, client, outputPath });

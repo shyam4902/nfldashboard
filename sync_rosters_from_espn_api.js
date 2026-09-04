@@ -24,12 +24,23 @@ const ESPN_TEAMS_URL = 'https://site.api.espn.com/apis/site/v2/sports/football/n
 const espnRosterUrl = id =>
   `https://site.api.espn.com/apis/site/v2/sports/football/nfl/teams/${id}?enable=roster`;
 
-const SUPABASE_URL = process.env.SUPABASE_URL || 'https://nedyoydylpbjvihaoexy.supabase.co/rest/v1/';
-const SUPABASE_KEY = process.env.SUPABASE_SERVICE_KEY || process.env.SUPABASE_ANON_KEY;
-if (!SUPABASE_KEY) {
-  throw new Error('SUPABASE_SERVICE_KEY or SUPABASE_ANON_KEY is required; set it in the environment, not in source.');
+function restUrl(url) {
+  const base = String(url || '').trim().replace(/\/+$/, '');
+  return /\/rest\/v1$/i.test(base) ? base : `${base}/rest/v1`;
 }
-const sbHeaders = { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` };
+
+const SUPABASE_URL = restUrl(process.env.SUPABASE_URL || 'https://nedyoydylpbjvihaoexy.supabase.co');
+
+function makeHeaders(key) {
+  if (!key) return {};
+  const headers = { apikey: key };
+  // Do not send sb_secret as Authorization Bearer token (per official key contract)
+  if (!key.startsWith('sb_secret_')) {
+    headers.Authorization = `Bearer ${key}`;
+  }
+  return headers;
+}
+
 
 // ESPN spells Washington WSH; nfl_teams uses WAS. Only divergence across all 32.
 const ABBR_ALIAS = { WSH: 'WAS' };
@@ -85,17 +96,17 @@ async function fetchEspnRosters(includePracticeSquad) {
 }
 
 // PostgREST caps a page at 1000 rows regardless of the limit you ask for.
-async function fetchAllPlayers() {
+async function fetchAllPlayers(key) {
   const out = [];
   for (let page = 0; ; page++) {
-    const chunk = await fetchSupabase(`nfl_players?select=name,ovr,ratings_source&offset=${page * 1000}&limit=1000`);
+    const chunk = await fetchSupabase(`nfl_players?select=name,ovr,ratings_source&offset=${page * 1000}&limit=1000`, key);
     out.push(...chunk);
     if (chunk.length < 1000) return out;
   }
 }
 
-async function fetchSupabase(pathAndQuery) {
-  const res = await fetch(SUPABASE_URL + pathAndQuery, { headers: sbHeaders });
+async function fetchSupabase(pathAndQuery, key) {
+  const res = await fetch(SUPABASE_URL + '/' + pathAndQuery.replace(/^\/+/, ''), { headers: makeHeaders(key) });
   if (!res.ok) throw new Error(`Supabase GET ${pathAndQuery} failed: ${res.status} ${res.statusText}`);
   return res.json();
 }
@@ -120,9 +131,9 @@ function buildRows(espnTeams, teamsByAbbr, maddenMap, existingByName) {
         team_id: team.id,
         name: p.name,
         pos: p.pos,
-        unit: candidate.unit,
-        age: ea && ea.age ? ea.age : p.age,
-        jersey: p.jersey,
+        unit: candidate.unit.toLowerCase(),
+        age: p.age != null ? p.age : null,
+        jersey: p.jersey != null ? p.jersey : null,
         is_rookie: p.is_rookie,
         ovr: ea ? ea.ovr : (prior && prior.ovr != null ? prior.ovr : null),
         ratings_source: ea ? 'madden27' : (prior && prior.ratings_source ? prior.ratings_source : 'unrated'),
@@ -133,27 +144,35 @@ function buildRows(espnTeams, teamsByAbbr, maddenMap, existingByName) {
   return { rows, unmatched };
 }
 
-async function replacePlayers(rows) {
-  const del = await fetch(SUPABASE_URL + 'nfl_players?id=not.is.null', {
-    method: 'DELETE', headers: { ...sbHeaders, Prefer: 'return=minimal' }
+async function replacePlayers(rows, key) {
+  if (!key) throw new Error('replacePlayers requires a server-only Supabase secret/service key');
+  const headers = {
+    ...makeHeaders(key),
+    'Content-Type': 'application/json'
+  };
+  const res = await fetch(SUPABASE_URL + '/rpc/replace_nfl_players', {
+    method: 'POST',
+    headers,
+    body: JSON.stringify({ p_rows: rows })
   });
-  if (!del.ok) throw new Error(`delete failed: ${del.status} ${del.statusText} ${await del.text()}`);
-
-  for (let i = 0; i < rows.length; i += 500) {
-    const chunk = rows.slice(i, i + 500);
-    const ins = await fetch(SUPABASE_URL + 'nfl_players', {
-      method: 'POST',
-      headers: { ...sbHeaders, 'Content-Type': 'application/json', Prefer: 'return=minimal' },
-      body: JSON.stringify(chunk)
-    });
-    if (!ins.ok) throw new Error(`insert failed at row ${i}: ${ins.status} ${ins.statusText} ${await ins.text()}`);
-    console.log(`  inserted ${Math.min(i + 500, rows.length)}/${rows.length}`);
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(`Atomic replace_nfl_players RPC failed: ${res.status} ${res.statusText} ${text}`);
   }
+  const summary = await res.json();
+  console.log(`  Atomic replacement completed: ${summary.inserted_count} rows inserted.`);
 }
 
 async function main() {
   const apply = process.argv.includes('--apply');
   const includePracticeSquad = process.argv.includes('--include-practice-squad');
+  const secretKey = process.env.SUPABASE_SERVICE_KEY || process.env.SUPABASE_SECRET_KEY;
+  const anonKey = process.env.SUPABASE_ANON_KEY || 'sb_publishable_cQOHCiQh2kZQQUn5sEEfIA_t9NScNZz';
+
+  if (apply && !secretKey) {
+    throw new Error('SUPABASE_SERVICE_KEY or SUPABASE_SECRET_KEY is required for --apply; writes must never use anon or publishable key.');
+  }
+  const key = secretKey || anonKey;
 
   console.log(`[${new Date().toISOString()}] Fetching 32 team rosters from ESPN...`);
   const espnTeams = await fetchEspnRosters(includePracticeSquad);
@@ -161,9 +180,9 @@ async function main() {
   const sizes = espnTeams.map(t => t.players.length);
   console.log(`  ${espnCount} players, ${Math.min(...sizes)}-${Math.max(...sizes)} per team`);
 
-  const teams = await fetchSupabase('nfl_teams?select=id,name,abbr');
+  const teams = await fetchSupabase('nfl_teams?select=id,name,abbr', key);
   const teamsByAbbr = Object.fromEntries(teams.map(t => [t.abbr, t]));
-  const current = await fetchAllPlayers();
+  const current = await fetchAllPlayers(key);
 
   const existingByName = new Map(current.map(p => [p.name, p]));
   const { rows, unmatched } = buildRows(espnTeams, teamsByAbbr, loadMaddenMap(), existingByName);
@@ -185,10 +204,11 @@ async function main() {
   }
 
   if (rows.length < 1600) throw new Error(`refusing to apply: only ${rows.length} rows, expected ~1700`);
-  console.log('\nReplacing nfl_players...');
-  await replacePlayers(rows);
+  console.log('\nReplacing nfl_players via atomic RPC...');
+  await replacePlayers(rows, secretKey);
   console.log(`Done. nfl_players now holds ${rows.length} players.`);
 }
+
 
 if (require.main === module) {
   main().catch(e => { console.error('sync_rosters_from_espn_api failed:', e.message); process.exit(1); });

@@ -107,6 +107,10 @@ function makeSupabaseClient({ url, secretKey, fetchImpl = fetch } = {}) {
     apikey: secretKey,
     'content-type': 'application/json',
   };
+  if (!secretKey.startsWith('sb_secret_')) {
+    headers.Authorization = `Bearer ${secretKey}`;
+  }
+
   return {
     async insertRows(rows) {
       const res = await fetchImpl(`${base}/${TRANSACTIONS_TABLE}?on_conflict=tx_id`, {

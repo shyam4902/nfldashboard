@@ -12,10 +12,7 @@ const path = require('path');
 const { atomicWriteFileSync } = require('./scripts/atomic-write.js');
 
 const SUPABASE_URL = process.env.SUPABASE_URL || "https://nedyoydylpbjvihaoexy.supabase.co/rest/v1/";
-const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY;
-if (!SUPABASE_ANON_KEY) {
-  throw new Error('SUPABASE_ANON_KEY is required; set it in the environment, not in source.');
-}
+const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY || "sb_publishable_cQOHCiQh2kZQQUn5sEEfIA_t9NScNZz";
 const headers = {
   apikey: SUPABASE_ANON_KEY,
   Authorization: `Bearer ${SUPABASE_ANON_KEY}`
@@ -59,8 +56,8 @@ async function main() {
       pos: p.pos || 'N/A',
       unit: (p.unit || 'offense').toUpperCase(),
       ovr: ea ? ea.ovr : (p.ovr != null ? p.ovr : ''),
-      age: (ea && ea.age) ? ea.age : (p.age != null ? p.age : ''),
-      jersey: (ea && ea.jersey != null) ? ea.jersey : (p.jersey != null ? p.jersey : ''),
+      age: p.age != null ? p.age : '',
+      jersey: p.jersey != null ? p.jersey : '',
       is_rookie: p.is_rookie ? 'Yes' : 'No',
       acquisition_type: p.acquisition_type || 'veteran'
     };
