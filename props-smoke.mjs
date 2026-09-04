@@ -94,6 +94,24 @@ console.log('--- schedule win-totals link present:', schedLink > 0);
 const edgeBtn = await page.locator('a[href*="edgeplay-analytics.pages.dev"]').count().catch(() => 0);
 console.log('--- edge analytics links present:', edgeBtn);
 
+const matchupNavBtn = await page.locator('button[data-tab="matchup"]').count().catch(() => -1);
+const playerCompareLabel = (await page.locator('button[onclick="openPlayerCompareModal()"] span').last().textContent().catch(() => '')).trim();
+const homeMappings = await page.evaluate(() => {
+  const actions = Array.from(document.querySelectorAll('#tab-home [onclick]'));
+  const actionFor = text => actions.find(element => element.textContent.includes(text))?.getAttribute('onclick') || '';
+  return {
+    compareRosters: actionFor('Compare rosters').includes('openCompare('),
+    scorestripGames: document.querySelectorAll('.h2a-strip-games .h2a-game[onclick^="openMatchup"]').length > 0,
+    allWeekOneGames: actionFor('All 16 games').includes('showScheduleWeek(1)'),
+    projectedStandings: actionFor('Projected standings').includes("showProjectionsTab('standings')"),
+    modelLab: actionFor('How the model is graded').includes('/model-lab')
+  };
+});
+const homeMappingsOk = matchupNavBtn === 0
+  && playerCompareLabel === 'Player Compare'
+  && Object.values(homeMappings).every(Boolean);
+console.log('--- owned header and Home mappings:', homeMappingsOk, homeMappings);
+
 // Ticket 14: freshness stamps visible on tab headers.
 let freshnessOk = false;
 await page.locator('button[data-tab="schedule"]').first().click();
@@ -105,6 +123,13 @@ const projStamp = await page.locator('#projectionsFreshness').textContent().catc
 const projGroups = await page.locator('#projSubTabs span').filter({ hasText: /Team|Offense|Defense|Model/ }).count().catch(() => 0);
 freshnessOk = /data .* ago/.test(schedStamp) && /data .* ago/.test(projStamp) && projGroups >= 4;
 console.log('--- freshness stamps (schedule/proj):', /data .* ago/.test(schedStamp), /data .* ago/.test(projStamp), '| projections groups:', projGroups);
+
+const projTabText = await page.locator('#projSubTabs').textContent().catch(() => '');
+const projectionLabelsOk = projTabText.includes('Strength of Schedule')
+  && projTabText.includes('Team Projections')
+  && !/📅\s*Schedule\b/.test(projTabText)
+  && !/🏟\s*Teams\b/.test(projTabText);
+console.log('--- projection labels are specific:', projectionLabelsOk);
 
 // Navigation regression: a game opens the full Matchup page directly, named
 // collection links reset their nested state, and a missing game preserves state.
@@ -309,7 +334,7 @@ console.log('--- missing cap space renders unavailable:', capOk, missingCapCheck
 console.log('--- page errors:', errors.length ? errors.slice(0, 5) : 'none');
 
   const homeOk = homeHero.length > 20 && homeScorestripGames > 0;
-  if (errors.length || hasBrowserSummerOverride || hasLegacyRosterOverride || !homeOk || !navigationOk || !matchupOk || !gamePickOk || !trustOk || !freshnessOk || !rosterDepthOk || !probabilityOk || !capOk || propsNavBtn !== 0 || wtNavBtn !== 0) {
+  if (errors.length || hasBrowserSummerOverride || hasLegacyRosterOverride || !homeOk || !homeMappingsOk || !projectionLabelsOk || !navigationOk || !matchupOk || !gamePickOk || !trustOk || !freshnessOk || !rosterDepthOk || !probabilityOk || !capOk || propsNavBtn !== 0 || wtNavBtn !== 0) {
     console.log('SMOKE TEST FAILED');
     process.exitCode = 1;
   } else {

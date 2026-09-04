@@ -393,6 +393,22 @@ html, body {
   .move-row { grid-template-columns:54px minmax(110px,1fr) 34px minmax(90px,.75fr); }
   .move-detail { grid-column:2 / -1; white-space:normal; line-height:1.35; margin-top:-2px; }
 }
+.move-drawer-team small { display:block; font-size:10px; font-weight:500; color:#94a3b8; margin-top:3px; }
+.compare-modal-body { grid-template-columns:1fr 1fr; }
+@media(max-width:640px){
+  .teams-subtabs { display:grid !important; grid-template-columns:repeat(3,1fr) !important; gap:6px !important; }
+  .teams-subtab { padding:8px 4px !important; font-size:11px !important; justify-content:center !important; gap:4px !important; border-radius:8px !important; }
+  .teams-subtab .subtab-icon { font-size:13px !important; }
+  .teams-subtab .subtab-badge { font-size:9px !important; padding:1px 4px !important; }
+  .roster-summary { grid-template-columns:repeat(2,1fr) !important; gap:6px !important; margin-bottom:12px !important; }
+  .roster-summary .rs-card { padding:8px 10px !important; }
+  .roster-summary .rs-value { font-size:15px !important; }
+  .roster-modal { width:95% !important; margin:10px auto !important; max-height:92vh !important; }
+  .roster-modal-content { padding:16px 40px 16px 14px !important; }
+  .roster-close { top:8px !important; right:10px !important; width:32px !important; height:32px !important; font-size:16px !important; }
+  .compare-modal-body { grid-template-columns:1fr !important; overflow-y:auto !important; }
+}
+
 
 .tx-pill { display:inline-block; padding:1px 6px; border-radius:3px; font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; }
 .tx-pill.trade { background:rgba(59,130,246,0.2); color:#93c5fd; }
@@ -1432,7 +1448,6 @@ body.theme-analyst .roster-summary .rs-value {
       <nav class="flex gap-1 items-center overflow-x-auto no-scrollbar py-0.5">
         <button onclick="showTab('home')" class="tab-btn active text-xs px-2.5 py-1.5 rounded-lg font-semibold transition shrink-0" data-tab="home">Home</button>
         <button onclick="showTab('schedule')" class="tab-btn text-xs px-2.5 py-1.5 rounded-lg font-semibold bg-slate-800 text-slate-400 hover:bg-slate-700 transition shrink-0" data-tab="schedule">Schedule</button>
-        <button onclick="showTab('matchup')" class="tab-btn text-xs px-2.5 py-1.5 rounded-lg font-semibold bg-slate-800 text-slate-400 hover:bg-slate-700 transition shrink-0" data-tab="matchup">Matchup</button>
         <button onclick="showTab('teams')" class="tab-btn text-xs px-2.5 py-1.5 rounded-lg font-semibold bg-slate-800 text-slate-400 hover:bg-slate-700 transition shrink-0" data-tab="teams">Teams</button>
         <button onclick="showTab('projections')" class="tab-btn text-xs px-2.5 py-1.5 rounded-lg font-semibold bg-slate-800 text-slate-400 hover:bg-slate-700 transition shrink-0" data-tab="projections">Projections</button>
       </nav>
@@ -1441,7 +1456,7 @@ body.theme-analyst .roster-summary .rs-value {
       <div class="flex items-center gap-1.5 pl-1.5 border-l border-slate-700/60 shrink-0">
         <button onclick="openPlayerCompareModal()" class="text-xs px-2.5 py-1.5 rounded-lg font-semibold bg-slate-800 text-slate-300 border border-slate-700 hover:bg-slate-700 hover:text-white hover:border-slate-500 transition flex items-center gap-1.5 shrink-0" title="Compare any two players side-by-side">
           <svg class="w-3.5 h-3.5 text-indigo-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3h5v5"/><path d="M4 20L21 3"/><path d="M21 16v5h-5"/><path d="M15 15l6 6"/><path d="M4 4l5 5"/></svg>
-          <span class="hidden sm:inline">Compare</span>
+          <span class="hidden sm:inline">Player Compare</span>
         </button>
         <a href="https://edgeplay-analytics.pages.dev" target="_blank" rel="noopener" class="text-xs px-2.5 py-1.5 rounded-lg font-semibold bg-slate-800 text-slate-300 border border-slate-700 hover:bg-slate-700 hover:text-white hover:border-slate-500 transition flex items-center gap-1.5 shrink-0" title="Open the Edge Analytics app (value analysis)">
           <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
@@ -2190,7 +2205,7 @@ function homeStatCards(){
     { label: '32 Teams', sub: 'rosters & depth charts', icon: '🛡️', color: '#3b82f6', action: "showTab('teams')" },
     { label: `${(DATA.players || []).length} Players`, sub: 'full 2026 rosters', icon: '🏈', color: '#06b6d4', action: "openCommandPalette()" },
     { label: `${(DATA.transactions || []).length} Moves`, sub: 'since Super Bowl LX', icon: '⚡', color: '#ef4444', action: "showMovesTab()" },
-    { label: '16 Week 1 Games', sub: 'odds & win probabilities', icon: '📅', color: '#10b981', action: "showTab('schedule')" },
+    { label: '16 Week 1 Games', sub: 'odds & win probabilities', icon: '📅', color: '#10b981', action: "showScheduleWeek(1)" },
     { label: 'Value Reads', sub: 'props & win totals in Edge Analytics', icon: '💰', color: '#f59e0b', action: "window.open('https://edgeplay-analytics.pages.dev/props','_blank')" },
   ];
   return cards.map(c => `
@@ -2895,7 +2910,7 @@ function home2aFeaturedSlide(feat){
     <div style="display:flex;align-items:center;justify-content:space-between;margin-top:14px;flex-wrap:wrap;gap:10px">
       <div style="display:flex;gap:10px">
         <span class="h2a-btn-amber" onclick="openMatchup('${homeEsc(feat.game_id)}')">View matchup →</span>
-        <span class="h2a-btn-ghost" onclick="openMatchup('${homeEsc(feat.game_id)}')">Both depth charts</span>
+        <span class="h2a-btn-ghost" onclick="openCompare('${homeEsc(feat.away_team)}','${homeEsc(feat.home_team)}')">Compare rosters</span>
       </div>
       <span class="h2a-mono" style="font:500 10px var(--font-mono);color:#8fa6bf">LOG5 SIM · COMPOSITE POWER + HOME EDGE</span>
     </div>
@@ -2922,7 +2937,7 @@ function home2aScorestrip(games){
     const tv = g.tv ? (' · ' + g.tv.split('/')[0].trim().toUpperCase()) : '';
     const aSpread = m && m.spread !== null ? ((m.spread > 0 ? '+' : '') + m.spread) : '';
     const homeFav = hPct >= aPct;
-    return `<div class="h2a-game" onclick="showTab('schedule')">
+    return `<div class="h2a-game" onclick="openMatchup('${homeEsc(g.game_id)}')">
       <div class="h2a-game-time">${homeEsc(when)}${homeEsc(tv)}</div>
       <div class="h2a-team-row"><span class="h2a-team-name"><img src="${getNflTeamLogo(g.away_team)}" alt="" style="width:16px;height:16px;object-fit:contain;flex:none;filter:drop-shadow(0 1px 2px rgba(0,0,0,.5))" loading="lazy"><span style="font:700 12px var(--font-sans);color:${homeFav ? '#c9ccd1' : '#fff'}">${homeEsc(aAbbr)}</span></span><span class="h2a-mono" style="font:600 11px var(--font-mono);color:${homeFav ? '#868a91' : '#7cc49b'}">${homeFav ? homeEsc(aSpread) : aPct + '%'}</span></div>
       <div class="h2a-team-row"><span class="h2a-team-name"><img src="${getNflTeamLogo(g.home_team)}" alt="" style="width:16px;height:16px;object-fit:contain;flex:none;filter:drop-shadow(0 1px 2px rgba(0,0,0,.5))" loading="lazy"><span style="font:700 12px var(--font-sans);color:${homeFav ? '#fff' : '#c9ccd1'}">${homeEsc(hAbbr)}</span></span><span class="h2a-mono" style="font:700 11px var(--font-mono);color:${homeFav ? '#7cc49b' : '#868a91'}">${homeFav ? hPct + '%' : ''}</span></div>
@@ -2934,7 +2949,7 @@ function home2aScorestrip(games){
       <div style="font:600 11px var(--font-sans);color:#e9e7e3;white-space:nowrap">${games.length} games</div>
     </div>
     <div class="h2a-strip-games"><div class="h2a-strip-inner">${cells}
-      <div class="h2a-game" style="flex:0 0 126px;display:flex;flex-direction:column;justify-content:center;gap:4px;border-right:0" onclick="showTab('schedule')">
+      <div class="h2a-game" style="flex:0 0 126px;display:flex;flex-direction:column;justify-content:center;gap:4px;border-right:0" onclick="showScheduleWeek(1)">
         <div style="font:700 11px var(--font-sans);color:#d9a441">All ${games.length} games →</div>
         <div style="font:400 10px var(--font-sans);color:#868a91">Model win % + live lines</div>
       </div>
@@ -2953,7 +2968,7 @@ function home2aPowerIndex(){
     const color = DATA.teamColors[t.name] || '#3b4261';
     const abbr = DATA.teamAbbr[t.name] || t.abbr || t.name;
     const wins = (t.projected_wins || 0).toFixed(1);
-    return `<div class="h2a-pi-row" onclick="showTab('projections')">
+    return `<div class="h2a-pi-row" onclick="showProjectionsTab('standings')">
       <span class="h2a-mono" style="font:700 11px var(--font-mono);color:#868a91;width:16px">${i + 1}</span>
       <div style="width:24px;height:24px;border-radius:5px;background:rgba(255,255,255,.04);border:1px solid ${color}44;display:flex;align-items:center;justify-content:center;padding:2px;flex:none">
         <img src="${getNflTeamLogo(t.name)}" alt="${homeEsc(abbr)}" style="width:18px;height:18px;object-fit:contain" loading="lazy">
@@ -2962,7 +2977,7 @@ function home2aPowerIndex(){
       <span class="h2a-mono" style="font:700 12px var(--font-mono);color:#e9e7e3;width:38px;text-align:right">${wins}</span>
     </div>`;
   }).join('');
-  return `<div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:14px"><div style="font:800 13px var(--font-sans);color:#fff">Power index</div><span style="font:600 10px var(--font-sans);color:#d9a441;cursor:pointer" onclick="showTab('projections')">All 32 →</span></div><div>${list}</div><div style="margin-top:12px;font:400 10px var(--font-mono);color:#5f6772">Mike Clay 2026 · projected wins</div>`;
+  return `<div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:14px"><div style="font:800 13px var(--font-sans);color:#fff">Power index</div><span style="font:600 10px var(--font-sans);color:#d9a441;cursor:pointer" onclick="showProjectionsTab('standings')">All 32 →</span></div><div>${list}</div><div style="margin-top:12px;font:400 10px var(--font-mono);color:#5f6772">Mike Clay 2026 · projected wins</div>`;
 }
 
 function homeRedesign2aHtml(){
@@ -3040,7 +3055,7 @@ function homeRedesign2aHtml(){
               <p style="margin:14px 0 0;font:400 14px/1.65 var(--font-sans);color:#a2a5ab;max-width:560px;text-wrap:pretty">${moveCount} trades, signings and draft pickups since Super Bowl LX, blockbusters flagged, each one re-scored against 2026 projected win totals.</p>
               <div style="display:flex;gap:10px;margin-top:20px">
                 <span class="h2a-btn-amber" onclick="showMovesTab()">Open the wire →</span>
-                <span class="h2a-btn-ghost" style="border-color:#363c44" onclick="showTab('projections')">Projected standings</span>
+                <span class="h2a-btn-ghost" style="border-color:#363c44" onclick="showProjectionsTab('standings')">Projected standings</span>
               </div>
             </div>
             <div style="width:100%;max-width:520px;min-height:280px;border-radius:10px;border:1px solid #2b3037;background:linear-gradient(135deg,#0c1322 0%,#141a24 50%,#0e1117 100%);position:relative;overflow:hidden;padding:22px;display:flex;flex-direction:column;justify-content:space-between">
@@ -3092,7 +3107,7 @@ function homeRedesign2aHtml(){
               <p style="margin:14px 0 0;font:400 14px/1.65 var(--font-sans);color:#a9aeaa;max-width:540px;text-wrap:pretty">Calibrated edge, per-market backtest evidence, line movement and win totals across Kalshi, DraftKings, BetMGM, FanDuel, Caesars and Polymarket. This hub stays the reading room; Edge is the terminal.</p>
               <div style="display:flex;gap:10px;margin-top:20px">
                 <a class="h2a-btn-amber" href="https://edge.shyamsapps.qzz.io" target="_blank" rel="noopener">Open Edge Analytics ↗</a>
-                <span class="h2a-btn-ghost" onclick="window.open('https://edge.shyamsapps.qzz.io','_blank')">How the model is graded</span>
+                <span class="h2a-btn-ghost" onclick="window.open('https://edge.shyamsapps.qzz.io/model-lab','_blank')">How the model is graded</span>
               </div>
             </div>
             <div style="background:rgba(255,255,255,.03);border:1px solid #2b3037;border-radius:10px;padding:20px">
@@ -5844,8 +5859,8 @@ let currentProjSubTab = 'standings';
 const PROJ_SUB_TABS = [
   { id: 'standings', label: 'Standings', icon: '🏈', group: 'Team' },
   { id: 'categories', label: 'Leaders', icon: '🏆', group: 'Team' },
-  { id: 'sos', label: 'Schedule', icon: '📅', group: 'Team' },
-  { id: 'teamproj', label: 'Teams', icon: '🏟', group: 'Team' },
+  { id: 'sos', label: 'Strength of Schedule', icon: '📅', group: 'Team' },
+  { id: 'teamproj', label: 'Team Projections', icon: '🏟', group: 'Team' },
   { id: 'coaching', label: 'Coaching', icon: '📋', group: 'Team' },
   { id: 'qb', label: 'QB', icon: '🎯', group: 'Offense' },
   { id: 'rb', label: 'RB', icon: '🏃', group: 'Offense' },
@@ -8030,17 +8045,18 @@ function handleCommandSearch(q) {
 
   const tabs = [
     { label: 'Home Dashboard', type: 'Tab', icon: '🏠', action: () => { showTab('home'); closeCommandPalette(); } },
-    { label: 'Week 1 Schedule', type: 'Tab', icon: '📅', action: () => { showTab('schedule'); closeCommandPalette(); } },
+    { label: 'Week 1 Schedule', type: 'Tab', icon: '📅', action: () => { showScheduleWeek(1); closeCommandPalette(); } },
     { label: 'Transactions / Moves', type: 'Tab', icon: '⚡', action: () => { showMovesTab(); closeCommandPalette(); } },
     { label: 'Teams & Rosters', type: 'Tab', icon: '🛡', action: () => { showTab('teams'); closeCommandPalette(); } },
-    { label: 'Mike Clay Projections', type: 'Tab', icon: '📊', action: () => { showTab('projections'); closeCommandPalette(); } },
+    { label: 'Mike Clay Projections', type: 'Tab', icon: '📊', action: () => { showProjectionsTab('standings'); closeCommandPalette(); } },
+    { label: 'Player Compare', type: 'Feature', icon: '⚖️', action: () => { openPlayerCompareModal(); closeCommandPalette(); } },
     { label: 'Edge Analytics (Props & Value)', type: 'Tab', icon: '💰', action: () => { window.open('https://edgeplay-analytics.pages.dev/props','_blank'); closeCommandPalette(); } },
     { label: 'Win Totals (Edge Analytics)', type: 'Tab', icon: '🏆', action: () => { window.open('https://edgeplay-analytics.pages.dev/win-totals','_blank'); closeCommandPalette(); } },
     { label: 'Matchup Center (Pro Preview & Next Gen Stats)', type: 'Tab', icon: '⚔️', action: () => { showTab('matchup'); closeCommandPalette(); } },
     { label: 'Next Gen Matchups 101', type: 'Guide', icon: '💡', action: () => { openMatchups101Modal(); closeCommandPalette(); } },
-    { label: 'Clay vs Market Delta', type: 'Feature', icon: '⚡', action: () => { showTab('projections'); switchProjSubTab('clay_delta'); closeCommandPalette(); } },
-    { label: 'Opponent Matchup Matrix', type: 'Feature', icon: '🎯', action: () => { showTab('projections'); switchProjSubTab('matchup_matrix'); closeCommandPalette(); } },
-    { label: 'Consensus Power Index', type: 'Feature', icon: '🏆', action: () => { showTab('projections'); switchProjSubTab('consensus'); closeCommandPalette(); } },
+    { label: 'Clay vs Market Delta', type: 'Feature', icon: '⚡', action: () => { showProjectionsTab('clay_delta'); closeCommandPalette(); } },
+    { label: 'Opponent Matchup Matrix', type: 'Feature', icon: '🎯', action: () => { showProjectionsTab('matchup_matrix'); closeCommandPalette(); } },
+    { label: 'Consensus Power Index', type: 'Feature', icon: '🏆', action: () => { showProjectionsTab('consensus'); closeCommandPalette(); } },
   ];
   for (const t of tabs) {
     if (!query || t.label.toLowerCase().includes(query)) cmdPaletteItems.push(t);
