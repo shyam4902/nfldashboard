@@ -46,15 +46,22 @@ Every nfldashboard copy of the shared layer is written by one path: `fantasyfoot
 
 ## ESPN transaction ingestion
 
-`update_rosters_from_espn.js` parses supported ESPN signings, releases, waiver claims, and trades into the dashboard transaction shape. It canonicalizes unambiguous full, abbreviated, and ESPN short team names, validates normalized record fields and dry-run metadata, preserves source identifiers and descriptions, and skips unsupported descriptions rather than converting them into invented rows.
+`update_rosters_from_espn.js` parses supported ESPN signings, releases, waiver claims, and trades into the dashboard transaction shape. It canonicalizes unambiguous full, abbreviated, and ESPN short team names, validates normalized record fields, preserves source identifiers and descriptions, and skips unsupported descriptions rather than converting them into invented rows.
 
-Use the dry-run path for inspection only:
+Dry run is the default. It fetches the live ESPN feed unless `--input` is supplied, and writes only the inspect artifact:
 
 ```bash
-node update_rosters_from_espn.js --dry-run
+node update_rosters_from_espn.js --dry-run                    # live ESPN feed to espn_transactions_2026.json
+node update_rosters_from_espn.js --input <saved-feed.json>    # same, from a saved feed (no network)
 ```
 
-This writes `espn_transactions_2026.json` with source metadata and normalized records. It does not write roster files or Supabase. The dashboard still reads its live transaction view from Supabase; persistence of normalized ESPN transactions is a separate follow-up.
+Persistence to Supabase is explicit and opt-in. The first write, and every later write, requires `--since`. The verified legacy boundary is `2026-04-23`, so the first safe import date is `2026-04-24`:
+
+```bash
+node update_rosters_from_espn.js --write --since 2026-04-24  # requires SUPABASE_URL and SUPABASE_SECRET_KEY
+```
+
+Writes are idempotent: every row carries a stable `tx_id` from the normalized source, exact ESPN timestamp, move type, player, and both teams. The writer sends one PostgREST bulk insert with `on_conflict=tx_id` and conflict-ignore handling, so concurrent runs do not race. Apply `supabase/migrations/20260903_espn_transactions_tx_id.sql` first. A failed write exits nonzero and never touches a local artifact.
 
 The roster generator and Supabase roster export no longer inject synthetic summer moves. Do not run live sync commands unless the task explicitly requires a remote write.
 
@@ -69,6 +76,7 @@ node --check generate_roster_files.js
 node --check sync_supabase_rosters.js
 node --check update_rosters_from_espn.js
 node --test update_rosters_from_espn.test.js
+node --test persist_espn_transactions.test.js
 node --test validate_data.test.js
 node --test concurrent_publish.test.js
 PLAYWRIGHT_MODULE=/path/to/installed/playwright node props-smoke.mjs

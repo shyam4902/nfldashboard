@@ -57,7 +57,7 @@
       "id": "rosters",
       "file": "nfl_rosters_2026.json",
       "label": "Roster snapshot (Supabase teams+players with Madden overlay)",
-      "producer": "sync_supabase_rosters.js (or generate_roster_files.js / update_rosters_from_espn.js) → sync-shared-data.sh",
+      "producer": "sync_supabase_rosters.js (or generate_roster_files.js) → sync-shared-data.sh",
       "canonical": "nfl_rosters_2026.json",
       "copies": ["data/shared/nfl_rosters_2026.json"],
       "fallbacks": [],
@@ -192,7 +192,7 @@
       "freshness_key": null,
       "failure_behavior": "loadAllData() awaits nfl_teams alongside players and transactions; on any error the page replaces the body with a red error screen and logs to console — no view renders.",
       "fallback_policy": "None in the browser. Team colors/abbrs feed the committed nfl_rosters_2026.json snapshot and the in-page ABBR_TO_TEAM map for line lookups; there is no live-team fallback.",
-      "test_fixture": "Hermetic browser tests intercept the Supabase REST endpoint and synthesize 32 team rows (id/name/abbr/division/primary_color, no cap fields) from the committed roster snapshot — see test-fixtures/README.md.",
+      "test_fixture": "Deterministic data-feed tests intercept the Supabase REST endpoint and synthesize 32 team rows (id/name/abbr/division/primary_color, no cap fields) from the committed roster snapshot — see test-fixtures/README.md.",
       "note": "Runtime dependency, not a repo file: inventory records its contract so the validator can enforce the documentation. The validator never contacts the network."
     },
     {
@@ -207,7 +207,7 @@
       "freshness_key": null,
       "failure_behavior": "loadAllData() awaits nfl_players (paginated at 1000 rows); on any error the page replaces the body with a red error screen and logs to console — no view renders.",
       "fallback_policy": "None in the browser. The committed nfl_rosters_2026.json is a deploy snapshot of this table used as the ESPN-updater baseline and test fixture, not a live fallback.",
-      "test_fixture": "Hermetic browser tests intercept the Supabase REST endpoint and serve the committed nfl_rosters_2026.json rows (with team_id linkage added) — see test-fixtures/README.md.",
+      "test_fixture": "Deterministic data-feed tests intercept the Supabase REST endpoint and serve the committed nfl_rosters_2026.json rows (with team_id linkage added) — see test-fixtures/README.md.",
       "note": "Runtime dependency, not a repo file; documented contract only."
     },
     {
@@ -221,8 +221,8 @@
       "fallbacks": [],
       "freshness_key": null,
       "failure_behavior": "loadAllData() awaits nfl_transactions (ordered by sort_date desc); on any error the page replaces the body with a red error screen — same path as the other two tables.",
-      "fallback_policy": "None in the browser. Normalized ESPN dry-run output (update_rosters_from_espn.js --dry-run) is inspectable but is not persisted to this table and is not a live fallback.",
-      "test_fixture": "Hermetic browser tests intercept the Supabase REST endpoint and serve the static, clearly-labeled synthetic fixture test-fixtures/nfl_transactions.json — see test-fixtures/README.md.",
+      "fallback_policy": "None in the browser. Normalized ESPN rows reach this table only via the explicit update_rosters_from_espn.js --write path (idempotent tx_id; migration supabase/migrations/20260903_espn_transactions_tx_id.sql). Dry-run output is inspectable only and is not a live fallback.",
+      "test_fixture": "Deterministic data-feed tests intercept the Supabase REST endpoint and serve the static, clearly-labeled synthetic fixture test-fixtures/nfl_transactions.json — see test-fixtures/README.md.",
       "note": "Runtime dependency, not a repo file; documented contract only. The Moves newswire, team gains/losses, and home stats all read this table."
     },
     {
@@ -237,7 +237,7 @@
       "freshness_key": null,
       "failure_behavior": "loadGameLines() catches and records MARKET_LINES_ERR; game cards render without spread/total/moneyline badges (schedule tab shows an empty line slot) instead of erroring the page.",
       "fallback_policy": "None: there is no committed market-line source. The committed schedule.json carries kickoffs/venues only. build_full_schedule.py is the offline builder for schedule shape, not for live odds.",
-      "test_fixture": "Hermetic browser tests intercept raw.githubusercontent.com/nflverse/** and synthesize a deterministic 2026 REG games.csv (lines derived per game) from the committed schedule.json — see test-fixtures/README.md.",
+      "test_fixture": "Deterministic data-feed tests intercept raw.githubusercontent.com/nflverse/** and synthesize a deterministic 2026 REG games.csv (lines derived per game) from the committed schedule.json — see test-fixtures/README.md.",
       "note": "Fetched at runtime by the schedule tab and home marquee; graceful degradation on failure."
     }
   ]

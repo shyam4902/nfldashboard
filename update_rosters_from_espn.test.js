@@ -54,6 +54,7 @@ test('normalizes an ESPN item into the dashboard transaction shape', () => {
   assert.deepEqual(normalized, [{
     id: 'espn-1:trade:caedan-wallace', source: 'ESPN', source_id: 'espn-1',
     source_key: '2026-08-10T07:00Z_New England Patriots_Traded OL Caedan Wallace and a 2029 seventh-round pick to Miami in exchange for a 2028 sixth-round pick.',
+    source_date: '2026-08-10T07:00Z',
     type: 'trade', blockbuster: false, player_name: 'Caedan Wallace', pos: 'OL',
     from_team: 'New England Patriots', to_team: 'Miami Dolphins',
     detail: 'Traded OL Caedan Wallace and a 2029 seventh-round pick to Miami in exchange for a 2028 sixth-round pick.',
@@ -100,7 +101,7 @@ test('normalizes a collection and rejects malformed records', () => {
 test('rejects invalid transaction types, dates, shapes, and duplicate IDs', () => {
   const valid = {
     id: 'one', source: 'ESPN', source_key: 'key', type: 'trade', player_name: 'Player',
-    pos: '', from_team: 'A', to_team: 'B', detail: 'Trade', sort_date: '2026-08-07'
+    pos: '', from_team: 'A', to_team: 'B', detail: 'Trade', source_date: '2026-08-07T07:00Z', sort_date: '2026-08-07'
   };
   const result = validator([
     valid,
