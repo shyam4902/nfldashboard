@@ -1,6 +1,6 @@
 # NFL Dashboard — State
 
-- updated: 2026-09-03
+- updated: 2026-09-04
 - live: https://nfldashboard.pages.dev/ (Cloudflare Pages; git-connected and published by `git push origin main`)
 - repo: https://github.com/shyam4902/nfldashboard
 - app: static `index.html` with repository JSON assets and Supabase-backed roster/transaction data
@@ -25,6 +25,20 @@
 - `update_rosters_from_espn.js` normalizes supported ESPN transaction descriptions, canonicalizes unambiguous team names, validates normalized records, and skips unsupported descriptions.
 - `node update_rosters_from_espn.js --dry-run` produces a source-tagged normalized inspection artifact without roster-file or database writes.
 - Normalized ESPN transaction persistence to Supabase is not implemented; the dashboard continues to read transactions from Supabase.
+
+## Schedule freshness fix (2026-09-04)
+
+- `schedule.json` had not been regenerated since 2026-08-26: the builder
+  (`scripts/build_full_schedule.py`) is manual, and nothing in the daily
+  automation re-ran it — the producer pipeline only *copied* the artifact, so
+  `freshness.json` truthfully reported the schedule stale (~200h).
+- Rebuilt from nflverse (content unchanged — kickoffs/venues/matchups identical,
+  only the `generated` date moved) and re-synced, so `schedule.json` +
+  `data/shared/schedule.json` + `data/shared/freshness.json` now report the
+  schedule fresh (age 0h).
+- Root cause fix lives producer-side: `fantasyfootball/scripts/daily-pipeline.sh`
+  now rebuilds the schedule from nflverse before the shared-data sync, so this
+  cannot silently rot again. No dashboard code change was needed.
 
 ## Backend hardening (2026-09-03)
 

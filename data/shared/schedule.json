@@ -2,7 +2,7 @@
   "season": 2026,
   "week": 1,
   "total_weeks": 18,
-  "generated": "2026-08-26",
+  "generated": "2026-09-04",
   "source": "nflverse games.csv (matchups, kickoffs, stadiums); Week 1 enriched with TV/city",
   "games": [
     {
