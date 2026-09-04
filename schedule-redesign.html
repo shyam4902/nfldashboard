@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NFL26 — Schedule Redesign (Pregame Studio)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800;900&family=Geist+Mono:wght@400;500;600;700&family=Archivo:wght@600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;background:#0c0d10;font-family:'Geist',system-ui,sans-serif;color:#e9e7e3}
+  .wrap{max-width:1440px;margin:0 auto;background:#14161a;border-left:1px solid #2b3037;border-right:1px solid #2b3037;min-height:100vh}
+  .mono{font-family:'Geist Mono',monospace}
+  .arch{font-family:'Archivo',sans-serif}
+  a{color:inherit;text-decoration:none}
+  @keyframes softpulse{0%,100%{opacity:1}50%{opacity:.35}}
+  .pulse{animation:softpulse 2.2s ease-in-out infinite}
+
+  /* Top Navigation */
+  .nav{display:flex;align-items:center;justify-content:space-between;height:56px;padding:0 24px;background:#14161a;border-bottom:1px solid #2b3037}
+  .nav-left{display:flex;align-items:center;gap:22px}
+  .logo{font:900 20px/1 'Archivo',sans-serif;letter-spacing:-.02em;color:#f2f0ec}
+  .logo span{color:#d9a441}
+  .nav nav{display:flex;gap:20px}
+  .nav nav a{font:600 12px 'Geist',sans-serif;color:#a2a5ab;transition:color .15s}
+  .nav nav a.on{font-weight:700;color:#fff;border-bottom:2px solid #d9a441;padding-bottom:17px;margin-bottom:-19px}
+  .nav nav a:hover{color:#fff}
+  .nav-right{display:flex;align-items:center;gap:14px}
+  .search{display:flex;align-items:center;gap:7px;background:#1c1f25;border:1px solid #2b3037;border-radius:6px;padding:6px 10px;width:190px}
+  .search span{font:400 11px 'Geist',sans-serif;color:#868a91}
+  .search .kbd{margin-left:auto;font:500 9px 'Geist Mono',monospace;color:#6f737a}
+  .synced{font:500 11px 'Geist Mono',monospace;color:#868a91}
+  .edge-btn{font:700 11px 'Geist',sans-serif;color:#17140f;background:#d9a441;border-radius:5px;padding:6px 12px;transition:background .15s}
+  .edge-btn:hover{background:#e6b556}
+
+  /* Schedule Subheader & Controls */
+  .sch-controls{background:#16191f;border-bottom:1px solid #2b3037;padding:18px 24px}
+  .sch-title-row{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:16px}
+  .sch-title{font:800 22px/1.1 'Archivo',sans-serif;letter-spacing:-.02em;color:#fff;display:flex;align-items:center;gap:10px}
+  .sch-title .badge{font:700 10px 'Geist Mono',monospace;letter-spacing:.12em;color:#d9a441;background:rgba(217,164,65,.1);border:1px solid rgba(217,164,65,.28);border-radius:3px;padding:2px 7px}
+  .sch-sub{font:400 12px 'Geist',sans-serif;color:#8f9299;margin-top:4px}
+  
+  /* View Toggle Buttons */
+  .view-toggles{display:flex;background:#111317;border:1px solid #2b3037;border-radius:6px;padding:3px;gap:3px}
+  .v-btn{font:700 11px 'Geist',sans-serif;color:#8f9299;background:transparent;border:0;padding:6px 12px;border-radius:4px;cursor:pointer;transition:all .15s}
+  .v-btn.on{color:#17140f;background:#d9a441}
+  .v-btn:hover:not(.on){color:#fff}
+
+  /* Week Pills Bar */
+  .week-pills-row{display:flex;align-items:center;justify-content:space-between;gap:16px;overflow-x:auto;padding-top:4px}
+  .week-pills{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px}
+  .wk-pill{font:800 10px 'Geist Mono',monospace;letter-spacing:.08em;color:#a2a5ab;background:#14161a;border:1px solid #2b3037;border-radius:5px;padding:6px 11px;white-space:nowrap;cursor:pointer;transition:all .15s}
+  .wk-pill:hover{color:#fff;border-color:rgba(255,255,255,.3)}
+  .wk-pill.on{color:#17140f;background:#d9a441;border-color:#d9a441}
+  
+  /* Filter Chips */
+  .filter-row{display:flex;align-items:center;gap:8px;margin-top:14px;overflow-x:auto}
+  .f-chip{font:600 11px 'Geist',sans-serif;color:#868a91;background:#14161a;border:1px solid #2b3037;border-radius:4px;padding:4px 10px;cursor:pointer;transition:all .15s;white-space:nowrap}
+  .f-chip:hover{color:#fff;border-color:#474d57}
+  .f-chip.on{color:#fff;background:rgba(255,255,255,.07);border-color:#5c6470}
+
+  /* Main Slate Content Area */
+  .slate-body{padding:24px}
+
+  /* Marquee Kickoff Banner (Slide 1 aesthetic) */
+  .marquee-banner{border-radius:12px;border:1px solid #2b3037;overflow:hidden;position:relative;margin-bottom:28px;background:linear-gradient(105deg,#2a1a1c 0%,#1e1b20 44%,#1b201c 100%)}
+  .marquee-banner .glow{position:absolute;inset:0;background:radial-gradient(ellipse at 18% 0%,rgba(198,12,48,.18) 0%,transparent 55%),radial-gradient(ellipse at 82% 12%,rgba(105,190,40,.12) 0%,transparent 52%);pointer-events:none}
+  .marquee-pad{position:relative;padding:26px 28px}
+  .kicker{font:800 10px 'Geist Mono',monospace;letter-spacing:.16em;border-radius:3px;padding:4px 8px;display:inline-block}
+  .btn-amber{font:700 12px 'Geist',sans-serif;color:#17140f;background:#d9a441;border-radius:6px;padding:10px 18px;cursor:pointer;display:inline-block;transition:background .15s}
+  .btn-amber:hover{background:#e6b556}
+  .btn-ghost{font:700 12px 'Geist',sans-serif;color:#e9e7e3;border:1px solid rgba(255,255,255,.18);border-radius:6px;padding:10px 18px;cursor:pointer;display:inline-block;transition:border-color .15s}
+  .btn-ghost:hover{border-color:rgba(255,255,255,.4)}
+
+  /* Broadcast Window Section Header */
+  .window-sec{margin-bottom:32px}
+  .window-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid #2b3037}
+  .window-title{display:flex;align-items:center;gap:10px}
+  .window-title h3{margin:0;font:800 13px/1 'Geist',sans-serif;letter-spacing:.04em;color:#fff;text-transform:uppercase}
+  .window-meta{font:600 11px 'Geist Mono',monospace;color:#868a91}
+  .tv-badge{font:800 9px 'Geist Mono',monospace;letter-spacing:.1em;border-radius:3px;padding:2px 6px;text-transform:uppercase}
+
+  /* Game Cards Grid */
+  .game-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(380px,1fr));gap:16px}
+  
+  /* Individual Game Card */
+  .game-card{background:#14161a;border:1px solid #2b3037;border-radius:10px;overflow:hidden;transition:transform .15s,border-color .2s,box-shadow .2s;cursor:pointer;display:flex;flex-direction:column}
+  .game-card:hover{transform:translateY(-2px);border-color:#3e4652;box-shadow:0 8px 24px rgba(0,0,0,.45)}
+  .game-card:hover .card-cta{color:#d9a441}
+  
+  .card-head{background:#1a1d22;padding:9px 14px;border-bottom:1px solid #262a31;display:flex;align-items:center;justify-content:space-between}
+  .card-time{font:600 10px 'Geist Mono',monospace;color:#8f9299;display:flex;align-items:center;gap:6px}
+  .card-network{font:800 9px 'Geist Mono',monospace;letter-spacing:.08em;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:3px;padding:2px 5px;color:#e9e7e3}
+
+  .card-body{padding:14px 16px;flex:1;display:flex;flex-direction:column;justify-content:space-between}
+  .team-block{display:flex;align-items:center;justify-content:space-between;padding:5px 0}
+  .team-info{display:flex;align-items:center;gap:10px}
+  .team-logo{width:26px;height:26px;object-fit:contain;filter:drop-shadow(0 2px 4px rgba(0,0,0,.5))}
+  .team-names{display:flex;align-items:baseline;gap:6px}
+  .team-abbr{font:800 15px/1 'Archivo',sans-serif;color:#fff}
+  .team-name{font:500 12px 'Geist',sans-serif;color:#a2a5ab}
+  .team-odds{display:flex;align-items:center;gap:12px;text-align:right}
+  .team-spread{font:600 12px 'Geist Mono',monospace;color:#868a91;width:42px}
+  .team-prob{font:800 14px 'Geist Mono',monospace;color:#7cc49b;width:44px}
+  .team-prob.underdog{color:#868a91;font-weight:600}
+
+  /* Dual color probability distribution bar */
+  .prob-bar{height:6px;border-radius:3px;overflow:hidden;background:rgba(255,255,255,.06);display:flex;gap:2px;margin:12px 0 10px}
+  
+  .card-foot{display:flex;align-items:center;justify-content:space-between;font:500 10px 'Geist Mono',monospace;color:#868a91;padding-top:10px;border-top:1px solid #23272e}
+  .card-cta{font:700 10px 'Geist',sans-serif;color:#a2a5ab;display:flex;align-items:center;gap:3px;transition:color .15s}
+
+  /* Full-Season 32x18 Matrix view (Toggled) */
+  .matrix-wrap{display:none;overflow-x:auto;background:#14161a;border:1px solid #2b3037;border-radius:10px;padding:16px}
+  .matrix-tbl{width:100%;border-collapse:collapse;min-width:1080px;font-size:11px}
+  .matrix-tbl th{background:#1a1d22;color:#8f9299;padding:9px 6px;text-align:center;font:700 10px 'Geist Mono',monospace;border-bottom:1px solid #2b3037}
+  .matrix-tbl th.t-col{text-align:left;padding-left:14px;position:sticky;left:0;z-index:2;background:#1a1d22;border-right:1px solid #2b3037}
+  .matrix-tbl td{padding:4px 3px;text-align:center;border-bottom:1px solid #20242b}
+  .matrix-tbl td.t-cell{text-align:left;padding-left:14px;position:sticky;left:0;z-index:1;background:#14161a;border-right:1px solid #2b3037}
+  .m-btn{display:block;width:100%;padding:4px 2px;border-radius:4px;border:1px solid transparent;font:700 10px 'Geist Mono',monospace;cursor:pointer;background:transparent;transition:all .12s}
+  .m-btn.home{background:#1e232c;color:#fff;border-color:#2e3542}
+  .m-btn.away{color:#8f9299}
+  .m-btn:hover{border-color:#d9a441;color:#fff}
+  .m-bye{font:500 9px 'Geist Mono',monospace;color:#555a63}
+
+  @media(max-width:960px){
+    .game-grid{grid-template-columns:1fr}
+    .hero-matchup-grid{grid-template-columns:1fr!important;gap:18px!important}
+    .sch-title-row{flex-direction:column;align-items:flex-start}
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <!-- TOP NAVIGATION (Matching home-redesign.html exactly) -->
+  <header class="nav">
+    <div class="nav-left">
+      <div class="logo">NFL<span>26</span></div>
+      <nav>
+        <a href="javascript:void(0)">Today</a>
+        <a class="on" href="javascript:void(0)">Schedule</a>
+        <a href="javascript:void(0)">Standings</a>
+        <a href="javascript:void(0)">Teams</a>
+        <a href="javascript:void(0)">Players</a>
+        <a href="javascript:void(0)">Wire</a>
+      </nav>
+    </div>
+    <div class="nav-right">
+      <div class="search">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#868a91" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-4.5-4.5"></path></svg>
+        <span>Players, teams, lines</span>
+        <span class="kbd">⌘K</span>
+      </div>
+      <span class="synced">SYNCED 07:12 UTC</span>
+      <a class="edge-btn" href="https://edge.shyamsapps.qzz.io" target="_blank" rel="noopener">Edge Analytics</a>
+    </div>
+  </header>
+
+  <!-- SCHEDULE CONTROLS & WEEK SELECTOR -->
+  <section class="sch-controls">
+    <div class="sch-title-row">
+      <div>
+        <div class="sch-title">
+          <span>2026 Regular Season Schedule</span>
+          <span class="badge">WEEK 1 SLATE</span>
+        </div>
+        <div class="sch-sub">16 opening matchups · Composite power ratings & log5 win probabilities · Live nflverse spreads & totals</div>
+      </div>
+      <div class="view-toggles">
+        <button class="v-btn on" id="btnViewSlate" onclick="setViewMode('slate')">Broadcast Slate</button>
+        <button class="v-btn" id="btnViewMatrix" onclick="setViewMode('matrix')">32 × 18 Grid</button>
+      </div>
+    </div>
+
+    <!-- Week Selector Carousel -->
+    <div class="week-pills-row">
+      <div class="week-pills" id="weekPills">
+        <span class="wk-pill" onclick="selectWeek(this, 'PRE')">PRE</span>
+        <span class="wk-pill on" onclick="selectWeek(this, 'WK 1')">WK 1</span>
+        <span class="wk-pill" onclick="selectWeek(this, 'WK 2')">WK 2</span>
+        <span class="wk-pill" onclick="selectWeek(this, 'WK 3')">WK 3</span>
+        <span class="wk-pill" onclick="selectWeek(this, 'WK 4')">WK 4</span>
+        <span class="wk-pill" onclick="selectWeek(this, 'WK 5')">WK 5</span>
+        <span class="wk-pill" onclick="selectWeek(this, 'WK 6')">WK 6</span>
+        <span class="wk-pill" onclick="selectWeek(this, 'WK 7')">WK 7</span>
+        <span class="wk-pill" onclick="selectWeek(this, 'WK 8')">WK 8</span>
+        <span class="wk-pill" onclick="selectWeek(this, 'WK 9')">WK 9</span>
+        <span class="wk-pill" onclick="selectWeek(this, 'WK 10')">WK 10</span>
+        <span class="wk-pill" onclick="selectWeek(this, 'WK 11')">WK 11</span>
+        <span class="wk-pill" onclick="selectWeek(this, 'WK 12')">WK 12</span>
+        <span class="wk-pill" onclick="selectWeek(this, 'WK 13')">WK 13</span>
+        <span class="wk-pill" onclick="selectWeek(this, 'WK 14')">WK 14</span>
+        <span class="wk-pill" onclick="selectWeek(this, 'WK 15')">WK 15</span>
+        <span class="wk-pill" onclick="selectWeek(this, 'WK 16')">WK 16</span>
+        <span class="wk-pill" onclick="selectWeek(this, 'WK 17')">WK 17</span>
+        <span class="wk-pill" onclick="selectWeek(this, 'WK 18')">WK 18</span>
+        <span class="wk-pill" onclick="selectWeek(this, 'PLAYOFFS')">PLAYOFFS</span>
+      </div>
+    </div>
+
+    <!-- Filter chips -->
+    <div class="filter-row">
+      <span class="f-chip on" onclick="filterGames(this, 'all')">All 16 Games</span>
+      <span class="f-chip" onclick="filterGames(this, 'primetime')">Primetime & National (5)</span>
+      <span class="f-chip" onclick="filterGames(this, 'divisional')">Divisional Battles (4)</span>
+      <span class="f-chip" onclick="filterGames(this, 'close')">Close Spreads ≤ 3.0 (7)</span>
+      <span class="f-chip" onclick="filterGames(this, 'high-total')">High Total ≥ 47.0 (3)</span>
+    </div>
+  </section>
+
+  <!-- SLATE CONTAINER -->
+  <main class="slate-body" id="slateContainer">
+
+    <!-- MARQUEE KICKOFF GAME HERO (Faithful to Slide 1 from home-redesign.html) -->
+    <div class="marquee-banner" data-category="primetime">
+      <div class="glow"></div>
+      <div class="marquee-pad">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px;flex-wrap:wrap">
+          <span class="kicker" style="color:#fff;background:#b23a35">2026 NFL KICKOFF GAME</span>
+          <span class="mono" style="font:600 11px 'Geist Mono',monospace;color:#b4b7bc">WED SEP 9 · 8:20 PM ET · LUMEN FIELD, SEATTLE · NBC / PEACOCK / NFL+</span>
+        </div>
+        <div class="hero-matchup-grid" style="display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:24px">
+          <!-- Away Team: Patriots -->
+          <div style="display:flex;align-items:center;gap:18px">
+            <div style="width:118px;height:150px;border-radius:10px;border:1px solid rgba(198,12,48,.4);background:linear-gradient(180deg,rgba(255,255,255,.03) 0%,rgba(0,0,0,.35) 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;flex:none;position:relative;overflow:hidden">
+              <div style="position:absolute;inset:0;background:radial-gradient(circle at 50% 50%,rgba(198,12,48,.25) 0%,transparent 70%);pointer-events:none"></div>
+              <img src="https://a.espncdn.com/i/teamlogos/nfl/500/ne.png" alt="NE" style="width:68px;height:68px;object-fit:contain;position:relative;z-index:1;filter:drop-shadow(0 4px 10px rgba(0,0,0,.6))">
+              <span class="mono" style="font:800 10px 'Geist Mono',monospace;letter-spacing:.14em;color:#e79aa5;position:relative;z-index:1">NE</span>
+            </div>
+            <div>
+              <div class="mono" style="font:800 10px 'Geist Mono',monospace;letter-spacing:.14em;color:#e79aa5">AWAY · 2025: 11-6</div>
+              <div style="display:flex;align-items:center;gap:10px;margin-top:7px">
+                <img src="https://a.espncdn.com/i/teamlogos/nfl/500/ne.png" alt="" style="width:28px;height:28px;object-fit:contain;filter:drop-shadow(0 2px 4px rgba(0,0,0,.4))">
+                <span class="arch" style="font:800 32px/1 'Archivo',sans-serif;letter-spacing:-.02em;color:#fff">PATRIOTS</span>
+              </div>
+              <div style="font:500 13px 'Geist',sans-serif;color:#c98d97;margin-top:4px">New England · AFC East</div>
+              <div style="display:flex;align-items:baseline;gap:8px;margin-top:14px">
+                <span class="mono" style="font:900 40px/1 'Geist Mono',monospace;color:#fff">48<span style="font-size:19px">%</span></span>
+                <span style="font:500 11px 'Geist',sans-serif;color:#c0a3a8">model win<br>probability</span>
+              </div>
+              <div class="mono" style="font:600 12px 'Geist Mono',monospace;color:#dbd9d4;margin-top:10px;border:1px solid rgba(198,12,48,.4);border-radius:5px;padding:5px 9px;display:inline-block">+3.5 &nbsp;·&nbsp; ML +155</div>
+            </div>
+          </div>
+          <!-- Center Divider -->
+          <div style="text-align:center">
+            <div class="mono" style="font:800 11px 'Geist Mono',monospace;letter-spacing:.2em;color:#8f9299">AT</div>
+            <div style="width:1px;height:76px;background:linear-gradient(180deg,transparent,rgba(255,255,255,.2),transparent);margin:10px auto"></div>
+            <div class="mono" style="font:600 11px 'Geist Mono',monospace;color:#b4b7bc">O/U 44.5</div>
+          </div>
+          <!-- Home Team: Seahawks -->
+          <div style="display:flex;align-items:center;gap:18px;justify-content:flex-end;text-align:right">
+            <div>
+              <div class="mono" style="font:800 10px 'Geist Mono',monospace;letter-spacing:.14em;color:#a7d68a">HOME · CLAY 11.2 PROJ W</div>
+              <div style="display:flex;align-items:center;gap:10px;margin-top:7px;justify-content:flex-end">
+                <span class="arch" style="font:800 32px/1 'Archivo',sans-serif;letter-spacing:-.02em;color:#fff">SEAHAWKS</span>
+                <img src="https://a.espncdn.com/i/teamlogos/nfl/500/sea.png" alt="" style="width:28px;height:28px;object-fit:contain;filter:drop-shadow(0 2px 4px rgba(0,0,0,.4))">
+              </div>
+              <div style="font:500 13px 'Geist',sans-serif;color:#a7d68a;margin-top:4px">Seattle · NFC West</div>
+              <div style="display:flex;align-items:baseline;gap:8px;margin-top:14px;justify-content:flex-end">
+                <span style="font:500 11px 'Geist',sans-serif;color:#a7d68a">model win<br>probability</span>
+                <span class="mono" style="font:900 40px/1 'Geist Mono',monospace;color:#69BE28">52<span style="font-size:19px">%</span></span>
+              </div>
+              <div class="mono" style="font:600 12px 'Geist Mono',monospace;color:#dbd9d4;margin-top:10px;border:1px solid rgba(105,190,40,.35);border-radius:5px;padding:5px 9px;display:inline-block">-3.5 &nbsp;·&nbsp; ML -185</div>
+            </div>
+            <div style="width:118px;height:150px;border-radius:10px;border:1px solid rgba(105,190,40,.35);background:linear-gradient(180deg,rgba(255,255,255,.03) 0%,rgba(0,0,0,.35) 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;flex:none;position:relative;overflow:hidden">
+              <div style="position:absolute;inset:0;background:radial-gradient(circle at 50% 50%,rgba(105,190,40,.25) 0%,transparent 70%);pointer-events:none"></div>
+              <img src="https://a.espncdn.com/i/teamlogos/nfl/500/sea.png" alt="SEA" style="width:68px;height:68px;object-fit:contain;position:relative;z-index:1;filter:drop-shadow(0 4px 10px rgba(0,0,0,.6))">
+              <span class="mono" style="font:800 10px 'Geist Mono',monospace;letter-spacing:.14em;color:#69BE28;position:relative;z-index:1">SEA</span>
+            </div>
+          </div>
+        </div>
+        <!-- Dual probability bar -->
+        <div style="display:flex;align-items:center;gap:2px;margin-top:20px;height:8px;border-radius:4px;overflow:hidden;background:rgba(255,255,255,.06)">
+          <div style="width:48%;height:100%;background:#C60C30"></div>
+          <div style="width:52%;height:100%;background:#69BE28"></div>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-top:14px;flex-wrap:wrap;gap:10px">
+          <div style="display:flex;gap:10px">
+            <span class="btn-amber">Open Matchup Lab →</span>
+            <span class="btn-ghost">Both Depth Charts</span>
+          </div>
+          <span class="mono" style="font:500 10px 'Geist Mono',monospace;color:#8fa6bf">LOG5 SIM · COMPOSITE POWER + HOME EDGE</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- WINDOW 1: SPECIAL INTERNATIONAL KICKOFF -->
+    <section class="window-sec" data-category="primetime">
+      <div class="window-hd">
+        <div class="window-title">
+          <h3>Thursday Night International Exclusive</h3>
+          <span class="tv-badge" style="background:#e5091420;color:#e50914;border:1px solid #e5091440">NETFLIX</span>
+        </div>
+        <div class="window-meta">THU SEP 10 · 8:35 PM ET · MELBOURNE CRICKET GROUND (100K CAP)</div>
+      </div>
+      <div class="game-grid" style="grid-template-columns:1fr">
+        <div class="game-card">
+          <div class="card-head">
+            <div class="card-time">
+              <span>THU 8:35 PM ET</span>
+              <span>·</span>
+              <span>MELBOURNE, AUSTRALIA</span>
+            </div>
+            <span class="card-network" style="color:#e50914;border-color:#e5091444">NETFLIX EXCLUSIVE</span>
+          </div>
+          <div class="card-body">
+            <div class="team-block">
+              <div class="team-info">
+                <img src="https://a.espncdn.com/i/teamlogos/nfl/500/sf.png" alt="SF" class="team-logo">
+                <div class="team-names">
+                  <span class="team-abbr">SF</span>
+                  <span class="team-name">San Francisco 49ers</span>
+                </div>
+              </div>
+              <div class="team-odds">
+                <span class="team-spread">+3.5</span>
+                <span class="team-prob underdog">47%</span>
+              </div>
+            </div>
+            <div class="team-block">
+              <div class="team-info">
+                <img src="https://a.espncdn.com/i/teamlogos/nfl/500/lar.png" alt="LAR" class="team-logo">
+                <div class="team-names">
+                  <span class="team-abbr">LAR</span>
+                  <span class="team-name">Los Angeles Rams</span>
+                </div>
+              </div>
+              <div class="team-odds">
+                <span class="team-spread">-3.5</span>
+                <span class="team-prob">53%</span>
+              </div>
+            </div>
+            <div class="prob-bar">
+              <div style="width:47%;background:#AA0000"></div>
+              <div style="width:53%;background:#003594"></div>
+            </div>
+            <div class="card-foot">
+              <span>SPREAD -3.5 · ML -175 · O/U 47.5</span>
+              <span class="card-cta">View Matchup Lab →</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- WINDOW 2: SUNDAY 1:00 PM SLATE (8 Games) -->
+    <section class="window-sec" data-category="sunday-early">
+      <div class="window-hd">
+        <div class="window-title">
+          <h3>Sunday Early Slate · 1:00 PM ET</h3>
+          <span class="tv-badge" style="background:#2b3037;color:#e9e7e3">8 MATCHUPS</span>
+        </div>
+        <div class="window-meta">CBS & FOX REGIONAL BROADCASTS</div>
+      </div>
+      <div class="game-grid">
+        <!-- Game 1 -->
+        <div class="game-card" data-category="close">
+          <div class="card-head">
+            <div class="card-time"><span>SUN 1:00 PM ET</span><span>·</span><span>CHARLOTTE, NC</span></div>
+            <span class="card-network">FOX</span>
+          </div>
+          <div class="card-body">
+            <div class="team-block">
+              <div class="team-info"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/chi.png" class="team-logo"><div class="team-names"><span class="team-abbr">CHI</span><span class="team-name">Bears</span></div></div>
+              <div class="team-odds"><span class="team-spread">-2.5</span><span class="team-prob">54%</span></div>
+            </div>
+            <div class="team-block">
+              <div class="team-info"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/car.png" class="team-logo"><div class="team-names"><span class="team-abbr">CAR</span><span class="team-name">Panthers</span></div></div>
+              <div class="team-odds"><span class="team-spread">+2.5</span><span class="team-prob underdog">46%</span></div>
+            </div>
+            <div class="prob-bar"><div style="width:54%;background:#0B162A"></div><div style="width:46%;background:#0085CA"></div></div>
+            <div class="card-foot"><span>SPREAD CHI -2.5 · O/U 41.5</span><span class="card-cta">View Matchup →</span></div>
+          </div>
+        </div>
+
+        <!-- Game 2 -->
+        <div class="game-card" data-category="high-total">
+          <div class="card-head">
+            <div class="card-time"><span>SUN 1:00 PM ET</span><span>·</span><span>CINCINNATI, OH</span></div>
+            <span class="card-network">FOX</span>
+          </div>
+          <div class="card-body">
+            <div class="team-block">
+              <div class="team-info"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/tb.png" class="team-logo"><div class="team-names"><span class="team-abbr">TB</span><span class="team-name">Buccaneers</span></div></div>
+              <div class="team-odds"><span class="team-spread">+4.0</span><span class="team-prob underdog">43%</span></div>
+            </div>
+            <div class="team-block">
+              <div class="team-info"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/cin.png" class="team-logo"><div class="team-names"><span class="team-abbr">CIN</span><span class="team-name">Bengals</span></div></div>
+              <div class="team-odds"><span class="team-spread">-4.0</span><span class="team-prob">57%</span></div>
+            </div>
+            <div class="prob-bar"><div style="width:43%;background:#D3BC8D"></div><div style="width:57%;background:#FB4F14"></div></div>
+            <div class="card-foot"><span>SPREAD CIN -4.0 · O/U 48.0</span><span class="card-cta">View Matchup →</span></div>
+          </div>
+        </div>
+
+        <!-- Game 3: Saints at Lions -->
+        <div class="game-card">
+          <div class="card-head">
+            <div class="card-time"><span>SUN 1:00 PM ET</span><span>·</span><span>FORD FIELD, DETROIT</span></div>
+            <span class="card-network">FOX</span>
+          </div>
+          <div class="card-body">
+            <div class="team-block">
+              <div class="team-info"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/no.png" class="team-logo"><div class="team-names"><span class="team-abbr">NO</span><span class="team-name">Saints</span></div></div>
+              <div class="team-odds"><span class="team-spread">+6.5</span><span class="team-prob underdog">32%</span></div>
+            </div>
+            <div class="team-block">
+              <div class="team-info"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/det.png" class="team-logo"><div class="team-names"><span class="team-abbr">DET</span><span class="team-name">Lions</span></div></div>
+              <div class="team-odds"><span class="team-spread">-6.5</span><span class="team-prob">68%</span></div>
+            </div>
+            <div class="prob-bar"><div style="width:32%;background:#D3BC8D"></div><div style="width:68%;background:#0076B6"></div></div>
+            <div class="card-foot"><span>SPREAD DET -6.5 · O/U 46.5</span><span class="card-cta">View Matchup →</span></div>
+          </div>
+        </div>
+
+        <!-- Game 4: Bills at Texans -->
+        <div class="game-card" data-category="close high-total">
+          <div class="card-head">
+            <div class="card-time"><span>SUN 1:00 PM ET</span><span>·</span><span>HOUSTON, TX</span></div>
+            <span class="card-network">CBS</span>
+          </div>
+          <div class="card-body">
+            <div class="team-block">
+              <div class="team-info"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/buf.png" class="team-logo"><div class="team-names"><span class="team-abbr">BUF</span><span class="team-name">Bills</span></div></div>
+              <div class="team-odds"><span class="team-spread">+1.5</span><span class="team-prob">57%</span></div>
+            </div>
+            <div class="team-block">
+              <div class="team-info"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/hou.png" class="team-logo"><div class="team-names"><span class="team-abbr">HOU</span><span class="team-name">Texans</span></div></div>
+              <div class="team-odds"><span class="team-spread">-1.5</span><span class="team-prob underdog">43%</span></div>
+            </div>
+            <div class="prob-bar"><div style="width:57%;background:#00338D"></div><div style="width:43%;background:#03202F"></div></div>
+            <div class="card-foot"><span>SPREAD HOU -1.5 · O/U 49.0</span><span class="card-cta">View Matchup →</span></div>
+          </div>
+        </div>
+
+        <!-- Game 5: Ravens at Colts -->
+        <div class="game-card">
+          <div class="card-head">
+            <div class="card-time"><span>SUN 1:00 PM ET</span><span>·</span><span>INDIANAPOLIS, IN</span></div>
+            <span class="card-network">CBS</span>
+          </div>
+          <div class="card-body">
+            <div class="team-block">
+              <div class="team-info"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/bal.png" class="team-logo"><div class="team-names"><span class="team-abbr">BAL</span><span class="team-name">Ravens</span></div></div>
+              <div class="team-odds"><span class="team-spread">-5.0</span><span class="team-prob">64%</span></div>
+            </div>
+            <div class="team-block">
+              <div class="team-info"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/ind.png" class="team-logo"><div class="team-names"><span class="team-abbr">IND</span><span class="team-name">Colts</span></div></div>
+              <div class="team-odds"><span class="team-spread">+5.0</span><span class="team-prob underdog">36%</span></div>
+            </div>
+            <div class="prob-bar"><div style="width:64%;background:#241773"></div><div style="width:36%;background:#002C5F"></div></div>
+            <div class="card-foot"><span>SPREAD BAL -5.0 · O/U 44.0</span><span class="card-cta">View Matchup →</span></div>
+          </div>
+        </div>
+
+        <!-- Game 6: Browns at Jaguars -->
+        <div class="game-card" data-category="close">
+          <div class="card-head">
+            <div class="card-time"><span>SUN 1:00 PM ET</span><span>·</span><span>JACKSONVILLE, FL</span></div>
+            <span class="card-network">CBS</span>
+          </div>
+          <div class="card-body">
+            <div class="team-block">
+              <div class="team-info"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/cle.png" class="team-logo"><div class="team-names"><span class="team-abbr">CLE</span><span class="team-name">Browns</span></div></div>
+              <div class="team-odds"><span class="team-spread">+2.0</span><span class="team-prob underdog">47%</span></div>
+            </div>
+            <div class="team-block">
+              <div class="team-info"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/jax.png" class="team-logo"><div class="team-names"><span class="team-abbr">JAX</span><span class="team-name">Jaguars</span></div></div>
+              <div class="team-odds"><span class="team-spread">-2.0</span><span class="team-prob">53%</span></div>
+            </div>
+            <div class="prob-bar"><div style="width:47%;background:#311D00"></div><div style="width:53%;background:#006778"></div></div>
+            <div class="card-foot"><span>SPREAD JAX -2.0 · O/U 42.5</span><span class="card-cta">View Matchup →</span></div>
+          </div>
+        </div>
+
+        <!-- Game 7: Falcons at Steelers -->
+        <div class="game-card" data-category="close">
+          <div class="card-head">
+            <div class="card-time"><span>SUN 1:00 PM ET</span><span>·</span><span>PITTSBURGH, PA</span></div>
+            <span class="card-network">FOX</span>
+          </div>
+          <div class="card-body">
+            <div class="team-block">
+              <div class="team-info"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/atl.png" class="team-logo"><div class="team-names"><span class="team-abbr">ATL</span><span class="team-name">Falcons</span></div></div>
+              <div class="team-odds"><span class="team-spread">+2.5</span><span class="team-prob underdog">46%</span></div>
+            </div>
+            <div class="team-block">
+              <div class="team-info"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/pit.png" class="team-logo"><div class="team-names"><span class="team-abbr">PIT</span><span class="team-name">Steelers</span></div></div>
+              <div class="team-odds"><span class="team-spread">-2.5</span><span class="team-prob">54%</span></div>
+            </div>
+            <div class="prob-bar"><div style="width:46%;background:#A71930"></div><div style="width:54%;background:#FFB612"></div></div>
+            <div class="card-foot"><span>SPREAD PIT -2.5 · O/U 41.0</span><span class="card-cta">View Matchup →</span></div>
+          </div>
+        </div>
+
+        <!-- Game 8: Jets at Titans -->
+        <div class="game-card">
+          <div class="card-head">
+            <div class="card-time"><span>SUN 1:00 PM ET</span><span>·</span><span>NASHVILLE, TN</span></div>
+            <span class="card-network">CBS</span>
+          </div>
+          <div class="card-body">
+            <div class="team-block">
+              <div class="team-info"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/nyj.png" class="team-logo"><div class="team-names"><span class="team-abbr">NYJ</span><span class="team-name">Jets</span></div></div>
+              <div class="team-odds"><span class="team-spread">-4.5</span><span class="team-prob">60%</span></div>
+            </div>
+            <div class="team-block">
+              <div class="team-info"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/ten.png" class="team-logo"><div class="team-names"><span class="team-abbr">TEN</span><span class="team-name">Titans</span></div></div>
+              <div class="team-odds"><span class="team-spread">+4.5</span><span class="team-prob underdog">40%</span></div>
+            </div>
+            <div class="prob-bar"><div style="width:60%;background:#125740"></div><div style="width:40%;background:#4B92DB"></div></div>
+            <div class="card-foot"><span>SPREAD NYJ -4.5 · O/U 42.0</span><span class="card-cta">View Matchup →</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- WINDOW 3: SUNDAY 4:25 PM NATIONAL SLATE (4 Games) -->
+    <section class="window-sec" data-category="sunday-late">
+      <div class="window-hd">
+        <div class="window-title">
+          <h3>Sunday Afternoon National Slate · 4:25 PM ET</h3>
+          <span class="tv-badge" style="background:#2b3037;color:#e9e7e3">4 MATCHUPS</span>
+        </div>
+        <div class="window-meta">FOX / CBS NATIONAL WINDOW OF THE WEEK</div>
+      </div>
+      <div class="game-grid">
+        <!-- Packers at Vikings (Divisional!) -->
+        <div class="game-card" data-category="divisional close">
+          <div class="card-head">
+            <div class="card-time"><span>SUN 4:25 PM ET</span><span>·</span><span>MINNEAPOLIS, MN</span></div>
+            <span class="card-network" style="color:#d9a441;border-color:#d9a44155">NFC NORTH CLASH · CBS</span>
+          </div>
+          <div class="card-body">
+            <div class="team-block">
+              <div class="team-info"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/gb.png" class="team-logo"><div class="team-names"><span class="team-abbr">GB</span><span class="team-name">Packers</span></div></div>
+              <div class="team-odds"><span class="team-spread">-2.0</span><span class="team-prob">53%</span></div>
+            </div>
+            <div class="team-block">
+              <div class="team-info"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/min.png" class="team-logo"><div class="team-names"><span class="team-abbr">MIN</span><span class="team-name">Vikings</span></div></div>
+              <div class="team-odds"><span class="team-spread">+2.0</span><span class="team-prob underdog">47%</span></div>
+            </div>
+            <div class="prob-bar"><div style="width:53%;background:#204E32"></div><div style="width:47%;background:#4F2683"></div></div>
+            <div class="card-foot"><span>SPREAD GB -2.0 · O/U 45.0</span><span class="card-cta">View Matchup →</span></div>
+          </div>
+        </div>
+
+        <!-- Commanders at Eagles (Divisional!) -->
+        <div class="game-card" data-category="divisional">
+          <div class="card-head">
+            <div class="card-time"><span>SUN 4:25 PM ET</span><span>·</span><span>PHILADELPHIA, PA</span></div>
+            <span class="card-network" style="color:#d9a441;border-color:#d9a44155">NFC EAST CLASH · FOX</span>
+          </div>
+          <div class="card-body">
+            <div class="team-block">
+              <div class="team-info"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/wsh.png" class="team-logo"><div class="team-names"><span class="team-abbr">WAS</span><span class="team-name">Commanders</span></div></div>
+              <div class="team-odds"><span class="team-spread">+4.0</span><span class="team-prob underdog">39%</span></div>
+            </div>
+            <div class="team-block">
+              <div class="team-info"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/phi.png" class="team-logo"><div class="team-names"><span class="team-abbr">PHI</span><span class="team-name">Eagles</span></div></div>
+              <div class="team-odds"><span class="team-spread">-4.0</span><span class="team-prob">61%</span></div>
+            </div>
+            <div class="prob-bar"><div style="width:39%;background:#5A1414"></div><div style="width:61%;background:#004C54"></div></div>
+            <div class="card-foot"><span>SPREAD PHI -4.0 · O/U 46.5</span><span class="card-cta">View Matchup →</span></div>
+          </div>
+        </div>
+
+        <!-- Dolphins at Raiders -->
+        <div class="game-card" data-category="close">
+          <div class="card-head">
+            <div class="card-time"><span>SUN 4:25 PM ET</span><span>·</span><span>LAS VEGAS, NV</span></div>
+            <span class="card-network">FOX</span>
+          </div>
+          <div class="card-body">
+            <div class="team-block">
+              <div class="team-info"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/mia.png" class="team-logo"><div class="team-names"><span class="team-abbr">MIA</span><span class="team-name">Dolphins</span></div></div>
+              <div class="team-odds"><span class="team-spread">-3.0</span><span class="team-prob">56%</span></div>
+            </div>
+            <div class="team-block">
+              <div class="team-info"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/lv.png" class="team-logo"><div class="team-names"><span class="team-abbr">LV</span><span class="team-name">Raiders</span></div></div>
+              <div class="team-odds"><span class="team-spread">+3.0</span><span class="team-prob underdog">44%</span></div>
+            </div>
+            <div class="prob-bar"><div style="width:56%;background:#008E97"></div><div style="width:44%;background:#000000"></div></div>
+            <div class="card-foot"><span>SPREAD MIA -3.0 · O/U 43.5</span><span class="card-cta">View Matchup →</span></div>
+          </div>
+        </div>
+
+        <!-- Cardinals at Chargers -->
+        <div class="game-card" data-category="close">
+          <div class="card-head">
+            <div class="card-time"><span>SUN 4:25 PM ET</span><span>·</span><span>SOFI STADIUM, LA</span></div>
+            <span class="card-network">CBS</span>
+          </div>
+          <div class="card-body">
+            <div class="team-block">
+              <div class="team-info"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/ari.png" class="team-logo"><div class="team-names"><span class="team-abbr">ARI</span><span class="team-name">Cardinals</span></div></div>
+              <div class="team-odds"><span class="team-spread">+2.5</span><span class="team-prob underdog">47%</span></div>
+            </div>
+            <div class="team-block">
+              <div class="team-info"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/lac.png" class="team-logo"><div class="team-names"><span class="team-abbr">LAC</span><span class="team-name">Chargers</span></div></div>
+              <div class="team-odds"><span class="team-spread">-2.5</span><span class="team-prob">53%</span></div>
+            </div>
+            <div class="prob-bar"><div style="width:47%;background:#97233F"></div><div style="width:53%;background:#0080C6"></div></div>
+            <div class="card-foot"><span>SPREAD LAC -2.5 · O/U 45.0</span><span class="card-cta">View Matchup →</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- WINDOW 4: PRIMETIME SHOWDOWNS (SNF & MNF) -->
+    <section class="window-sec" data-category="primetime">
+      <div class="window-hd">
+        <div class="window-title">
+          <h3>National Primetime Showdowns</h3>
+          <span class="tv-badge" style="background:#d9a44122;color:#d9a441;border:1px solid #d9a44144">SNF & MNF</span>
+        </div>
+        <div class="window-meta">SUNDAY NIGHT & MONDAY NIGHT MARQUEES</div>
+      </div>
+      <div class="game-grid" style="grid-template-columns:repeat(auto-fit,minmax(460px,1fr))">
+        <!-- Sunday Night Football: Cowboys at Giants -->
+        <div class="game-card" data-category="primetime divisional close">
+          <div class="card-head">
+            <div class="card-time"><span>SUN 8:20 PM ET</span><span>·</span><span>METLIFE STADIUM, NY</span></div>
+            <span class="card-network" style="color:#60a5fa;border-color:#60a5fa44">SUNDAY NIGHT FOOTBALL · NBC</span>
+          </div>
+          <div class="card-body">
+            <div class="team-block">
+              <div class="team-info"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/dal.png" class="team-logo"><div class="team-names"><span class="team-abbr">DAL</span><span class="team-name">Dallas Cowboys</span></div></div>
+              <div class="team-odds"><span class="team-spread">-2.5</span><span class="team-prob">55%</span></div>
+            </div>
+            <div class="team-block">
+              <div class="team-info"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/nyg.png" class="team-logo"><div class="team-names"><span class="team-abbr">NYG</span><span class="team-name">New York Giants</span></div></div>
+              <div class="team-odds"><span class="team-spread">+2.5</span><span class="team-prob underdog">45%</span></div>
+            </div>
+            <div class="prob-bar"><div style="width:55%;background:#003594"></div><div style="width:45%;background:#0B2265"></div></div>
+            <div class="card-foot"><span>SPREAD DAL -2.5 · ML -140 · O/U 45.5</span><span class="card-cta">View Matchup Lab →</span></div>
+          </div>
+        </div>
+
+        <!-- Monday Night Football: Broncos at Chiefs -->
+        <div class="game-card" data-category="primetime divisional close">
+          <div class="card-head">
+            <div class="card-time"><span>MON 8:15 PM ET</span><span>·</span><span>ARROWHEAD STADIUM, KC</span></div>
+            <span class="card-network" style="color:#e50914;border-color:#e5091444">MONDAY NIGHT FOOTBALL · ESPN / ABC</span>
+          </div>
+          <div class="card-body">
+            <div class="team-block">
+              <div class="team-info"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/den.png" class="team-logo"><div class="team-names"><span class="team-abbr">DEN</span><span class="team-name">Denver Broncos</span></div></div>
+              <div class="team-odds"><span class="team-spread">+3.0</span><span class="team-prob underdog">46%</span></div>
+            </div>
+            <div class="team-block">
+              <div class="team-info"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/kc.png" class="team-logo"><div class="team-names"><span class="team-abbr">KC</span><span class="team-name">Kansas City Chiefs</span></div></div>
+              <div class="team-odds"><span class="team-spread">-3.0</span><span class="team-prob">54%</span></div>
+            </div>
+            <div class="prob-bar"><div style="width:46%;background:#FB4F14"></div><div style="width:54%;background:#E31837"></div></div>
+            <div class="card-foot"><span>SPREAD KC -3.0 · ML -160 · O/U 46.0</span><span class="card-cta">View Matchup Lab →</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FULL SEASON 32x18 MATRIX CONTAINER (Toggled) -->
+  <div class="slate-body matrix-wrap" id="matrixContainer">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:10px">
+      <div>
+        <div style="font:800 16px 'Archivo',sans-serif;color:#fff">2026 Full-Season Opponent Matrix</div>
+        <div style="font:400 12px 'Geist',sans-serif;color:#8f9299;margin-top:2px">All 32 teams across 18 regular season weeks. Shaded blocks = Home games. Click any cell to open Matchup Lab.</div>
+      </div>
+      <div style="display:flex;gap:12px;font:600 11px 'Geist',sans-serif;color:#8f9299">
+        <span style="display:flex;align-items:center;gap:5px"><span style="width:10px;height:10px;background:#1e232c;border:1px solid #2e3542;border-radius:2px"></span> Home (vs)</span>
+        <span style="display:flex;align-items:center;gap:5px"><span style="width:10px;height:10px;background:transparent;border:1px solid #2b3037;border-radius:2px"></span> Away (@)</span>
+      </div>
+    </div>
+    <div style="overflow-x:auto">
+      <table class="matrix-tbl" id="matrixTable">
+        <!-- Generated by JS below -->
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// Mock matrix sample data for 32x18 preview
+const SAMPLE_TEAMS = [
+  { name:'Arizona Cardinals', abbr:'ARI', color:'#97233F' },
+  { name:'Atlanta Falcons', abbr:'ATL', color:'#A71930' },
+  { name:'Baltimore Ravens', abbr:'BAL', color:'#241773' },
+  { name:'Buffalo Bills', abbr:'BUF', color:'#00338D' },
+  { name:'Carolina Panthers', abbr:'CAR', color:'#0085CA' },
+  { name:'Chicago Bears', abbr:'CHI', color:'#0B162A' },
+  { name:'Cincinnati Bengals', abbr:'CIN', color:'#FB4F14' },
+  { name:'Cleveland Browns', abbr:'CLE', color:'#311D00' },
+  { name:'Dallas Cowboys', abbr:'DAL', color:'#003594' },
+  { name:'Denver Broncos', abbr:'DEN', color:'#FB4F14' },
+  { name:'Detroit Lions', abbr:'DET', color:'#0076B6' },
+  { name:'Green Bay Packers', abbr:'GB', color:'#204E32' },
+  { name:'Houston Texans', abbr:'HOU', color:'#03202F' },
+  { name:'Indianapolis Colts', abbr:'IND', color:'#002C5F' },
+  { name:'Jacksonville Jaguars', abbr:'JAX', color:'#006778' },
+  { name:'Kansas City Chiefs', abbr:'KC', color:'#E31837' },
+  { name:'Las Vegas Raiders', abbr:'LV', color:'#000000' },
+  { name:'Los Angeles Chargers', abbr:'LAC', color:'#0080C6' },
+  { name:'Los Angeles Rams', abbr:'LAR', color:'#003594' },
+  { name:'Miami Dolphins', abbr:'MIA', color:'#008E97' },
+  { name:'Minnesota Vikings', abbr:'MIN', color:'#4F2683' },
+  { name:'New England Patriots', abbr:'NE', color:'#002244' },
+  { name:'New Orleans Saints', abbr:'NO', color:'#D3BC8D' },
+  { name:'New York Giants', abbr:'NYG', color:'#0B2265' },
+  { name:'New York Jets', abbr:'NYJ', color:'#125740' },
+  { name:'Philadelphia Eagles', abbr:'PHI', color:'#004C54' },
+  { name:'Pittsburgh Steelers', abbr:'PIT', color:'#FFB612' },
+  { name:'San Francisco 49ers', abbr:'SF', color:'#AA0000' },
+  { name:'Seattle Seahawks', abbr:'SEA', color:'#69BE28' },
+  { name:'Tampa Bay Buccaneers', abbr:'TB', color:'#D3BC8D' },
+  { name:'Tennessee Titans', abbr:'TEN', color:'#4B92DB' },
+  { name:'Washington Commanders', abbr:'WAS', color:'#5A1414' }
+];
+
+function buildMatrix(){
+  const tbl = document.getElementById('matrixTable');
+  if (!tbl) return;
+  let h = '<thead><tr><th class="t-col">TEAM</th>';
+  for (let w = 1; w <= 18; w++) h += `<th>W${w}</th>`;
+  h += '</tr></thead><tbody>';
+  SAMPLE_TEAMS.forEach(t => {
+    h += `<tr><td class="t-cell"><div style="display:flex;align-items:center;gap:8px"><span style="width:3px;height:12px;border-radius:1px;background:${t.color}"></span><span style="font:700 11px 'Archivo',sans-serif;color:#fff">${t.abbr}</span><span style="font:400 11px 'Geist',sans-serif;color:#8f9299;white-space:nowrap">${t.name}</span></div></td>`;
+    for (let w = 1; w <= 18; w++) {
+      if (w === 7 && (t.abbr === 'NE' || t.abbr === 'SEA')) {
+        h += '<td><span class="m-bye">BYE</span></td>';
+      } else {
+        const isHome = (w + t.abbr.charCodeAt(0)) % 2 === 0;
+        const opp = SAMPLE_TEAMS[(t.abbr.charCodeAt(0) + w) % SAMPLE_TEAMS.length].abbr;
+        h += `<td><button class="m-btn ${isHome ? 'home' : 'away'}">${isHome ? '' : '@'}${opp}</button></td>`;
+      }
+    }
+    h += '</tr>';
+  });
+  h += '</tbody>';
+  tbl.innerHTML = h;
+}
+
+function setViewMode(mode){
+  const slate = document.getElementById('slateContainer');
+  const matrix = document.getElementById('matrixContainer');
+  const btnSlate = document.getElementById('btnViewSlate');
+  const btnMatrix = document.getElementById('btnViewMatrix');
+  if (mode === 'slate'){
+    slate.style.display = 'block';
+    matrix.style.display = 'none';
+    btnSlate.classList.add('on');
+    btnMatrix.classList.remove('on');
+  } else {
+    slate.style.display = 'none';
+    matrix.style.display = 'block';
+    btnSlate.classList.remove('on');
+    btnMatrix.classList.add('on');
+    if (!matrix.dataset.built) { buildMatrix(); matrix.dataset.built = 'true'; }
+  }
+}
+
+function selectWeek(el, wk){
+  document.querySelectorAll('.wk-pill').forEach(p => p.classList.remove('on'));
+  el.classList.add('on');
+}
+
+function filterGames(el, cat){
+  document.querySelectorAll('.f-chip').forEach(c => c.classList.remove('on'));
+  el.classList.add('on');
+  const cards = document.querySelectorAll('.game-card');
+  const marquee = document.querySelector('.marquee-banner');
+  if (cat === 'all'){
+    cards.forEach(c => c.style.display = 'flex');
+    if (marquee) marquee.style.display = 'block';
+  } else {
+    if (marquee) marquee.style.display = marquee.dataset.category?.includes(cat) ? 'block' : 'none';
+    cards.forEach(c => {
+      c.style.display = (c.dataset.category && c.dataset.category.includes(cat)) ? 'flex' : 'none';
+    });
+  }
+}
+</script>
+</body>
+</html>

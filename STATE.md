@@ -33,6 +33,13 @@
   - Team logos and visual assets integrated across the homepage UI.
   - `_redirects` deny list added at repo root.
 
+- Schedule view redesigned to match the NFL26 pregame studio theme:
+  - Scoped studio controls bar with week selector carousel (WK 1 to WK 18), view mode switcher (Broadcast Slate vs 32x18 Matrix), and quick filters (Primetime, Divisional, Close Spreads <= 3.0, High Total >= 47.0).
+  - Marquee kickoff hero banner with 110x140 team pods, radial glow backdrops, dual win-probability distribution bar, and direct link to Matchup Center.
+  - Chronological broadcast windows (Thursday/Special Kickoff, Sunday 1:00 PM ET Early Slate, Sunday 4:25 PM National Slate, Primetime Showdowns) with team logos, spread, log5 win probability, and total lines.
+  - Full-season 32x18 matrix view updated with studio dark aesthetics and sticky team column.
+  - Verified with `python3 test_all_extensions.py` (0 errors, 100% checks passing).
+
 ## Backup and rollback artifacts
 
 - Supabase table snapshots before migration and data replacement:
