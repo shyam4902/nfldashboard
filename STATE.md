@@ -7,7 +7,10 @@
 
 ## Shipped recently
 
-- Extended the NFL26 pregame-studio theme from the hero and Schedule tab to the
+- Aligned Home marquee game cards and the Teams page with the Schedule card design system:
+  - Redesigned Home 'Week 1 Marquee' game cards (`marqueeGameHtml`) to use the `.home-sch-card` component matching `.sch-card`: high-res NFL team logos, Archivo bold abbreviations, Geist team names, green probability highlights for favorites, dual-color win probability bars, and footer with spread/total and direct navigation to Matchup Center.
+  - Redesigned the Teams page (`renderConf`) from a cramped 4-column layout without logos to a responsive 2x2 division grid of rich studio cards (`.team-tile`): top team-color indicator rail, team logo with drop-shadow, Archivo typography, model projected wins badge, cap space, and draft capital summary.
+  - Verified with `python3 test_all_extensions.py` (34/34 passing checks, 0 console errors) and live Playwright visual captures.
   rest of the app in one pass, replacing the legacy navy "Obsidian Slate" look:
   - Added a `tailwind.config` palette remap right after the Tailwind CDN tag. The
     `slate` ramp becomes warm studio charcoal (`#16191f` / `#2b3037` / `#8f9299`),
