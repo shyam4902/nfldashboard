@@ -595,9 +595,115 @@ html, body {
 .tx-dp .dp-team { font-weight:800; color:#dbd9d4; }
 .tx-dp .dp-name { color:#8f9299; }
 .tx-dp .dp-pos { color:#868a91; }
-.team-tile { background:rgba(16, 18, 21,0.8); border:1px solid rgba(61, 67, 76,0.3); border-radius:10px; padding:10px 8px; cursor:pointer; transition:transform 0.15s,border-color 0.2s,box-shadow 0.2s; text-align:center; }
-.team-tile:hover { transform:translateY(-2px); border-color:rgba(61, 67, 76,0.6); }
-.team-tile.cmp-sel { border-color:#3b82f6 !important; box-shadow:0 0 0 2px rgba(59,130,246,0.35); }
+.team-tile {
+  background: #14161a;
+  border: 1px solid #2b3037;
+  border-radius: 10px;
+  overflow: hidden;
+  position: relative;
+  cursor: pointer;
+  transition: transform 0.15s, border-color 0.2s, box-shadow 0.2s;
+  display: flex;
+  flex-direction: column;
+}
+.team-tile:hover {
+  transform: translateY(-2px);
+  border-color: #3e4652;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.45);
+}
+.team-tile.cmp-sel {
+  border-color: #d9a441 !important;
+  box-shadow: 0 0 0 2px rgba(217, 164, 65, 0.35);
+}
+.team-tile-rail {
+  height: 3px;
+  width: 100%;
+  flex-shrink: 0;
+}
+.team-tile-inner {
+  padding: 11px 13px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+}
+.team-tile-main {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.team-tile-lead {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+.team-tile-logo {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.45));
+  flex-shrink: 0;
+}
+.team-tile-names {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  min-width: 0;
+}
+.team-tile-abbr {
+  font: 800 15px/1 'Archivo', sans-serif;
+  color: #fff;
+  letter-spacing: -0.01em;
+}
+.team-tile-name {
+  font: 500 12px 'Geist', sans-serif;
+  color: #a2a5ab;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.team-tile-stat {
+  font-size: 11px;
+  font-weight: 700;
+  color: #7cc49b;
+  background: rgba(124, 196, 155, 0.12);
+  border: 1px solid rgba(124, 196, 155, 0.28);
+  border-radius: 4px;
+  padding: 2px 6px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.team-tile-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid #23272e;
+  padding-top: 7px;
+  font-size: 10px;
+  color: #868a91;
+  gap: 8px;
+}
+.team-tile-cap {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.team-tile-cap-lbl {
+  color: #6c727d;
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.team-tile-draft {
+  color: #8fa6bf;
+  font-size: 9px;
+  text-align: right;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 .conf-split { display:grid; grid-template-columns:1fr 1fr; gap:2rem; }
 @media(max-width:900px){ .conf-split { grid-template-columns:1fr; } }
 
@@ -787,14 +893,23 @@ body.theme-analyst .moves-filter.active {
   color: #ffffff !important;
   border-color: #0284c7 !important;
 }
-body.theme-analyst .sch-card {
+body.theme-analyst .sch-card, body.theme-analyst .home-sch-card {
   background: #ffffff !important;
   border: 1px solid #e2e8f0 !important;
   box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.02) !important;
 }
-body.theme-analyst .sch-card:hover {
+body.theme-analyst .sch-card:hover, body.theme-analyst .home-sch-card:hover {
   border-color: #0284c7 !important;
   box-shadow: 0 8px 24px -4px rgba(2,132,199,0.12) !important;
+}
+body.theme-analyst .team-tile-abbr {
+  color: #0f172a !important;
+}
+body.theme-analyst .team-tile-name {
+  color: #475569 !important;
+}
+body.theme-analyst .team-tile-meta {
+  border-color: #e2e8f0 !important;
 }
 body.theme-analyst .sch-head {
   border-bottom: 1px solid #f1f5f9 !important;
@@ -1218,7 +1333,7 @@ body.theme-analyst .roster-summary .rs-value {
   grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
   gap: 16px;
 }
-.sch-card {
+.sch-card, .home-sch-card {
   background: #14161a;
   border: 1px solid #2b3037;
   border-radius: 10px;
@@ -1228,12 +1343,12 @@ body.theme-analyst .roster-summary .rs-value {
   display: flex;
   flex-direction: column;
 }
-.sch-card:hover {
+.sch-card:hover, .home-sch-card:hover {
   transform: translateY(-2px);
   border-color: #3d434c;
   box-shadow: 0 8px 24px rgba(0,0,0,0.45);
 }
-.sch-card:hover .sch-cta {
+.sch-card:hover .sch-cta, .home-sch-card:hover .sch-cta {
   color: #d9a441;
 }
 .sch-head {
@@ -1273,46 +1388,57 @@ body.theme-analyst .roster-summary .rs-value {
   align-items: center;
   justify-content: space-between;
   padding: 4px 0;
+  gap: 8px;
 }
 .sch-team-info {
   display: flex;
   align-items: center;
   gap: 10px;
+  min-width: 0;
 }
 .sch-team-logo {
   width: 26px;
   height: 26px;
   object-fit: contain;
   filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+  flex-shrink: 0;
 }
 .sch-team-names {
   display: flex;
   align-items: baseline;
   gap: 6px;
+  min-width: 0;
 }
 .sch-team-abbr {
   font: 800 15px/1 'Archivo', sans-serif;
   color: #fff;
+  letter-spacing: -0.01em;
 }
 .sch-team-name {
   font: 500 12px 'Geist', sans-serif;
   color: #a2a5ab;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .sch-team-odds {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
   text-align: right;
+  flex-shrink: 0;
 }
 .sch-team-spread {
-  font: 600 12px 'Geist Mono', monospace;
+  font: 600 11px 'Geist Mono', monospace;
   color: #868a91;
-  width: 44px;
+  min-width: 36px;
+  white-space: nowrap;
 }
 .sch-team-prob {
-  font: 800 14px 'Geist Mono', monospace;
+  font: 800 13px 'Geist Mono', monospace;
   color: #7cc49b;
-  width: 44px;
+  min-width: 36px;
+  text-align: right;
 }
 .sch-team-prob.underdog {
   color: #868a91;
@@ -1335,6 +1461,14 @@ body.theme-analyst .roster-summary .rs-value {
   color: #868a91;
   padding-top: 10px;
   border-top: 1px solid #1a1d22;
+  gap: 6px;
+  min-width: 0;
+}
+.sch-foot > span:first-child {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
 }
 .sch-cta {
   font: 700 10px 'Geist', sans-serif;
@@ -1343,6 +1477,19 @@ body.theme-analyst .roster-summary .rs-value {
   align-items: center;
   gap: 3px;
   transition: color 0.15s;
+  flex-shrink: 0;
+}
+
+.home-sch-card .sch-head {
+  padding: 8px 12px;
+}
+.home-sch-card .sch-body {
+  padding: 11px 13px;
+}
+.home-sch-card .sch-foot {
+  padding-top: 8px;
+  font-size: 10px;
+  gap: 4px;
 }
 
 /* Compact legacy line preservation for tests */
@@ -1960,7 +2107,7 @@ body.theme-analyst .roster-summary .rs-value {
     <div class="flex items-center justify-between flex-wrap gap-3 mb-4">
       <div class="flex items-center gap-3">
         <h2 class="text-xl font-bold">Teams <span id="teamsFreshness" class="text-[9px] font-normal align-middle"></span></h2>
-        <button id="compareModeBtn" onclick="toggleCompareMode()" class="text-[11px] font-bold px-3 py-1 rounded-lg border border-slate-600 bg-slate-800/80 text-slate-400 hover:bg-slate-700 transition">⚖ Compare</button>
+        <button id="compareModeBtn" onclick="toggleCompareMode()" class="text-[11px] font-bold px-3 py-1.5 rounded-lg border border-slate-700 bg-slate-800/80 text-slate-300 hover:border-slate-500 hover:text-white transition">⚖ Compare</button>
       </div>
       <div id="divNavBtns" class="flex items-center flex-wrap gap-1.5"></div>
     </div>
@@ -2730,47 +2877,64 @@ function marqueeGameHtml(g){
   const prob = winProb(homeStr, awayStr);
   const aProb = prob === null ? null : 1 - prob;
   const hProb = prob;
-  const m = g.market;
-  const line = m ? ((m.spread === null ? '' : '(' + (teamAbbrFor(g.away_team) || g.away_team) + ') ' + (m.spread > 0 ? '+' : '') + m.spread) + (m.total === null ? '' : ' · O/U ' + m.total)) : 'odds loading…';
-  const d = new Date(g.kickoff_utc);
-  const when = isNaN(d.getTime()) ? 'Kickoff TBD' : d.toLocaleString([], { weekday:'short', month:'short', day:'numeric', hour:'numeric', minute:'2-digit' });
-  const colorA = DATA.teamColors[g.away_team] || '#3b4261';
-  const colorH = DATA.teamColors[g.home_team] || '#3b4261';
-  const pct = (v) => v === null ? '—' : (v * 100).toFixed(0) + '%';
-  const aAbbr = teamAbbrFor(g.away_team) || g.away_team;
-  const hAbbr = teamAbbrFor(g.home_team) || g.home_team;
-  const aProbPct = aProb !== null ? Math.round(aProb * 100) : 50;
-  const hProbPct = 100 - aProbPct;
-  const tvBadgeClass = (g.tv || '').includes('Netflix') ? 'studio-pill' : ((g.tv || '').includes('Peacock') || (g.tv || '').includes('NBC') ? 'studio-pill gold' : 'studio-pill neu');
+  const aPct = aProb === null ? 50 : Math.round(aProb * 100);
+  const hPct = hProb === null ? 50 : Math.round(hProb * 100);
+  const aFav = aPct >= hPct;
+  const aAbbr = homeEsc(teamAbbrFor(g.away_team) || g.away_team);
+  const hAbbr = homeEsc(teamAbbrFor(g.home_team) || g.home_team);
+  const aColor = DATA.teamColors[g.away_team] || '#d9a441';
+  const hColor = DATA.teamColors[g.home_team] || '#7cc49b';
+  const aLogo = getNflTeamLogo(g.away_team);
+  const hLogo = getNflTeamLogo(g.home_team);
 
-  return `<div class="studio-tile" onclick="openMatchup('${homeEsc(g.game_id)}')" title="Open this selected matchup">
-    <div class="flex items-center justify-between gap-2 mb-2">
-      <span class="studio-kicker" style="color:#c9ccd1">${homeEsc(when)}</span>
-      <span class="${tvBadgeClass}">${homeEsc(g.tv || 'TV')}</span>
+  const d = new Date(g.kickoff_utc);
+  const timeFmt = isNaN(d.getTime()) ? 'Kickoff TBD' : d.toLocaleString([], { weekday:'short', month:'short', day:'numeric', hour:'numeric', minute:'2-digit' });
+  const network = g.tv ? (g.tv.includes(',') ? g.tv.split(',')[0].trim().toUpperCase() : g.tv.toUpperCase()) : 'TV';
+
+  const m = g.market;
+  const aSpreadStr = m && m.spread !== null ? ((m.spread > 0 ? '+' : '') + m.spread) : '—';
+  const hSpreadStr = m && m.spread !== null ? ((-m.spread > 0 ? '+' : '') + (-m.spread)) : '—';
+  const totalStr = m && m.total != null ? String(m.total) : '—';
+
+  let footLines = `${aFav ? aAbbr : hAbbr} ${aFav ? aSpreadStr : hSpreadStr}`;
+  if (totalStr !== '—') footLines += ` · O/U ${totalStr}`;
+
+  return `<article class="home-sch-card" tabindex="0" role="button" aria-label="View analysis for ${homeEsc(g.away_team)} at ${homeEsc(g.home_team)}" data-game="${homeEsc(g.game_id)}" onclick="openMatchup('${homeEsc(g.game_id)}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openMatchup('${homeEsc(g.game_id)}');}">
+    <div class="sch-head">
+      <div class="sch-card-time truncate"><span>${homeEsc(timeFmt)}</span></div>
+      <span class="sch-card-network shrink-0">${homeEsc(network)}</span>
     </div>
-    <div class="flex items-center justify-between gap-2 py-1">
-      <div class="flex items-center gap-2 min-w-0">
-        <span class="text-[10px] font-black w-8 h-6 rounded flex items-center justify-center shrink-0" style="background:${colorA}33;color:${colorA};border:1px solid ${colorA}">${homeEsc(aAbbr)}</span>
-        <span class="text-xs font-bold text-white truncate">${homeEsc(g.away_team)}</span>
+    <div class="sch-body">
+      <div class="sch-team-block">
+        <div class="sch-team-info">
+          <img src="${aLogo}" alt="" class="sch-team-logo" loading="lazy">
+          <div class="sch-team-names"><span class="sch-team-abbr">${aAbbr}</span><span class="sch-team-name">${homeEsc(g.away_team)}</span></div>
+        </div>
+        <div class="sch-team-odds">
+          <span class="sch-team-spread">${homeEsc(aSpreadStr)}</span>
+          <span class="sch-team-prob ${aFav ? '' : 'underdog'}">${aPct}%</span>
+        </div>
       </div>
-      <span class="text-xs font-black shrink-0" style="color:${colorA}">${pct(aProb)}</span>
-    </div>
-    <div class="flex items-center justify-between gap-2 py-1">
-      <div class="flex items-center gap-2 min-w-0">
-        <span class="text-[10px] font-black w-8 h-6 rounded flex items-center justify-center shrink-0" style="background:${colorH}33;color:${colorH};border:1px solid ${colorH}">${homeEsc(hAbbr)}</span>
-        <span class="text-xs font-bold text-white truncate">${homeEsc(g.home_team)}</span>
+      <div class="sch-team-block">
+        <div class="sch-team-info">
+          <img src="${hLogo}" alt="" class="sch-team-logo" loading="lazy">
+          <div class="sch-team-names"><span class="sch-team-abbr">${hAbbr}</span><span class="sch-team-name">${homeEsc(g.home_team)}</span></div>
+        </div>
+        <div class="sch-team-odds">
+          <span class="sch-team-spread">${homeEsc(hSpreadStr)}</span>
+          <span class="sch-team-prob ${aFav ? 'underdog' : ''}">${hPct}%</span>
+        </div>
       </div>
-      <span class="text-xs font-black shrink-0" style="color:${colorH}">${pct(hProb)}</span>
+      <div class="sch-prob-bar">
+        <div style="width:${aPct}%;background:${aColor}"></div>
+        <div style="width:${hPct}%;background:${hColor}"></div>
+      </div>
+      <div class="sch-foot">
+        <span>${homeEsc(footLines)}</span>
+        <span class="sch-cta">View matchup →</span>
+      </div>
     </div>
-    <div class="prob-split-bar my-1.5">
-      <div style="width:${aProbPct}%;background:${colorA}"></div>
-      <div style="width:${hProbPct}%;background:${colorH}"></div>
-    </div>
-    <div class="text-[10px] border-t pt-1.5 font-mono flex items-center justify-between" style="border-color:#262a31;color:#c9ccd1">
-      <span>${homeEsc(line)}</span>
-      <span class="studio-kicker">Log5 Sim</span>
-    </div>
-  </div>`;
+  </article>`;
 }
 
 function marqueeHtml(){
@@ -3713,7 +3877,7 @@ function toggleCompareMode(){
   document.querySelectorAll('.team-tile').forEach(t=>t.classList.remove('cmp-sel'));
   const btn=document.getElementById('compareModeBtn');
   if(btn){
-    if(compareModeActive){btn.style.cssText='background:rgba(59,130,246,0.2);border-color:#3b82f6;color:#93c5fd;';btn.textContent='⚖ Pick 2 teams…';}
+    if(compareModeActive){btn.style.cssText='background:rgba(217,164,65,0.15);border-color:#d9a441;color:#d9a441;';btn.textContent='⚖ Pick 2 teams…';}
     else{btn.style.cssText='';btn.textContent='⚖ Compare';}
   }
 }
@@ -3824,9 +3988,12 @@ function renderTeams(){
 }
 
   const renderTile=(team)=>{
-    const abbr=DATA.teamAbbr[team];
-    const color=DATA.teamColors[team];
+    const abbr=DATA.teamAbbr[team] || team.slice(0, 3).toUpperCase();
+    const color=DATA.teamColors[team] || '#d9a441';
     const cap=DATA.capData[team]||{};
+    const capValue = Number.isFinite(Number(cap.space)) ? Number(cap.space) : null;
+    const capLabel = capValue === null ? (cap.status || '—') : formatCap(capValue);
+    const capClass = capValue === null ? 'text-slate-400' : capValue >= 0 ? 'cap-positive' : 'cap-negative';
     const tEsc=team.replace(/'/g,"\\'");
     let standing = null;
     if (CLAY_DATA && CLAY_DATA.standings && CLAY_DATA.standings.divisions) {
@@ -3836,27 +4003,46 @@ function renderTeams(){
       }
     }
     const winsLabel = standing?.wins != null ? `${standing.wins} Proj W` : (cap.status || '');
-    return `<div class="team-tile" id="tile-${abbr}" onclick="compareModeActive?selectForCompare('${tEsc}'):openRoster('${tEsc}')" style="border-top:3px solid ${color};">
-      <div style="font-size:16px;font-weight:700;color:#f8fafc;letter-spacing:-0.5px" class="font-mono">${abbr}</div>
-      <div style="font-size:10px;color:#94a3b8;margin-top:2px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${team}</div>
-      ${winsLabel ? `<div style="font-size:9px;font-weight:600;margin-top:3px;color:#38bdf8" class="font-mono">${winsLabel}</div>` : ''}
-      <div style="font-size:9px;color:#a78bfa;margin-top:2px;font-weight:500" class="font-mono" title="Future draft capital — open the team and click Draft Capital for detail">${draftCapitalSummary(team)}</div>
+    const logo = getNflTeamLogo(team);
+
+    return `<div class="team-tile" id="tile-${abbr}" onclick="compareModeActive?selectForCompare('${tEsc}'):openRoster('${tEsc}')">
+      <div class="team-tile-rail" style="background:${color}"></div>
+      <div class="team-tile-inner">
+        <div class="team-tile-main">
+          <div class="team-tile-lead">
+            <img src="${logo}" alt="${homeEsc(abbr)}" class="team-tile-logo" loading="lazy">
+            <div class="team-tile-names">
+              <span class="team-tile-abbr">${abbr}</span>
+              <span class="team-tile-name">${homeEsc(team)}</span>
+            </div>
+          </div>
+          ${winsLabel ? `<span class="team-tile-stat font-mono">${homeEsc(winsLabel)}</span>` : ''}
+        </div>
+        <div class="team-tile-meta font-mono">
+          <span class="team-tile-cap"><span class="team-tile-cap-lbl">Cap:</span> <b class="${capClass}">${capLabel}</b></span>
+          <span class="team-tile-draft" title="Future draft capital">${draftCapitalSummary(team)}</span>
+        </div>
+      </div>
     </div>`;
   };
 
   const renderConf=(confDivs,confName,colorCls)=>{
     let col=`<div>
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;padding-bottom:8px;border-bottom:1px solid rgba(71,85,105,0.3)">
-        <span style="font-size:18px;font-weight:900;letter-spacing:-0.5px" class="${colorCls}">${confName}</span>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid #2b3037">
+        <span style="font:800 20px 'Archivo',sans-serif;letter-spacing:-0.02em" class="${colorCls}">${confName}</span>
+        <span class="studio-kicker" style="color:#868a91">16 TEAMS · 4 DIVISIONS</span>
       </div>`;
     for(const[divName,teams] of confDivs){
       const divId='div-'+divName.replace(/ /g,'-').toLowerCase();
-      col+=`<div id="${divId}" class="division-header dropdown-toggle open rounded-lg px-3 py-1.5 mb-2 mt-4 flex items-center justify-between hover:bg-slate-800/40 transition" onclick="toggleDropdown(this)">
-        <h3 style="font-size:11px;font-weight:700;letter-spacing:0.3px" class="${colorCls}">${divName}</h3>
+      col+=`<div id="${divId}" class="division-header dropdown-toggle open rounded-lg px-3.5 py-2 mb-2.5 mt-5 flex items-center justify-between cursor-pointer hover:brightness-110 transition" onclick="toggleDropdown(this)">
+        <div class="flex items-center gap-2">
+          <span class="w-1.5 h-3.5 rounded-full" style="background:${confName === 'AFC' ? '#ef4444' : '#5c7490'}"></span>
+          <h3 style="font:800 12px 'Archivo',sans-serif;letter-spacing:0.04em;text-transform:uppercase" class="${colorCls}">${divName}</h3>
+        </div>
         <svg class="dropdown-chevron w-3.5 h-3.5 ${colorCls}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"/></svg>
       </div>
       <div class="dropdown-content division-content open">
-        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:8px">
+        <div class="division-grid grid grid-cols-1 sm:grid-cols-2 gap-2.5 mb-3.5">
           ${teams.map(renderTile).join('')}
         </div>
       </div>`;
