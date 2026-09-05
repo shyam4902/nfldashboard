@@ -2451,11 +2451,11 @@ function quickTeamPillsHtml(){
 
 function homeStatCards(){
   const cards = [
-    { label: '32 Teams', sub: 'rosters & depth charts', icon: '🛡️', color: '#3b82f6', action: "showTab('teams')" },
-    { label: `${(DATA.players || []).length} Players`, sub: 'full 2026 rosters', icon: '🏈', color: '#06b6d4', action: "openCommandPalette()" },
-    { label: `${(DATA.transactions || []).length} Moves`, sub: 'since Super Bowl LX', icon: '⚡', color: '#ef4444', action: "showMovesTab()" },
-    { label: '16 Week 1 Games', sub: 'odds & win probabilities', icon: '📅', color: '#10b981', action: "showScheduleWeek(1)" },
-    { label: 'Value Reads', sub: 'props & win totals in Edge Analytics', icon: '💰', color: '#f59e0b', action: "window.open('https://edgeplay-analytics.pages.dev/props','_blank')" },
+    { label: '32 Teams', sub: 'rosters & depth charts', icon: '🛡️', color: '#8fa6bf', action: "showTab('teams')" },
+    { label: `${(DATA.players || []).length} Players`, sub: 'full 2026 rosters', icon: '🏈', color: '#7ec0b0', action: "openCommandPalette()" },
+    { label: `${(DATA.transactions || []).length} Moves`, sub: 'since Super Bowl LX', icon: '⚡', color: '#e8877c', action: "showMovesTab()" },
+    { label: '16 Week 1 Games', sub: 'odds & win probabilities', icon: '📅', color: '#7cc49b', action: "showScheduleWeek(1)" },
+    { label: 'Value Reads', sub: 'props & win totals in Edge Analytics', icon: '💰', color: '#d9a441', action: "window.open('https://edgeplay-analytics.pages.dev/props','_blank')" },
   ];
   return cards.map(c => `
     <div class="studio-tile group" onclick="${c.action}" title="Open ${c.label}">
@@ -2465,7 +2465,7 @@ function homeStatCards(){
       </div>
       <div style="font:800 16px 'Archivo',sans-serif;letter-spacing:-.02em;color:#fff" class="group-hover:text-amber-400 transition truncate">${c.label}</div>
       <div class="text-[10px] text-slate-400 mt-1 leading-tight truncate">${c.sub}</div>
-      <div style="height:2px;border-radius:2px;margin-top:9px;background:${c.color};opacity:.55"></div>
+      <div style="height:2px;border-radius:2px;margin-top:9px;background:${c.color};opacity:.8"></div>
     </div>`).join('');
 }
 
