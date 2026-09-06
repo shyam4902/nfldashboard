@@ -7,12 +7,12 @@
 
 ## Shipped recently
 
-- Refined the Teams overview page for desktop display and visual hierarchy:
-  - Redesigned conference layout into a 4-column division architecture (`.divisions-cols-grid`) where each division (East, North, South, West) has its own vertical stack of team cards, removing horizontal stretching.
-  - Sized team cards with balanced padding (`10px 11px`), 26px drop-shadowed logos, clear typography, and breathing room.
-  - Relocated Compare to the top right header slot with descriptive subtext ("Compare any two teams or explore matchups").
-  - Made division headers static with conference color pills.
-  - Kept draft assets inside the roster modal and out of the overview tiles.
+- Refined Teams overview proportions and layout:
+  - Eliminated wide letterbox team cards by transitioning desktop viewports (`>= 1240px`) to a side-by-side conference architecture (`.conf-split: grid-template-columns: 1fr 1fr`).
+  - Reduced individual team tile width from ~380px down to ~186px with an 86px height (~2.1:1 ratio), providing natural sports tile proportions with zero dead space.
+  - Re-architected tile interior: Row 1 pairs the team logo and bold abbreviation on the left with the model projected wins badge on the right; Row 2 displays the full team name with clean typography without truncating long names; Row 3 provides the cap space footer.
+  - Enables viewing all 32 NFL teams across all 8 divisions simultaneously on desktop without vertical scrolling.
+  - Collapses responsively on smaller viewports with constrained container widths.
   - Verified with `python3 test_all_extensions.py` (32 passing checks, 0 console errors) and `node scripts/validate-data.js` (16/16 assets pass).
 
 - Aligned Home marquee game cards and the Teams page with the Schedule card design system:
