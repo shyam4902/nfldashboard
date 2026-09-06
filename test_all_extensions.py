@@ -114,13 +114,20 @@ with sync_playwright() as p:
         successes.append("Draft Capital renders 2027/2028/2029 blocks with acquired picks")
     else:
         failures.append("Draft Capital view incomplete")
+    page.evaluate("openRoster('Cleveland Browns', 'offense')")
+    page.wait_for_timeout(400)
+    summary_txt = page.locator('#rosterSummary').inner_text().lower()
+    if 'draft capital' in summary_txt and 'picks' in summary_txt:
+        successes.append("Roster summary card presents draft capital")
+    else:
+        failures.append("Roster summary card missing draft capital")
     page.evaluate("closeRoster()")
     page.wait_for_timeout(300)
     tile_txt = page.locator('.team-tile').first.inner_text()
-    if '2027:' in tile_txt and '2028:' in tile_txt and '2029:' in tile_txt:
-        successes.append("Team tiles show draft capital pick counts")
+    if 'Cap Space' in tile_txt and 'Proj W' in tile_txt:
+        successes.append("Team tiles render clean cap space and projected wins badges")
     else:
-        failures.append("Team tiles missing draft capital summary")
+        failures.append("Team tiles missing clean cap space or projected wins badges")
     page.click('[data-tab="teams"]')
     page.wait_for_timeout(500)
 

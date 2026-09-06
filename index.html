@@ -405,15 +405,13 @@ html, body {
 .r3 { background: #548b7e; color: white; } .r4 { background: #4e9a70; color: white; }
 .r5 { background: #65a30d; color: white; } .r6 { background: #ca8a04; color: white; }
 .r7 { background: #9a3412; color: white; }
-.division-header { background: linear-gradient(90deg, rgba(217,164,65,0.14), transparent); border-left: 3px solid #d9a441; }
+.division-header { background: linear-gradient(90deg, rgba(217,164,65,0.12), transparent); border-left: 3px solid #d9a441; }
 .search-glow:focus { box-shadow: 0 0 0 3px var(--accent-brand-subtle); border-color: var(--accent-brand); }
 
-/* Dropdown accordion */
+/* Dropdown accordion (modal / generic) */
 .dropdown-toggle { cursor: pointer; user-select: none; }
 .dropdown-content { max-height: 0; overflow: hidden; transition: max-height 0.3s ease; }
 .dropdown-content.open { max-height: 600px; }
-.division-content { transition: max-height 0.35s ease; }
-.division-content.open { max-height: 4000px; }
 .dropdown-chevron { transition: transform 0.2s; }
 .dropdown-toggle.open .dropdown-chevron { transform: rotate(180deg); }
 
@@ -597,8 +595,8 @@ html, body {
 .tx-dp .dp-pos { color:#868a91; }
 .team-tile {
   background: #14161a;
-  border: 1px solid #2b3037;
-  border-radius: 10px;
+  border: 1px solid #282c34;
+  border-radius: 8px;
   overflow: hidden;
   position: relative;
   cursor: pointer;
@@ -607,41 +605,41 @@ html, body {
   flex-direction: column;
 }
 .team-tile:hover {
-  transform: translateY(-2px);
+  transform: translateY(-1.5px);
   border-color: #3e4652;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.45);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.45);
 }
 .team-tile.cmp-sel {
   border-color: #d9a441 !important;
-  box-shadow: 0 0 0 2px rgba(217, 164, 65, 0.35);
+  box-shadow: 0 0 0 2px rgba(217, 164, 65, 0.4);
 }
 .team-tile-rail {
-  height: 3px;
+  height: 2.5px;
   width: 100%;
   flex-shrink: 0;
 }
 .team-tile-inner {
-  padding: 11px 13px;
+  padding: 8px 10px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 5px;
   flex: 1;
 }
 .team-tile-main {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 8px;
+  gap: 6px;
 }
 .team-tile-lead {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 7px;
   min-width: 0;
 }
 .team-tile-logo {
-  width: 28px;
-  height: 28px;
+  width: 24px;
+  height: 24px;
   object-fit: contain;
   filter: drop-shadow(0 2px 4px rgba(0,0,0,0.45));
   flex-shrink: 0;
@@ -649,41 +647,43 @@ html, body {
 .team-tile-names {
   display: flex;
   align-items: baseline;
-  gap: 6px;
+  gap: 5px;
   min-width: 0;
 }
 .team-tile-abbr {
-  font: 800 15px/1 'Archivo', sans-serif;
+  font: 800 13px/1 'Archivo', sans-serif;
   color: #fff;
   letter-spacing: -0.01em;
 }
 .team-tile-name {
-  font: 500 12px 'Geist', sans-serif;
-  color: #a2a5ab;
+  font: 500 11px 'Geist', sans-serif;
+  color: #9499a3;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 .team-tile-stat {
-  font-size: 11px;
-  font-weight: 700;
-  color: #7cc49b;
-  background: rgba(124, 196, 155, 0.12);
-  border: 1px solid rgba(124, 196, 155, 0.28);
+  font-size: 10.5px;
+  font-weight: 800;
+  color: #34d399;
+  background: rgba(16, 185, 129, 0.16);
+  border: 1px solid rgba(52, 211, 153, 0.4);
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.12);
   border-radius: 4px;
-  padding: 2px 6px;
+  padding: 1.5px 5.5px;
   white-space: nowrap;
   flex-shrink: 0;
+  letter-spacing: -0.01em;
 }
 .team-tile-meta {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-top: 1px solid #23272e;
-  padding-top: 7px;
-  font-size: 10px;
+  border-top: 1px solid #20242b;
+  padding-top: 5px;
+  font-size: 9.5px;
   color: #868a91;
-  gap: 8px;
+  gap: 6px;
 }
 .team-tile-cap {
   display: flex;
@@ -692,20 +692,12 @@ html, body {
 }
 .team-tile-cap-lbl {
   color: #6c727d;
-  font-size: 9px;
+  font-size: 8.5px;
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }
-.team-tile-draft {
-  color: #8fa6bf;
-  font-size: 9px;
-  text-align: right;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.conf-split { display:grid; grid-template-columns:1fr 1fr; gap:2rem; }
-@media(max-width:900px){ .conf-split { grid-template-columns:1fr; } }
+.conf-split { display:grid; grid-template-columns:1fr 1fr; gap:1.25rem; }
+@media(max-width:900px){ .conf-split { grid-template-columns:1fr; gap:1rem; } }
 
 /* ── THEMES ── */
 
@@ -2107,9 +2099,16 @@ body.theme-analyst .roster-summary .rs-value {
     <div class="flex items-center justify-between flex-wrap gap-3 mb-4">
       <div class="flex items-center gap-3">
         <h2 class="text-xl font-bold">Teams <span id="teamsFreshness" class="text-[9px] font-normal align-middle"></span></h2>
-        <button id="compareModeBtn" onclick="toggleCompareMode()" class="text-[11px] font-bold px-3 py-1.5 rounded-lg border border-slate-700 bg-slate-800/80 text-slate-300 hover:border-slate-500 hover:text-white transition">⚖ Compare</button>
       </div>
-      <div id="divNavBtns" class="flex items-center flex-wrap gap-1.5"></div>
+      <div class="flex items-center">
+        <button id="compareModeBtn" onclick="toggleCompareMode()" class="flex items-center gap-2 px-3.5 py-1.5 rounded-lg border border-slate-700 bg-slate-800/80 hover:border-amber-500/50 hover:bg-slate-800 text-left transition group">
+          <span class="text-sm">⚖</span>
+          <div class="flex flex-col">
+            <span id="compareBtnLabel" class="text-xs font-bold text-slate-200 group-hover:text-amber-400 transition">Compare Teams</span>
+            <span id="compareBtnSub" class="text-[10px] text-slate-400 font-normal">Compare any two teams or explore matchups</span>
+          </div>
+        </button>
+      </div>
     </div>
     <div id="teamsSubTabs" class="teams-subtabs mb-4"></div>
     <div id="teamsOverviewPanel">
@@ -2164,7 +2163,8 @@ const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 // Loaded asynchronously from Supabase. Render functions read from DATA.* fields.
 let DATA = { teams: [], players: [], transactions: [] };
-var MATCHUP_STATE = { teamA: 'New England Patriots', teamB: 'Seattle Seahawks', subtab: 'preview', personnel: '12', front: '43' };
+var TEAM_TENDENCIES_LOADED = false;
+var MATCHUP_STATE = { teamA: 'New England Patriots', teamB: 'Seattle Seahawks', subtab: 'preview', personnel: '12', front: '43', gameId: null, viewedOffense: 'A' };
 
 async function fetchAllPlayers() {
   const PAGE = 1000;
@@ -3876,9 +3876,18 @@ function toggleCompareMode(){
   compareSelections=[];
   document.querySelectorAll('.team-tile').forEach(t=>t.classList.remove('cmp-sel'));
   const btn=document.getElementById('compareModeBtn');
+  const lbl=document.getElementById('compareBtnLabel');
+  const sub=document.getElementById('compareBtnSub');
   if(btn){
-    if(compareModeActive){btn.style.cssText='background:rgba(217,164,65,0.15);border-color:#d9a441;color:#d9a441;';btn.textContent='⚖ Pick 2 teams…';}
-    else{btn.style.cssText='';btn.textContent='⚖ Compare';}
+    if(compareModeActive){
+      btn.style.cssText='background:rgba(217,164,65,0.15);border-color:#d9a441;';
+      if(lbl){lbl.textContent='Pick 2 teams…';lbl.classList.add('text-amber-400');}
+      if(sub){sub.textContent='Click any two team tiles below to compare';sub.classList.add('text-amber-300/80');}
+    } else {
+      btn.style.cssText='';
+      if(lbl){lbl.textContent='Compare Teams';lbl.classList.remove('text-amber-400');}
+      if(sub){sub.textContent='Compare any two teams or explore matchups';sub.classList.remove('text-amber-300/80');}
+    }
   }
 }
 
@@ -3959,33 +3968,10 @@ function renderComparePanel(team){
 
 function renderTeams(){
   const c=document.getElementById('teamsContainer');
-  const navC=document.getElementById('divNavBtns');
   if(!c)return;
   const allDivs=Object.entries(DATA.divisions);
   const afcDivs=allDivs.filter(([k])=>k.startsWith('AFC'));
   const nfcDivs=allDivs.filter(([k])=>k.startsWith('NFC'));
-
-  if(navC){
-    let navH='';
-    for(const[divs,conf] of [[afcDivs,'afc'],[nfcDivs,'nfc']]){
-      for(const[divName] of divs){
-        const short=divName.replace(/AFC |NFC /,'');
-        navH+=`<button onclick="scrollToDiv('${divName}')" class="div-nav-btn ${conf}" title="Jump to ${divName}">` +
-          `<span class="dv-short">${short}</span><span class="dv-conf">${conf === 'afc' ? 'AFC' : 'NFC'}</span></button>`;
-      }
-      navH+='<div class="w-px h-8 bg-slate-700 mx-1 self-center"></div>';
-    }
-    navC.innerHTML=navH;
-  }
-
-  function draftCapitalSummary(team){
-  const dc = DATA.draftCapital;
-  if (!dc || !dc.capital || !dc.capital[team]) return '';
-  return dc.years.map(y => {
-    const n = (dc.capital[team][String(y)] || []).length;
-    return `<span title="${y} draft: ${n} pick${n === 1 ? '' : 's'}">${y}: ${n}</span>`;
-  }).join(' · ');
-}
 
   const renderTile=(team)=>{
     const abbr=DATA.teamAbbr[team] || team.slice(0, 3).toUpperCase();
@@ -4019,8 +4005,7 @@ function renderTeams(){
           ${winsLabel ? `<span class="team-tile-stat font-mono">${homeEsc(winsLabel)}</span>` : ''}
         </div>
         <div class="team-tile-meta font-mono">
-          <span class="team-tile-cap"><span class="team-tile-cap-lbl">Cap:</span> <b class="${capClass}">${capLabel}</b></span>
-          <span class="team-tile-draft" title="Future draft capital">${draftCapitalSummary(team)}</span>
+          <span class="team-tile-cap"><span class="team-tile-cap-lbl">Cap Space</span> <b class="${capClass}">${capLabel}</b></span>
         </div>
       </div>
     </div>`;
@@ -4028,21 +4013,20 @@ function renderTeams(){
 
   const renderConf=(confDivs,confName,colorCls)=>{
     let col=`<div>
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid #2b3037">
-        <span style="font:800 20px 'Archivo',sans-serif;letter-spacing:-0.02em" class="${colorCls}">${confName}</span>
-        <span class="studio-kicker" style="color:#868a91">16 TEAMS · 4 DIVISIONS</span>
+      <div class="conf-head" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid #2b3037">
+        <span style="font:800 17px 'Archivo',sans-serif;letter-spacing:-0.02em" class="${colorCls}">${confName}</span>
+        <span class="studio-kicker" style="color:#868a91;font-size:10px">16 TEAMS · 4 DIVISIONS</span>
       </div>`;
     for(const[divName,teams] of confDivs){
       const divId='div-'+divName.replace(/ /g,'-').toLowerCase();
-      col+=`<div id="${divId}" class="division-header dropdown-toggle open rounded-lg px-3.5 py-2 mb-2.5 mt-5 flex items-center justify-between cursor-pointer hover:brightness-110 transition" onclick="toggleDropdown(this)">
+      col+=`<div id="${divId}" class="division-header rounded px-2.5 py-1 mb-1.5 mt-3 flex items-center justify-between">
         <div class="flex items-center gap-2">
-          <span class="w-1.5 h-3.5 rounded-full" style="background:${confName === 'AFC' ? '#ef4444' : '#5c7490'}"></span>
-          <h3 style="font:800 12px 'Archivo',sans-serif;letter-spacing:0.04em;text-transform:uppercase" class="${colorCls}">${divName}</h3>
+          <span class="w-1 h-3 rounded-full" style="background:${confName === 'AFC' ? '#ef4444' : '#5c7490'}"></span>
+          <h3 style="font:800 11px 'Archivo',sans-serif;letter-spacing:0.04em;text-transform:uppercase" class="${colorCls}">${divName}</h3>
         </div>
-        <svg class="dropdown-chevron w-3.5 h-3.5 ${colorCls}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"/></svg>
       </div>
-      <div class="dropdown-content division-content open">
-        <div class="division-grid grid grid-cols-1 sm:grid-cols-2 gap-2.5 mb-3.5">
+      <div class="division-content">
+        <div class="division-grid grid grid-cols-1 sm:grid-cols-2 gap-1.5 mb-2">
           ${teams.map(renderTile).join('')}
         </div>
       </div>`;
@@ -4749,6 +4733,13 @@ function setMatchupSubTab(subtab) {
     activeBtn.classList.add('active', 'bg-sky-500', 'text-slate-950', 'font-bold');
     activeBtn.classList.remove('text-slate-400');
   }
+  renderMatchupPanels();
+}
+
+// Persist viewed offense as part of MATCHUP_STATE so possession is a UI toggle;
+// it changes only the bias, never the selected event or its header/metadata.
+function swapViewedOffense() {
+  MATCHUP_STATE.viewedOffense = MATCHUP_STATE.viewedOffense === 'A' ? 'B' : 'A';
   renderMatchupPanels();
 }
 
@@ -6011,47 +6002,175 @@ function renderMatchupPanels() {
   const og = offGrade.length ? offGrade.reduce((s, v) => s + v, 0) / offGrade.length : null;
   const dg = defGrade.length ? defGrade.reduce((s, v) => s + v, 0) / defGrade.length : null;
 
-  const sub = MATCHUP_STATE.subtab || 'preview';
+  const scheduled = !!(MATCHUP_STATE.gameId && curGame);
+  const viewedOffenseIsA = MATCHUP_STATE.viewedOffense === 'A';
+  const viewedOffTeam = viewedOffenseIsA ? tA : tB;
+  const viewedDefTeam = viewedOffenseIsA ? tB : tA;
 
-  if (sub === 'preview') {
-    const ranksA = computeTeamNextGenRanks(tA);
-    const ranksB = computeTeamNextGenRanks(tB);
+  // Free tendencies question: the viewed offense's 2025 tendency vs the opposing
+  // defense's 2025 exposure. Defensive exposure is an opponent-observed count,
+  // not a measure of defensive effectiveness or a winner prediction.
+  const viewedOffRec = getTeamTendency(viewedOffTeam, 'off', 'play_action');
+  const viewedDefRec = getTeamTendency(viewedDefTeam, 'def', 'play_action');
 
-    main.innerHTML = `
-      <div class="grid grid-cols-1 lg:grid-cols-9 gap-4">
-        <!-- CENTER RAIL: Team A Off vs Team B Def & Team B Off vs Team A Def (lg:col-span-6) -->
-        <div class="lg:col-span-6 flex flex-col gap-4">
-          ${renderPreviewOffVsDefMatrix(tA, tB, ranksA, ranksB, true)}
-          ${renderPreviewOffVsDefMatrix(tB, tA, ranksB, ranksA, false)}
+  const offRateLine =
+    viewedOffRec && typeof viewedOffRec.value === 'number' && Number.isFinite(viewedOffRec.value)
+      ? `${(viewedOffRec.value * 100).toFixed(1)}% of ${viewedOffRec.denominator} (${viewedOffRec.numerator}/${viewedOffRec.observed})`
+      : '2025 regular-season rate unavailable';
+  const defExposureLine =
+    viewedDefRec && typeof viewedDefRec.value === 'number' && Number.isFinite(viewedDefRec.value)
+      ? `faced ${viewedDefRec.numerator}/${viewedDefRec.observed} by ${viewedDefTeam} (${defExposurePct(viewedDefRec)})`
+      : '2025 regular-season opponent exposure unavailable';
+
+  const labelA = DATA.teamAbbr[tA] || ABBR_TO_TEAM[tA] || tA;
+  const labelB = DATA.teamAbbr[tB] || ABBR_TO_TEAM[tB] || tB;
+
+  main.innerHTML = `
+    <!-- MATCHUP QUESTION BANNER: viewed offense's 2025 play-action tendency vs the opposing defense's 2025 exposure -->
+    <div class="bg-surface-card border border-subtle rounded-lg p-4 space-y-3" role="region" aria-label="Matchup preview question">
+      <div class="flex items-start justify-between gap-3">
+        <div class="space-y-1">
+          <div class="text-[10px] uppercase tracking-widest font-bold text-slate-500 font-mono">2025 Regular Season · One Question</div>
+          <div class="text-base font-bold text-white leading-snug">How often does ${attrEsc(viewedOffTeam)} run play-action?</div>
+          <div class="text-xs text-slate-400 leading-relaxed">
+            ${attrEsc(viewedOffTeam)} offense used play-action on ${offRateLine}.
+            In 2025 regular-season opponents faced ${defExposureLine}.
+          </div>
+          <div class="text-[10px] text-amber-400/80 font-mono">
+            Defensive exposure counts opponent usage, it is not a measure of defensive effectiveness and does not predict a winner.
+          </div>
         </div>
-
-        <!-- RIGHT RAIL: Unit Grades & Insights (lg:col-span-3) -->
-        <div class="lg:col-span-3 flex flex-col gap-4">
-          ${renderPreviewUnitGrades(tA, tB)}
-          ${renderPreviewInsights(tA, tB, curGame)}
+        <div class="shrink-0 flex gap-1">
+          <button
+            type="button"
+            onclick="swapViewedOffense()"
+            aria-pressed="${viewedOffenseIsA ? 'true' : 'false'}"
+            aria-label="View ${viewedOffenseIsA ? tB : tA} offense${viewedOffenseIsA ? ' instead of ' + tA : ' instead of ' + tB}"
+            class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-semibold border transition ${viewedOffenseIsA ? 'border-rose-500/60 bg-rose-500/10 text-rose-300' : 'border-slate-600 bg-slate-800/60 text-slate-400 hover:text-slate-200'}"
+          >
+            <span>${attrEsc(labelA)} OFF</span>
+            <span class="text-slate-600 text-[10px]">/</span>
+            <span>${attrEsc(labelB)} OFF</span>
+          </button>
         </div>
       </div>
-    `;
-  } else if (sub === 'overview') {
-    main.innerHTML = `
-      <div class="space-y-4">
-        ${renderAtAGlanceTable(tA, tB)}
-        ${renderKeyAdvantagesPanel(tA, tB)}
+
+      <!-- PROMINENT EPA BARS: overall, pass, run for the viewed offense vs opposing defense -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1 border-t border-subtle/40">
+        ${epaBarHtml('Overall EPA', epaValue(viewedOffTeam, 'off', 'overall'), epaValue(viewedDefTeam, 'def', 'overall'), 'overall', tA, tB, viewedOffenseIsA)}
+        ${epaBarHtml('Pass EPA', epaValue(viewedOffTeam, 'off', 'pass'), epaValue(viewedDefTeam, 'def', 'pass'), 'pass', tA, tB, viewedOffenseIsA)}
+        ${epaBarHtml('Run EPA', epaValue(viewedOffTeam, 'off', 'run'), epaValue(viewedDefTeam, 'def', 'run'), 'run', tA, tB, viewedOffenseIsA)}
       </div>
-    `;
-  } else if (sub === 'advantages') {
-    main.innerHTML = renderKeyAdvantagesPanel(tA, tB);
-  } else if (sub === 'passing') {
-    main.innerHTML = renderMatchupComparisonsSideBySide(PASSING_SPLITS, tA, tB, 'Passing Split Metric');
-  } else if (sub === 'rushing') {
-    main.innerHTML = renderMatchupComparisonsSideBySide(RUSHING_SPLITS, tA, tB, 'Rushing Split Metric');
-  } else if (sub === 'trenches') {
-    main.innerHTML = renderMatchupComparisonsSideBySide(TRENCH_SPLITS, tA, tB, 'Trench & Pressure Metric');
-  } else if (sub === 'insights') {
-    main.innerHTML = renderMatchupInsightsPanel(tA, tB, curGame);
-  } else if (sub === 'formation') {
-    main.innerHTML = renderFormationLabPanel(tA, tB, og, dg);
+
+      <!-- EVIDENCE DISCLOSURE: definition, denominator, eligibility, missing counts, provenance -->
+      <div class="pt-1 border-t border-subtle/40">
+        ${renderTeamTendenciesDisclosure(viewedOffTeam, 'off', 'play_action')}
+        <div class="mt-2">
+          ${renderTeamTendenciesDisclosure(viewedDefTeam, 'def', 'play_action')}
+        </div>
+        <div class="mt-2 text-[10px] text-slate-500 font-mono space-y-1">
+          <div>Sources & Method: 2025 measured team tendencies (motion, play-action, shotgun) + 2025 EPA and Next Gen Stats.</div>
+          <div class="flex justify-between items-center">
+            <span class="text-slate-600">Rosters: ${rosterVersionLabel()}</span>
+            <span class="text-slate-600">Tendencies fetched: ${attrEsc(fetchedAtLabel())}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- EXISTING PRO PREVIEW: draft depth + unit grades, kept below the tendencies question -->
+    <div class="grid grid-cols-1 lg:grid-cols-9 gap-4">
+      <!-- CENTER RAIL: Team A Off vs Team B Def & Team B Off vs Team A Def (lg:col-span-6) -->
+      <div class="lg:col-span-6 flex flex-col gap-4">
+        ${renderPreviewOffVsDefMatrix(tA, tB, computeTeamNextGenRanks(tA), computeTeamNextGenRanks(tB), true)}
+        ${renderPreviewOffVsDefMatrix(tB, tA, computeTeamNextGenRanks(tB), computeTeamNextGenRanks(tA), false)}
+      </div>
+
+      <!-- RIGHT RAIL: Unit Grades & Insights (lg:col-span-3) -->
+      <div class="lg:col-span-3 flex flex-col gap-4">
+        ${renderPreviewUnitGrades(tA, tB)}
+        ${renderPreviewInsights(tA, tB, curGame)}
+      </div>
+    </div>
+  `;
+
+  // After setting innerHTML, activate the pressed toggle on re-render so focus
+  // and aria-pressed stay correct across subtab switches.
+  const toggle = main.querySelector('button[onclick*="swapViewedOffense"]');
+  if (toggle) toggle.setAttribute('aria-pressed', viewedOffenseIsA ? 'true' : 'false');
+
+  // Load 2025 team tendencies on first preview render (lazy, non-blocking).
+  if (typeof loadTeamTendencies === 'function' && !TEAM_TENDENCIES_LOADED) {
+    TEAM_TENDENCIES_LOADED = true;
+    (async () => {
+      try {
+        const mod = await import('./scripts/load_team_tendencies.js');
+        await mod.loadTeamTendencies();
+        renderMatchupPanels();
+      } catch (e) {
+        console.warn('[renderMatchupPanels] tendencies load failed, continuing with EPA only', e && e.message);
+      }
+    })();
   }
+}
+
+function defExposurePct(rec){
+  if (!rec || rec.observed == null || rec.observed === 0) return '—';
+  return (rec.value * 100).toFixed(1) + '%';
+}
+
+// Normalized overall/pass/run EPA for a team-side, for the prominent matchup bars.
+function epaValue(team, side, metric){
+  if (typeof efficiencyValue === 'function') {
+    try {
+      return efficiencyValue(team, side, metric, 2025);
+    } catch (e) {
+      return null;
+    }
+  }
+  return null;
+}
+
+function epaBarHtml(label, offenseVal, defenseVal, metricKey, tA, tB, offenseIsA){
+  const defTeam = offenseIsA ? tB : tA;
+  const offTeam = offenseIsA ? tA : tB;
+  const offRaw = offenseVal;
+  const defRaw = defenseVal;
+  const offDisplay = offRaw == null ? '—' : offRaw.toFixed(2);
+  const defDisplay = defRaw == null ? '—' : defRaw.toFixed(2);
+  const maxAbs = Math.max(
+    Math.abs(offRaw || 0), Math.abs(defRaw || 0), 0.0001
+  );
+  const offPct = maxAbs > 0 ? Math.max(-1, Math.min(1, (offRaw || 0) / maxAbs)) : 0;
+  const defPct = maxAbs > 0 ? Math.max(-1, Math.min(1, (defRaw || 0) / maxAbs)) : 0;
+  const offColor = (offRaw || 0) >= 0 ? 'bg-emerald-500' : 'bg-red-500';
+  const defColor = (defRaw || 0) >= 0 ? 'bg-sky-400' : 'bg-rose-400';
+  return `
+    <div class="bg-surface-card border border-subtle rounded-lg p-3">
+      <div class="text-[10px] uppercase tracking-wider font-bold text-slate-400 mb-2">${label}</div>
+      <div class="flex justify-between text-xs font-mono mb-1">
+        <span class="${offenseIsA ? 'text-rose-300' : 'text-sky-300'} font-semibold">${attrEsc(offTeam)}</span>
+        <span class="text-slate-500">${offDisplay}</span>
+      </div>
+      <div class="h-2 bg-slate-800 rounded-full overflow-hidden relative">
+        <div class="absolute inset-y-0 left-1/2 w-0.5 bg-slate-600"></div>
+        <div class="h-full rounded-full ${offColor} transition-all" style="width: ${Math.abs(offPct * 50)}%; margin-left: ${offPct >= 0 ? '50%' : '0'}; margin-right: ${offPct < 0 ? '50%' : '0'};"></div>
+      </div>
+      <div class="flex justify-between text-[10px] text-slate-500 font-mono mt-2">
+        <span>vs ${attrEsc(defTeam)} ${label.includes('Overall') ? 'overall' : label.toLowerCase()}</span>
+        <span class="text-slate-600">def: ${defDisplay}</span>
+      </div>
+    </div>
+  `;
+}
+
+function rosterVersionLabel(){
+  if (!DATA || !DATA.players || !DATA.players.length) return 'roster snapshot';
+  return 'Supabase nfl_players (live)';
+}
+
+function fetchedAtLabel(){
+  return 'fetched ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) + ' · source update unknown';
 }
 
 function matchupGameChanged() {
@@ -6099,6 +6218,9 @@ async function renderMatchup() {
   }
 
   // Populate the game picker from the dashboard schedule (all weeks).
+  // Exact-event selection only: a selected game_id (scheduled mode) pins the
+  // active event and its header/kickoff/venue/market metadata. Manual team
+  // edits (hypothetical mode) clear gameId. No borrowed-game fallback.
   const selGame = document.getElementById('matchupGame');
   const games = (SCHEDULE_DATA && SCHEDULE_DATA.games) || [];
   if (selGame && !selGame.options.length && games.length) {
@@ -6109,27 +6231,30 @@ async function renderMatchup() {
       selGame.add(new Option(`Wk ${g.week}: ${g.away_team} @ ${g.home_team}${when ? ' · ' + when : ''}`, `${g.away_team}__${g.home_team}`));
     }
     const matchesGame = sorted.find(g => g.away_team === MATCHUP_STATE.teamA && g.home_team === MATCHUP_STATE.teamB);
-    if (matchesGame) {
-      selGame.value = `${matchesGame.away_team}__${matchesGame.home_team}`;
+    if (matchesGame && !MATCHUP_STATE.gameId) {
+      const want = `${matchesGame.away_team}__${matchesGame.home_team}`;
+      selGame.value = want;
+    } else if (matchesGame && MATCHUP_STATE.gameId) {
+      const want = `${matchesGame.away_team}__${matchesGame.home_team}`;
+      selGame.value = want === `${matchesGame.away_team}__${matchesGame.home_team}` ? want : '';
     } else {
-      const fallback = sorted.find(g => g.week === (SCHEDULE_DATA.week || 1)) || sorted[0];
-      if (fallback) {
-        MATCHUP_STATE.teamA = fallback.away_team;
-        MATCHUP_STATE.teamB = fallback.home_team;
-        selGame.value = `${fallback.away_team}__${fallback.home_team}`;
-        if (selA) selA.value = fallback.away_team;
-        if (selB) selB.value = fallback.home_team;
-      }
+      selGame.value = '';
     }
   }
 
-  if (selA) {
-    if (MATCHUP_STATE.teamA) selA.value = MATCHUP_STATE.teamA;
-    else MATCHUP_STATE.teamA = selA.value;
+  // Manual team edits (via the team A/B selects) enter hypothetical mode:
+  // clear the pinned event so the preview is not labeled with a selected game's
+  // kickoff/venue/market metadata. Team changes from openMatchup() keep the
+  // pinned event because they do not route through selA/selB.value.
+  if (selA && selA.value !== MATCHUP_STATE.teamA) {
+    MATCHUP_STATE.teamA = selA.value;
+    MATCHUP_STATE.gameId = null;
+    if (selGame && selGame.options.length) selGame.value = '';
   }
-  if (selB) {
-    if (MATCHUP_STATE.teamB) selB.value = MATCHUP_STATE.teamB;
-    else MATCHUP_STATE.teamB = selB.value;
+  if (selB && selB.value !== MATCHUP_STATE.teamB) {
+    MATCHUP_STATE.teamB = selB.value;
+    MATCHUP_STATE.gameId = null;
+    if (selGame && selGame.options.length) selGame.value = '';
   }
 
   if (selGame && selGame.options.length) {
@@ -6137,7 +6262,17 @@ async function renderMatchup() {
     selGame.value = Array.from(selGame.options).some(o => o.value === want) ? want : '';
   }
 
-  const curGame = games.find(g => g.away_team === MATCHUP_STATE.teamA && g.home_team === MATCHUP_STATE.teamB) || games[0];
+  // Exact-event selection: the selected game_id owns the header, kickoff, venue,
+  // and market metadata. Unset when the user manually edits teams (hypothetical
+  // mode). An unresolved non-null gameId is an error state (not a fallback).
+  let curGame = games.find(g => g.away_team === MATCHUP_STATE.teamA && g.home_team === MATCHUP_STATE.teamB);
+  if (curGame && MATCHUP_STATE.gameId && curGame.game_id !== MATCHUP_STATE.gameId) {
+    curGame = null; // current selection does not match the pinned event
+  }
+  if (!curGame && MATCHUP_STATE.gameId) {
+    curGame = games.find(g => g.game_id === MATCHUP_STATE.gameId) || null;
+  }
+
   const homeStr = computeTeamOverall(MATCHUP_STATE.teamB);
   const awayStr = computeTeamOverall(MATCHUP_STATE.teamA);
   const prob = winProb(homeStr, awayStr);
@@ -7396,13 +7531,14 @@ async function renderSchedule(){
 }
 
 function openMatchup(gameId){
-  const game = SCHEDULE_DATA?.games?.find(candidate => candidate.game_id === gameId);
+  const game = (SCHEDULE_DATA && SCHEDULE_DATA.games) ? SCHEDULE_DATA.games.find(candidate => candidate.game_id === gameId) : undefined;
   if (!game) {
-    console.error(`[openMatchup] Game not found: ${gameId}`);
+    if (gameId) console.error(`[openMatchup] Game not found: ${gameId}`);
     return false;
   }
   MATCHUP_STATE.teamA = game.away_team;
   MATCHUP_STATE.teamB = game.home_team;
+  MATCHUP_STATE.gameId = game.game_id;
   showTab('matchup');
   return true;
 }

@@ -1,11 +1,19 @@
 # NFL Dashboard state
 
-- Updated: 2026-09-04
+- Updated: 2026-09-06
 - Live: https://nfldashboard.pages.dev/
 - Repo: https://github.com/shyam4902/nfldashboard
 - App: static `index.html`, tracked JSON assets, and Supabase roster and transaction data
 
 ## Shipped recently
+
+- Refined the Teams overview page for desktop display and usability:
+  - Relocated Compare to the top right where the division jump buttons were, adding a descriptive sub-label ("Compare any two teams or explore matchups").
+  - Made division headers static, removing accordion collapse chevrons and clicks.
+  - Removed draft assets summary from team tiles while keeping complete draft capital in the roster modal.
+  - Upgraded the projected wins box into a vibrant emerald badge with clear typography.
+  - Compacted team tile padding and division spacing so all 32 teams fit cleanly on a standard desktop screen with minimal scrolling.
+  - Verified with `python3 test_all_extensions.py` (32 passing checks, 0 console errors) and `node scripts/validate-data.js` (16/16 assets pass).
 
 - Aligned Home marquee game cards and the Teams page with the Schedule card design system:
   - Redesigned Home 'Week 1 Marquee' game cards (`marqueeGameHtml`) to use the `.home-sch-card` component matching `.sch-card`: high-res NFL team logos, Archivo bold abbreviations, Geist team names, green probability highlights for favorites, dual-color win probability bars, and footer with spread/total and direct navigation to Matchup Center.
@@ -106,3 +114,17 @@
 - Push `main` to `origin/main`.
 - Verify live production deployment at `https://nfldashboard.pages.dev` via browser and automated checks.
 - Clean up temporary worktree `nfldashboard-teams-repair`.
+
+## Agent D local matchup preview (2026-09-06)
+
+- Added `nfldashboard/scripts/load_team_tendencies.js` and `nfldashboard/scripts/team_tendencies.test.js` for the free 2025 team-tendencies matchup preview.
+- Wired the dashboard matchup page in `index.html` to use `MATCHUP_STATE.gameId` and `viewedOffense`, with exact-event selection from the schedule, hypothetical mode when teams are edited manually, a possession toggle, and a tendencies question + evidence disclosure for the viewed offense vs the opposing defense.
+- The preview reuses the existing EPA and field where tendencies are absent or malformed, and it keeps the existing Pro Preview matrix, unit grades, and insights below the new section.
+- Artifact is published through `fantasyfootball/scripts/sync-shared-data.sh` into `data/shared/` and the dashboard copies, with a `team_tendencies` freshness entry and a `nfldashboard/scripts/data-assets.json` registry entry.
+
+### Unfinished
+
+- `node --test scripts/team_tendencies.test.js` is not green yet; the test file still has a compile/assertion issue near the end.
+- Repo checks not run in this pass: `node scripts/validate-data.js`, `node props-smoke.mjs`, the Python suite, and fantasyfootball `npm test` / `npm run check`.
+- Root fallback `nfldashboard/team_tendencies_2025.json` byte-identical confirmation and a live browser pass were not completed.
+- `STATE.md` itself is being updated as part of finishing the report.
