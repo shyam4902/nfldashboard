@@ -596,52 +596,52 @@ html, body {
 .team-tile {
   background: #14161a;
   border: 1px solid #282c34;
-  border-radius: 8px;
+  border-radius: 9px;
   overflow: hidden;
   position: relative;
   cursor: pointer;
-  transition: transform 0.15s, border-color 0.2s, box-shadow 0.2s;
+  transition: transform 0.15s ease, border-color 0.2s ease, box-shadow 0.2s ease;
   display: flex;
   flex-direction: column;
 }
 .team-tile:hover {
-  transform: translateY(-1.5px);
+  transform: translateY(-2px);
   border-color: #3e4652;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.45);
+  box-shadow: 0 8px 22px rgba(0,0,0,0.5);
 }
 .team-tile.cmp-sel {
   border-color: #d9a441 !important;
-  box-shadow: 0 0 0 2px rgba(217, 164, 65, 0.4);
+  box-shadow: 0 0 0 2px rgba(217, 164, 65, 0.45);
 }
 .team-tile-rail {
-  height: 2.5px;
+  height: 3px;
   width: 100%;
   flex-shrink: 0;
 }
 .team-tile-inner {
-  padding: 8px 10px;
+  padding: 10px 11px;
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 8px;
   flex: 1;
 }
 .team-tile-main {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 6px;
+  gap: 8px;
 }
 .team-tile-lead {
   display: flex;
   align-items: center;
-  gap: 7px;
+  gap: 8px;
   min-width: 0;
 }
 .team-tile-logo {
-  width: 24px;
-  height: 24px;
+  width: 26px;
+  height: 26px;
   object-fit: contain;
-  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.45));
+  filter: drop-shadow(0 2px 5px rgba(0,0,0,0.5));
   flex-shrink: 0;
 }
 .team-tile-names {
@@ -651,12 +651,12 @@ html, body {
   min-width: 0;
 }
 .team-tile-abbr {
-  font: 800 13px/1 'Archivo', sans-serif;
+  font: 800 14px/1 'Archivo', sans-serif;
   color: #fff;
   letter-spacing: -0.01em;
 }
 .team-tile-name {
-  font: 500 11px 'Geist', sans-serif;
+  font: 500 11.5px 'Geist', sans-serif;
   color: #9499a3;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -670,7 +670,7 @@ html, body {
   border: 1px solid rgba(52, 211, 153, 0.4);
   box-shadow: 0 0 8px rgba(16, 185, 129, 0.12);
   border-radius: 4px;
-  padding: 1.5px 5.5px;
+  padding: 2px 6px;
   white-space: nowrap;
   flex-shrink: 0;
   letter-spacing: -0.01em;
@@ -680,8 +680,8 @@ html, body {
   align-items: center;
   justify-content: space-between;
   border-top: 1px solid #20242b;
-  padding-top: 5px;
-  font-size: 9.5px;
+  padding-top: 6px;
+  font-size: 10px;
   color: #868a91;
   gap: 6px;
 }
@@ -696,8 +696,32 @@ html, body {
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }
-.conf-split { display:grid; grid-template-columns:1fr 1fr; gap:1.25rem; }
-@media(max-width:900px){ .conf-split { grid-template-columns:1fr; gap:1rem; } }
+
+.conf-split {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+.conf-block {
+  width: 100%;
+}
+.divisions-cols-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1rem;
+}
+@media(max-width: 1200px) {
+  .divisions-cols-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.25rem;
+  }
+}
+@media(max-width: 640px) {
+  .divisions-cols-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+}
 
 /* ── THEMES ── */
 
@@ -4012,26 +4036,33 @@ function renderTeams(){
   };
 
   const renderConf=(confDivs,confName,colorCls)=>{
-    let col=`<div>
-      <div class="conf-head" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid #2b3037">
-        <span style="font:800 17px 'Archivo',sans-serif;letter-spacing:-0.02em" class="${colorCls}">${confName}</span>
-        <span class="studio-kicker" style="color:#868a91;font-size:10px">16 TEAMS · 4 DIVISIONS</span>
-      </div>`;
+    let col=`<div class="conf-block">
+      <div class="conf-head" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid #2b3037">
+        <div class="flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full" style="background:${confName === 'AFC' ? '#ef4444' : '#5c7490'}"></span>
+          <span style="font:800 18px 'Archivo',sans-serif;letter-spacing:-0.02em" class="${colorCls}">${confName}</span>
+        </div>
+        <span class="studio-kicker" style="color:#868a91;font-size:10.5px">16 TEAMS · 4 DIVISIONS</span>
+      </div>
+      <div class="divisions-cols-grid">`;
     for(const[divName,teams] of confDivs){
       const divId='div-'+divName.replace(/ /g,'-').toLowerCase();
-      col+=`<div id="${divId}" class="division-header rounded px-2.5 py-1 mb-1.5 mt-3 flex items-center justify-between">
-        <div class="flex items-center gap-2">
-          <span class="w-1 h-3 rounded-full" style="background:${confName === 'AFC' ? '#ef4444' : '#5c7490'}"></span>
-          <h3 style="font:800 11px 'Archivo',sans-serif;letter-spacing:0.04em;text-transform:uppercase" class="${colorCls}">${divName}</h3>
+      const divShort = divName.replace(/AFC |NFC /,'');
+      col+=`<div class="division-col">
+        <div id="${divId}" class="division-header rounded-md px-3 py-1.5 mb-2.5 flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <span class="w-1 h-3 rounded-full" style="background:${confName === 'AFC' ? '#ef4444' : '#5c7490'}"></span>
+            <h3 style="font:800 11.5px 'Archivo',sans-serif;letter-spacing:0.04em;text-transform:uppercase" class="${colorCls}">${divShort}</h3>
+          </div>
         </div>
-      </div>
-      <div class="division-content">
-        <div class="division-grid grid grid-cols-1 sm:grid-cols-2 gap-1.5 mb-2">
-          ${teams.map(renderTile).join('')}
+        <div class="division-content">
+          <div class="division-grid flex flex-col gap-2">
+            ${teams.map(renderTile).join('')}
+          </div>
         </div>
       </div>`;
     }
-    return col+'</div>';
+    return col+'</div></div>';
   };
 
   c.innerHTML=`<div class="conf-split">

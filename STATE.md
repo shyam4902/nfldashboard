@@ -7,12 +7,12 @@
 
 ## Shipped recently
 
-- Refined the Teams overview page for desktop display and usability:
-  - Relocated Compare to the top right where the division jump buttons were, adding a descriptive sub-label ("Compare any two teams or explore matchups").
-  - Made division headers static, removing accordion collapse chevrons and clicks.
-  - Removed draft assets summary from team tiles while keeping complete draft capital in the roster modal.
-  - Upgraded the projected wins box into a vibrant emerald badge with clear typography.
-  - Compacted team tile padding and division spacing so all 32 teams fit cleanly on a standard desktop screen with minimal scrolling.
+- Refined the Teams overview page for desktop display and visual hierarchy:
+  - Redesigned conference layout into a 4-column division architecture (`.divisions-cols-grid`) where each division (East, North, South, West) has its own vertical stack of team cards, removing horizontal stretching.
+  - Sized team cards with balanced padding (`10px 11px`), 26px drop-shadowed logos, clear typography, and breathing room.
+  - Relocated Compare to the top right header slot with descriptive subtext ("Compare any two teams or explore matchups").
+  - Made division headers static with conference color pills.
+  - Kept draft assets inside the roster modal and out of the overview tiles.
   - Verified with `python3 test_all_extensions.py` (32 passing checks, 0 console errors) and `node scripts/validate-data.js` (16/16 assets pass).
 
 - Aligned Home marquee game cards and the Teams page with the Schedule card design system:
