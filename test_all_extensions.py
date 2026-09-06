@@ -124,10 +124,10 @@ with sync_playwright() as p:
     page.evaluate("closeRoster()")
     page.wait_for_timeout(300)
     tile_txt = page.locator('.team-tile').first.inner_text()
-    if 'Cap Space' in tile_txt and 'Proj W' in tile_txt:
-        successes.append("Team tiles render clean cap space and projected wins badges")
+    if 'Cap Space' in tile_txt and 'Proj W' not in tile_txt:
+        successes.append("Team tiles render clean cap space without projected wins badges")
     else:
-        failures.append("Team tiles missing clean cap space or projected wins badges")
+        failures.append("Team tiles missing clean cap space or have unexpected projected wins badges")
     page.click('[data-tab="teams"]')
     page.wait_for_timeout(500)
 

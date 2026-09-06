@@ -7,12 +7,11 @@
 
 ## Shipped recently
 
-- Refined Teams overview proportions and layout:
-  - Eliminated wide letterbox team cards by transitioning desktop viewports (`>= 1240px`) to a side-by-side conference architecture (`.conf-split: grid-template-columns: 1fr 1fr`).
-  - Reduced individual team tile width from ~380px down to ~186px with an 86px height (~2.1:1 ratio), providing natural sports tile proportions with zero dead space.
-  - Re-architected tile interior: Row 1 pairs the team logo and bold abbreviation on the left with the model projected wins badge on the right; Row 2 displays the full team name with clean typography without truncating long names; Row 3 provides the cap space footer.
-  - Enables viewing all 32 NFL teams across all 8 divisions simultaneously on desktop without vertical scrolling.
-  - Collapses responsively on smaller viewports with constrained container widths.
+- Refined Teams overview cards and proportions:
+  - Enlarged team boxes by ~20-25% (~248px width by ~92px height, 32px team logo, 15px bold Archivo abbreviation, 12px Geist team name) with balanced negative space.
+  - Centered overview container at `max-width: 1040px` with 4 division columns per conference.
+  - Removed projected wins badges from the overview tiles in general; projected wins and records remain accessible inside each team's subtabs and roster modal (`openRoster`).
+  - Maintained team color top rail and cap space footer on each tile.
   - Verified with `python3 test_all_extensions.py` (32 passing checks, 0 console errors) and `node scripts/validate-data.js` (16/16 assets pass).
 
 - Aligned Home marquee game cards and the Teams page with the Schedule card design system:
