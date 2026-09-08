@@ -62,13 +62,18 @@
 /test-fixtures/* / 302
 /screenshots_2026/* / 302
 /screenshots_expansion/* / 302
-/screenshots_home/* / 302
+/screenshots_home/* / 302# Root markdown/docs and the remaining root-level internal file. NOTE: do
+# not use extension wildcards like /*.js here — a Pages splat matches ACROSS
+# slashes, so /*.js would also deny scripts/load_team_tendencies.js (the
+# runtime module the UI imports). Enumerate internal root files explicitly;
+# data JSONs (*.json) stay public by design.
+/AGENTS.md / 302
+/CLAUDE.md / 302
+/README.md / 302
+/STATE.md / 302
+/WALKTHROUGH.md / 302
+/moves_filtering.test.js / 302
 
-# Extension wildcards — future-proofing: any new code/doc/config file at the
-# repo root is internal unless it is data. Data lives in *.json only.
-/*.md / 302
-/*.py / 302
-/*.mjs / 302
-/*.js / 302
+
 /*.plist / 302
 /*.sql / 302
