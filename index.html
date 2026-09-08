@@ -429,6 +429,8 @@ html, body {
 .rating-star { background: linear-gradient(135deg, #22c55e, #16a34a); color: #000; }
 .rating-solid { background: linear-gradient(135deg, #8fa6bf, #5c7490); color: #101215; }
 .rating-dev { background: linear-gradient(135deg, #868a91, #3d434c); color: white; }
+/* No rating on file. Distinct from a low rating - we don't know, we're not saying they're bad. */
+.rating-unrated { background: transparent; border: 1px dashed rgba(148,163,184,0.5); color: #94a3b8; font-weight: 600; }
 /* Madden ratings demoted: hidden on all main pages, kept only in the Matchup Lab */
 .rating-badge { display: none; }
 .formation-player .rating-badge { display: flex; }
@@ -2267,113 +2269,6 @@ async function loadAllData() {
     DATA.draftCapital = capRes.ok ? await capRes.json() : null;
   } catch { DATA.draftCapital = null; }
 
-  // Overlay EA Madden ratings from madden_official_ratings.json if present
-  try {
-    const mRes = await fetch('./madden_official_ratings.json');
-    if (mRes.ok) {
-      const maddenMap = await mRes.json();
-      // normName is defined once at the top level (see propsMarketLabels).
-
-      function matchMadden(maddenMap, p) {
-        if (!p || !p.name) return null;
-        const norm = normName(p.name);
-        const rawNorm = (p.name || '').toLowerCase().replace(/['’.\-]/g, '').replace(/\s+/g, ' ').trim();
-        const maddenObj = maddenMap[norm] || maddenMap[rawNorm];
-        if (!maddenObj) return null;
-
-        const entries = Array.isArray(maddenObj) ? maddenObj : (maddenObj.entries || [maddenObj]);
-        if (!entries.length) return null;
-
-        const pUnit = (p.unit || '').toUpperCase();
-        const pPos = (p.pos || '').toUpperCase();
-        const isRookie = p.is_rookie === true || p.is_rookie === 'Yes';
-        const pJersey = p.jersey !== null && p.jersey !== undefined && p.jersey !== '' ? Number(p.jersey) : null;
-        const pAge = p.age ? Number(p.age) : null;
-        const pNameLower = p.name.toLowerCase();
-
-        const offensivePos = ['QB', 'RB', 'FB', 'HB', 'WR', 'TE', 'C', 'G', 'OG', 'OT', 'T', 'OL'];
-        const defensivePos = ['DE', 'EDGE', 'DT', 'NT', 'DL', 'LB', 'ILB', 'OLB', 'MLB', 'CB', 'DB', 'S', 'FS', 'SS'];
-        const specialPos = ['PK', 'K', 'P', 'LS'];
-
-        const scored = entries.map(cand => {
-          let score = 0;
-          const candUnit = (cand.inferred_unit || '').toUpperCase();
-          const candJersey = cand.jersey !== null && cand.jersey !== undefined ? Number(cand.jersey) : null;
-          const candAge = cand.age ? Number(cand.age) : null;
-          const candYears = cand.yearsPro !== null && cand.yearsPro !== undefined ? Number(cand.yearsPro) : null;
-          const candNameLower = (cand.name || '').toLowerCase();
-
-          // Unit compatibility check
-          let unitMismatch = false;
-          if (pUnit && candUnit) {
-            if (pUnit === 'DEFENSE' && candUnit === 'OFFENSE') unitMismatch = true;
-            if (pUnit === 'OFFENSE' && candUnit === 'DEFENSE') unitMismatch = true;
-          }
-          if (pPos) {
-            if (defensivePos.includes(pPos) && candUnit === 'OFFENSE') unitMismatch = true;
-            if (offensivePos.includes(pPos) && candUnit === 'DEFENSE') unitMismatch = true;
-            if (specialPos.includes(pPos) && candUnit !== 'SPECIAL' && cand.ovr > 70) unitMismatch = true;
-          }
-          if (unitMismatch) return { cand, score: -999 };
-
-          // Rookie vs veteran check
-          if (isRookie && candYears !== null && candYears >= 2) {
-            return { cand, score: -999 };
-          }
-
-          // Base unit match
-          if (pUnit && candUnit && pUnit === candUnit) {
-            score += 30;
-          }
-
-          // Exact Jersey match
-          if (pJersey !== null && candJersey !== null && pJersey === candJersey) {
-            score += 100;
-          } else if (pJersey !== null && candJersey !== null && pJersey !== candJersey && entries.length > 1) {
-            score -= 50;
-          }
-
-          // Suffix match
-          if (pNameLower.includes('jr') && candNameLower.includes('jr')) score += 50;
-          if ((pNameLower.includes('ii') || pNameLower.includes(' 2')) && (candNameLower.includes('ii') || candNameLower.includes(' 2'))) score += 50;
-
-          // Pos / Weight compatibility
-          if (cand.weight) {
-            if (['DT', 'NT', 'DL'].includes(pPos) && cand.weight >= 280) score += 40;
-            if (['EDGE', 'DE', 'LB', 'OLB', 'ILB'].includes(pPos) && cand.weight >= 225 && cand.weight <= 285) score += 40;
-            if (['CB', 'DB', 'S', 'FS', 'SS', 'WR'].includes(pPos) && cand.weight < 220) score += 40;
-            if (['OT', 'OG', 'C', 'G', 'T', 'OL'].includes(pPos) && cand.weight >= 280) score += 40;
-            if (['RB', 'HB'].includes(pPos) && cand.weight >= 190 && cand.weight <= 245) score += 40;
-          }
-
-          // Age proximity
-          if (pAge !== null && candAge !== null) {
-            const diff = Math.abs(pAge - candAge);
-            if (diff <= 1) score += 20;
-            else if (diff <= 2) score += 10;
-          }
-
-          return { cand, score };
-        });
-
-        scored.sort((a, b) => b.score - a.score);
-        const best = scored[0];
-        if (!best || best.score < 0) return null;
-        return best.cand;
-      }
-
-      for (const p of DATA.players) {
-        const match = matchMadden(maddenMap, p);
-        if (match && match.ovr) {
-          p.ovr = match.ovr;
-          p.ratings_source = 'madden_official';
-        }
-      }
-    }
-  } catch (e) {
-    console.warn("Could not load local madden_official_ratings.json map", e);
-  }
-
   // High-contrast primary display colors for UI badges & borders across all themes
   const TEAM_COLOR_OVERRIDES = {
     'New England Patriots': '#C60C30',   // Patriots Red (was dark navy #002244)
@@ -3993,7 +3888,7 @@ function renderComparePanel(team){
     if(!players.length)continue;
     rows+=`<div style="font-size:9px;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:0.8px;padding:7px 16px 3px;background:rgba(30,41,59,0.4)">${grp}</div>`;
     for(const p of players){
-      const rc=p.ovr>=90?'rating-elite':p.ovr>=80?'rating-star':p.ovr>=70?'rating-solid':'rating-dev';
+      const rc=p.ovr==null?'rating-unrated':p.ovr>=90?'rating-elite':p.ovr>=80?'rating-star':p.ovr>=70?'rating-solid':'rating-dev';
       const badge=p.isRookie?'<span class="badge-rook" style="margin-left:auto;flex-shrink:0">ROOK</span>':p.acquisitionType?'<span class="badge-new" style="margin-left:auto;flex-shrink:0">NEW</span>':'';
       rows+=`<div style="display:flex;align-items:center;gap:7px;padding:3px 16px;font-size:11px;border-bottom:1px solid rgba(71,85,105,0.08)">
         <div class="rating-badge ${rc}" style="width:24px;height:24px;font-size:11px;flex-shrink:0">${p.ovr??'—'}</div>
@@ -6478,7 +6373,40 @@ function showTab(tab){
     renderMatchup();
     stampFreshness('matchupFreshness', 'team_efficiency');
   }
+  writeHash(tab);
 }
+
+// ═══════════════════════════════════════════════════════════
+// URL HASH ROUTING - shareable tabs, working back button
+// ═══════════════════════════════════════════════════════════
+const ROUTABLE_TABS = ['home', 'schedule', 'teams', 'projections', 'matchup'];
+let suppressHashRoute = false;
+
+// Mirror the current tab into the address bar. Matchup carries its game id
+// so a preview can be linked directly.
+function writeHash(tab) {
+  const target = (tab === 'matchup' && MATCHUP_STATE.gameId)
+    ? `#matchup/${MATCHUP_STATE.gameId}`
+    : `#${tab}`;
+  if (location.hash === target) return;
+  suppressHashRoute = true;              // our own write, not a back/forward
+  location.hash = target;
+  setTimeout(() => { suppressHashRoute = false; }, 0);
+}
+
+// Read the address bar and show whatever it points at.
+async function applyHash() {
+  const [tab, arg] = (location.hash || '').replace(/^#/, '').split('/');
+  if (tab === 'matchup' && arg) {
+    await loadSchedule();                // deep link needs the game list first
+    if (openMatchup(arg)) return;        // openMatchup calls showTab itself
+  }
+  showTab(ROUTABLE_TABS.includes(tab) ? tab : 'home');
+}
+
+window.addEventListener('hashchange', () => {
+  if (!suppressHashRoute) applyHash();
+});
 
 function filterDashboard(q){
   q = (q || '').toLowerCase().trim();
@@ -6554,6 +6482,7 @@ loadAllData().then(() => {
   });
   loadPipelineStatus();        // checkpoint 4: owner-visible failed-update banner
   renderHome();                 // first-run showcase (hero, features, spotlights)
+  applyHash();                  // honour a shared #tab / #matchup/<id> link
   renderTeams();
   renderTeamsSubTabs();
   setTeamsSubTab(currentTeamsSubTab);
