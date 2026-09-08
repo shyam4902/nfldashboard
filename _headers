@@ -1,0 +1,20 @@
+# Cloudflare Pages headers — security hardening for the static dashboard.
+#
+# CSP origin allowlist was derived from a full live walkthrough of every tab,
+# modal, and the matchup preview (2026-09-08):
+#   script-src:  self (inline + dynamic import of scripts/load_team_tendencies.js),
+#                cdn.tailwindcss.com (Tailwind play CDN), cdn.jsdelivr.net (supabase-js)
+#   style-src:   self, unsafe-inline (inline styles/attrs), fonts.googleapis.com
+#   font-src:    self, fonts.gstatic.com
+#   img-src:     self, data: (inline SVGs), a.espncdn.com (team logos)
+#   connect-src: self, supabase.co REST (rosters/transactions), raw.githubusercontent.com
+#                (nflverse games.csv market lines)
+# No eval/new Function is used by the app or the CDNs above, so unsafe-eval is
+# deliberately absent. If a future feature adds a new external origin, add it
+# here — a blocked request shows up as a console CSP violation, not a crash.
+/*
+  Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+  X-Frame-Options: DENY
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://a.espncdn.com; connect-src 'self' https://nedyoydylpbjvihaoexy.supabase.co https://raw.githubusercontent.com; object-src 'none'; base-uri 'self'; form-action 'none'; frame-ancestors 'none'
