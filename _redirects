@@ -44,7 +44,19 @@
 /validate_data.test.js / 302
 
 # Internal directories (splat rules; first match wins, statics above)
-/scripts/* / 302
+# NOTE: /scripts/* is NOT denied wholesale because index.html dynamically
+# imports ./scripts/load_team_tendencies.js at runtime (the matchup preview's
+# tendency loader). That one file must stay public; everything else in
+# scripts/ is internal tooling and is denied explicitly below.
+/scripts/atomic-write.js / 302
+/scripts/build_draft_capital.py / 302
+/scripts/build_full_schedule.py / 302
+/scripts/data-assets.json / 302
+/scripts/debug_load.js / 302
+/scripts/madden-overlay.js / 302
+/scripts/production-health-check.mjs / 302
+/scripts/team_tendencies.test.js / 302
+/scripts/validate-data.js / 302
 /docs/* / 302
 /supabase/* / 302
 /test-fixtures/* / 302
