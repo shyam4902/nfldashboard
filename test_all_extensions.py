@@ -3,7 +3,9 @@
 Comprehensive verification test for updated NFL Dashboard features.
 """
 
+import json
 import os
+import re
 import sys
 import threading
 import http.server
@@ -36,6 +38,7 @@ time.sleep(0.5)
 successes = []
 failures = []
 console_errors = []
+page_errors = []
 
 with sync_playwright() as p:
     browser = p.chromium.launch(headless=True)
@@ -44,7 +47,12 @@ with sync_playwright() as p:
     def handle_console(msg):
         if msg.type == "error":
             console_errors.append(msg.text)
+    def handle_pageerror(err):
+        # Uncaught page exceptions (ReferenceError etc.) — the suite must fail
+        # on these, not just on console errors.
+        page_errors.append(str(err))
     page.on("console", handle_console)
+    page.on("pageerror", handle_pageerror)
     browser_fixtures.install(page, DASHBOARD_DIR)
 
     page.goto(f"http://127.0.0.1:{PORT}/index.html")
@@ -327,15 +335,156 @@ with sync_playwright() as p:
     # 8. Test Matchup Center & Pro Preview
     print("Testing Matchup Center & Pro Preview...")
     page.evaluate("showTab('matchup')")
-    page.wait_for_timeout(600)
+    page.wait_for_timeout(900)
     page.screenshot(path=f"{SCREENSHOT_DIR}/14_matchup_center.png")
     # Click Pro Preview subtab
     pro_tab = page.locator('#matchupViewMode button, [onclick*="preview"], [onclick*="pro"]')
     if pro_tab.count() > 0:
         page.locator('button', has_text='Pro Preview').first.click()
-        page.wait_for_timeout(600)
+        page.wait_for_timeout(900)
         page.screenshot(path=f"{SCREENSHOT_DIR}/15_matchup_pro_preview.png")
-        successes.append("Matchup Pro Preview subpage rendered and captured")
+    # Real-content assertions: a blank main panel or a missing question/EPA
+    # evidence is a FAILURE, not a success. The tendencies loader is async, so
+    # first wait for its evidence disclosure to render (up to ~5s).
+    disclosure_ready = False
+    for _ in range(10):
+        if page.locator("#matchupMainContent details summary").count() > 0:
+            disclosure_ready = True
+            break
+        page.wait_for_timeout(500)
+    preview_text = page.locator("#matchupMainContent").inner_text().strip()
+    if len(preview_text) < 100:
+        failures.append(f"Matchup Pro Preview main panel is blank or nearly empty ({len(preview_text)} chars)")
+    else:
+        if "How will" in preview_text and "play-action" in preview_text and "does not measure" in preview_text:
+            successes.append("Matchup Pro Preview question banner renders dynamic play-action copy")
+        else:
+            failures.append("Matchup Pro Preview question banner missing dynamic question or exposure wording")
+        if re.search(r"\d+ of \d+", preview_text):
+            successes.append("Matchup Pro Preview shows numeric tendency evidence (numerator / observed)")
+        else:
+            failures.append("Matchup Pro Preview missing numeric tendency evidence")
+        if "Overall EPA" in preview_text and re.search(r"EPA.*\d", preview_text, re.DOTALL):
+            successes.append("Matchup Pro Preview shows numeric EPA bars")
+        else:
+            failures.append("Matchup Pro Preview missing numeric EPA bars")
+        if "Win Probability" in page.locator("#matchupSidebar").inner_text():
+            failures.append("Matchup Pro Preview still shows the unsupported win-probability card")
+        else:
+            successes.append("Matchup Pro Preview excludes the win-probability card")
+    # Expanded evidence disclosure: open the first details block and verify the
+    # definition, observation period, aggregation time, and a clickable source.
+    if disclosure_ready:
+        page.locator("#matchupMainContent details summary").first.click()
+        page.wait_for_timeout(400)
+        disclosure_text = page.locator("#matchupMainContent").inner_text()
+        if "measures:" in disclosure_text and "2025 regular season" in disclosure_text and "aggregated" in disclosure_text:
+            successes.append("Matchup evidence disclosure shows definition, season window, and aggregation time")
+        else:
+            failures.append("Matchup evidence disclosure missing definition, season, or aggregation provenance")
+        if page.locator("#matchupMainContent details a[href^='http']").count() > 0:
+            successes.append("Matchup evidence disclosure links to its source")
+        else:
+            failures.append("Matchup evidence disclosure missing a clickable source link")
+    else:
+        failures.append("Matchup evidence disclosure never rendered (tendency loader did not load)")
+    # Checkpoint 3: the observation season is labeled and kept distinct from
+    # the current (2026) season, and the field carries the illustrative note.
+    if re.search(r"2025 regular season", preview_text, re.IGNORECASE) and "last completed" in preview_text:
+        successes.append("Matchup preview labels the measured season as last completed, distinct from the current season")
+    else:
+        failures.append("Matchup preview missing measured-season label or last-completed note")
+    if "2026 season in progress" in preview_text:
+        successes.append("Matchup preview states the current season is in progress, so measured numbers are historical")
+    else:
+        failures.append("Matchup preview missing current-season-in-progress note")
+    page.evaluate("setMatchupSubTab('formation')")
+    page.wait_for_timeout(700)
+    formation_text = page.locator("#matchupMainContent").inner_text()
+    if "Illustrative alignments" in formation_text and "not a complete weekly injury report" in formation_text:
+        successes.append("Formation Lab explains the field is illustrative, not a game-day lineup or injury report")
+    else:
+        failures.append("Formation Lab missing illustrative-alignment / injury-report note")
+    page.evaluate("setMatchupSubTab('preview')")
+    page.wait_for_timeout(400)
+
+    # Checkpoint 4: the failed-update banner is the owner-visible signal.
+    # Healthy (ok) status -> no banner; failed status -> visible banner with
+    # the failing step, run time, and recovery hint; absent file -> no claim.
+    banner = page.locator("#pipelineStatusBanner")
+    if banner.is_hidden() and "Last automatic data update failed" not in page.inner_text("body"):
+        successes.append("No failure banner with a healthy (ok) pipeline status")
+    else:
+        failures.append("Failure banner shown while pipeline status is ok")
+
+    failed_page = browser.new_page(viewport={"width": 1600, "height": 950})
+    failed_page.on("console", handle_console)
+    failed_page.on("pageerror", handle_pageerror)
+    browser_fixtures.install(failed_page, DASHBOARD_DIR)
+    failed_page.route(
+        "**/data/shared/pipeline-status.json",
+        lambda route: route.fulfill(
+            status=200,
+            content_type="application/json",
+            body=json.dumps({
+                "status": "failed",
+                "started_at": "2026-09-08T03:45:54Z",
+                "finished_at": "2026-09-08T03:47:10Z",
+                "failed_step": "sync shared data",
+                "exit_code": 1,
+            }),
+        ),
+    )
+    failed_page.goto(f"http://127.0.0.1:{PORT}/index.html")
+    failed_page.wait_for_load_state("networkidle")
+    failed_page.wait_for_timeout(1500)
+    failed_banner = failed_page.locator("#pipelineStatusBanner")
+    failed_text = failed_page.inner_text("body")
+    if failed_banner.is_visible() \
+            and re.search(r"last automatic data update failed", failed_text, re.IGNORECASE) \
+            and "sync shared data" in failed_text and "props:daily" in failed_text:
+        successes.append("Failed pipeline status renders the visible failure banner (step, time, recovery)")
+    else:
+        failures.append("Failed pipeline status did not render the failure banner")
+    failed_page.close()
+
+    absent_page = browser.new_page(viewport={"width": 1600, "height": 950})
+    absent_page.on("console", handle_console)
+    absent_page.on("pageerror", handle_pageerror)
+    browser_fixtures.install(absent_page, DASHBOARD_DIR)
+    absent_page.route("**/data/shared/pipeline-status.json",
+                      lambda route: route.fulfill(status=204))
+    absent_page.goto(f"http://127.0.0.1:{PORT}/index.html")
+    absent_page.wait_for_load_state("networkidle")
+    absent_page.wait_for_timeout(1200)
+    if absent_page.locator("#pipelineStatusBanner").is_hidden() \
+            and not re.search(r"last automatic data update failed",
+                              absent_page.inner_text("body"), re.IGNORECASE):
+        successes.append("Absent pipeline status file shows no banner (no claim, no error)")
+    else:
+        failures.append("Absent pipeline status file rendered a banner or page error")
+    absent_page.close()
+
+    # Malformed (non-JSON) status response: treated as "no claim" — the page
+    # must render normally with no banner and no uncaught error.
+    malformed_page = browser.new_page(viewport={"width": 1600, "height": 950})
+    malformed_page.on("console", handle_console)
+    malformed_page.on("pageerror", handle_pageerror)
+    browser_fixtures.install(malformed_page, DASHBOARD_DIR)
+    malformed_page.route("**/data/shared/pipeline-status.json",
+                         lambda route: route.fulfill(status=200,
+                                                      content_type="text/html",
+                                                      body="<html>not json</html>"))
+    malformed_page.goto(f"http://127.0.0.1:{PORT}/index.html")
+    malformed_page.wait_for_load_state("networkidle")
+    malformed_page.wait_for_timeout(1200)
+    if malformed_page.locator("#pipelineStatusBanner").is_hidden() \
+            and not re.search(r"last automatic data update failed",
+                              malformed_page.inner_text("body"), re.IGNORECASE):
+        successes.append("Malformed pipeline status response shows no banner and no error")
+    else:
+        failures.append("Malformed pipeline status response broke the page or showed a banner")
+    malformed_page.close()
 
     browser.close()
 
@@ -356,5 +505,8 @@ else:
 print(f"\nConsole errors logged: {len(console_errors)}")
 for err in console_errors:
     print(f"  [Console Error] {err}")
+print(f"\nUncaught page errors: {len(page_errors)}")
+for err in page_errors:
+    print(f"  [Page Error] {err}")
 
-sys.exit(0 if len(failures) == 0 and len(console_errors) == 0 else 1)
+sys.exit(0 if len(failures) == 0 and len(console_errors) == 0 and len(page_errors) == 0 else 1)

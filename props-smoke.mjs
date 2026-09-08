@@ -233,8 +233,11 @@ if (navigationCheck.opened) {
   const hasRealEpa = /EPA\/play 2025/.test(glanceText);
   const noFakeStats = !/Record in Close Games/.test(glanceText) && !/Total Penalties/.test(glanceText);
   const sourcesNote = await page.locator('text=Sources & Method').count().catch(() => 0);
-  trustOk = hasRealEpa && noFakeStats && sourcesNote > 0 && noUnsupportedNarrative && hasContextDisclosure;
-  console.log('--- at-a-glance real EPA:', hasRealEpa, '| no fabricated columns:', noFakeStats, '| sources note:', sourcesNote > 0);
+  // Checkpoint 2: the first preview must not show the unsupported log5-style
+  // win-probability card in the matchup sidebar.
+  const noWinProbCard = !/Win Probability/.test(sidebarText);
+  trustOk = hasRealEpa && noFakeStats && sourcesNote > 0 && noUnsupportedNarrative && hasContextDisclosure && noWinProbCard;
+  console.log('--- at-a-glance real EPA:', hasRealEpa, '| no fabricated columns:', noFakeStats, '| sources note:', sourcesNote > 0, '| no win-probability card:', noWinProbCard);
 
   // Switch to Formation Lab subtab
   await page.evaluate(() => setMatchupSubTab('formation'));

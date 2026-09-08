@@ -1,0 +1,62 @@
+# ────────────────────────────────────────────────────────────────────────────
+# Deny list — keep internal repo files off the public site.
+#
+# This Cloudflare Pages project is git-connected and serves the repo root
+# directly, so every tracked file (docs, scripts, tests, fixtures) used to be
+# publicly fetchable. Pages _redirects rules are always followed even when a
+# physical file matches, so each rule below masks an internal path by
+# redirecting it to the app home. Rewrites to a hard 404 are not supported by
+# Pages; a 302 to "/" stops raw content delivery, which is the goal here.
+#
+# Everything NOT listed below stays public on purpose — index.html and the
+# data exports the dashboard fetches (data/shared/* and the root JSON copies
+# that loaders fall back to). If you add a root-level script or doc, it is
+# automatically denied by the extension wildcards at the bottom of this file.
+# ────────────────────────────────────────────────────────────────────────────
+
+# Root config / dotfiles (never served)
+/.env.example / 302
+/.gitignore / 302
+/pyproject.toml / 302
+/uv.lock / 302
+/com.nfldashboard.rostersync.plist / 302
+/nfl_rosters_2026.txt / 302
+/schedule-redesign.html / 302
+/home-redesign.html / 302
+
+# Root data scripts and tests (all internal tooling; the UI is single-file)
+/build_madden_map.js / 302
+/check_html_scripts.mjs / 302
+/compare_madden_ratings.js / 302
+/concurrent_publish.test.js / 302
+/espn_transaction_persistence.js / 302
+/extract_clay_projections.py / 302
+/generate_roster_files.js / 302
+/persist_espn_transactions.test.js / 302
+/props-smoke.mjs / 302
+/sync_rosters_from_espn_api.js / 302
+/sync_supabase_rosters.js / 302
+/test_all_extensions.py / 302
+/test_projections.py / 302
+/test_schedule_data.py / 302
+/update_rosters_from_espn.js / 302
+/update_rosters_from_espn.test.js / 302
+/validate_data.test.js / 302
+
+# Internal directories (splat rules; first match wins, statics above)
+/scripts/* / 302
+/docs/* / 302
+/supabase/* / 302
+/test-fixtures/* / 302
+/screenshots_2026/* / 302
+/screenshots_expansion/* / 302
+/screenshots_home/* / 302
+
+# Extension wildcards — future-proofing: any new code/doc/config file at the
+# repo root is internal unless it is data. Data lives in *.json only.
+/*.md / 302
+/*.py / 302
+/*.mjs / 302
+/*.js / 302
+/*.plist / 302
+/*.sql / 302

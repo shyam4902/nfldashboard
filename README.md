@@ -2,7 +2,7 @@
 
 Static NFL dashboard served from `index.html` and repository data assets.
 
-> The Edge app uses `https://edge.shyamsapps.qzz.io`. Its `pages.dev` URL remains a valid fallback. Lovable references are historical only.
+> The Edge app uses `https://edgeplay-analytics.pages.dev`. The `edge.shyamsapps.qzz.io` custom domain is not serving. Lovable references are historical only.
 
 ## Production deployment
 
@@ -31,6 +31,31 @@ Props and win totals are owned by the Edge Analytics app; the dashboard keeps on
 The browser does not apply summer roster, transaction, or cap-space overrides. Teams, players, and dashboard transactions come from the Supabase-backed data path. Static artifacts such as `schedule.json`, `clay_projections_2026.json`, `draft-capital.json`, `madden_official_ratings.json`, and the shared data layer are loaded from the repository where the page requires them.
 
 Missing cap-space values and missing or malformed weekly win probabilities render as `Unavailable`; explicit zero values remain valid. Freshness badges show source age and non-fresh manifest status when `data/shared/freshness.json` provides it.
+
+## Matchup preview: season labels and update rules
+
+The matchup preview never invents a season: every measured label comes from the
+data's own metadata, and the app keeps the current season (from the schedule)
+separate from the season the numbers actually measure.
+
+| Source | When it can update | How its season is determined | What the app shows before it arrives |
+|---|---|---|---|
+| Team tendencies (`team_tendencies_2025.json`) | Only by rerunning `research/nfl-stickiness/01-team-tendencies-producer.py` against a refreshed nflverse cache. Static 2025 reference today; 2026 charting (participation-style coverage) arrives after the 2026 postseason per the nflverse data schedule. | The artifact's `observation_period.season` (2025 today). The disclosure and banner label every tendency from this field — never from the current date or schedule. | Honest unavailable copy ("tendency unavailable… EPA and the field remain available"). No invented numbers; EPA bars and the Formation Lab still render. |
+| Team efficiency / EPA (`team_season_efficiency_2012_2025.csv` → `team_season_efficiency.json`) | Rebuilt by the research R scripts (`01_build_dataset.R`) at season end. Through 2025 today. | The CSV's own `season` column; the app reads the maximum season present (2025 today) for every EPA lookup and label. | EPA cells show "—" where rows are missing; labels show the season the data actually covers. No silent blending with the current season. |
+| Schedule (`schedule.json`) | Full-season build; refreshed in-season by the daily pipeline. 2026 today. | `schedule.json.season`. When it differs from the measured season, the preview says "{current} season in progress — these numbers measure the {measured} regular season (last completed)". | Schedule loads with its own freshness stamp; absent schedule data means the matchup picker stays empty rather than guessing games. |
+| Rosters (`nfl_rosters_2026.json` / Supabase) | Weekly roster snapshot during the season. 2026 today. | Current season by construction (snapshot file name + schedule). | The field renders as illustrative alignments from the snapshot, labeled as not-a-verified-game-day-lineup and not-a-weekly-injury-report. |
+| Clay projections (`clay_projections_2026.json`) | Season static. 2026 today. | File name + metadata. Always labeled `PROJECTIONS`, never measured. | Projection panels show an unavailable message when the file is absent. |
+
+**Recorded limitation (2026 current-season measured data):** this pipeline has
+no 2026 measured EPA or tendencies today — the app shows 2025 as the last
+completed season. Enabling a current-season transition requires (a) rebuilding
+team-season efficiency from in-season nflverse PBP (published weekly) by
+updating the research cache and rerunning `01_build_dataset.R`, and (b)
+rebuilding the tendency producer from 2026 PBP + FTN charting when that
+coverage is available. Until then, a 2026 regenerated artifact is not expected,
+and the season-transition mechanics (labels driven by `observation_period` and
+the efficiency CSV's `season` column) are covered by fixture tests, not live
+2026 data.
 
 ## Data assets and validation
 

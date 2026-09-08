@@ -39,6 +39,7 @@ const VINTAGES = {
   stickiness: '2026-08-30T19:28:41Z',
   win_projection: '2026-08-30T19:28:42Z',
   market_comparison: '2026-08-30T19:28:50Z',
+  team_tendencies: '2026-09-06T07:51:14Z',    // internal only (2025 historical)
 };
 
 // Same arithmetic as the validator / producer stamp(): floor on epoch seconds.
@@ -104,7 +105,7 @@ function buildWorkspace(dir) {
   // optional asset present in the clean workspace
   fs.writeFileSync(path.join(dir, 'draft-capital.json'), JSON.stringify({ capital: {} }));
 
-  // freshness manifest: all 8 sources, internally consistent by construction.
+  // freshness manifest: all known sources, internally consistent by construction.
   // No file mtime was set - the manifest must hold on its own.
   const sources = {};
   for (const [key, asOf] of Object.entries(VINTAGES)) {
@@ -119,6 +120,9 @@ function buildWorkspace(dir) {
       max_age_hours: max
     };
   }
+  // team_tendencies is an optional historical artifact with the same max age
+  // convention as the other research outputs; the inventory declares its
+  // freshness_key, so the manifest must stamp it (bidirectional contract).
   fs.writeFileSync(path.join(shared, 'freshness.json'),
     JSON.stringify({ generated_at: GENERATED_AT, sources }));
 }
@@ -143,7 +147,7 @@ test('clean fixture workspace passes all checks', () => {
   try {
     const result = validate(dir);
     assert.equal(result.ok, true, result.problems.join('\n'));
-    assert.equal(result.results.length, 15); // 8 file assets + 3 'none' + 4 runtime
+    assert.equal(result.results.length, 16); // 9 file assets + 3 'none' + 4 runtime
     for (const r of result.results) assert.equal(r.ok, true, `${r.id}: ${r.problems.join('; ')}`);
   } finally { cleanup(dir); }
 });

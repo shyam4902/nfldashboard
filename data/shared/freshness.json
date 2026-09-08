@@ -1,13 +1,14 @@
 {
-  "generated_at": "2026-09-04T06:58:10Z",
+  "generated_at": "2026-09-08T03:48:50Z",
   "sources": {
-  "props_board": { "as_of": "2026-09-03T11:02:50.575Z", "status": "fresh", "age_hours": 19, "max_age_hours": 24 },
-  "rosters": { "as_of": "2026-09-03T13:11:11Z", "status": "fresh", "age_hours": 17, "max_age_hours": 168 },
-  "schedule": { "as_of": "2026-09-04T06:55:19Z", "status": "fresh", "age_hours": 0, "max_age_hours": 168 },
-  "clay_projections": { "as_of": "2026-08-26T00:53:55Z", "status": "fresh", "age_hours": 222, "max_age_hours": 720 },
-  "team_efficiency": { "as_of": "2026-08-30T19:28:25Z", "status": "fresh", "age_hours": 107, "max_age_hours": 262980 },
-  "stickiness": { "as_of": "2026-08-30T19:28:41Z", "status": "fresh", "age_hours": 107, "max_age_hours": 262980 },
-  "win_projection": { "as_of": "2026-08-30T19:28:42Z", "status": "fresh", "age_hours": 107, "max_age_hours": 262980 },
-  "market_comparison": { "as_of": "2026-08-30T19:28:50Z", "status": "fresh", "age_hours": 107, "max_age_hours": 262980 }
+  "props_board": { "as_of": "2026-09-08T03:48:48.552Z", "status": "fresh", "age_hours": 0, "max_age_hours": 24 },
+  "rosters": { "as_of": "2026-09-05T08:19:17Z", "status": "fresh", "age_hours": 67, "max_age_hours": 168 },
+  "schedule": { "as_of": "2026-09-08T03:48:50Z", "status": "fresh", "age_hours": 0, "max_age_hours": 168 },
+  "clay_projections": { "as_of": "2026-08-26T00:53:55Z", "status": "fresh", "age_hours": 314, "max_age_hours": 720 },
+  "team_efficiency": { "as_of": "2026-08-30T19:28:25Z", "status": "fresh", "age_hours": 200, "max_age_hours": 262980 },
+  "stickiness": { "as_of": "2026-08-30T19:28:41Z", "status": "fresh", "age_hours": 200, "max_age_hours": 262980 },
+  "team_tendencies": { "as_of": "2026-09-07T07:21:19Z", "status": "fresh", "age_hours": 20, "max_age_hours": 262980 },
+  "win_projection": { "as_of": "2026-08-30T19:28:42Z", "status": "fresh", "age_hours": 200, "max_age_hours": 262980 },
+  "market_comparison": { "as_of": "2026-08-30T19:28:50Z", "status": "fresh", "age_hours": 200, "max_age_hours": 262980 }
   }
 }

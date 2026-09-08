@@ -1915,6 +1915,13 @@ body.theme-analyst .roster-summary .rs-value {
   </div>
 </header>
 
+<!-- PIPELINE UPDATE STATUS: owner-visible failure signal. Written by
+     fantasyfootball/scripts/daily-pipeline.sh on every run (ok or failed) and
+     published through sync-shared-data.sh, so a failed automatic update is
+     visible here instead of living only in an unread launchd log. Absent file
+     or ok status = no banner; nothing is ever invented. -->
+<div id="pipelineStatusBanner" class="hidden"></div>
+
 <!-- ROSTER MODAL -->
 <div id="rosterModal" class="roster-modal-overlay" onclick="if(event.target===this)closeRoster()">
   <div class="roster-modal">
@@ -2094,14 +2101,14 @@ body.theme-analyst .roster-summary .rs-value {
     <!-- SLEEK COMPACT MATCHUP SELECTOR STRIP -->
     <div id="matchupControls" class="bg-surface-card border border-subtle rounded-lg px-4 py-2.5 mb-4 flex items-center justify-between flex-wrap gap-3">
       <div class="flex items-center gap-2 flex-1 min-w-[280px]">
-        <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 font-mono">GAME:</span>
-        <select id="matchupGame" onchange="matchupGameChanged()" class="flex-1 text-xs px-3 py-1.5 rounded border border-subtle bg-slate-900 text-slate-200 focus:outline-none focus:border-sky-500 font-medium"></select>
+        <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 font-mono shrink-0">GAME:</span>
+        <select id="matchupGame" onchange="matchupGameChanged()" class="flex-1 min-w-0 text-xs px-3 py-1.5 rounded border border-subtle bg-slate-900 text-slate-200 focus:outline-none focus:border-sky-500 font-medium"></select>
       </div>
-      <div class="flex items-center gap-2">
-        <select id="matchupTeamA" onchange="renderMatchup()" class="text-xs px-2.5 py-1.5 rounded border border-subtle bg-slate-900 text-rose-400 font-medium"></select>
-        <button onclick="swapMatchupTeams()" title="Swap Home/Away Teams" class="p-1 rounded bg-slate-800 hover:bg-slate-700 border border-subtle text-slate-300 text-xs font-bold transition">⇄</button>
-        <select id="matchupTeamB" onchange="renderMatchup()" class="text-xs px-2.5 py-1.5 rounded border border-subtle bg-slate-900 text-sky-400 font-medium"></select>
-        <button onclick="openMatchups101Modal()" class="text-[11px] px-2.5 py-1.5 rounded border border-subtle bg-slate-800 hover:bg-slate-700 text-slate-300 transition font-bold flex items-center gap-1 ml-2">
+      <div class="flex items-center gap-2 flex-wrap min-w-0">
+        <select id="matchupTeamA" onchange="renderMatchup()" class="min-w-0 max-w-full text-xs px-2.5 py-1.5 rounded border border-subtle bg-slate-900 text-rose-400 font-medium"></select>
+        <button onclick="swapMatchupTeams()" title="Swap Home/Away Teams" class="p-1 rounded bg-slate-800 hover:bg-slate-700 border border-subtle text-slate-300 text-xs font-bold transition shrink-0">⇄</button>
+        <select id="matchupTeamB" onchange="renderMatchup()" class="min-w-0 max-w-full text-xs px-2.5 py-1.5 rounded border border-subtle bg-slate-900 text-sky-400 font-medium"></select>
+        <button onclick="openMatchups101Modal()" class="text-[11px] px-2.5 py-1.5 rounded border border-subtle bg-slate-800 hover:bg-slate-700 text-slate-300 transition font-bold flex items-center gap-1 ml-2 shrink-0">
           <span>💡</span> 101
         </button>
         <span id="matchupFreshness" class="hidden"></span>
@@ -2135,10 +2142,10 @@ body.theme-analyst .roster-summary .rs-value {
     <footer class="mt-8 pt-4 border-t border-subtle flex justify-between items-center text-[10px] text-slate-500 font-mono">
       <div>© 2026 NFL MATCHUP LAB. ALL RIGHTS RESERVED.</div>
       <div class="flex gap-4">
-        <span>nflverse</span>
-        <span>Next Gen Stats</span>
-        <span>Clay 2026</span>
-        <span>PFF Data</span>
+        <span>nflverse play-by-play</span>
+        <span>FTN charting</span>
+        <span>Clay ${currentSeason()}</span>
+        <span>Supabase rosters</span>
       </div>
     </footer>
   </div>
@@ -3558,8 +3565,8 @@ function homeRedesign2aHtml(){
               <h2 class="h2a-arch" style="margin:0;font:800 38px/1.08 'Archivo',sans-serif;letter-spacing:-.028em;color:#fff;max-width:580px;text-wrap:pretty">Want the number behind the number? Edge grades every prop against the model.</h2>
               <p style="margin:14px 0 0;font:400 14px/1.65 var(--font-sans);color:#a9aeaa;max-width:540px;text-wrap:pretty">Calibrated edge, per-market backtest evidence, line movement and win totals across Kalshi, DraftKings, BetMGM, FanDuel, Caesars and Polymarket. This hub stays the reading room; Edge is the terminal.</p>
               <div style="display:flex;gap:10px;margin-top:20px">
-                <a class="h2a-btn-amber" href="https://edge.shyamsapps.qzz.io" target="_blank" rel="noopener">Open Edge Analytics ↗</a>
-                <span class="h2a-btn-ghost" onclick="window.open('https://edge.shyamsapps.qzz.io/model-lab','_blank')">How the model is graded</span>
+                <a class="h2a-btn-amber" href="https://edgeplay-analytics.pages.dev" target="_blank" rel="noopener">Open Edge Analytics ↗</a>
+                <span class="h2a-btn-ghost" onclick="window.open('https://edgeplay-analytics.pages.dev/model-lab','_blank')">How the model is graded</span>
               </div>
             </div>
             <div style="background:rgba(255,255,255,.03);border:1px solid #2b3037;border-radius:10px;padding:20px">
@@ -4962,7 +4969,8 @@ function formationPlayerHtml(p, isOffense, slot) {
   const tier = (Number(p.ovr) || 0) >= 90 ? 'rating-elite' : (Number(p.ovr) || 0) >= 80 ? 'rating-star' : (Number(p.ovr) || 0) >= 70 ? 'rating-solid' : 'rating-dev';
   const escName = attrEsc(p.name);
   const escTeam = attrEsc(teamNameOf(p));
-  return `<div class="formation-player" onclick="openPlayerModal('${escName.replace(/'/g, "\\'")}','${escTeam.replace(/'/g, "\\'")}')" title="${escName} · ${p.pos} · OVR ${p.ovr || '—'}">
+  const openPlayer = `openPlayerModal('${escName.replace(/'/g, "\\'")}','${escTeam.replace(/'/g, "\\'")}')`;
+  return `<div class="formation-player" tabindex="0" role="button" aria-label="${escName} · ${p.pos} · OVR ${p.ovr || '—'}" onclick="${openPlayer}" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();${openPlayer}}" title="${escName} · ${p.pos} · OVR ${p.ovr || '—'}">
     <div class="fp-circle ${isOffense ? 'fp-o' : 'fp-x'}">${p.pos}<span class="fp-rating rating-badge ${tier}">${p.ovr || '—'}</span></div>
     <div class="fp-name">${escName}</div>
     <div class="fp-slot">${slot || p.pos}</div>
@@ -5015,7 +5023,7 @@ function getTeamStanding(teamName) {
 // 1-32 across the league for a real metric; nothing here is invented.
 // Defense ranks invert the metric so 1 = best (e.g. lowest EPA/play).
 function computeTeamNextGenRanks(teamName) {
-  const rank = (side, metric) => efficiencyRank(teamName, side, metric, 2025);
+  const rank = (side, metric) => efficiencyRank(teamName, side, metric, measuredEpaSeason());
   const offense = {};
   const defense = {};
   for (const s of [...PASSING_SPLITS, ...RUSHING_SPLITS, ...TRENCH_SPLITS]) {
@@ -5088,14 +5096,14 @@ function getTeamAtAGlance(teamName) {
   const diffStr = std ? ((Number(std.diff) >= 0 ? '+' : '') + Math.round(Number(std.diff))) : null;
   const ppgRank = std ? getClayStandingRank(teamName, 'pf') : null;
   const diffRank = std ? getClayStandingRank(teamName, 'diff') : null;
-  const epaOff = efficiencyValue(teamName, 'off', 'epa_per_play', 2025);
-  const epaOffRank = efficiencyRank(teamName, 'off', 'epa_per_play', 2025);
-  const epaDef = efficiencyValue(teamName, 'def', 'epa_per_play', 2025);
-  const epaDefRank = efficiencyRank(teamName, 'def', 'epa_per_play', 2025);
-  const successOff = efficiencyValue(teamName, 'off', 'success_rate', 2025);
-  const successOffRank = efficiencyRank(teamName, 'off', 'success_rate', 2025);
-  const successDef = efficiencyValue(teamName, 'def', 'success_rate', 2025);
-  const successDefRank = efficiencyRank(teamName, 'def', 'success_rate', 2025);
+  const epaOff = efficiencyValue(teamName, 'off', 'epa_per_play', measuredEpaSeason());
+  const epaOffRank = efficiencyRank(teamName, 'off', 'epa_per_play', measuredEpaSeason());
+  const epaDef = efficiencyValue(teamName, 'def', 'epa_per_play', measuredEpaSeason());
+  const epaDefRank = efficiencyRank(teamName, 'def', 'epa_per_play', measuredEpaSeason());
+  const successOff = efficiencyValue(teamName, 'off', 'success_rate', measuredEpaSeason());
+  const successOffRank = efficiencyRank(teamName, 'off', 'success_rate', measuredEpaSeason());
+  const successDef = efficiencyValue(teamName, 'def', 'success_rate', measuredEpaSeason());
+  const successDefRank = efficiencyRank(teamName, 'def', 'success_rate', measuredEpaSeason());
 
   return {
     ppg, ppgRank, diffStr, diffRank,
@@ -5127,12 +5135,12 @@ function generateMatchupInsights(tA, tB, game) {
   const ugB = CLAY_DATA?.unit_grades?.[tB] || {};
 
   // Real 2025 efficiency ranks (nflverse).
-  const offEffA = efficiencyRank(tA, 'off', 'epa_per_play', 2025);
-  const defEffB = efficiencyRank(tB, 'def', 'epa_per_play', 2025);
-  const offEffB = efficiencyRank(tB, 'off', 'epa_per_play', 2025);
-  const defEffA = efficiencyRank(tA, 'def', 'epa_per_play', 2025);
+  const offEffA = efficiencyRank(tA, 'off', 'epa_per_play', measuredEpaSeason());
+  const defEffB = efficiencyRank(tB, 'def', 'epa_per_play', measuredEpaSeason());
+  const offEffB = efficiencyRank(tB, 'off', 'epa_per_play', measuredEpaSeason());
+  const defEffA = efficiencyRank(tA, 'def', 'epa_per_play', measuredEpaSeason());
 
-  const rankText = (r) => r != null ? `2025 EPA/play rank #${r}` : '2025 EPA/play rank unavailable';
+  const rankText = (r) => r != null ? `${measuredEpaSeason()} EPA/play rank #${r}` : `${measuredEpaSeason()} EPA/play rank unavailable`;
   const rosterText = (p) => {
     if (!p) return '';
     const depth = Number(p.depth_chart_order ?? p.depthChartOrder ?? p.depth);
@@ -5245,18 +5253,15 @@ function renderMatchupHeroBanner(game, tA, tB) {
   `;
 }
 
-function renderMatchupSidebar(game, tA, tB, prob) {
+function renderMatchupSidebar(game, tA, tB) {
   const m = game?.market;
 
-  const awayProb = prob != null ? ((1 - prob) * 100).toFixed(1) : null;
-  const homeProb = prob != null ? (prob * 100).toFixed(1) : null;
-
-  const effSuccA = efficiencyValue(tA, 'off', 'success_rate', 2025);
-  const effSuccB = efficiencyValue(tB, 'off', 'success_rate', 2025);
-  const effYppA = efficiencyValue(tA, 'off', 'yds_per_play', 2025);
-  const effYppB = efficiencyValue(tB, 'off', 'yds_per_play', 2025);
-  const effSackA = efficiencyValue(tA, 'off', 'sack_rate', 2025);
-  const effSackB = efficiencyValue(tB, 'off', 'sack_rate', 2025);
+  const effSuccA = efficiencyValue(tA, 'off', 'success_rate', measuredEpaSeason());
+  const effSuccB = efficiencyValue(tB, 'off', 'success_rate', measuredEpaSeason());
+  const effYppA = efficiencyValue(tA, 'off', 'yds_per_play', measuredEpaSeason());
+  const effYppB = efficiencyValue(tB, 'off', 'yds_per_play', measuredEpaSeason());
+  const effSackA = efficiencyValue(tA, 'off', 'sack_rate', measuredEpaSeason());
+  const effSackB = efficiencyValue(tB, 'off', 'sack_rate', measuredEpaSeason());
 
   const abbrA = DATA.teamAbbr[tA] || tA;
   const abbrB = DATA.teamAbbr[tB] || tB;
@@ -5265,23 +5270,6 @@ function renderMatchupSidebar(game, tA, tB, prob) {
   const fmtYpp = (v) => v != null ? v.toFixed(1) : '—';
 
   return `
-    <!-- Win Probability Card -->
-    <div class="bg-surface-card border border-subtle rounded-lg p-4 flex flex-col gap-3">
-      <div class="flex justify-between items-end mb-1">
-        <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Win Probability</span>
-        <div class="flex gap-3 font-mono text-xs font-semibold">
-          <span class="text-sky-400">${attrEsc(abbrA)} ${awayProb != null ? awayProb + '%' : '—'}</span>
-          <span class="text-cyber-lime">${attrEsc(abbrB)} ${homeProb != null ? homeProb + '%' : '—'}</span>
-        </div>
-      </div>
-      <div class="h-2 w-full bg-slate-800 rounded-full overflow-hidden flex">
-        ${awayProb != null && homeProb != null ? `
-          <div class="bg-sky-400 h-full" style="width: ${awayProb}%"></div>
-          <div class="bg-cyber-lime h-full" style="width: ${homeProb}%"></div>
-        ` : `<div class="bg-slate-700 h-full w-full opacity-40"></div>`}
-      </div>
-    </div>
-
     <!-- Betting Market Card -->
     <div class="bg-surface-card border border-subtle rounded-lg p-4 flex flex-col gap-3">
       <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Betting Market</span>
@@ -5300,7 +5288,7 @@ function renderMatchupSidebar(game, tA, tB, prob) {
     <!-- Efficiency Strip Card -->
     <div class="bg-surface-card border border-subtle rounded-lg p-4 flex flex-col gap-3">
       <div class="flex justify-between items-center">
-        <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">2025 Efficiency (${attrEsc(abbrA)} vs ${attrEsc(abbrB)})</span>
+        <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">${measuredEpaSeason()} Efficiency (${attrEsc(abbrA)} vs ${attrEsc(abbrB)})</span>
         <span class="text-[9px] font-mono text-slate-500">nflverse</span>
       </div>
       <div class="flex flex-col gap-3">
@@ -5345,8 +5333,8 @@ function renderAtAGlanceTable(tA, tB) {
   const rows = [
     { label: 'Points Per Game (proj)', vA: cell(gA.ppg, gA.ppgRank), vB: cell(gB.ppg, gB.ppgRank) },
     { label: 'Point Differential (proj)', vA: cell(gA.diffStr, gA.diffRank), vB: cell(gB.diffStr, gB.diffRank) },
-    { label: 'Off EPA/play 2025', vA: cell(gA.epaOff != null ? gA.epaOff.toFixed(3) : null, gA.epaOffRank), vB: cell(gB.epaOff != null ? gB.epaOff.toFixed(3) : null, gB.epaOffRank) },
-    { label: 'Def EPA/play 2025', vA: cell(gA.epaDef != null ? gA.epaDef.toFixed(3) : null, gA.epaDefRank), vB: cell(gB.epaDef != null ? gB.epaDef.toFixed(3) : null, gB.epaDefRank) },
+    { label: `Off EPA/play ${measuredEpaSeason()}`, vA: cell(gA.epaOff != null ? gA.epaOff.toFixed(3) : null, gA.epaOffRank), vB: cell(gB.epaOff != null ? gB.epaOff.toFixed(3) : null, gB.epaOffRank) },
+    { label: `Def EPA/play ${measuredEpaSeason()}`, vA: cell(gA.epaDef != null ? gA.epaDef.toFixed(3) : null, gA.epaDefRank), vB: cell(gB.epaDef != null ? gB.epaDef.toFixed(3) : null, gB.epaDefRank) },
     { label: 'Off Success Rate 2025', vA: cell(gA.successOff != null ? (gA.successOff * 100).toFixed(0) + '%' : null, gA.successOffRank), vB: cell(gB.successOff != null ? (gB.successOff * 100).toFixed(0) + '%' : null, gB.successOffRank) },
     { label: 'Def Success Rate 2025', vA: cell(gA.successDef != null ? (gA.successDef * 100).toFixed(0) + '%' : null, gA.successDefRank), vB: cell(gB.successDef != null ? (gB.successDef * 100).toFixed(0) + '%' : null, gB.successDefRank) },
   ];
@@ -5357,7 +5345,7 @@ function renderAtAGlanceTable(tA, tB) {
         <h2 class="text-sm font-bold text-white flex items-center gap-2 uppercase tracking-wide">
           <span class="text-sky-400">📋</span> At a Glance Comparison
         </h2>
-        <span class="text-[10px] font-mono text-slate-400">2025 MEASURED & 2026 PROJECTIONS</span>
+        <span class="text-[10px] font-mono text-slate-400">${measuredEpaSeason()} MEASURED & ${currentSeason()} PROJECTIONS</span>
       </div>
       <table class="w-full text-left border-collapse">
         <thead>
@@ -5378,7 +5366,7 @@ function renderAtAGlanceTable(tA, tB) {
         </tbody>
       </table>
       <div class="mt-3 pt-2 border-t border-subtle/50 text-[10px] text-slate-500 font-mono flex justify-between items-center">
-        <span>Sources & Method: 2025 measured EPA and Clay 2026 model</span>
+        <span>Sources & Method: ${measuredEpaSeason()} measured EPA and Clay ${currentSeason()} model</span>
         <span class="text-slate-600">Model verified</span>
       </div>
     </div>
@@ -5415,8 +5403,8 @@ function renderMatchupComparisonsSideBySide(splits, tA, tB, categoryTitle) {
   const leftRows = splits.map(s => {
     const offRank = ranksA.offense[s.id] != null ? ranksA.offense[s.id] : null;
     const defRank = ranksB.defense[s.id] != null ? ranksB.defense[s.id] : null;
-    const offVal = efficiencyValue(tA, 'off', s.id, 2025);
-    const defVal = efficiencyValue(tB, 'def', s.id, 2025);
+    const offVal = efficiencyValue(tA, 'off', s.id, measuredEpaSeason());
+    const defVal = efficiencyValue(tB, 'def', s.id, measuredEpaSeason());
     const adv = computeAdvantage(offRank, defRank, tA, tB);
     return {
       id: s.id,
@@ -5433,8 +5421,8 @@ function renderMatchupComparisonsSideBySide(splits, tA, tB, categoryTitle) {
   const rightRows = splits.map(s => {
     const offRank = ranksB.offense[s.id] != null ? ranksB.offense[s.id] : null;
     const defRank = ranksA.defense[s.id] != null ? ranksA.defense[s.id] : null;
-    const offVal = efficiencyValue(tB, 'off', s.id, 2025);
-    const defVal = efficiencyValue(tA, 'def', s.id, 2025);
+    const offVal = efficiencyValue(tB, 'off', s.id, measuredEpaSeason());
+    const defVal = efficiencyValue(tA, 'def', s.id, measuredEpaSeason());
     const adv = computeAdvantage(offRank, defRank, tB, tA);
     return {
       id: s.id,
@@ -5453,7 +5441,7 @@ function renderMatchupComparisonsSideBySide(splits, tA, tB, categoryTitle) {
         <h3 class="text-xs font-bold ${isLeft ? 'text-sky-400' : 'text-indigo-400'} uppercase tracking-wide flex items-center gap-1.5">
           <span>⚔️</span> ${attrEsc(offAbbr)} Offense vs ${attrEsc(defAbbr)} Defense
         </h3>
-        <span class="text-[10px] font-mono text-slate-400">2025 MEASURED</span>
+        <span class="text-[10px] font-mono text-slate-400">${measuredEpaSeason()} MEASURED</span>
       </div>
       <table class="w-full text-left border-collapse">
         <thead>
@@ -5500,8 +5488,8 @@ function renderKeyAdvantagesPanel(tA, tB) {
   const leftKey = allSplits.map(s => {
     const offRank = ranksA.offense[s.id] != null ? ranksA.offense[s.id] : null;
     const defRank = ranksB.defense[s.id] != null ? ranksB.defense[s.id] : null;
-    const offVal = efficiencyValue(tA, 'off', s.id, 2025);
-    const defVal = efficiencyValue(tB, 'def', s.id, 2025);
+    const offVal = efficiencyValue(tA, 'off', s.id, measuredEpaSeason());
+    const defVal = efficiencyValue(tB, 'def', s.id, measuredEpaSeason());
     const adv = computeAdvantage(offRank, defRank, tA, tB);
     return { id: s.id, label: s.label, offRank, defRank, offVal, defVal, adv };
   }).filter(r => r.adv && !r.adv.unavailable && r.adv.stars > 0 && r.adv.team === tA)
@@ -5510,8 +5498,8 @@ function renderKeyAdvantagesPanel(tA, tB) {
   const rightKey = allSplits.map(s => {
     const offRank = ranksB.offense[s.id] != null ? ranksB.offense[s.id] : null;
     const defRank = ranksA.defense[s.id] != null ? ranksA.defense[s.id] : null;
-    const offVal = efficiencyValue(tB, 'off', s.id, 2025);
-    const defVal = efficiencyValue(tA, 'def', s.id, 2025);
+    const offVal = efficiencyValue(tB, 'off', s.id, measuredEpaSeason());
+    const defVal = efficiencyValue(tA, 'def', s.id, measuredEpaSeason());
     const adv = computeAdvantage(offRank, defRank, tB, tA);
     return { id: s.id, label: s.label, offRank, defRank, offVal, defVal, adv };
   }).filter(r => r.adv && !r.adv.unavailable && r.adv.stars > 0 && r.adv.team === tB)
@@ -5575,7 +5563,7 @@ function renderMatchupInsightsPanel(tA, tB, game) {
           <span class="text-[10px] font-mono text-slate-400">SITUATIONAL INTELLIGENCE</span>
         </div>
         <p class="text-xs text-slate-400 leading-relaxed">
-          Synthesized from 2025 Next Gen Stats efficiency, Clay 2026 unit grades, and depth charts. Note: Evaluation excludes player-vs-player assignments, injury status, or a player-specific weekly projection.
+          Synthesized from ${measuredEpaSeason()} nflverse efficiency, Clay ${currentSeason()} unit grades, and depth charts. Note: Evaluation excludes player-vs-player assignments, injury status, or a player-specific weekly projection.
         </p>
       </div>
 
@@ -5614,7 +5602,7 @@ function renderMatchupInsightsPanel(tA, tB, game) {
         </div>
       `}
       <div class="text-[10px] text-slate-500 font-mono flex justify-between items-center px-1">
-        <span>Sources & Method: 2025 measured EPA and Next Gen Stats</span>
+        <span>Sources & Method: ${measuredEpaSeason()} measured EPA (nflverse)</span>
         <span class="text-slate-600">Model verified</span>
       </div>
     </div>
@@ -5688,6 +5676,9 @@ function renderFormationLabPanel(tA, tB, og, dg) {
           <div class="formation-field"><div class="formation-midline"></div>${formationFieldHtml(tB, null, false)}</div>
         </div>
       </div>
+      <div class="text-[10px] text-slate-500 font-mono leading-relaxed px-1">
+        Illustrative alignments built from the current roster snapshot — representative personnel and fronts, not a verified game-day lineup or confirmed assignments. Roster snapshot data is not a complete weekly injury report.
+      </div>
     </div>
   `;
 }
@@ -5720,13 +5711,13 @@ function renderPreviewOffVsDefMatrix(offTeam, defTeam, ranksOff, ranksDef, isLef
   const offAbbr = DATA.teamAbbr[offTeam] || offTeam;
   const defAbbr = DATA.teamAbbr[defTeam] || defTeam;
 
-  const passEpaOff = efficiencyValue(offTeam, 'off', 'pass_epa_per_att', 2025);
-  const passEpaDef = efficiencyValue(defTeam, 'def', 'pass_epa_per_att', 2025);
+  const passEpaOff = efficiencyValue(offTeam, 'off', 'pass_epa_per_att', measuredEpaSeason());
+  const passEpaDef = efficiencyValue(defTeam, 'def', 'pass_epa_per_att', measuredEpaSeason());
   const rankPassOff = ranksOff.offense['pass_epa_per_att'];
   const rankPassDef = ranksDef.defense['pass_epa_per_att'];
 
-  const runEpaOff = efficiencyValue(offTeam, 'off', 'run_epa_per_att', 2025);
-  const runEpaDef = efficiencyValue(defTeam, 'def', 'run_epa_per_att', 2025);
+  const runEpaOff = efficiencyValue(offTeam, 'off', 'run_epa_per_att', measuredEpaSeason());
+  const runEpaDef = efficiencyValue(defTeam, 'def', 'run_epa_per_att', measuredEpaSeason());
   const rankRunOff = ranksOff.offense['run_epa_per_att'];
   const rankRunDef = ranksDef.defense['run_epa_per_att'];
 
@@ -5749,14 +5740,14 @@ function renderPreviewOffVsDefMatrix(offTeam, defTeam, ranksOff, ranksDef, isLef
         <h2 class="text-sm font-bold text-white flex items-center gap-2 uppercase tracking-wide">
           <span>⚔️</span> <span class="${offColor}">${attrEsc(offAbbr)} Offense</span> <span class="text-slate-500 font-normal">vs</span> <span class="${defColor}">${attrEsc(defAbbr)} Defense</span>
         </h2>
-        <span class="text-[10px] font-mono text-slate-400 bg-slate-800 px-2 py-0.5 rounded border border-subtle">2025 MEASURED</span>
+        <span class="text-[10px] font-mono text-slate-400 bg-slate-800 px-2 py-0.5 rounded border border-subtle">${measuredEpaSeason()} MEASURED</span>
       </div>
 
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 mb-3">
         <div class="bg-slate-800/40 p-2.5 border border-subtle rounded flex flex-col gap-1">
           <div class="flex items-center justify-between">
             <span class="text-[9px] font-bold uppercase tracking-wider text-sky-400 font-mono">PASS ATTACK (EPA/ATT)</span>
-            <span class="text-[9px] font-mono text-slate-500">2025</span>
+            <span class="text-[9px] font-mono text-slate-500">${measuredEpaSeason()}</span>
           </div>
           <div class="flex items-center justify-between font-mono text-xs">
             <div class="flex items-center gap-1.5">
@@ -5805,10 +5796,10 @@ function renderPreviewOffVsDefMatrix(offTeam, defTeam, ranksOff, ranksDef, isLef
         </thead>
         <tbody class="font-mono text-xs">
           ${rows.map(r => {
-            const vOff = efficiencyValue(offTeam, 'off', r.id, 2025);
-            const vDef = efficiencyValue(defTeam, 'def', r.id, 2025);
-            const rOff = ranksOff.offense[r.id] ?? efficiencyRank(offTeam, 'off', r.id, 2025);
-            const rDef = ranksDef.defense[r.id] ?? efficiencyRank(defTeam, 'def', r.id, 2025);
+            const vOff = efficiencyValue(offTeam, 'off', r.id, measuredEpaSeason());
+            const vDef = efficiencyValue(defTeam, 'def', r.id, measuredEpaSeason());
+            const rOff = ranksOff.offense[r.id] ?? efficiencyRank(offTeam, 'off', r.id, measuredEpaSeason());
+            const rDef = ranksDef.defense[r.id] ?? efficiencyRank(defTeam, 'def', r.id, measuredEpaSeason());
             const adv = computeAdvantage(rOff, rDef, offTeam, defTeam);
             return `
               <tr class="matchup-table-row border-b border-subtle/50 hover:bg-slate-800/30 transition-colors">
@@ -5981,10 +5972,10 @@ function renderPreviewInsights(tA, tB, curGame) {
           <h2 class="text-sm font-bold text-white flex items-center gap-2 uppercase tracking-wide">
             <span class="text-amber-400">💡</span> Matchup Insights
           </h2>
-          <span class="text-[10px] font-mono text-slate-400">2026 ROSTER & 2025 DATA</span>
+          <span class="text-[10px] font-mono text-slate-400">${currentSeason()} ROSTER & ${measuredEpaSeason()} DATA</span>
         </div>
         <div class="text-xs text-slate-400 py-4 text-center leading-relaxed font-mono">
-          Matchup insights require verified starter and 2025 efficiency data. None currently available for this pairing.
+          Matchup insights require verified starter and ${measuredEpaSeason()} efficiency data. None currently available for this pairing.
         </div>
       </div>
     `;
@@ -5999,7 +5990,7 @@ function renderPreviewInsights(tA, tB, curGame) {
         <h2 class="text-sm font-bold text-white flex items-center gap-2 uppercase tracking-wide">
           <span class="text-amber-400">💡</span> Matchup Insights
         </h2>
-        <span class="text-[10px] font-mono text-slate-400">2026 ROSTER & 2025 EPA</span>
+        <span class="text-[10px] font-mono text-slate-400">${currentSeason()} ROSTER & ${measuredEpaSeason()} EPA</span>
       </div>
       <div class="flex flex-col gap-3 text-xs">
         ${previewItems.map((item, idx) => {
@@ -6025,7 +6016,7 @@ function renderPreviewInsights(tA, tB, curGame) {
         }).join('')}
       </div>
       <div class="mt-3 pt-2 border-t border-subtle/50 text-[10px] text-slate-500 leading-normal flex justify-between items-center font-mono">
-        <span>Verified 2026 Depth Chart & 2025 EPA</span>
+        <span>Verified ${currentSeason()} Depth Chart & ${measuredEpaSeason()} EPA</span>
         <button onclick="setMatchupSubTab('insights')" class="text-sky-400 hover:text-sky-300 font-semibold">More insights →</button>
       </div>
     </div>
@@ -6046,40 +6037,167 @@ function renderMatchupPanels() {
   const og = offGrade.length ? offGrade.reduce((s, v) => s + v, 0) / offGrade.length : null;
   const dg = defGrade.length ? defGrade.reduce((s, v) => s + v, 0) / defGrade.length : null;
 
-  const scheduled = !!(MATCHUP_STATE.gameId && curGame);
+  const sub = MATCHUP_STATE.subtab || 'preview';
+
+  // Preserve keyboard focus across the re-render: the innerHTML swap below
+  // replaces the focused node, so save which control was active and refocus
+  // its replacement afterward. Covers the possession toggle, the Formation
+  // Lab player chips, and the personnel/front selects.
+  const activeEl = document.activeElement;
+  let focusKey = null;
+  if (activeEl && main.contains(activeEl)) {
+    if (activeEl.classList && activeEl.classList.contains('formation-player')) {
+      focusKey = 'formation';
+    } else if (activeEl.getAttribute && activeEl.getAttribute('onclick') && activeEl.getAttribute('onclick').includes('swapViewedOffense')) {
+      focusKey = 'swap';
+    } else if (activeEl.id === 'matchupPersonnel' || activeEl.id === 'matchupFront') {
+      focusKey = activeEl.id;
+    }
+  }
+
+  if (sub === 'preview') {
+    main.innerHTML = renderPreviewSubtab(tA, tB, curGame, og, dg);
+  } else if (sub === 'overview') {
+    main.innerHTML = `
+      <div class="space-y-4">
+        ${renderAtAGlanceTable(tA, tB)}
+        ${renderKeyAdvantagesPanel(tA, tB)}
+      </div>
+    `;
+  } else if (sub === 'passing') {
+    main.innerHTML = renderMatchupComparisonsSideBySide(PASSING_SPLITS, tA, tB, 'Passing Split Metric');
+  } else if (sub === 'rushing') {
+    main.innerHTML = renderMatchupComparisonsSideBySide(RUSHING_SPLITS, tA, tB, 'Rushing Split Metric');
+  } else if (sub === 'trenches') {
+    main.innerHTML = renderMatchupComparisonsSideBySide(TRENCH_SPLITS, tA, tB, 'Trench & Pressure Metric');
+  } else if (sub === 'insights') {
+    main.innerHTML = renderMatchupInsightsPanel(tA, tB, curGame);
+  } else if (sub === 'formation') {
+    main.innerHTML = renderFormationLabPanel(tA, tB, og, dg);
+  } else {
+    main.innerHTML = renderPreviewSubtab(tA, tB, curGame, og, dg);
+  }
+
+  // After setting innerHTML, activate the pressed toggle on re-render so focus
+  // and aria-pressed stay correct across subtab switches.
+  const toggle = main.querySelector('button[onclick*="swapViewedOffense"]');
+  if (toggle) toggle.setAttribute('aria-pressed', (MATCHUP_STATE.viewedOffense === 'A') ? 'true' : 'false');
+
+  // Refocus the replacement of the control that had focus before the render.
+  if (focusKey) {
+    let target = null;
+    if (focusKey === 'swap') target = main.querySelector('button[onclick*="swapViewedOffense"]');
+    else if (focusKey === 'formation') target = main.querySelector('.formation-player');
+    else target = document.getElementById(focusKey);
+    if (target && typeof target.focus === 'function') target.focus();
+  }
+
+  // Load 2025 team tendencies on first preview render (lazy, non-blocking).
+  if (!TEAM_TENDENCIES_LOADED) {
+    (async () => {
+      try {
+        const mod = await import('./scripts/load_team_tendencies.js');
+        const data = await mod.loadTeamTendencies();
+        TEAM_TENDENCIES_LOADED = true;
+        window.TEAM_TENDENCIES_STATE = (data && data.absent) ? 'absent' : 'present';
+        // Attach the functions to the window so that subsequent calls to renderMatchupPanels can use them.
+        window.loadTeamTendencies = mod.loadTeamTendencies;
+        window.getTeamTendency = mod.getTeamTendency;
+        window.renderTeamTendenciesDisclosure = mod.renderTeamTendenciesDisclosure;
+        renderMatchupPanels();
+      } catch (e) {
+        TEAM_TENDENCIES_LOADED = true;
+        window.TEAM_TENDENCIES_STATE = 'absent';
+        console.warn('[renderMatchupPanels] tendencies load failed, continuing with EPA only', e && e.message);
+      }
+    })();
+  }
+}
+
+// Build the preview subtab: question banner, EPA bars, tendencies disclosure,
+// and existing pro-preview matrix + grades + insights.
+// Measured-data seasons, derived from the data itself so a regenerated
+// artifact (e.g. a future 2026 rebuild) flips the labels without code edits.
+// Historical measured stats are never presented as current-season numbers:
+// the current season comes from the schedule, a separate label.
+function measuredEpaSeason() {
+  if (EFFICIENCY_DATA && EFFICIENCY_DATA.length) {
+    const seasons = EFFICIENCY_DATA.map(r => Number(r.season)).filter(Number.isFinite);
+    if (seasons.length) return Math.max(...seasons);
+  }
+  return 2025; // last completed season; contract default until data loads
+}
+
+function tendenciesSeason() {
+  const op = typeof teamTendenciesObservationPeriod === 'function'
+    ? teamTendenciesObservationPeriod()
+    : null;
+  const s = op && Number(op.season);
+  return Number.isFinite(s) ? s : measuredEpaSeason();
+}
+
+function currentSeason() {
+  if (SCHEDULE_DATA && Number(SCHEDULE_DATA.season)) return Number(SCHEDULE_DATA.season);
+  return 2026; // contract default while the schedule is not loaded
+}
+
+// The artifact keys records by abbreviation (NE, SEA). Lookups use the abbr;
+// display keeps the full team name.
+function playActionSentence(offTeam, defTeam, offAbbr, defAbbr) {
+  const offRec = getTeamTendency(offAbbr, 'off', 'play_action');
+  const defRec = getTeamTendency(defAbbr, 'def', 'play_action');
+  const pct = (v) => (v * 100).toFixed(1) + '%';
+  if (!offRec && !defRec) {
+    return `${tendenciesSeason()} play-action charting is unavailable for this matchup, so the question is not computed here. EPA and the field remain available.`;
+  }
+  const parts = [];
+  if (offRec && offRec.value !== null) {
+    parts.push(`${attrEsc(offTeam)} used play-action on ${offRec.numerator} of ${offRec.observed} dropbacks, ${pct(offRec.value)}.`);
+  } else if (offRec) {
+    parts.push(`No play-action observations were recorded for ${attrEsc(offTeam)} in the ${tendenciesSeason()} regular season.`);
+  } else {
+    parts.push(`${attrEsc(offTeam)} play-action usage is unavailable.`);
+  }
+  if (defRec && defRec.value !== null) {
+    parts.push(`Opponents used it on ${defRec.numerator} of ${defRec.observed} dropbacks against ${attrEsc(defTeam)}, ${pct(defRec.value)}.`);
+  } else if (defRec) {
+    parts.push(`No opponent play-action observations were recorded against ${attrEsc(defTeam)} in the ${tendenciesSeason()} regular season.`);
+  } else {
+    parts.push(`Opponent play-action exposure against ${attrEsc(defTeam)} is unavailable.`);
+  }
+  parts.push(`This snapshot does not measure ${attrEsc(defTeam)}'s results against play-action.`);
+  return parts.join(' ');
+}
+
+function renderPreviewSubtab(tA, tB, curGame, og, dg) {
   const viewedOffenseIsA = MATCHUP_STATE.viewedOffense === 'A';
   const viewedOffTeam = viewedOffenseIsA ? tA : tB;
   const viewedDefTeam = viewedOffenseIsA ? tB : tA;
-
-  // Free tendencies question: the viewed offense's 2025 tendency vs the opposing
-  // defense's 2025 exposure. Defensive exposure is an opponent-observed count,
-  // not a measure of defensive effectiveness or a winner prediction.
-  const viewedOffRec = getTeamTendency(viewedOffTeam, 'off', 'play_action');
-  const viewedDefRec = getTeamTendency(viewedDefTeam, 'def', 'play_action');
-
-  const offRateLine =
-    viewedOffRec && typeof viewedOffRec.value === 'number' && Number.isFinite(viewedOffRec.value)
-      ? `${(viewedOffRec.value * 100).toFixed(1)}% of ${viewedOffRec.denominator} (${viewedOffRec.numerator}/${viewedOffRec.observed})`
-      : '2025 regular-season rate unavailable';
-  const defExposureLine =
-    viewedDefRec && typeof viewedDefRec.value === 'number' && Number.isFinite(viewedDefRec.value)
-      ? `faced ${viewedDefRec.numerator}/${viewedDefRec.observed} by ${viewedDefTeam} (${defExposurePct(viewedDefRec)})`
-      : '2025 regular-season opponent exposure unavailable';
-
   const labelA = DATA.teamAbbr[tA] || ABBR_TO_TEAM[tA] || tA;
   const labelB = DATA.teamAbbr[tB] || ABBR_TO_TEAM[tB] || tB;
-
-  main.innerHTML = `
-    <!-- MATCHUP QUESTION BANNER: viewed offense's 2025 play-action tendency vs the opposing defense's 2025 exposure -->
+  const offAbbr = DATA.teamAbbr[viewedOffTeam] || ABBR_TO_TEAM[viewedOffTeam] || viewedOffTeam;
+  const defAbbr = DATA.teamAbbr[viewedDefTeam] || ABBR_TO_TEAM[viewedDefTeam] || viewedDefTeam;
+  const tSeason = tendenciesSeason();
+  const eSeason = measuredEpaSeason();
+  const cSeason = currentSeason();
+  const tendenciesState = window.TEAM_TENDENCIES_STATE || 'loading';
+  const tendenciesLabel = tendenciesState === 'present'
+    ? `${tSeason} REG charting loaded`
+    : tendenciesState === 'absent'
+      ? 'unavailable (EPA and field still shown)'
+      : 'loading…';
+  const seasonNote = cSeason !== tSeason
+    ? `${cSeason} season in progress — these numbers measure the ${tSeason} regular season (last completed), not ${cSeason}.`
+    : `Measured in the ${tSeason} regular season.`;
+  return `
+    <!-- MATCHUP QUESTION BANNER: viewed offense's play-action tendency vs the opposing defense's exposure, observation season labeled -->
     <div class="bg-surface-card border border-subtle rounded-lg p-4 space-y-3" role="region" aria-label="Matchup preview question">
       <div class="flex items-start justify-between gap-3">
         <div class="space-y-1">
-          <div class="text-[10px] uppercase tracking-widest font-bold text-slate-500 font-mono">2025 Regular Season · One Question</div>
-          <div class="text-base font-bold text-white leading-snug">How often does ${attrEsc(viewedOffTeam)} run play-action?</div>
-          <div class="text-xs text-slate-400 leading-relaxed">
-            ${attrEsc(viewedOffTeam)} offense used play-action on ${offRateLine}.
-            In 2025 regular-season opponents faced ${defExposureLine}.
-          </div>
+          <div class="text-[10px] uppercase tracking-widest font-bold text-slate-500 font-mono">${tSeason} Regular Season · One Question</div>
+          <div class="text-base font-bold text-white leading-snug">How will ${attrEsc(viewedOffTeam)}'s play-action passing meet ${attrEsc(viewedDefTeam)}'s defense?</div>
+          <div class="text-xs text-slate-400 leading-relaxed">In the ${tSeason} regular season, ${playActionSentence(viewedOffTeam, viewedDefTeam, offAbbr, defAbbr)}</div>
+          <div class="text-[10px] text-slate-500 font-mono">${attrEsc(seasonNote)}</div>
           <div class="text-[10px] text-amber-400/80 font-mono">
             Defensive exposure counts opponent usage, it is not a measure of defensive effectiveness and does not predict a winner.
           </div>
@@ -6101,22 +6219,22 @@ function renderMatchupPanels() {
 
       <!-- PROMINENT EPA BARS: overall, pass, run for the viewed offense vs opposing defense -->
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1 border-t border-subtle/40">
-        ${epaBarHtml('Overall EPA', epaValue(viewedOffTeam, 'off', 'overall'), epaValue(viewedDefTeam, 'def', 'overall'), 'overall', tA, tB, viewedOffenseIsA)}
-        ${epaBarHtml('Pass EPA', epaValue(viewedOffTeam, 'off', 'pass'), epaValue(viewedDefTeam, 'def', 'pass'), 'pass', tA, tB, viewedOffenseIsA)}
-        ${epaBarHtml('Run EPA', epaValue(viewedOffTeam, 'off', 'run'), epaValue(viewedDefTeam, 'def', 'run'), 'run', tA, tB, viewedOffenseIsA)}
+        ${epaBarHtml('Overall EPA', epaValue(viewedOffTeam, 'off', 'epa_per_play'), epaValue(viewedDefTeam, 'def', 'epa_per_play'), 'epa_per_play', tA, tB, viewedOffenseIsA)}
+        ${epaBarHtml('Pass EPA', epaValue(viewedOffTeam, 'off', 'pass_epa_per_att'), epaValue(viewedDefTeam, 'def', 'pass_epa_per_att'), 'pass_epa_per_att', tA, tB, viewedOffenseIsA)}
+        ${epaBarHtml('Run EPA', epaValue(viewedOffTeam, 'off', 'run_epa_per_att'), epaValue(viewedDefTeam, 'def', 'run_epa_per_att'), 'run_epa_per_att', tA, tB, viewedOffenseIsA)}
       </div>
 
       <!-- EVIDENCE DISCLOSURE: definition, denominator, eligibility, missing counts, provenance -->
       <div class="pt-1 border-t border-subtle/40">
-        ${renderTeamTendenciesDisclosure(viewedOffTeam, 'off', 'play_action')}
+        ${renderTeamTendenciesDisclosure(offAbbr, 'off', 'play_action')}
         <div class="mt-2">
-          ${renderTeamTendenciesDisclosure(viewedDefTeam, 'def', 'play_action')}
+          ${renderTeamTendenciesDisclosure(defAbbr, 'def', 'play_action')}
         </div>
         <div class="mt-2 text-[10px] text-slate-500 font-mono space-y-1">
-          <div>Sources & Method: 2025 measured team tendencies (motion, play-action, shotgun) + 2025 EPA and Next Gen Stats.</div>
+          <div>Sources &amp; Method: ${tSeason} measured team tendencies (motion, play-action, shotgun) from FTN charting + nflverse play-by-play, plus ${eSeason} EPA.</div>
           <div class="flex justify-between items-center">
             <span class="text-slate-600">Rosters: ${rosterVersionLabel()}</span>
-            <span class="text-slate-600">Tendencies fetched: ${attrEsc(fetchedAtLabel())}</span>
+            <span class="text-slate-600">Tendencies: ${tendenciesLabel}</span>
           </div>
         </div>
       </div>
@@ -6124,50 +6242,46 @@ function renderMatchupPanels() {
 
     <!-- EXISTING PRO PREVIEW: draft depth + unit grades, kept below the tendencies question -->
     <div class="grid grid-cols-1 lg:grid-cols-9 gap-4">
-      <!-- CENTER RAIL: Team A Off vs Team B Def & Team B Off vs Team A Def (lg:col-span-6) -->
+      <!-- CENTER RAIL: Team A Off vs Team B Def &amp; Team B Off vs Team A Def (lg:col-span-6) -->
       <div class="lg:col-span-6 flex flex-col gap-4">
         ${renderPreviewOffVsDefMatrix(tA, tB, computeTeamNextGenRanks(tA), computeTeamNextGenRanks(tB), true)}
         ${renderPreviewOffVsDefMatrix(tB, tA, computeTeamNextGenRanks(tB), computeTeamNextGenRanks(tA), false)}
       </div>
 
-      <!-- RIGHT RAIL: Unit Grades & Insights (lg:col-span-3) -->
+      <!-- RIGHT RAIL: Unit Grades &amp; Insights (lg:col-span-3) -->
       <div class="lg:col-span-3 flex flex-col gap-4">
         ${renderPreviewUnitGrades(tA, tB)}
         ${renderPreviewInsights(tA, tB, curGame)}
       </div>
     </div>
   `;
-
-  // After setting innerHTML, activate the pressed toggle on re-render so focus
-  // and aria-pressed stay correct across subtab switches.
-  const toggle = main.querySelector('button[onclick*="swapViewedOffense"]');
-  if (toggle) toggle.setAttribute('aria-pressed', viewedOffenseIsA ? 'true' : 'false');
-
-  // Load 2025 team tendencies on first preview render (lazy, non-blocking).
-  if (typeof loadTeamTendencies === 'function' && !TEAM_TENDENCIES_LOADED) {
-    TEAM_TENDENCIES_LOADED = true;
-    (async () => {
-      try {
-        const mod = await import('./scripts/load_team_tendencies.js');
-        await mod.loadTeamTendencies();
-        renderMatchupPanels();
-      } catch (e) {
-        console.warn('[renderMatchupPanels] tendencies load failed, continuing with EPA only', e && e.message);
-      }
-    })();
-  }
 }
 
-function defExposurePct(rec){
-  if (!rec || rec.observed == null || rec.observed === 0) return '—';
-  return (rec.value * 100).toFixed(1) + '%';
+// Global fallback for the tendency lookup. The ES module sets
+// window.getTeamTendency once it loads; until then (and if loading fails)
+// this returns null so renderMatchupPanels never throws a ReferenceError.
+function getTeamTendency(team, side, metric){
+  if (typeof window.getTeamTendency === 'function' && window.getTeamTendency !== getTeamTendency) {
+    return window.getTeamTendency(team, side, metric);
+  }
+  return null;
+}
+
+// Global fallback for the disclosure renderer. The ES module sets
+// window.renderTeamTendenciesDisclosure once it loads.
+function renderTeamTendenciesDisclosure(team, side, metric, rec){
+  if (typeof window.renderTeamTendenciesDisclosure === 'function' && window.renderTeamTendenciesDisclosure !== renderTeamTendenciesDisclosure) {
+    return window.renderTeamTendenciesDisclosure(team, side, metric, rec);
+  }
+  // Return a minimal unavailable state when the module hasn't loaded yet.
+  return `<div class="text-[10px] text-slate-400 font-mono">${tendenciesSeason()} tendency loading…</div>`;
 }
 
 // Normalized overall/pass/run EPA for a team-side, for the prominent matchup bars.
 function epaValue(team, side, metric){
   if (typeof efficiencyValue === 'function') {
     try {
-      return efficiencyValue(team, side, metric, 2025);
+      return efficiencyValue(team, side, metric, measuredEpaSeason());
     } catch (e) {
       return null;
     }
@@ -6208,13 +6322,13 @@ function epaBarHtml(label, offenseVal, defenseVal, metricKey, tA, tB, offenseIsA
   `;
 }
 
+// Roster provenance is tied to the loaded Supabase players only: no fabricated
+// fetched/source-update timestamps, and an explicit note that the field uses
+// available roster information as representative alignments — not a verified
+// game-day availability or injury report.
 function rosterVersionLabel(){
-  if (!DATA || !DATA.players || !DATA.players.length) return 'roster snapshot';
-  return 'Supabase nfl_players (live)';
-}
-
-function fetchedAtLabel(){
-  return 'fetched ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) + ' · source update unknown';
+  const base = (!DATA || !DATA.players || !DATA.players.length) ? 'roster snapshot' : 'Supabase nfl_players roster';
+  return base + ' · illustrative lineups, not game-day availability';
 }
 
 function matchupGameChanged() {
@@ -6317,16 +6431,12 @@ async function renderMatchup() {
     curGame = games.find(g => g.game_id === MATCHUP_STATE.gameId) || null;
   }
 
-  const homeStr = computeTeamOverall(MATCHUP_STATE.teamB);
-  const awayStr = computeTeamOverall(MATCHUP_STATE.teamA);
-  const prob = winProb(homeStr, awayStr);
-
   // Render Hero Banner & Sidebar
   const hero = document.getElementById('matchupHeroBanner');
   if (hero) hero.innerHTML = renderMatchupHeroBanner(curGame, MATCHUP_STATE.teamA, MATCHUP_STATE.teamB);
 
   const sidebar = document.getElementById('matchupSidebar');
-  if (sidebar) sidebar.innerHTML = renderMatchupSidebar(curGame, MATCHUP_STATE.teamA, MATCHUP_STATE.teamB, prob);
+  if (sidebar) sidebar.innerHTML = renderMatchupSidebar(curGame, MATCHUP_STATE.teamA, MATCHUP_STATE.teamB);
 
   // Render Active Subtab Main Content
   renderMatchupPanels();
@@ -6442,6 +6552,7 @@ loadAllData().then(() => {
       if (el) el.innerHTML = dataAgeBadge({ schedule: 'schedule', projections: 'clay_projections', teams: 'rosters', matchup: 'team_efficiency' }[id.replace('Freshness', '')]);
     });
   });
+  loadPipelineStatus();        // checkpoint 4: owner-visible failed-update banner
   renderHome();                 // first-run showcase (hero, features, spotlights)
   renderTeams();
   renderTeamsSubTabs();
@@ -6979,7 +7090,7 @@ function efficiencyRank(team, side, metric, season){
 function efficiencyValue(team, side, metric, season){
   if (!EFFICIENCY_DATA) return null;
   const t = effTeamAbbr(team);
-  const targetSeason = season || 2025;
+  const targetSeason = season || measuredEpaSeason();
   const row = EFFICIENCY_DATA.find(r => r.season === targetSeason && r.side === side && r.team === t);
   if (!row || row[metric] == null) return null;
   const v = Number(row[metric]);
@@ -7682,6 +7793,46 @@ async function loadFreshness(){
     if (res.ok && isJsonResponse(res)) FRESHNESS = await res.json();
   } catch (err) { /* absent manifest = no stamps, never block rendering */ }
   return FRESHNESS;
+}
+
+// Checkpoint 4: the pipeline run signal. daily-pipeline.sh writes
+// pipeline-status.json on EVERY run (ok or failed) into data/shared and the
+// deploy layer, so a failed automatic update is owner-visible in the app — an
+// unread launchd log alone is not a signal. Absent file = no claim; ok =
+// nothing to show; failed = a visible banner with the failing step, the run
+// time, and how to recover. Nothing is ever invented from model knowledge.
+let PIPELINE_STATUS = null;
+let PIPELINE_STATUS_LOADED = false;
+async function loadPipelineStatus(){
+  if (PIPELINE_STATUS_LOADED) return PIPELINE_STATUS;
+  PIPELINE_STATUS_LOADED = true;
+  try {
+    const res = await fetch('./data/shared/pipeline-status.json', { cache: 'no-store' });
+    if (res.ok && isJsonResponse(res)) PIPELINE_STATUS = await res.json();
+  } catch (err) { /* absent status file = no banner, never block rendering */ }
+  renderPipelineStatusBanner();
+  return PIPELINE_STATUS;
+}
+
+function renderPipelineStatusBanner(){
+  const el = document.getElementById('pipelineStatusBanner');
+  if (!el) return;
+  if (!PIPELINE_STATUS || PIPELINE_STATUS.status !== 'failed') {
+    el.className = 'hidden';
+    el.innerHTML = '';
+    return;
+  }
+  const failedAt = PIPELINE_STATUS.finished_at || PIPELINE_STATUS.started_at || '';
+  const step = PIPELINE_STATUS.failed_step || 'an unknown step';
+  const when = failedAt ? ' on ' + homeEsc(String(failedAt).slice(0, 16).replace('T', ' ')) + ' UTC' : '';
+  const exitNote = Number.isFinite(Number(PIPELINE_STATUS.exit_code)) ? ` (exit ${PIPELINE_STATUS.exit_code})` : '';
+  el.className = 'bg-red-950/70 border-b border-red-500/40 text-red-200 text-[11px] font-mono px-4 py-2';
+  el.innerHTML = `<div class="max-w-[1600px] mx-auto flex flex-wrap items-center gap-x-2 gap-y-1">`
+    + `<span class="font-bold uppercase tracking-wider text-red-300">⚠ Last automatic data update failed</span>`
+    + `<span>at step <b>${attrEsc(step)}</b>${when}${exitNote}.</span>`
+    + `<span class="text-red-300/70">The preview below is the last published data.</span>`
+    + `<span class="ml-auto">Recovery: <code>npm run props:daily</code> in <code>fantasyfootball/</code> (or <code>launchctl kickstart -k gui/$(id -u)/com.nfldashboard.props-scan</code>).</span>`
+    + `</div>`;
 }
 
 // Human-readable "data from Xh ago" for a panel, or '' when unknown.

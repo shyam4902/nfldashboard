@@ -1,6 +1,6 @@
 # NFL Dashboard state
 
-- Updated: 2026-09-06
+- Updated: 2026-09-08
 - Live: https://nfldashboard.pages.dev/
 - Repo: https://github.com/shyam4902/nfldashboard
 - App: static `index.html`, tracked JSON assets, and Supabase roster/transaction data
@@ -18,14 +18,101 @@
 - Simplified navigation: removed Matchup from header, renamed Compare to Player Compare, direct links to Matchup Center.
 - Verified: `python3 test_all_extensions.py` (32 passing checks, 0 console errors), `node scripts/validate-data.js` (16/16).
 
+## Checkpoint 3 (2026-09-07): clear season context
+
+- Matchup preview season labels are now derived from the data, not hardcoded:
+  tendencies season comes from the artifact's `observation_period`
+  (`teamTendenciesObservationPeriod` exposed by `scripts/load_team_tendencies.js`),
+  EPA season from the max `season` in the efficiency dataset
+  (`measuredEpaSeason()`), and the current season from `schedule.json.season`
+  (`currentSeason()`). A regenerated artifact for a new season flips every
+  label without code edits.
+- The preview states the current season is in progress when it differs from
+  the measured season ("2026 season in progress — these numbers measure the
+  2025 regular season (last completed), not 2026"), so a 2026 roster or
+  schedule never makes the 2025 measured stats appear current. Disclosure and
+  banner labels keep the observation window (weeks 1-18, 272 games), the
+  aggregation time, and the "not a current-season measurement" note separate.
+- Formation Lab now explains the field: illustrative alignments from the
+  current roster snapshot — not a verified game-day lineup or confirmed
+  assignments, and not a complete weekly injury report. The footer source
+  credit row was corrected to the sources actually used (nflverse play-by-play,
+  FTN charting, Clay, Supabase rosters) — the old row claimed Next Gen Stats
+  and PFF, which this app does not use.
+- `README.md` gained a "Matchup preview: season labels and update rules"
+  section: per-source update cadence, how each season is determined, and what
+  the app shows before the data arrives, including the recorded 2026
+  current-season limitation and what would enable it.
+- Tests: `scripts/team_tendencies.test.js` gained a fixture-based 2026
+  observation-period label test (18/18); `test_all_extensions.py` asserts the
+  last-completed label, the current-season-in-progress note, and the Formation
+  Lab field note (all green).
+
+## Checkpoint 4 (2026-09-07): owner-visible failed-update banner
+
+- The dashboard now fetches `./data/shared/pipeline-status.json` on load
+  (`loadPipelineStatus()`, cache no-store, never blocks rendering) and, when it
+  reports `status: "failed"`, renders a visible banner under the header with
+  the failing step, run time (UTC), exit code, a "last published data" note,
+  and the recovery command. `ok` or absent file = no banner (no claim).
+- `test_all_extensions.py` asserts all three states via route interception:
+  no banner on healthy `ok`, a visible banner with step/recovery on `failed`,
+  and no banner and no error when the file is absent (0 console / 0 page
+  errors, full suite green).
+- The writer lives in the producer: `fantasyfootball/scripts/daily-pipeline.sh`
+  writes `pipeline-status.json` on every run (see fantasyfootball STATE.md).
+
+## Checkpoint 5 (2026-09-08): release rehearsal fixes
+
+- Home hero Edge-promo buttons linked to the dead custom domain
+  (`edge.shyamsapps.qzz.io`) — rewritten to the canonical
+  `edgeplay-analytics.pages.dev` (+ `/model-lab`) per `docs/agents/edge-url-policy.md`.
+- `_redirects` deny list extended with `/schedule-redesign.html` and
+  `/home-redesign.html` (tracked/working scratch HTML that was previously
+  fetchable). `_redirects` itself is untracked — it must be committed with
+  the release or the live site keeps serving internal files (verified:
+  live `nfldashboard.pages.dev` still returns 200 for AGENTS.md/STATE.md/
+  scripts/* — Sept 4 blocker B2 is fixed in-repo but never shipped).
+- Mobile horizontal overflow fixed on the Matchup tab (Sept 4 blocker B5):
+  the team-picker row (`#matchupGame`/`#matchupTeamA`/`#matchupTeamB`
+  selects) forced the page to 535px at a 390px viewport. Selects now
+  shrink (`min-w-0`) and the team row wraps. All 7 Matchup subtabs and all
+  3 Teams sub-tabs now measure exactly 390px at a 390px viewport.
+- Keyboard access hardened:
+  - `renderMatchupPanels()` preserves focus across re-renders (possession
+    toggle, Formation Lab player chips, personnel/front selects) — the
+    innerHTML swap previously dropped keyboard focus after a swap.
+  - Formation Lab starter chips are now real controls: `tabindex="0"`,
+    `role="button"`, `aria-label`, and Enter/Space opens the player modal.
+- `checkpoint5_rehearsal.py` added: release-rehearsal browser probe
+  (desktop walkthrough + mobile overflow on every Matchup/Teams subtab +
+  possession swap + keyboard + cross-app link checks).
+
 ## In flight
 
-- Agent D local matchup preview for 2025 team tendencies (`MATCHUP_STATE.gameId`, `load_team_tendencies.js`).
+- Checkpoint 2 (trustworthy evidence) repairs on the local matchup preview:
+  - `scripts/load_team_tendencies.js` now rejects malformed records, duplicate
+    identities on the `team|side|metric` lookup key, count-invariant breaks,
+    rate/count disagreement, out-of-range values, and unknown source keys;
+    keeps present unknown records (observed 0, value null) distinct from
+    absent records; and renders an expanded evidence disclosure (definition,
+    observation period, aggregation time, clickable source + license, cache
+    sha256, missing counts, source-update provenance).
+  - `index.html` question banner now renders the dynamic offense-usage /
+    defense-exposure sentence with real records (full team names display,
+    abbreviations look up); roster label is honest (no fabricated
+    fetched/update timestamps; illustrative-lineups note); the matchup
+    sidebar no longer shows the unsupported log5 win-probability card.
+  - Tests fixed: `scripts/team_tendencies.test.js` (17 passing), the four
+    `validate_data.test.js` fixture-manifest failures (18 passing), and the
+    Python suite's matchup check now requires real content, captures uncaught
+    `pageerror`s, and fails on a blank panel.
 - Untracked screenshot captures and draft tendencies scripts staged for separate validation.
 
 ## Next
 
-- Finalize and verify `scripts/team_tendencies.test.js`.
+- Coordinate review of `results/checkpoint-2-completion.md` (checkpoint 2 of
+  `docs/superpowers/plans/2026-09-05-matchup-product/10-build-checkpoints.md`).
 - Run cross-repo checks (`scripts/sync_shared_data.sh`, `scripts/check_repo_drift.sh`).
 
 ## Blockers
