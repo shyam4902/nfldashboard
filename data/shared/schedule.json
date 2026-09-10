@@ -13,10 +13,11 @@
       "city": "Seattle, WA",
       "kickoff_utc": "2026-09-10T00:20:00Z",
       "tv": "NBC, Peacock, NFL+",
-      "winner": null,
-      "away_score": null,
-      "home_score": null,
-      "week": 1
+      "winner": "Seattle Seahawks",
+      "away_score": 10,
+      "home_score": 13,
+      "week": 1,
+      "status": "final"
     },
     {
       "game_id": "2026-09-10-SF-LAR",
@@ -3541,5 +3542,6 @@
       "home_score": null,
       "week": 18
     }
-  ]
+  ],
+  "scores_synced_at": "2026-09-10T20:22:32.679Z"
 }

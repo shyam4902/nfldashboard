@@ -1486,6 +1486,21 @@ body.theme-analyst .roster-summary .rs-value {
   color: #868a91;
   font-weight: 600;
 }
+.sch-team-score {
+  font: 800 20px/1 'Archivo', sans-serif;
+  color: #868a91;
+  min-width: 36px;
+  text-align: right;
+}
+.sch-team-score.won { color: #fff; }
+.sch-final-chip {
+  font: 800 9px 'Geist Mono', monospace;
+  letter-spacing: 0.1em;
+  color: #17140f;
+  background: #d9a441;
+  border-radius: 3px;
+  padding: 2px 5px;
+}
 .sch-prob-bar {
   height: 6px;
   border-radius: 3px;
@@ -3174,6 +3189,78 @@ function getNflTeamLogo(teamOrAbbr) {
 // by design (they are promo/story slots in the mockup). No fabricated
 // rank-movement arrows — there's no prior-week ranking in the data.
 // ═══════════════════════════════════════════════════════════
+// ── Shared game-state + featured-game helpers ──────────────────────────
+// Used by both the home hero and the Schedule page so the "game of the
+// week" never sits on a game that has already been played.
+
+// A game is over once it carries a recorded result, or once its kickoff has
+// passed (in progress counts — the featured slot should have moved on).
+function gameIsOver(g){
+  if (!g) return false;
+  if (g.status === 'final' || g.status === 'in_progress' || g.winner) return true;
+  const t = new Date(g.kickoff_utc).getTime();
+  return !isNaN(t) && Date.now() >= t;
+}
+
+function gameEtDay(g){
+  const d = new Date(g.kickoff_utc);
+  return isNaN(d.getTime()) ? '' :
+    d.toLocaleDateString('en-US', { weekday: 'short', timeZone: 'America/New_York' }).toUpperCase();
+}
+
+// Categories drive the Schedule filters and the featured ranking.
+function gameCategories(game){
+  if (!game.market) game.market = gameMarketLines(game);
+  const tvUpper = String(game.tv || '').toUpperCase();
+  const d = new Date(game.kickoff_utc);
+  const day = gameEtDay(game);
+  const hour = isNaN(d.getTime()) ? 13 : d.getUTCHours();
+
+  const isPrimetime = tvUpper.includes('NBC') || tvUpper.includes('ESPN') || tvUpper.includes('ABC') ||
+                      tvUpper.includes('NETFLIX') || tvUpper.includes('PRIME') || day === 'THU' || day === 'MON' ||
+                      (day === 'SUN' && hour >= 23);
+  // Sunday Night Football: Sunday ET kickoff that lands after 8pm ET (>= 00Z).
+  const isSnf = day === 'SUN' && tvUpper.includes('NBC') && (hour >= 23 || hour <= 4);
+
+  const aDiv = (DATA.teams && DATA.teams[game.away_team] && DATA.teams[game.away_team].division) || '';
+  const hDiv = (DATA.teams && DATA.teams[game.home_team] && DATA.teams[game.home_team].division) || '';
+  const isDivisional = aDiv && hDiv && (aDiv === hDiv);
+
+  const spreadVal = game.market && game.market.spread !== null ? Math.abs(game.market.spread) : null;
+  const isClose = spreadVal !== null && spreadVal <= 3.0;
+  const totalVal = game.market && game.market.total !== null ? game.market.total : null;
+  const isHighTotal = totalVal !== null && totalVal >= 47.0;
+
+  const cats = ['all'];
+  if (isPrimetime) cats.push('primetime');
+  if (isSnf) cats.push('snf');
+  if (isDivisional) cats.push('divisional');
+  if (isClose) cats.push('close');
+  if (isHighTotal) cats.push('high-total');
+  return cats;
+}
+
+// Sunday night is the league's marquee window, so it outranks other primetime.
+function featuredScore(g){
+  const c = g._categories || gameCategories(g);
+  return (c.includes('snf') ? 4 : 0) + (c.includes('primetime') ? 3 : 0) +
+         (c.includes('divisional') ? 2 : 0) + (c.includes('close') ? 2 : 0) +
+         (c.includes('high-total') ? 1 : 0);
+}
+
+// Best n games still to be played, in kickoff order. Falls back to the whole
+// slate once every game in the week is done (end of week — nothing upcoming).
+function pickFeaturedGames(games, n){
+  const live = games.filter(g => !gameIsOver(g));
+  const pool = live.length ? live : games;
+  return pool
+    .map((g, i) => ({ g: g, i: i, s: featuredScore(g) }))
+    .sort((a, b) => b.s - a.s || a.i - b.i)
+    .slice(0, n)
+    .sort((a, b) => a.i - b.i)
+    .map(x => x.g);
+}
+
 function home2aWeekGames(){
   const games = (SCHEDULE_DATA && SCHEDULE_DATA.games) ? SCHEDULE_DATA.games : [];
   const wk = typeof currentScheduleWeek === 'number' ? currentScheduleWeek : 1;
@@ -3291,10 +3378,23 @@ function home2aScorestrip(games){
     const tv = g.tv ? (' · ' + g.tv.split('/')[0].trim().toUpperCase()) : '';
     const aSpread = m && m.spread !== null ? ((m.spread > 0 ? '+' : '') + m.spread) : '';
     const homeFav = hPct >= aPct;
+    // Played games show the result, not a pregame line.
+    const done = g.status === 'final' || g.winner;
+    const hasScore = g.away_score != null && g.home_score != null;
+    const label = done && hasScore
+      ? (g.status === 'in_progress' ? 'LIVE' : 'FINAL')
+      : homeEsc(when) + homeEsc(tv);
+    const awayWon = hasScore && g.away_score > g.home_score;
+    const aRight = done && hasScore
+      ? `<span class="h2a-mono" style="font:700 12px var(--font-mono);color:${awayWon ? '#fff' : '#868a91'}">${g.away_score}</span>`
+      : `<span class="h2a-mono" style="font:600 11px var(--font-mono);color:${homeFav ? '#868a91' : '#7cc49b'}">${homeFav ? homeEsc(aSpread) : aPct + '%'}</span>`;
+    const hRight = done && hasScore
+      ? `<span class="h2a-mono" style="font:700 12px var(--font-mono);color:${awayWon ? '#868a91' : '#fff'}">${g.home_score}</span>`
+      : `<span class="h2a-mono" style="font:700 11px var(--font-mono);color:${homeFav ? '#7cc49b' : '#868a91'}">${homeFav ? hPct + '%' : ''}</span>`;
     return `<div class="h2a-game" onclick="openMatchup('${homeEsc(g.game_id)}')">
-      <div class="h2a-game-time">${homeEsc(when)}${homeEsc(tv)}</div>
-      <div class="h2a-team-row"><span class="h2a-team-name"><img src="${getNflTeamLogo(g.away_team)}" alt="" style="width:16px;height:16px;object-fit:contain;flex:none;filter:drop-shadow(0 1px 2px rgba(0,0,0,.5))" loading="lazy"><span style="font:700 12px var(--font-sans);color:${homeFav ? '#c9ccd1' : '#fff'}">${homeEsc(aAbbr)}</span></span><span class="h2a-mono" style="font:600 11px var(--font-mono);color:${homeFav ? '#868a91' : '#7cc49b'}">${homeFav ? homeEsc(aSpread) : aPct + '%'}</span></div>
-      <div class="h2a-team-row"><span class="h2a-team-name"><img src="${getNflTeamLogo(g.home_team)}" alt="" style="width:16px;height:16px;object-fit:contain;flex:none;filter:drop-shadow(0 1px 2px rgba(0,0,0,.5))" loading="lazy"><span style="font:700 12px var(--font-sans);color:${homeFav ? '#fff' : '#c9ccd1'}">${homeEsc(hAbbr)}</span></span><span class="h2a-mono" style="font:700 11px var(--font-mono);color:${homeFav ? '#7cc49b' : '#868a91'}">${homeFav ? hPct + '%' : ''}</span></div>
+      <div class="h2a-game-time" style="${done && hasScore ? 'color:#d9a441;font-weight:800' : ''}">${label}</div>
+      <div class="h2a-team-row"><span class="h2a-team-name"><img src="${getNflTeamLogo(g.away_team)}" alt="" style="width:16px;height:16px;object-fit:contain;flex:none;filter:drop-shadow(0 1px 2px rgba(0,0,0,.5))" loading="lazy"><span style="font:700 12px var(--font-sans);color:${(done && hasScore) ? (awayWon ? '#fff' : '#868a91') : (homeFav ? '#c9ccd1' : '#fff')}">${homeEsc(aAbbr)}</span></span>${aRight}</div>
+      <div class="h2a-team-row"><span class="h2a-team-name"><img src="${getNflTeamLogo(g.home_team)}" alt="" style="width:16px;height:16px;object-fit:contain;flex:none;filter:drop-shadow(0 1px 2px rgba(0,0,0,.5))" loading="lazy"><span style="font:700 12px var(--font-sans);color:${(done && hasScore) ? (awayWon ? '#868a91' : '#fff') : (homeFav ? '#fff' : '#c9ccd1')}">${homeEsc(hAbbr)}</span></span>${hRight}</div>
     </div>`;
   }).join('');
   return `<div class="h2a-strip">
@@ -3336,7 +3436,7 @@ function home2aPowerIndex(){
 
 function homeRedesign2aHtml(){
   const games = home2aWeekGames();
-  const feat = games[0];
+  const feat = pickFeaturedGames(games, 1)[0];
   const moveCount = (DATA.transactions || []).length;
   return `<style>
     .h2a-wrap{background:#14161a;border:1px solid #2b3037;border-radius:16px;overflow:hidden}
@@ -7381,35 +7481,7 @@ async function renderSchedule(){
     const prob = winProb(homeStr, awayStr);
     game._hProb = prob;
     game._aProb = prob === null ? null : (1 - prob);
-    
-    const tvUpper = String(game.tv || '').toUpperCase();
-    const d = new Date(game.kickoff_utc);
-    const day = isNaN(d.getTime()) ? '' : d.toLocaleDateString('en-US', { weekday: 'short', timeZone: 'America/New_York' }).toUpperCase();
-    const hour = isNaN(d.getTime()) ? 13 : d.getUTCHours();
-    
-    // Primetime or national check
-    const isPrimetime = tvUpper.includes('NBC') || tvUpper.includes('ESPN') || tvUpper.includes('ABC') || 
-                        tvUpper.includes('NETFLIX') || tvUpper.includes('PRIME') || day === 'THU' || day === 'MON' ||
-                        (day === 'SUN' && hour >= 23);
-    // Divisional check
-    const aDiv = (DATA.teams && DATA.teams[game.away_team] && DATA.teams[game.away_team].division) || '';
-    const hDiv = (DATA.teams && DATA.teams[game.home_team] && DATA.teams[game.home_team].division) || '';
-    const isDivisional = aDiv && hDiv && (aDiv === hDiv);
-    
-    // Close spread check
-    const spreadVal = game.market && game.market.spread !== null ? Math.abs(game.market.spread) : null;
-    const isClose = spreadVal !== null && spreadVal <= 3.0;
-    
-    // High total check
-    const totalVal = game.market && game.market.total !== null ? game.market.total : null;
-    const isHighTotal = totalVal !== null && totalVal >= 47.0;
-    
-    const cats = ['all'];
-    if (isPrimetime) cats.push('primetime');
-    if (isDivisional) cats.push('divisional');
-    if (isClose) cats.push('close');
-    if (isHighTotal) cats.push('high-total');
-    game._categories = cats;
+    game._categories = gameCategories(game);
   });
 
   const activeFilter = typeof scheduleActiveFilter !== 'undefined' ? scheduleActiveFilter : 'all';
@@ -7439,6 +7511,20 @@ async function renderSchedule(){
     const hPct = game._hProb === null ? 50 : Math.round(game._hProb * 100);
     const aFav = aPct >= hPct;
 
+    // A played game shows its result; the pregame line stops being the story.
+    const isFinal = (game.status === 'final' || !!game.winner) &&
+                    game.away_score != null && game.home_score != null;
+    const isLive = game.status === 'in_progress';
+    const awayWon = isFinal && game.away_score > game.home_score;
+    const aOdds = isFinal
+      ? '<span class="sch-team-score' + (awayWon ? ' won' : '') + '">' + game.away_score + '</span>'
+      : '<span class="sch-team-spread">' + esc(aSpreadStr) + '</span>' +
+        '<span class="sch-team-prob ' + (aFav ? '' : 'underdog') + '">' + aPct + '%</span>';
+    const hOdds = isFinal
+      ? '<span class="sch-team-score' + (awayWon ? '' : ' won') + '">' + game.home_score + '</span>'
+      : '<span class="sch-team-spread">' + esc(hSpreadStr) + '</span>' +
+        '<span class="sch-team-prob ' + (aFav ? 'underdog' : '') + '">' + hPct + '%</span>';
+
     let footLines = `SPREAD ${aFav ? aAbbr : hAbbr} ${aFav ? aSpreadStr : hSpreadStr}`;
     if (aFav && aMlStr) footLines += ` · ML ${aMlStr}`;
     else if (!aFav && hMlStr) footLines += ` · ML ${hMlStr}`;
@@ -7455,7 +7541,8 @@ async function renderSchedule(){
       'aria-label="View analysis for ' + esc(game.away_team) + ' at ' + esc(game.home_team) + '" ' +
       'data-game="' + esc(game.game_id) + '">' +
       '<div class="sch-head">' +
-        '<div class="sch-card-time"><span>' + esc(timeFmt) + '</span>' + (location ? '<span>·</span><span>' + esc(location) + '</span>' : '') + '</div>' +
+        '<div class="sch-card-time">' + (isFinal || isLive ? '<span class="sch-final-chip">' + (isLive ? 'LIVE' : 'FINAL') + '</span>' : '') +
+          '<span>' + esc(timeFmt) + '</span>' + (location ? '<span>·</span><span>' + esc(location) + '</span>' : '') + '</div>' +
         '<span class="sch-card-network">' + esc(network) + '</span>' +
       '</div>' +
       '<div class="sch-body">' +
@@ -7464,24 +7551,23 @@ async function renderSchedule(){
             '<img src="' + aLogo + '" alt="" class="sch-team-logo" loading="lazy">' +
             '<div class="sch-team-names"><span class="sch-team-abbr">' + aAbbr + '</span><span class="sch-team-name">' + esc(game.away_team) + '</span></div>' +
           '</div>' +
-          '<div class="sch-team-odds">' +
-            '<span class="sch-team-spread">' + esc(aSpreadStr) + '</span>' +
-            '<span class="sch-team-prob ' + (aFav ? '' : 'underdog') + '">' + aPct + '%</span>' +
-          '</div>' +
+          '<div class="sch-team-odds">' + aOdds + '</div>' +
         '</div>' +
         '<div class="sch-team-block">' +
           '<div class="sch-team-info">' +
             '<img src="' + hLogo + '" alt="" class="sch-team-logo" loading="lazy">' +
             '<div class="sch-team-names"><span class="sch-team-abbr">' + hAbbr + '</span><span class="sch-team-name">' + esc(game.home_team) + '</span></div>' +
           '</div>' +
-          '<div class="sch-team-odds">' +
-            '<span class="sch-team-spread">' + esc(hSpreadStr) + '</span>' +
-            '<span class="sch-team-prob ' + (aFav ? 'underdog' : '') + '">' + hPct + '%</span>' +
-          '</div>' +
+          '<div class="sch-team-odds">' + hOdds + '</div>' +
         '</div>' +
-        '<div class="sch-prob-bar"><div style="width:' + aPct + '%;background:' + aColor + '"></div><div style="width:' + hPct + '%;background:' + hColor + '"></div></div>' +
+        (function(){
+          if (!isFinal) return '<div class="sch-prob-bar"><div style="width:' + aPct + '%;background:' + aColor + '"></div><div style="width:' + hPct + '%;background:' + hColor + '"></div></div>';
+          const tot = game.away_score + game.home_score;
+          const aShare = tot > 0 ? Math.round((game.away_score / tot) * 100) : 50;
+          return '<div class="sch-prob-bar"><div style="width:' + aShare + '%;background:' + aColor + '"></div><div style="width:' + (100 - aShare) + '%;background:' + hColor + '"></div></div>';
+        })() +
         testLineRow +
-        '<div class="sch-foot"><span>' + esc(footLines) + '</span><span class="sch-cta">View matchup →</span></div>' +
+        '<div class="sch-foot"><span>' + esc(isFinal ? ((awayWon ? aAbbr : hAbbr) + ' won ' + Math.max(game.away_score, game.home_score) + '-' + Math.min(game.away_score, game.home_score)) : footLines) + '</span><span class="sch-cta">View matchup →</span></div>' +
       '</div>' +
       '</article>';
   };
@@ -7572,26 +7658,16 @@ async function renderSchedule(){
       '</div>' +
     '</div>';
   };
-  const featScore = (g) => {
-    const c = g._categories || [];
-    return (c.includes('primetime') ? 3 : 0) + (c.includes('divisional') ? 2 : 0) +
-           (c.includes('close') ? 2 : 0) + (c.includes('high-total') ? 1 : 0);
-  };
   const featKicker = (g) => {
-    if (currentScheduleWeek === 1 && g === sorted[0]) return '2026 NFL KICKOFF GAME';
     const c = g._categories || [];
+    if (c.includes('snf')) return 'SUNDAY NIGHT SHOWDOWN';
     if (c.includes('primetime')) return 'PRIMETIME SHOWDOWN';
     if (c.includes('close')) return 'TOSS-UP OF THE WEEK';
     if (c.includes('divisional')) return 'DIVISION CLASH';
     if (c.includes('high-total')) return 'SHOOTOUT WATCH';
     return 'FEATURED MATCHUP';
   };
-  const featured = sorted
-    .map((g, n) => ({ g: g, n: n, s: featScore(g) }))
-    .sort((a, b) => b.s - a.s || a.n - b.n)
-    .slice(0, 3)
-    .sort((a, b) => a.n - b.n)
-    .map(x => x.g);
+  const featured = pickFeaturedGames(sorted, 3);
   if (featured.length && activeFilter === 'all') {
     const nSlides = featured.length;
     const slides = featured.map(g => marqueeSlide(g, featKicker(g))).join('');

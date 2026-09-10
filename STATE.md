@@ -1,6 +1,6 @@
 # NFL Dashboard state
 
-- Updated: 2026-09-08
+- Updated: 2026-09-10
 - Live: https://nfldashboard.pages.dev/
 - Repo: https://github.com/shyam4902/nfldashboard
 - App: static `index.html`, tracked JSON assets, and Supabase roster/transaction data
@@ -87,6 +87,35 @@
 - `checkpoint5_rehearsal.py` added: release-rehearsal browser probe
   (desktop walkthrough + mobile overflow on every Matchup/Teams subtab +
   possession swap + keyboard + cross-app link checks).
+
+## Checkpoint 6 (2026-09-10): results after games are played
+
+- `sync_scores.js` (new): pulls final/in-progress scores from the ESPN
+  scoreboard API into `schedule.json` and its `data/shared/` copy
+  (`winner`, `away_score`, `home_score`, plus a new `status` field and a
+  top-level `scores_synced_at`). Matches on the game's **Eastern-time** date,
+  since Thursday/Sunday-night kickoffs are the next day in UTC —
+  `sync_scores.test.js` pins that. `--week N` and `--dry-run` supported.
+  Contacts a live service; run it after each slate. Week 1 kickoff game is
+  recorded: Seahawks 13, Patriots 10.
+- The featured "game of the week" no longer sits on a game that has been
+  played. `pickFeaturedGames()` drops any game whose kickoff has passed (or
+  that carries a result) and ranks the rest; Sunday Night Football now
+  outranks other primetime, so Week 1's hero is Cowboys @ Giants on SNF.
+  The home hero and the Schedule carousel share the same picker and the same
+  `gameCategories()` (extracted from the Schedule render loop, which now
+  calls it instead of inlining the logic).
+- Played games render their result, not a stale pregame line: the home
+  scorestrip shows `FINAL` with both scores, and Schedule cards show a
+  `FINAL`/`LIVE` chip, the score in place of spread/win%, and
+  "SEA won 13-10" in the footer.
+- **Not automated.** Deploying a score update is still `node sync_scores.js`
+  then `git push origin main`. No cron writes to this repo.
+- Verified: `python3 test_all_extensions.py` (all green, 0 console / 0 page
+  errors), `node scripts/validate-data.js` (16/16),
+  `python3 test_schedule_data.py`, `node --test sync_scores.test.js`.
+  `node props-smoke.mjs` cannot run here — the npm `playwright` module is not
+  installed in this repo (pre-existing; the Python suites use their own).
 
 ## In flight
 
