@@ -110,7 +110,9 @@
   `FINAL`/`LIVE` chip, the score in place of spread/win%, and
   "SEA won 13-10" in the footer.
 - **Automated (2026-09-12).** `.github/workflows/sync-scores.yml` runs
-  `sync_scores.js` hourly Sept-Feb on GitHub Actions, then commits and pushes
+  `sync_scores.js` hourly Sept-Feb on GitHub Actions — every 15 minutes over
+  the Sunday 1-8pm ET slate (two UTC cron ranges, since GitHub cron has no
+  DST) — then commits and pushes
   only when `schedule.json` actually changed — the push is the Pages deploy.
   It runs `sync_scores.test.js` and `scripts/validate-data.js` first, so a
   malformed or copy-drifted schedule never reaches the live site, and a quiet
