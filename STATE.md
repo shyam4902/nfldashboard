@@ -1,6 +1,6 @@
 # NFL Dashboard state
 
-- Updated: 2026-09-10
+- Updated: 2026-09-12
 - Live: https://nfldashboard.pages.dev/
 - Repo: https://github.com/shyam4902/nfldashboard
 - App: static `index.html`, tracked JSON assets, and Supabase roster/transaction data
@@ -109,8 +109,14 @@
   scorestrip shows `FINAL` with both scores, and Schedule cards show a
   `FINAL`/`LIVE` chip, the score in place of spread/win%, and
   "SEA won 13-10" in the footer.
-- **Not automated.** Deploying a score update is still `node sync_scores.js`
-  then `git push origin main`. No cron writes to this repo.
+- **Automated (2026-09-12).** `.github/workflows/sync-scores.yml` runs
+  `sync_scores.js` hourly Sept-Feb on GitHub Actions, then commits and pushes
+  only when `schedule.json` actually changed — the push is the Pages deploy.
+  It runs `sync_scores.test.js` and `scripts/validate-data.js` first, so a
+  malformed or copy-drifted schedule never reaches the live site, and a quiet
+  hour produces no commit and no rebuild. `workflow_dispatch` for a manual run.
+  The local command still works and is the fallback if Actions is down.
+- Week 1 results recorded so far: Seahawks 13-10 Patriots, 49ers 27-7 Rams.
 - Verified: `python3 test_all_extensions.py` (all green, 0 console / 0 page
   errors), `node scripts/validate-data.js` (16/16),
   `python3 test_schedule_data.py`, `node --test sync_scores.test.js`.

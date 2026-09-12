@@ -27,10 +27,11 @@
       "city": "Melbourne, Australia",
       "kickoff_utc": "2026-09-11T00:35:00Z",
       "tv": "Netflix",
-      "winner": null,
-      "away_score": null,
-      "home_score": null,
-      "week": 1
+      "winner": "San Francisco 49ers",
+      "away_score": 27,
+      "home_score": 7,
+      "week": 1,
+      "status": "final"
     },
     {
       "game_id": "2026-09-13-CHI-CAR",
@@ -3543,5 +3544,5 @@
       "week": 18
     }
   ],
-  "scores_synced_at": "2026-09-10T20:22:32.679Z"
+  "scores_synced_at": "2026-09-12T06:23:16.755Z"
 }

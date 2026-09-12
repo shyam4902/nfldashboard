@@ -28,6 +28,7 @@ The Edge app link uses `https://edgeplay-analytics.pages.dev`, the canonical URL
 ```bash
 node scripts/validate-data.js        # data-layer gate (JSON shape, copy identity, freshness)
 node sync_scores.js                  # pull final scores into schedule.json (live ESPN call)
+                                     # (also runs hourly via .github/workflows/sync-scores.yml)
 node --test sync_scores.test.js
 node props-smoke.mjs                 # browser smoke, deterministic data-feed fixtures by default
 python3 test_all_extensions.py       # deterministic data-feed fixtures by default

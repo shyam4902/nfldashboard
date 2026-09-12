@@ -1,0 +1,45 @@
+# Pulls final scores into schedule.json and pushes them. The Pages project is
+# git-connected, so the push is the deploy — nothing else ships the site.
+#
+# Runs hourly through the season. sync_scores.js only writes when a kicked-off
+# game is missing a result, so quiet hours produce no commit and no rebuild.
+name: sync scores
+
+on:
+  schedule:
+    - cron: '0 * * 9,10,11,12,1,2 *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sync-scores
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - run: node --test sync_scores.test.js
+      - run: node sync_scores.js
+
+      # Guard the deploy: never push a schedule.json the app's own validator rejects.
+      - run: node scripts/validate-data.js
+
+      - name: Commit and push if scores changed
+        run: |
+          if git diff --quiet -- schedule.json data/shared/schedule.json; then
+            echo "No score changes."
+            exit 0
+          fi
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add schedule.json data/shared/schedule.json
+          git commit -m "data: sync game scores (automated)"
+          git push
