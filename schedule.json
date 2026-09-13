@@ -41,11 +41,11 @@
       "city": "Charlotte, NC",
       "kickoff_utc": "2026-09-13T17:00:00Z",
       "tv": "FOX",
-      "winner": null,
-      "away_score": 45,
-      "home_score": 31,
+      "winner": "Chicago Bears",
+      "away_score": 59,
+      "home_score": 37,
       "week": 1,
-      "status": "in_progress"
+      "status": "final"
     },
     {
       "game_id": "2026-09-13-TB-CIN",
@@ -55,11 +55,11 @@
       "city": "Cincinnati, OH",
       "kickoff_utc": "2026-09-13T17:00:00Z",
       "tv": "FOX",
-      "winner": null,
+      "winner": "Cincinnati Bengals",
       "away_score": 27,
       "home_score": 33,
       "week": 1,
-      "status": "in_progress"
+      "status": "final"
     },
     {
       "game_id": "2026-09-13-NO-DET",
@@ -69,11 +69,11 @@
       "city": "Detroit, MI",
       "kickoff_utc": "2026-09-13T17:00:00Z",
       "tv": "FOX",
-      "winner": null,
-      "away_score": 17,
-      "home_score": 24,
+      "winner": "Detroit Lions",
+      "away_score": 30,
+      "home_score": 31,
       "week": 1,
-      "status": "in_progress"
+      "status": "final"
     },
     {
       "game_id": "2026-09-13-BUF-HOU",
@@ -83,11 +83,11 @@
       "city": "Houston, TX",
       "kickoff_utc": "2026-09-13T17:00:00Z",
       "tv": "CBS",
-      "winner": null,
-      "away_score": 30,
+      "winner": "Buffalo Bills",
+      "away_score": 36,
       "home_score": 31,
       "week": 1,
-      "status": "in_progress"
+      "status": "final"
     },
     {
       "game_id": "2026-09-13-BAL-IND",
@@ -97,11 +97,11 @@
       "city": "Indianapolis, IN",
       "kickoff_utc": "2026-09-13T17:00:00Z",
       "tv": "CBS",
-      "winner": null,
+      "winner": "Baltimore Ravens",
       "away_score": 41,
       "home_score": 23,
       "week": 1,
-      "status": "in_progress"
+      "status": "final"
     },
     {
       "game_id": "2026-09-13-CLE-JAX",
@@ -125,11 +125,11 @@
       "city": "Pittsburgh, PA",
       "kickoff_utc": "2026-09-13T17:00:00Z",
       "tv": "FOX",
-      "winner": null,
+      "winner": "Pittsburgh Steelers",
       "away_score": 13,
       "home_score": 20,
       "week": 1,
-      "status": "in_progress"
+      "status": "final"
     },
     {
       "game_id": "2026-09-13-NYJ-TEN",
@@ -139,11 +139,11 @@
       "city": "Nashville, TN",
       "kickoff_utc": "2026-09-13T17:00:00Z",
       "tv": "CBS",
-      "winner": null,
+      "winner": "New York Jets",
       "away_score": 23,
       "home_score": 10,
       "week": 1,
-      "status": "in_progress"
+      "status": "final"
     },
     {
       "game_id": "2026-09-13-ARI-LAC",
@@ -154,9 +154,10 @@
       "kickoff_utc": "2026-09-13T20:25:00Z",
       "tv": "CBS",
       "winner": null,
-      "away_score": null,
-      "home_score": null,
-      "week": 1
+      "away_score": 10,
+      "home_score": 7,
+      "week": 1,
+      "status": "in_progress"
     },
     {
       "game_id": "2026-09-13-MIA-LV",
@@ -167,9 +168,10 @@
       "kickoff_utc": "2026-09-13T20:25:00Z",
       "tv": "FOX",
       "winner": null,
-      "away_score": null,
-      "home_score": null,
-      "week": 1
+      "away_score": 3,
+      "home_score": 10,
+      "week": 1,
+      "status": "in_progress"
     },
     {
       "game_id": "2026-09-13-GB-MIN",
@@ -180,9 +182,10 @@
       "kickoff_utc": "2026-09-13T20:25:00Z",
       "tv": "CBS",
       "winner": null,
-      "away_score": null,
-      "home_score": null,
-      "week": 1
+      "away_score": 12,
+      "home_score": 3,
+      "week": 1,
+      "status": "in_progress"
     },
     {
       "game_id": "2026-09-13-WAS-PHI",
@@ -193,9 +196,10 @@
       "kickoff_utc": "2026-09-13T20:25:00Z",
       "tv": "FOX",
       "winner": null,
-      "away_score": null,
-      "home_score": null,
-      "week": 1
+      "away_score": 3,
+      "home_score": 13,
+      "week": 1,
+      "status": "in_progress"
     },
     {
       "game_id": "2026-09-13-DAL-NYG",
@@ -3552,5 +3556,5 @@
       "week": 18
     }
   ],
-  "scores_synced_at": "2026-09-13T20:04:14.406Z"
+  "scores_synced_at": "2026-09-13T21:26:57.055Z"
 }
