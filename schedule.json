@@ -42,9 +42,10 @@
       "kickoff_utc": "2026-09-13T17:00:00Z",
       "tv": "FOX",
       "winner": null,
-      "away_score": null,
-      "home_score": null,
-      "week": 1
+      "away_score": 0,
+      "home_score": 0,
+      "week": 1,
+      "status": "in_progress"
     },
     {
       "game_id": "2026-09-13-TB-CIN",
@@ -55,9 +56,10 @@
       "kickoff_utc": "2026-09-13T17:00:00Z",
       "tv": "FOX",
       "winner": null,
-      "away_score": null,
-      "home_score": null,
-      "week": 1
+      "away_score": 0,
+      "home_score": 0,
+      "week": 1,
+      "status": "in_progress"
     },
     {
       "game_id": "2026-09-13-NO-DET",
@@ -68,9 +70,10 @@
       "kickoff_utc": "2026-09-13T17:00:00Z",
       "tv": "FOX",
       "winner": null,
-      "away_score": null,
-      "home_score": null,
-      "week": 1
+      "away_score": 0,
+      "home_score": 0,
+      "week": 1,
+      "status": "in_progress"
     },
     {
       "game_id": "2026-09-13-BUF-HOU",
@@ -81,9 +84,10 @@
       "kickoff_utc": "2026-09-13T17:00:00Z",
       "tv": "CBS",
       "winner": null,
-      "away_score": null,
-      "home_score": null,
-      "week": 1
+      "away_score": 0,
+      "home_score": 0,
+      "week": 1,
+      "status": "in_progress"
     },
     {
       "game_id": "2026-09-13-BAL-IND",
@@ -94,9 +98,10 @@
       "kickoff_utc": "2026-09-13T17:00:00Z",
       "tv": "CBS",
       "winner": null,
-      "away_score": null,
-      "home_score": null,
-      "week": 1
+      "away_score": 0,
+      "home_score": 0,
+      "week": 1,
+      "status": "in_progress"
     },
     {
       "game_id": "2026-09-13-CLE-JAX",
@@ -107,9 +112,10 @@
       "kickoff_utc": "2026-09-13T17:00:00Z",
       "tv": "CBS",
       "winner": null,
-      "away_score": null,
-      "home_score": null,
-      "week": 1
+      "away_score": 0,
+      "home_score": 0,
+      "week": 1,
+      "status": "in_progress"
     },
     {
       "game_id": "2026-09-13-ATL-PIT",
@@ -120,9 +126,10 @@
       "kickoff_utc": "2026-09-13T17:00:00Z",
       "tv": "FOX",
       "winner": null,
-      "away_score": null,
-      "home_score": null,
-      "week": 1
+      "away_score": 0,
+      "home_score": 0,
+      "week": 1,
+      "status": "in_progress"
     },
     {
       "game_id": "2026-09-13-NYJ-TEN",
@@ -133,9 +140,10 @@
       "kickoff_utc": "2026-09-13T17:00:00Z",
       "tv": "CBS",
       "winner": null,
-      "away_score": null,
-      "home_score": null,
-      "week": 1
+      "away_score": 0,
+      "home_score": 0,
+      "week": 1,
+      "status": "in_progress"
     },
     {
       "game_id": "2026-09-13-ARI-LAC",
@@ -3544,5 +3552,5 @@
       "week": 18
     }
   ],
-  "scores_synced_at": "2026-09-12T06:23:16.755Z"
+  "scores_synced_at": "2026-09-13T17:09:50.237Z"
 }
