@@ -42,8 +42,8 @@
       "kickoff_utc": "2026-09-13T17:00:00Z",
       "tv": "FOX",
       "winner": null,
-      "away_score": 31,
-      "home_score": 24,
+      "away_score": 45,
+      "home_score": 31,
       "week": 1,
       "status": "in_progress"
     },
@@ -56,8 +56,8 @@
       "kickoff_utc": "2026-09-13T17:00:00Z",
       "tv": "FOX",
       "winner": null,
-      "away_score": 20,
-      "home_score": 27,
+      "away_score": 27,
+      "home_score": 33,
       "week": 1,
       "status": "in_progress"
     },
@@ -70,8 +70,8 @@
       "kickoff_utc": "2026-09-13T17:00:00Z",
       "tv": "FOX",
       "winner": null,
-      "away_score": 0,
-      "home_score": 21,
+      "away_score": 17,
+      "home_score": 24,
       "week": 1,
       "status": "in_progress"
     },
@@ -84,8 +84,8 @@
       "kickoff_utc": "2026-09-13T17:00:00Z",
       "tv": "CBS",
       "winner": null,
-      "away_score": 24,
-      "home_score": 21,
+      "away_score": 30,
+      "home_score": 31,
       "week": 1,
       "status": "in_progress"
     },
@@ -98,8 +98,8 @@
       "kickoff_utc": "2026-09-13T17:00:00Z",
       "tv": "CBS",
       "winner": null,
-      "away_score": 31,
-      "home_score": 13,
+      "away_score": 41,
+      "home_score": 23,
       "week": 1,
       "status": "in_progress"
     },
@@ -111,11 +111,11 @@
       "city": "Jacksonville, FL",
       "kickoff_utc": "2026-09-13T17:00:00Z",
       "tv": "CBS",
-      "winner": null,
-      "away_score": 3,
+      "winner": "Jacksonville Jaguars",
+      "away_score": 10,
       "home_score": 34,
       "week": 1,
-      "status": "in_progress"
+      "status": "final"
     },
     {
       "game_id": "2026-09-13-ATL-PIT",
@@ -126,8 +126,8 @@
       "kickoff_utc": "2026-09-13T17:00:00Z",
       "tv": "FOX",
       "winner": null,
-      "away_score": 7,
-      "home_score": 13,
+      "away_score": 13,
+      "home_score": 20,
       "week": 1,
       "status": "in_progress"
     },
@@ -140,8 +140,8 @@
       "kickoff_utc": "2026-09-13T17:00:00Z",
       "tv": "CBS",
       "winner": null,
-      "away_score": 20,
-      "home_score": 3,
+      "away_score": 23,
+      "home_score": 10,
       "week": 1,
       "status": "in_progress"
     },
@@ -3552,5 +3552,5 @@
       "week": 18
     }
   ],
-  "scores_synced_at": "2026-09-13T19:12:03.239Z"
+  "scores_synced_at": "2026-09-13T20:04:14.406Z"
 }
