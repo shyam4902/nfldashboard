@@ -154,7 +154,7 @@
       "kickoff_utc": "2026-09-13T20:25:00Z",
       "tv": "CBS",
       "winner": null,
-      "away_score": 16,
+      "away_score": 26,
       "home_score": 14,
       "week": 1,
       "status": "in_progress"
@@ -183,7 +183,7 @@
       "tv": "CBS",
       "winner": null,
       "away_score": 22,
-      "home_score": 17,
+      "home_score": 25,
       "week": 1,
       "status": "in_progress"
     },
@@ -196,8 +196,8 @@
       "kickoff_utc": "2026-09-13T20:25:00Z",
       "tv": "FOX",
       "winner": null,
-      "away_score": 9,
-      "home_score": 14,
+      "away_score": 16,
+      "home_score": 24,
       "week": 1,
       "status": "in_progress"
     },
@@ -3556,5 +3556,5 @@
       "week": 18
     }
   ],
-  "scores_synced_at": "2026-09-13T22:44:33.283Z"
+  "scores_synced_at": "2026-09-13T23:22:15.174Z"
 }
