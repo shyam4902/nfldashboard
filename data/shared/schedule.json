@@ -211,7 +211,7 @@
       "tv": "NBC, Peacock, NFL+",
       "winner": null,
       "away_score": 7,
-      "home_score": 7,
+      "home_score": 21,
       "week": 1,
       "status": "in_progress"
     },
@@ -3557,5 +3557,5 @@
       "week": 18
     }
   ],
-  "scores_synced_at": "2026-09-14T01:22:36.657Z"
+  "scores_synced_at": "2026-09-14T02:20:03.238Z"
 }
