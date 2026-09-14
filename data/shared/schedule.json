@@ -153,11 +153,11 @@
       "city": "Inglewood, CA",
       "kickoff_utc": "2026-09-13T20:25:00Z",
       "tv": "CBS",
-      "winner": null,
+      "winner": "Arizona Cardinals",
       "away_score": 26,
       "home_score": 14,
       "week": 1,
-      "status": "in_progress"
+      "status": "final"
     },
     {
       "game_id": "2026-09-13-MIA-LV",
@@ -167,11 +167,11 @@
       "city": "Las Vegas, NV",
       "kickoff_utc": "2026-09-13T20:25:00Z",
       "tv": "FOX",
-      "winner": null,
+      "winner": "Las Vegas Raiders",
       "away_score": 13,
       "home_score": 27,
       "week": 1,
-      "status": "in_progress"
+      "status": "final"
     },
     {
       "game_id": "2026-09-13-GB-MIN",
@@ -181,11 +181,11 @@
       "city": "Minneapolis, MN",
       "kickoff_utc": "2026-09-13T20:25:00Z",
       "tv": "CBS",
-      "winner": null,
+      "winner": "Minnesota Vikings",
       "away_score": 22,
-      "home_score": 25,
+      "home_score": 39,
       "week": 1,
-      "status": "in_progress"
+      "status": "final"
     },
     {
       "game_id": "2026-09-13-WAS-PHI",
@@ -195,11 +195,11 @@
       "city": "Philadelphia, PA",
       "kickoff_utc": "2026-09-13T20:25:00Z",
       "tv": "FOX",
-      "winner": null,
-      "away_score": 16,
+      "winner": "Philadelphia Eagles",
+      "away_score": 22,
       "home_score": 24,
       "week": 1,
-      "status": "in_progress"
+      "status": "final"
     },
     {
       "game_id": "2026-09-13-DAL-NYG",
@@ -210,9 +210,10 @@
       "kickoff_utc": "2026-09-14T00:20:00Z",
       "tv": "NBC, Peacock, NFL+",
       "winner": null,
-      "away_score": null,
-      "home_score": null,
-      "week": 1
+      "away_score": 0,
+      "home_score": 0,
+      "week": 1,
+      "status": "in_progress"
     },
     {
       "game_id": "2026-09-14-DEN-KC",
@@ -3556,5 +3557,5 @@
       "week": 18
     }
   ],
-  "scores_synced_at": "2026-09-13T23:22:15.174Z"
+  "scores_synced_at": "2026-09-14T00:33:41.316Z"
 }
