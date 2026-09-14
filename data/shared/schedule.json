@@ -209,11 +209,11 @@
       "city": "East Rutherford, NJ",
       "kickoff_utc": "2026-09-14T00:20:00Z",
       "tv": "NBC, Peacock, NFL+",
-      "winner": null,
-      "away_score": 7,
-      "home_score": 21,
+      "winner": "New York Giants",
+      "away_score": 20,
+      "home_score": 28,
       "week": 1,
-      "status": "in_progress"
+      "status": "final"
     },
     {
       "game_id": "2026-09-14-DEN-KC",
@@ -3557,5 +3557,5 @@
       "week": 18
     }
   ],
-  "scores_synced_at": "2026-09-14T02:20:03.238Z"
+  "scores_synced_at": "2026-09-14T05:36:42.714Z"
 }
