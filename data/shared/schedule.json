@@ -223,10 +223,11 @@
       "city": "Kansas City, MO",
       "kickoff_utc": "2026-09-15T00:15:00Z",
       "tv": "ESPN, ABC",
-      "winner": null,
-      "away_score": null,
-      "home_score": null,
-      "week": 1
+      "winner": "Kansas City Chiefs",
+      "away_score": 10,
+      "home_score": 31,
+      "week": 1,
+      "status": "final"
     },
     {
       "game_id": "2026-09-17-DET-BUF",
@@ -3557,5 +3558,5 @@
       "week": 18
     }
   ],
-  "scores_synced_at": "2026-09-14T05:36:42.714Z"
+  "scores_synced_at": "2026-09-15T05:37:56.106Z"
 }
