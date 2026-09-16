@@ -34,18 +34,27 @@ TCC denies to background jobs.
   attempts); a pre-existing local commit ahead of origin is replayed the same
   way. Nothing is committed unless validation passed, so the last good output
   survives upstream/validation failures.
-- **Cadence:** chained into the existing 07:00 launchd run as the final step
-  (`daily-pipeline.sh` → `publish dashboard`). Publishing is opt-in via
-  `PUBLISH_DASHBOARD=1`, which the launchd plist now sets, so a manual
-  `npm run props:daily` from Desktop still cannot publish by accident. Order in
-  the run: syncs → refresh nfl results → export board → rebuild schedule → sync
-  shared data → publish dashboard.
-- Failure reporting reuses the existing channel: the step failing sets the
-  pipeline `failed_step`, and the checkpoint-4 trap writes
-  `pipeline-status.json`; a standalone publisher run writes the same shape
-  itself. A publish failure does **not** ship a partial commit.
+- **Cadence:** a separate launchd job, `com.nfldashboard.publish`, at **07:20**
+  (20 minutes after `com.nfldashboard.props-scan` at 07:00). It is deliberately
+  not a step inside `daily-pipeline.sh`: the pipeline's EXIT trap writes
+  `pipeline-status.json` *after* its last step, so a publish step inside the
+  pipeline would always publish the previous run's verdict — and a failed data
+  step would stop the verdict from ever being published. Order in the 07:00
+  run: syncs → refresh nfl results → export board → rebuild schedule → sync
+  shared data. `npm run props:daily` from Desktop cannot publish.
+- Failure reporting reuses the existing channel: any failing step sets the
+  pipeline `failed_step`, the checkpoint-4 trap writes `pipeline-status.json`,
+  and the 07:20 publisher carries that verdict to the public app — so a failed
+  data run is owner-visible even though the board itself is unchanged. A
+  publish failure does **not** ship a partial commit, and the last published
+  output stays live; a standalone publisher run records the same status shape
+  itself. A failed publish is visible in `logs/publish.log` and is recovered
+  with `bash scripts/publish-daily.sh`.
 - The broken 07:10 workspace-sync cron was retired once this replacement was
-  verified (see below). Nothing was left behind that reads the Desktop tree.
+  verified: `crontab` no longer carries
+  `10 7 * * * ... sync-shared-data.sh` (backup at
+  `/tmp/crontab.backup.20260916-045232`; every other entry was preserved).
+  Nothing scheduled now reads the Desktop tree.
 
 **Actual standings and current-season statistics (`League` tab).**
 

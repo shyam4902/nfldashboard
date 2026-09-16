@@ -359,10 +359,14 @@ async function main() {
 }
 
 if (require.main === module) {
+  const dryRun = process.argv.includes('--dry-run');
   main().catch((err) => {
-    const opts = parseArgs(process.argv.slice(2).filter((a) => a !== '--dry-run'));
     console.error(`[publish] FAILED: ${err.message}`);
-    recordFailure(opts.runtime, err.message);
+    // A dry run must have no side effects at all — not even a status record.
+    if (!dryRun) {
+      const opts = parseArgs(process.argv.slice(2));
+      recordFailure(opts.runtime, err.message);
+    }
     process.exit(1);
   });
 }
