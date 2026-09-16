@@ -1,7 +1,7 @@
 {
   "artifact": "nfl_stats",
   "season": 2026,
-  "generated_at": "2026-09-16T08:56:56Z",
+  "generated_at": "2026-09-16T11:20:05Z",
   "source": "Sleeper weekly stats API (api.sleeper.app/v1/stats/nfl/regular) — free, no key; names and team from the Sleeper player catalogue",
   "source_of_points": "schedule.json completed regular-season results",
   "season_kind": "actual",
