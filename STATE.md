@@ -1,9 +1,33 @@
 # NFL Dashboard state
 
-- Updated: 2026-09-12
+- Updated: 2026-09-15
 - Live: https://nfldashboard.pages.dev/
 - Repo: https://github.com/shyam4902/nfldashboard
 - App: static `index.html`, tracked JSON assets, and Supabase roster/transaction data
+
+## Week 2 refresh, 2026-09-15
+
+- All 16 Week 1 finals arrived through the score workflow. Pulled its 11
+  commits, rebuilt the schedule to Week 2, and preserved every recorded result.
+- The score workflow now runs the existing schedule builder before syncing
+  scores. Tuesday rollover no longer depends on the Mac's daily pipeline.
+  The builder retains score-sync provenance; a regression test covers rollover
+  and result preservation. Cron minutes moved off the top of the hour.
+- Refreshed the 1,699-player Supabase snapshot, the producer's 2026 game
+  results, and the daily props pipeline. Board generated
+  `2026-09-16T00:36:09.866Z`, 1,830 plays, 32 win-total rows, one game played
+  per team. Exchange quotes refreshed; sportsbook quotes still date to August.
+- Fixed the producer's runtime path handling, which had hidden all win totals
+  under `Application Support`. The installed runtime has the fix too.
+- Refreshed the live Moves feed with 163 validated ESPN transactions from
+  Sept 4-15. Used the existing normalizer and transaction identity rules,
+  inserted through the authenticated Supabase connector with conflict-ignore,
+  and verified 2,131 total transactions, newest Sept 15, zero duplicate IDs.
+  This updates transactions only, not the underlying player roster.
+- Verification: all 16 data assets pass, schedule tests pass, 283 producer
+  tests pass, Python browser suite has zero console/page errors, and the Node
+  smoke works with the Python Playwright package via `PLAYWRIGHT_MODULE`.
+- Audit and proposed next work: `results/2026-09-15-week2-automation-audit.md`.
 
 ## Checkpoint 6 (2026-09-10 → 09-12): in-season results, automated
 
@@ -74,8 +98,8 @@ to the first game of the week, so it sat on a game already played.
 
 - Review `results/checkpoint-2-completion.md` (checkpoint 2 of
   `docs/superpowers/plans/2026-09-05-matchup-product/10-build-checkpoints.md`).
-- Watch the first unattended Sunday run of `sync-scores.yml` (2026-09-13,
-  17:00Z onward) and confirm it commits the 1pm slate without help.
+- Add guarded daily publication of the producer's output and verify the live
+  artifact after deployment. The runtime pipeline alone does not publish it.
 - Dashboard favicon + Open Graph tags (Sept 4 blocker B4) still unsent.
 - Run cross-repo checks (`scripts/sync_shared_data.sh`,
   `scripts/check_repo_drift.sh`).
@@ -90,11 +114,16 @@ to the first game of the week, so it sat on a game already played.
 
 ## Known limits
 
-- `node props-smoke.mjs` cannot run here — the npm `playwright` module is not
-  installed in this repo. The Python suites carry their own and are the real
-  browser gate. Pre-existing, not caused by recent work.
-- GitHub deprioritizes scheduled runs under load, so `*/15` often lands closer
-  to every 20-25 min in practice. A final can be ~30 min late worst case.
+- The repo has no npm `playwright` install. The smoke passes with
+  `PLAYWRIGHT_MODULE=/opt/homebrew/lib/python3.14/site-packages/playwright/driver/package`.
+- GitHub's cron is delayed in practice. Sept 13 afternoon runs were about
+  38-122 minutes apart; weekday baseline runs sometimes had gaps over 5 hours.
+  There is no verified 30-minute upper bound. Moving cron minutes may help,
+  but does not guarantee live-score latency.
+- The 07:10 workspace sync cron fails with `Operation not permitted`. The
+  07:00 props job succeeds in Application Support, but public props publication
+  still needs a checked commit/push. The legacy 06:00 ESPN cron is dry-run-only
+  and its output log has not advanced since Sept 3.
 
 ## Blockers
 

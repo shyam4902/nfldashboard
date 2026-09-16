@@ -43,9 +43,9 @@ def kickoff_utc(gameday: str, gametime: str) -> str:
     return local.astimezone(ZoneInfo("UTC")).strftime("%Y-%m-%dT%H:%M:%SZ")
 
 
-def current_week(games) -> int:
+def current_week(games, now=None) -> int:
     """The week containing 'now', or the next upcoming week if between games."""
-    now = datetime.now(ZoneInfo("UTC"))
+    now = now or datetime.now(ZoneInfo("UTC"))
     week_starts = {}
     for g in games:
         dt = datetime.strptime(g["kickoff_utc"], "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=ZoneInfo("UTC"))
@@ -108,6 +108,7 @@ def main():
 
     games.sort(key=lambda g: (g["week"], g["kickoff_utc"]))
     out = {
+        **existing,  # Keep score-sync provenance when refreshing schedule metadata.
         "season": 2026,
         "week": current_week(games),
         "total_weeks": 18,

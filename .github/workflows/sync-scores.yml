@@ -2,20 +2,20 @@
 # git-connected, so the push is the deploy — nothing else ships the site.
 #
 # Hourly through the season, every 15 min over the Sunday 1-8pm ET slate.
-# sync_scores.js only writes when a kicked-off game is missing a result, so
-# quiet hours produce no commit and no rebuild.
+# Rebuild the schedule too, so its selected week advances every Tuesday.
+# Unchanged scores and schedule produce no commit and no rebuild.
 name: sync scores
 
 on:
   schedule:
     # Hourly through the season, the baseline.
-    - cron: '0 * * 9,10,11,12,1,2 *'
+    - cron: '7 * * 9,10,11,12,1,2 *'
     # Every 15 min over the Sunday afternoon/early-evening slate. GitHub cron
     # is UTC with no DST, so 1-8pm Eastern needs both offsets: 17:00-23:59Z
     # Sunday plus 00:00-01:59Z Monday covers it under EDT and under EST. The
     # winter spillover is harmless — an unchanged schedule.json makes no commit.
-    - cron: '*/15 17-23 * 9,10,11,12,1,2 0'
-    - cron: '*/15 0-1 * 9,10,11,12,1,2 1'
+    - cron: '7,22,37,52 17-23 * 9,10,11,12,1,2 0'
+    - cron: '7,22,37,52 0-1 * 9,10,11,12,1,2 1'
   workflow_dispatch:
 
 permissions:
@@ -35,7 +35,11 @@ jobs:
           node-version: '22'
 
       - run: node --test sync_scores.test.js
+      - run: python3 -m unittest test_schedule_refresh.py
+      - run: python3 scripts/build_full_schedule.py
+      - run: cp schedule.json data/shared/schedule.json
       - run: node sync_scores.js
+      - run: python3 test_schedule_data.py
 
       # Guard the deploy: never push a schedule.json the app's own validator rejects.
       - run: node scripts/validate-data.js

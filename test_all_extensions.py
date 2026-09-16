@@ -13,7 +13,7 @@ import time
 from playwright.sync_api import sync_playwright
 
 DASHBOARD_DIR = os.path.dirname(os.path.abspath(__file__))
-SCREENSHOT_DIR = os.path.join(DASHBOARD_DIR, "screenshots_expansion")
+SCREENSHOT_DIR = os.environ.get("DASH_SCREENSHOT_DIR", os.path.join(DASHBOARD_DIR, "screenshots_expansion"))
 os.makedirs(SCREENSHOT_DIR, exist_ok=True)
 
 # Deterministic data-feed fixtures (default): intercept Supabase + nflverse with
@@ -75,7 +75,9 @@ with sync_playwright() as p:
         failures.append(f"Team logos missing or insufficient in home: {logo_count}")
     page.wait_for_timeout(1500)
     spots = page.inner_text("#homeSpotlights")
-    for sec in ["Week 1 Marquee", "Top Value Plays", "Biggest Offseason Moves"]:
+    schedule = json.load(open(os.path.join(DASHBOARD_DIR, "schedule.json")))
+    schedule_week = schedule["week"]
+    for sec in [f"Week {schedule_week} Marquee", "Top Value Plays", "Biggest Offseason Moves"]:
         if sec in spots:
             successes.append(f"Home spotlight '{sec}' rendered")
         else:
@@ -144,8 +146,9 @@ with sync_playwright() as p:
     page.click('[data-tab="schedule"]')
     page.wait_for_timeout(1500)
     chips = page.locator('#scheduleWeekChips button')
-    if chips.count() == 18 and page.locator('.sch-card').count() == 16:
-        successes.append("Schedule shows 18 week chips and 16 Week 1 cards")
+    expected_games = sum(game["week"] == schedule_week for game in schedule["games"])
+    if chips.count() == 18 and page.locator('.sch-card').count() == expected_games:
+        successes.append(f"Schedule shows 18 week chips and {expected_games} Week {schedule_week} cards")
     else:
         failures.append(f"Schedule selector wrong ({chips.count()} chips, {page.locator('.sch-card').count()} cards)")
     page.locator('#scheduleWeekChips button', has_text='WK 2').click()
