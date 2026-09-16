@@ -1,7 +1,7 @@
 {
-  "status": "ok",
-  "started_at": "2026-09-16T00:33:52Z",
-  "finished_at": "2026-09-16T00:36:12Z",
-  "failed_step": null,
-  "exit_code": 0
+  "status": "failed",
+  "started_at": "2026-09-16T08:49:36Z",
+  "finished_at": "2026-09-16T08:49:36Z",
+  "failed_step": "publish dashboard: not a dashboard checkout (missing scripts/build_league_data.js): /Users/shyampatel/Library/Application Support/nfldashboard-publish/nfldashboard",
+  "exit_code": 1
 }
