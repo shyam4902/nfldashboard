@@ -1,14 +1,14 @@
 {
-  "generated_at": "2026-09-16T00:36:11Z",
+  "generated_at": "2026-09-16T08:56:34Z",
   "sources": {
-  "props_board": { "as_of": "2026-09-16T00:36:09.866Z", "status": "fresh", "age_hours": 0, "max_age_hours": 24 },
-  "rosters": { "as_of": "2026-09-16T00:32:34Z", "status": "fresh", "age_hours": 0, "max_age_hours": 168 },
-  "schedule": { "as_of": "2026-09-16T00:36:11Z", "status": "fresh", "age_hours": 0, "max_age_hours": 168 },
-  "clay_projections": { "as_of": "2026-08-26T00:53:55Z", "status": "fresh", "age_hours": 503, "max_age_hours": 720 },
-  "team_efficiency": { "as_of": "2026-08-30T19:28:25Z", "status": "fresh", "age_hours": 389, "max_age_hours": 262980 },
-  "stickiness": { "as_of": "2026-08-30T19:28:41Z", "status": "fresh", "age_hours": 389, "max_age_hours": 262980 },
-  "team_tendencies": { "as_of": "2026-09-07T07:21:19Z", "status": "fresh", "age_hours": 209, "max_age_hours": 262980 },
-  "win_projection": { "as_of": "2026-08-30T19:28:42Z", "status": "fresh", "age_hours": 389, "max_age_hours": 262980 },
-  "market_comparison": { "as_of": "2026-08-30T19:28:50Z", "status": "fresh", "age_hours": 389, "max_age_hours": 262980 }
+  "props_board": { "as_of": "2026-09-16T08:56:32.412Z", "status": "fresh", "age_hours": 0, "max_age_hours": 24 },
+  "rosters": { "as_of": "2026-09-16T08:54:35Z", "status": "fresh", "age_hours": 0, "max_age_hours": 168 },
+  "schedule": { "as_of": "2026-09-16T08:56:34Z", "status": "fresh", "age_hours": 0, "max_age_hours": 168 },
+  "clay_projections": { "as_of": "2026-09-16T08:54:35Z", "status": "fresh", "age_hours": 0, "max_age_hours": 720 },
+  "team_efficiency": { "as_of": "2026-09-16T08:54:35Z", "status": "fresh", "age_hours": 0, "max_age_hours": 262980 },
+  "stickiness": { "as_of": "2026-09-16T08:54:35Z", "status": "fresh", "age_hours": 0, "max_age_hours": 262980 },
+  "team_tendencies": { "as_of": "2026-09-07T07:21:19Z", "status": "fresh", "age_hours": 217, "max_age_hours": 262980 },
+  "win_projection": { "as_of": "2026-09-16T08:54:35Z", "status": "fresh", "age_hours": 0, "max_age_hours": 262980 },
+  "market_comparison": { "as_of": "2026-09-16T08:54:35Z", "status": "fresh", "age_hours": 0, "max_age_hours": 262980 }
   }
 }
