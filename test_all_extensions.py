@@ -82,6 +82,20 @@ with sync_playwright() as p:
             successes.append(f"Home spotlight '{sec}' rendered")
         else:
             failures.append(f"Home spotlight '{sec}' missing")
+    expected_games = sum(game["week"] == schedule_week for game in schedule["games"])
+    if f"{expected_games} Week {schedule_week} Games" in page.inner_text('#homeStats') and \
+       f"The full Week {schedule_week} slate" in page.inner_text('#homeHero'):
+        successes.append("Home schedule labels follow the current week")
+    else:
+        failures.append("Home schedule labels do not follow the current week")
+    page.locator('.h2a-strip-inner .h2a-game').last.click()
+    page.wait_for_timeout(600)
+    if page.inner_text('#scheduleWeekNum') == str(schedule_week):
+        successes.append("Home all-games link opens the current week")
+    else:
+        failures.append("Home all-games link resets to the wrong week")
+    page.click('[data-tab="home"]')
+    page.wait_for_timeout(600)
     # Power index navigation: click a row and verify it switches to projections tab
     page.locator(".h2a-pi-row").first.click()
     page.wait_for_timeout(500)

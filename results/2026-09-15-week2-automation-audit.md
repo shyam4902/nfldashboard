@@ -8,6 +8,9 @@ as proof that a job still works.
 
 - Week 1 has all 16 finals. The public schedule already had those finals but
   still selected Week 1. The schedule now selects Week 2.
+- Home labels, the all-games link, and the command palette now follow the
+  selected week. Replaced the static Melbourne kickoff promotion with the
+  selected week's featured matchup data.
 - Added the existing schedule builder to the score workflow. It retains
   recorded results and their sync timestamp. This handles future weekly rollovers.
 - Refreshed the Supabase snapshot, 1,699 players across 32 teams. Snapshot

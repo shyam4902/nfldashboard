@@ -97,13 +97,16 @@ console.log('--- edge analytics links present:', edgeBtn);
 const matchupNavBtn = await page.locator('button[data-tab="matchup"]').count().catch(() => -1);
 const playerCompareLabel = (await page.locator('button[onclick="openPlayerCompareModal()"] span').last().textContent().catch(() => '')).trim();
 const homeMappings = await page.evaluate(() => {
+  const expectedWeek = typeof currentScheduleWeek === 'number' ? currentScheduleWeek : 1;
   const actions = Array.from(document.querySelectorAll('#tab-home [onclick]'));
   const actionFor = text => actions.find(element => element.textContent.includes(text))?.getAttribute('onclick') || '';
   return {
     compareRosters: actionFor('Compare rosters').includes('openCompare('),
     scorestripGames: document.querySelectorAll('.h2a-strip-games .h2a-game[onclick^="openMatchup"]').length > 0,
     marqueeGames: document.querySelectorAll('#homeSpotlights [onclick^="openMatchup"]').length > 0,
-    allWeekOneGames: actionFor('All 16 games').includes('showScheduleWeek(1)'),
+    allScheduleWeekGames: actionFor(`All ${home2aWeekGames().length} games`).includes(`showScheduleWeek(${expectedWeek})`),
+    sundayNightEastern: ['2026-09-21T00:20:00Z', '2026-12-07T01:20:00Z'].every(kickoff_utc => gameCategories({ kickoff_utc, tv: '', market: {} }).includes('snf')),
+    sundayAfternoon: !gameCategories({ kickoff_utc: '2026-09-20T20:25:00Z', tv: '', market: {} }).includes('snf'),
     projectedStandings: actionFor('Projected standings').includes("showProjectionsTab('standings')"),
     modelLab: actionFor('How the model is graded').includes('/model-lab')
   };

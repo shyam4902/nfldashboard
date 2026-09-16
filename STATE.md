@@ -28,6 +28,11 @@
   tests pass, Python browser suite has zero console/page errors, and the Node
   smoke works with the Python Playwright package via `PLAYWRIGHT_MODULE`.
 - Audit and proposed next work: `results/2026-09-15-week2-automation-audit.md`.
+- Removed the remaining hardcoded Week 1 home labels and navigation targets.
+  The schedule story now uses the selected week's featured game's teams,
+  venue, and kickoff. Home stats refresh after the schedule arrives.
+- Sunday-night classification and schedule windows use Eastern kickoff hours,
+  including games without TV metadata. Carousel labels use the supplied title.
 
 ## Checkpoint 6 (2026-09-10 → 09-12): in-season results, automated
 

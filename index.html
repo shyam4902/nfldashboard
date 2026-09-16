@@ -2566,7 +2566,7 @@ function homeStatCards(){
     { label: '32 Teams', sub: 'rosters & depth charts', icon: '🛡️', color: '#8fa6bf', action: "showTab('teams')" },
     { label: `${(DATA.players || []).length} Players`, sub: 'full 2026 rosters', icon: '🏈', color: '#7ec0b0', action: "openCommandPalette()" },
     { label: `${(DATA.transactions || []).length} Moves`, sub: 'since Super Bowl LX', icon: '⚡', color: '#e8877c', action: "showMovesTab()" },
-    { label: '16 Week 1 Games', sub: 'odds & win probabilities', icon: '📅', color: '#7cc49b', action: "showScheduleWeek(1)" },
+    { label: `${home2aWeekGames().length} Week ${currentScheduleWeek} Games`, sub: 'odds & win probabilities', icon: '📅', color: '#7cc49b', action: `showScheduleWeek(${currentScheduleWeek})` },
     { label: 'Value Reads', sub: 'props & win totals in Edge Analytics', icon: '💰', color: '#d9a441', action: "window.open('https://edgeplay-analytics.pages.dev/props','_blank')" },
   ];
   return cards.map(c => `
@@ -2701,7 +2701,7 @@ function homeHeroHtml(){
         <span>League Command Center</span>
       </h1>
       <p class="text-sm text-slate-300 mt-2.5 max-w-4xl leading-relaxed">
-        The complete NFL season command center. Explore the Week 1 slate with live odds and model win probabilities, composite power rankings, depth charts, and draft analysis. For deep value and prop analysis, open Edge Analytics.
+        The complete NFL season command center. Explore the current weekly slate with live odds and model win probabilities, composite power rankings, depth charts, and draft analysis. For deep value and prop analysis, open Edge Analytics.
       </p>
       <div class="flex items-center gap-3 mt-4 pt-3.5 border-t border-slate-700/40">
         <span class="text-[10px] uppercase font-black text-slate-400 tracking-wider shrink-0 px-2 py-1 rounded bg-slate-800/80 border border-slate-700/70">Teams</span>
@@ -2717,7 +2717,7 @@ function homeHeroHtml(){
 }
 
 const HOME_FEATURES = [
-  { icon:'📅', title:'Schedule', tab:'schedule', accent:'#3b82f6', stat:'Week 1 · Sep 9–14', desc:'All 16 opening-week matchups with live spreads, totals, moneylines and model win probabilities. Click any game for deep matchup analytics.' },
+  { icon:'📅', title:'Schedule', tab:'schedule', accent:'#3b82f6', stat:() => `Week ${currentScheduleWeek}`, desc:'Every matchup in the selected week with live spreads, totals, moneylines and model win probabilities. Click any game for deep matchup analytics.' },
   { icon:'⚔️', title:'Matchup Lab', tab:'matchup', accent:'#f43f5e', stat:'offense vs defense', desc:"X's and O's formation preview for any matchup. Pick personnel and defensive front, scan Clay unit-grade advantages, click a player for their full profile." },
   { icon:'📊', title:'Mike Clay Projections', tab:'projections', accent:'#06b6d4', stat:'11 supported views', desc:'2026 projected standings, category leaders, coaching staffs, unit grades and Clay vs Market deltas.' },
   { icon:'💰', title:'Value Reads', tab:null, extUrl:'https://edgeplay-analytics.pages.dev/props', accent:'#10b981', stat:'Edge Analytics', desc:'Player props, win totals, line movement and model diagnostics live in the Edge Analytics app. Deep value analysis opens in a new tab.' },
@@ -3208,19 +3208,30 @@ function gameEtDay(g){
     d.toLocaleDateString('en-US', { weekday: 'short', timeZone: 'America/New_York' }).toUpperCase();
 }
 
+function gameEtHour(g){
+  const d = new Date(g.kickoff_utc);
+  if (isNaN(d.getTime())) return 13;
+  const parts = new Intl.DateTimeFormat('en-US', {
+    timeZone: 'America/New_York',
+    hour: 'numeric',
+    hour12: false
+  }).formatToParts(d);
+  const part = parts.find(p => p.type === 'hour');
+  return part ? (parseInt(part.value, 10) % 24) : 13;
+}
+
 // Categories drive the Schedule filters and the featured ranking.
 function gameCategories(game){
   if (!game.market) game.market = gameMarketLines(game);
   const tvUpper = String(game.tv || '').toUpperCase();
-  const d = new Date(game.kickoff_utc);
   const day = gameEtDay(game);
-  const hour = isNaN(d.getTime()) ? 13 : d.getUTCHours();
+  const etHour = gameEtHour(game);
 
-  const isPrimetime = tvUpper.includes('NBC') || tvUpper.includes('ESPN') || tvUpper.includes('ABC') ||
-                      tvUpper.includes('NETFLIX') || tvUpper.includes('PRIME') || day === 'THU' || day === 'MON' ||
-                      (day === 'SUN' && hour >= 23);
-  // Sunday Night Football: Sunday ET kickoff that lands after 8pm ET (>= 00Z).
-  const isSnf = day === 'SUN' && tvUpper.includes('NBC') && (hour >= 23 || hour <= 4);
+  // Sunday Night Football: Sunday ET kickoff that lands at or after 8pm ET (20:00+),
+  // regardless of whether TV metadata says NBC or is empty/missing.
+  const isSnf = (day === 'SUN' && etHour >= 20) || (day === 'SUN' && tvUpper.includes('NBC') && etHour >= 19);
+  const isPrimetime = isSnf || tvUpper.includes('NBC') || tvUpper.includes('ESPN') || tvUpper.includes('ABC') ||
+                      tvUpper.includes('NETFLIX') || tvUpper.includes('PRIME') || day === 'THU' || day === 'MON';
 
   const aDiv = (DATA.teams && DATA.teams[game.away_team] && DATA.teams[game.away_team].division) || '';
   const hDiv = (DATA.teams && DATA.teams[game.home_team] && DATA.teams[game.home_team].division) || '';
@@ -3403,7 +3414,7 @@ function home2aScorestrip(games){
       <div style="font:600 11px var(--font-sans);color:#e9e7e3;white-space:nowrap">${games.length} games</div>
     </div>
     <div class="h2a-strip-games"><div class="h2a-strip-inner">${cells}
-      <div class="h2a-game" style="flex:0 0 126px;display:flex;flex-direction:column;justify-content:center;gap:4px;border-right:0" onclick="showScheduleWeek(1)">
+      <div class="h2a-game" style="flex:0 0 126px;display:flex;flex-direction:column;justify-content:center;gap:4px;border-right:0" onclick="showScheduleWeek(${currentScheduleWeek})">
         <div style="font:700 11px var(--font-sans);color:#d9a441">All ${games.length} games →</div>
         <div style="font:400 10px var(--font-sans);color:#868a91">Model win % + live lines</div>
       </div>
@@ -3621,26 +3632,26 @@ function homeRedesign2aHtml(){
               </div>
             </div>
             <div class="h2a-mono" style="font:800 9px var(--font-mono);letter-spacing:.14em;color:#69BE28;margin-top:10px">TRANSACTIONS</div>
-            <div style="font:700 16px/1.3 var(--font-sans);color:#fff;margin-top:6px;text-wrap:pretty">${moveCount} moves reshaped the board before Week 1</div>
+            <div style="font:700 16px/1.3 var(--font-sans);color:#fff;margin-top:6px;text-wrap:pretty">${moveCount} moves since Super Bowl LX</div>
             <div style="font:400 11px/1.6 var(--font-sans);color:#a2a5ab;margin-top:6px">Every trade, signing and draft pickup since Super Bowl LX, blockbusters flagged and re-scored.</div>
           </div>
           <div>
             <div style="height:150px;border-radius:8px;border:1px solid #2b3037;background:linear-gradient(135deg,#1b1417 0%,#191e28 100%);position:relative;overflow:hidden;padding:16px;display:flex;flex-direction:column;justify-content:space-between">
               <div style="display:flex;align-items:center;justify-content:space-between;position:relative;z-index:1">
                 <div style="display:flex;align-items:center;gap:8px">
-                  <img src="${getNflTeamLogo('San Francisco 49ers')}" alt="SF" style="width:22px;height:22px;object-fit:contain">
+                  <img src="${getNflTeamLogo(feat?.away_team)}" alt="${homeEsc(feat?.away_team)}" style="width:22px;height:22px;object-fit:contain">
                   <span class="h2a-mono" style="font:700 10px var(--font-mono);color:#868a91">AT</span>
-                  <img src="${getNflTeamLogo('Los Angeles Rams')}" alt="LAR" style="width:22px;height:22px;object-fit:contain">
+                  <img src="${getNflTeamLogo(feat?.home_team)}" alt="${homeEsc(feat?.home_team)}" style="width:22px;height:22px;object-fit:contain">
                 </div>
-                <span class="h2a-mono" style="font:700 9px var(--font-mono);color:#e50914;background:rgba(229,9,20,.12);border:1px solid rgba(229,9,20,.3);border-radius:3px;padding:2px 6px">NETFLIX EXCLUSIVE</span>
+                <span class="h2a-mono" style="font:700 9px var(--font-mono);color:#e50914;background:rgba(229,9,20,.12);border:1px solid rgba(229,9,20,.3);border-radius:3px;padding:2px 6px">WEEK ${currentScheduleWeek}</span>
               </div>
               <div style="position:relative;z-index:1">
-                <div class="h2a-arch" style="font:800 13px var(--font-sans);color:#fff">MELBOURNE CRICKET GROUND</div>
-                <div class="h2a-mono" style="font:500 11px var(--font-mono);color:#a2a5ab;margin-top:2px">THU SEP 10 · 8:35 PM ET · 100,000 CAP</div>
+                <div class="h2a-arch" style="font:800 13px var(--font-sans);color:#fff">${homeEsc(feat?.venue || 'Full schedule')}</div>
+                <div class="h2a-mono" style="font:500 11px var(--font-mono);color:#a2a5ab;margin-top:2px">${feat ? homeEsc(new Date(feat.kickoff_utc).toLocaleString([], { weekday:'short', month:'short', day:'numeric', hour:'numeric', minute:'2-digit' })) : 'Kickoff times loading'}</div>
               </div>
             </div>
             <div class="h2a-mono" style="font:800 9px var(--font-mono);letter-spacing:.14em;color:#69BE28;margin-top:10px">SCHEDULE</div>
-            <div style="font:700 16px/1.3 var(--font-sans);color:#fff;margin-top:6px;text-wrap:pretty">The full Week 1 slate, with model win probabilities on every game</div>
+            <div style="font:700 16px/1.3 var(--font-sans);color:#fff;margin-top:6px;text-wrap:pretty">The full Week ${currentScheduleWeek} slate, with results and upcoming matchups</div>
             <div style="font:400 11px/1.6 var(--font-sans);color:#a2a5ab;margin-top:6px">Composite power ratings, log5 and a home-field edge, priced against live nflverse lines.</div>
           </div>
         </div>
@@ -3707,6 +3718,7 @@ async function renderHome(){
     loadPropsBoard().catch(() => null),
     loadSchedule().catch(() => null),
   ]);
+  if (stats) stats.querySelector('.grid').innerHTML = homeStatCards();
   // Re-render the 2a hero now that schedule + Clay data are in (featured
   // matchup, scorestrip and power index all read live data).
   hero.innerHTML = homeRedesign2aHtml();
@@ -7599,7 +7611,7 @@ async function renderSchedule(){
       '<div class="sch-glow" style="background:radial-gradient(ellipse at 18% 0%,' + aColor + '2e 0%,transparent 55%),radial-gradient(ellipse at 82% 12%,' + hColor + '24 0%,transparent 52%)"></div>' +
       '<div class="sch-marquee-pad">' +
         '<div class="flex items-center gap-3 mb-4 flex-wrap">' +
-          '<span class="sch-kicker" style="color:#fff;background:' + aColor + '">2026 NFL KICKOFF GAME</span>' +
+          '<span class="sch-kicker" style="color:#fff;background:' + aColor + '">' + esc(kicker || 'FEATURED MATCHUP') + '</span>' +
           '<span class="font-mono text-[11px] font-semibold text-[#b4b7bc]">' + esc(dateLine) + '</span>' +
         '</div>' +
         '<div class="sch-hero-matchup grid grid-cols-1 md:grid-cols-[1fr_auto_1fr] items-center gap-6">' +
@@ -7694,16 +7706,15 @@ async function renderSchedule(){
   const otherGames = [];
 
   sorted.forEach(g => {
-    const d = new Date(g.kickoff_utc);
-    const day = isNaN(d.getTime()) ? '' : d.toLocaleDateString('en-US', { weekday: 'short', timeZone: 'America/New_York' }).toUpperCase();
-    const hour = isNaN(d.getTime()) ? 13 : d.getUTCHours();
+    const day = gameEtDay(g);
+    const etHour = gameEtHour(g);
     const tv = String(g.tv || '').toUpperCase();
 
     if (day === 'THU' || day === 'FRI' || day === 'WED' || tv.includes('NETFLIX')) {
       windows.push({ title: 'Thursday / Special Kickoff Showcase', meta: 'INTERNATIONAL & OPENING SHOWCASES', games: [g] });
-    } else if (day === 'MON' || (day === 'SUN' && hour >= 23) || tv.includes('NBC') || tv.includes('ESPN')) {
+    } else if (day === 'MON' || (day === 'SUN' && etHour >= 20) || tv.includes('NBC') || tv.includes('ESPN')) {
       primeGames.push(g);
-    } else if (day === 'SUN' && hour >= 20) {
+    } else if (day === 'SUN' && etHour >= 16) {
       lateGames.push(g);
     } else if (day === 'SUN') {
       earlyGames.push(g);
@@ -8872,7 +8883,7 @@ function handleCommandSearch(q) {
 
   const tabs = [
     { label: 'Home Dashboard', type: 'Tab', icon: '🏠', action: () => { showTab('home'); closeCommandPalette(); } },
-    { label: 'Week 1 Schedule', type: 'Tab', icon: '📅', action: () => { showScheduleWeek(1); closeCommandPalette(); } },
+    { label: `Week ${currentScheduleWeek} Schedule`, type: 'Tab', icon: '📅', action: () => { showScheduleWeek(currentScheduleWeek); closeCommandPalette(); } },
     { label: 'Transactions / Moves', type: 'Tab', icon: '⚡', action: () => { showMovesTab(); closeCommandPalette(); } },
     { label: 'Teams & Rosters', type: 'Tab', icon: '🛡', action: () => { showTab('teams'); closeCommandPalette(); } },
     { label: 'Mike Clay Projections', type: 'Tab', icon: '📊', action: () => { showProjectionsTab('standings'); closeCommandPalette(); } },
