@@ -102,6 +102,32 @@ function buildWorkspace(dir) {
   fs.writeFileSync(path.join(shared, 'team_season_efficiency.json'), JSON.stringify(eff));
   fs.writeFileSync(path.join(dir, 'team_season_efficiency.json'), JSON.stringify(eff));
 
+  // standings: canonical root + data/shared copy; all 32 teams, 8 divisions
+  const standingsTeams = fixtureRows(32, i => ({
+    team: `Team ${i}`, abbr: `T${i}`, division: 'AFC West', conference: 'AFC',
+    wins: 0, losses: 0, ties: 0, played: 0, points_for: 0, points_against: 0,
+    differential: 0
+  }));
+  const standings = JSON.stringify({
+    artifact: 'nfl_standings', season: 2026, generated_at: GENERATED_AT,
+    through_week: 1, completed_games: 16, source: 'schedule.json results',
+    divisions: [{ conference: 'AFC', division: 'AFC West', teams: standingsTeams.slice(0, 4) }],
+    teams: standingsTeams
+  });
+  fs.writeFileSync(path.join(dir, 'nfl_standings_2026.json'), standings);
+  fs.writeFileSync(path.join(shared, 'nfl_standings_2026.json'), standings);
+
+  // player_stats: canonical root + data/shared copy
+  const stats = JSON.stringify({
+    artifact: 'nfl_stats', season: 2026, generated_at: GENERATED_AT,
+    source: 'Sleeper weekly stats API', completed_weeks: [1],
+    weeks: { '1': { passing: [], rushing: [], receiving: [] } },
+    season_to_date: { passing: [], rushing: [], receiving: [] },
+    team_totals: []
+  });
+  fs.writeFileSync(path.join(dir, 'nfl_stats_2026.json'), stats);
+  fs.writeFileSync(path.join(shared, 'nfl_stats_2026.json'), stats);
+
   // optional asset present in the clean workspace
   fs.writeFileSync(path.join(dir, 'draft-capital.json'), JSON.stringify({ capital: {} }));
 
@@ -147,7 +173,7 @@ test('clean fixture workspace passes all checks', () => {
   try {
     const result = validate(dir);
     assert.equal(result.ok, true, result.problems.join('\n'));
-    assert.equal(result.results.length, 16); // 9 file assets + 3 'none' + 4 runtime
+    assert.equal(result.results.length, 18); // 11 file assets + 3 'none' + 4 runtime
     for (const r of result.results) assert.equal(r.ok, true, `${r.id}: ${r.problems.join('; ')}`);
   } finally { cleanup(dir); }
 });
@@ -161,6 +187,8 @@ test('clean checkout: fresh file mtimes (as git writes them) never affect proven
       'data/shared/schedule.json', 'data/shared/clay_projections_2026.json',
       'data/shared/nfl_rosters_2026.json', 'props-board.json', 'data/shared/props-board.json',
       'data/shared/team_season_efficiency.json', 'team_season_efficiency.json',
+      'nfl_standings_2026.json', 'data/shared/nfl_standings_2026.json',
+      'nfl_stats_2026.json', 'data/shared/nfl_stats_2026.json',
       'data/shared/freshness.json']) {
       fs.utimesSync(path.join(dir, rel), now, now);
     }
