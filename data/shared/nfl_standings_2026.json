@@ -1,11 +1,12 @@
 {
   "artifact": "nfl_standings",
   "season": 2026,
-  "generated_at": "2026-09-17T11:20:05Z",
-  "through_week": 1,
-  "completed_games": 16,
+  "generated_at": "2026-09-18T11:20:06Z",
+  "through_week": 2,
+  "completed_games": 17,
   "completed_weeks": [
-    1
+    1,
+    2
   ],
   "source": "schedule.json completed regular-season results (final scores synced from ESPN by the score workflow)",
   "source_of_teams": "nfl_rosters_2026.json team/division catalogue",
@@ -20,6 +21,21 @@
       "division": "AFC East",
       "teams": [
         {
+          "team": "Buffalo Bills",
+          "abbr": "BUF",
+          "division": "AFC East",
+          "conference": "AFC",
+          "wins": 2,
+          "losses": 0,
+          "ties": 0,
+          "played": 2,
+          "win_pct": 1,
+          "points_for": 77,
+          "points_against": 62,
+          "differential": 15,
+          "source": "actual"
+        },
+        {
           "team": "New York Jets",
           "abbr": "NYJ",
           "division": "AFC East",
@@ -32,21 +48,6 @@
           "points_for": 23,
           "points_against": 10,
           "differential": 13,
-          "source": "actual"
-        },
-        {
-          "team": "Buffalo Bills",
-          "abbr": "BUF",
-          "division": "AFC East",
-          "conference": "AFC",
-          "wins": 1,
-          "losses": 0,
-          "ties": 0,
-          "played": 1,
-          "win_pct": 1,
-          "points_for": 36,
-          "points_against": 31,
-          "differential": 5,
           "source": "actual"
         },
         {
@@ -385,13 +386,13 @@
           "division": "NFC North",
           "conference": "NFC",
           "wins": 1,
-          "losses": 0,
+          "losses": 1,
           "ties": 0,
-          "played": 1,
-          "win_pct": 1,
-          "points_for": 31,
-          "points_against": 30,
-          "differential": 1,
+          "played": 2,
+          "win_pct": 0.5,
+          "points_for": 62,
+          "points_against": 71,
+          "differential": -9,
           "source": "actual"
         },
         {
@@ -595,14 +596,14 @@
       "abbr": "BUF",
       "division": "AFC East",
       "conference": "AFC",
-      "wins": 1,
+      "wins": 2,
       "losses": 0,
       "ties": 0,
-      "played": 1,
+      "played": 2,
       "win_pct": 1,
-      "points_for": 36,
-      "points_against": 31,
-      "differential": 5,
+      "points_for": 77,
+      "points_against": 62,
+      "differential": 15,
       "source": "actual"
     },
     {
@@ -701,13 +702,13 @@
       "division": "NFC North",
       "conference": "NFC",
       "wins": 1,
-      "losses": 0,
+      "losses": 1,
       "ties": 0,
-      "played": 1,
-      "win_pct": 1,
-      "points_for": 31,
-      "points_against": 30,
-      "differential": 1,
+      "played": 2,
+      "win_pct": 0.5,
+      "points_for": 62,
+      "points_against": 71,
+      "differential": -9,
       "source": "actual"
     },
     {

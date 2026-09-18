@@ -1,7 +1,7 @@
 {
   "artifact": "nfl_stats",
   "season": 2026,
-  "generated_at": "2026-09-17T11:20:05Z",
+  "generated_at": "2026-09-18T11:20:06Z",
   "source": "Sleeper weekly stats API (api.sleeper.app/v1/stats/nfl/regular) — free, no key; names and team from the Sleeper player catalogue",
   "source_of_points": "schedule.json completed regular-season results",
   "season_kind": "actual",
@@ -1810,6 +1810,34 @@
   },
   "team_totals": [
     {
+      "team": "Buffalo Bills",
+      "abbr": "BUF",
+      "division": "AFC East",
+      "games": 1,
+      "pass_yards": 334,
+      "rush_yards": 86,
+      "total_yards": 420,
+      "offensive_tds": 4,
+      "points_for": 77,
+      "points_against": 62,
+      "yards_allowed": 381,
+      "differential": 15
+    },
+    {
+      "team": "Detroit Lions",
+      "abbr": "DET",
+      "division": "NFC North",
+      "games": 1,
+      "pass_yards": 206,
+      "rush_yards": 165,
+      "total_yards": 371,
+      "offensive_tds": 4,
+      "points_for": 62,
+      "points_against": 71,
+      "yards_allowed": 469,
+      "differential": -9
+    },
+    {
       "team": "Chicago Bears",
       "abbr": "CHI",
       "division": "NFC North",
@@ -1866,20 +1894,6 @@
       "differential": -22
     },
     {
-      "team": "Buffalo Bills",
-      "abbr": "BUF",
-      "division": "AFC East",
-      "games": 1,
-      "pass_yards": 334,
-      "rush_yards": 86,
-      "total_yards": 420,
-      "offensive_tds": 4,
-      "points_for": 36,
-      "points_against": 31,
-      "yards_allowed": 381,
-      "differential": 5
-    },
-    {
       "team": "Jacksonville Jaguars",
       "abbr": "JAX",
       "division": "AFC South",
@@ -1906,20 +1920,6 @@
       "points_against": 27,
       "yards_allowed": 282,
       "differential": 6
-    },
-    {
-      "team": "Detroit Lions",
-      "abbr": "DET",
-      "division": "NFC North",
-      "games": 1,
-      "pass_yards": 206,
-      "rush_yards": 165,
-      "total_yards": 371,
-      "offensive_tds": 4,
-      "points_for": 31,
-      "points_against": 30,
-      "yards_allowed": 469,
-      "differential": 1
     },
     {
       "team": "Houston Texans",
