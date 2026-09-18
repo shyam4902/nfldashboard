@@ -237,10 +237,11 @@
       "city": "",
       "kickoff_utc": "2026-09-18T00:15:00Z",
       "tv": "",
-      "winner": null,
-      "away_score": null,
-      "home_score": null,
-      "week": 2
+      "winner": "Buffalo Bills",
+      "away_score": 31,
+      "home_score": 41,
+      "week": 2,
+      "status": "final"
     },
     {
       "game_id": "2026-09-20-CAR-ATL",
@@ -3558,5 +3559,5 @@
       "week": 18
     }
   ],
-  "scores_synced_at": "2026-09-15T05:37:56.106Z"
+  "scores_synced_at": "2026-09-18T04:35:07.608Z"
 }
