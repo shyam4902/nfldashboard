@@ -252,7 +252,7 @@
       "kickoff_utc": "2026-09-20T17:00:00Z",
       "tv": "",
       "winner": null,
-      "away_score": 20,
+      "away_score": 27,
       "home_score": 3,
       "week": 2,
       "status": "in_progress"
@@ -266,8 +266,8 @@
       "kickoff_utc": "2026-09-20T17:00:00Z",
       "tv": "",
       "winner": null,
-      "away_score": 9,
-      "home_score": 14,
+      "away_score": 17,
+      "home_score": 17,
       "week": 2,
       "status": "in_progress"
     },
@@ -294,7 +294,7 @@
       "kickoff_utc": "2026-09-20T17:00:00Z",
       "tv": "",
       "winner": null,
-      "away_score": 7,
+      "away_score": 17,
       "home_score": 3,
       "week": 2,
       "status": "in_progress"
@@ -309,7 +309,7 @@
       "tv": "",
       "winner": null,
       "away_score": 3,
-      "home_score": 10,
+      "home_score": 13,
       "week": 2,
       "status": "in_progress"
     },
@@ -323,7 +323,7 @@
       "tv": "",
       "winner": null,
       "away_score": 7,
-      "home_score": 7,
+      "home_score": 14,
       "week": 2,
       "status": "in_progress"
     },
@@ -336,8 +336,8 @@
       "kickoff_utc": "2026-09-20T17:00:00Z",
       "tv": "",
       "winner": null,
-      "away_score": 6,
-      "home_score": 9,
+      "away_score": 16,
+      "home_score": 16,
       "week": 2,
       "status": "in_progress"
     },
@@ -350,8 +350,8 @@
       "kickoff_utc": "2026-09-20T17:00:00Z",
       "tv": "",
       "winner": null,
-      "away_score": 14,
-      "home_score": 10,
+      "away_score": 17,
+      "home_score": 17,
       "week": 2,
       "status": "in_progress"
     },
@@ -3567,5 +3567,5 @@
       "week": 18
     }
   ],
-  "scores_synced_at": "2026-09-20T18:40:50.879Z"
+  "scores_synced_at": "2026-09-20T19:22:49.878Z"
 }
