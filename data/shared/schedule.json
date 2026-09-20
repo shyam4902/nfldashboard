@@ -335,11 +335,11 @@
       "city": "",
       "kickoff_utc": "2026-09-20T17:00:00Z",
       "tv": "",
-      "winner": null,
+      "winner": "Cleveland Browns",
       "away_score": 23,
       "home_score": 19,
       "week": 2,
-      "status": "in_progress"
+      "status": "final"
     },
     {
       "game_id": "2026-09-20-PHI-TEN",
@@ -363,11 +363,11 @@
       "city": "",
       "kickoff_utc": "2026-09-20T20:05:00Z",
       "tv": "",
-      "winner": null,
-      "away_score": 10,
-      "home_score": 3,
+      "winner": "Denver Broncos",
+      "away_score": 13,
+      "home_score": 20,
       "week": 2,
-      "status": "in_progress"
+      "status": "final"
     },
     {
       "game_id": "2026-09-20-LV-LAC",
@@ -377,11 +377,11 @@
       "city": "",
       "kickoff_utc": "2026-09-20T20:05:00Z",
       "tv": "",
-      "winner": null,
-      "away_score": 10,
-      "home_score": 7,
+      "winner": "Las Vegas Raiders",
+      "away_score": 26,
+      "home_score": 14,
       "week": 2,
-      "status": "in_progress"
+      "status": "final"
     },
     {
       "game_id": "2026-09-20-SEA-ARI",
@@ -391,11 +391,11 @@
       "city": "",
       "kickoff_utc": "2026-09-20T20:25:00Z",
       "tv": "",
-      "winner": null,
-      "away_score": 7,
+      "winner": "Seattle Seahawks",
+      "away_score": 31,
       "home_score": 7,
       "week": 2,
-      "status": "in_progress"
+      "status": "final"
     },
     {
       "game_id": "2026-09-20-WAS-DAL",
@@ -405,11 +405,11 @@
       "city": "",
       "kickoff_utc": "2026-09-20T20:25:00Z",
       "tv": "",
-      "winner": null,
-      "away_score": 10,
-      "home_score": 17,
+      "winner": "Dallas Cowboys",
+      "away_score": 20,
+      "home_score": 37,
       "week": 2,
-      "status": "in_progress"
+      "status": "final"
     },
     {
       "game_id": "2026-09-20-MIA-SF",
@@ -419,11 +419,11 @@
       "city": "",
       "kickoff_utc": "2026-09-20T20:25:00Z",
       "tv": "",
-      "winner": null,
-      "away_score": 6,
-      "home_score": 14,
+      "winner": "San Francisco 49ers",
+      "away_score": 13,
+      "home_score": 35,
       "week": 2,
-      "status": "in_progress"
+      "status": "final"
     },
     {
       "game_id": "2026-09-20-IND-KC",
@@ -3572,5 +3572,5 @@
       "week": 18
     }
   ],
-  "scores_synced_at": "2026-09-20T21:47:18.424Z"
+  "scores_synced_at": "2026-09-20T23:36:09.522Z"
 }
