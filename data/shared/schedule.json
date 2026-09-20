@@ -251,11 +251,11 @@
       "city": "",
       "kickoff_utc": "2026-09-20T17:00:00Z",
       "tv": "",
-      "winner": null,
-      "away_score": 27,
+      "winner": "Carolina Panthers",
+      "away_score": 34,
       "home_score": 3,
       "week": 2,
-      "status": "in_progress"
+      "status": "final"
     },
     {
       "game_id": "2026-09-20-NO-BAL",
@@ -265,11 +265,11 @@
       "city": "",
       "kickoff_utc": "2026-09-20T17:00:00Z",
       "tv": "",
-      "winner": null,
-      "away_score": 17,
+      "winner": "New Orleans Saints",
+      "away_score": 24,
       "home_score": 17,
       "week": 2,
-      "status": "in_progress"
+      "status": "final"
     },
     {
       "game_id": "2026-09-20-MIN-CHI",
@@ -279,11 +279,11 @@
       "city": "",
       "kickoff_utc": "2026-09-20T17:00:00Z",
       "tv": "",
-      "winner": null,
-      "away_score": 6,
+      "winner": "Minnesota Vikings",
+      "away_score": 9,
       "home_score": 3,
       "week": 2,
-      "status": "in_progress"
+      "status": "final"
     },
     {
       "game_id": "2026-09-20-CIN-HOU",
@@ -293,11 +293,11 @@
       "city": "",
       "kickoff_utc": "2026-09-20T17:00:00Z",
       "tv": "",
-      "winner": null,
-      "away_score": 17,
-      "home_score": 3,
+      "winner": "Cincinnati Bengals",
+      "away_score": 20,
+      "home_score": 6,
       "week": 2,
-      "status": "in_progress"
+      "status": "final"
     },
     {
       "game_id": "2026-09-20-PIT-NE",
@@ -307,11 +307,11 @@
       "city": "",
       "kickoff_utc": "2026-09-20T17:00:00Z",
       "tv": "",
-      "winner": null,
+      "winner": "New England Patriots",
       "away_score": 3,
-      "home_score": 13,
+      "home_score": 20,
       "week": 2,
-      "status": "in_progress"
+      "status": "final"
     },
     {
       "game_id": "2026-09-20-GB-NYJ",
@@ -321,11 +321,11 @@
       "city": "",
       "kickoff_utc": "2026-09-20T17:00:00Z",
       "tv": "",
-      "winner": null,
-      "away_score": 7,
-      "home_score": 14,
+      "winner": "Green Bay Packers",
+      "away_score": 20,
+      "home_score": 17,
       "week": 2,
-      "status": "in_progress"
+      "status": "final"
     },
     {
       "game_id": "2026-09-20-CLE-TB",
@@ -336,8 +336,8 @@
       "kickoff_utc": "2026-09-20T17:00:00Z",
       "tv": "",
       "winner": null,
-      "away_score": 16,
-      "home_score": 16,
+      "away_score": 23,
+      "home_score": 19,
       "week": 2,
       "status": "in_progress"
     },
@@ -349,11 +349,11 @@
       "city": "",
       "kickoff_utc": "2026-09-20T17:00:00Z",
       "tv": "",
-      "winner": null,
-      "away_score": 17,
-      "home_score": 17,
+      "winner": "Philadelphia Eagles",
+      "away_score": 24,
+      "home_score": 20,
       "week": 2,
-      "status": "in_progress"
+      "status": "final"
     },
     {
       "game_id": "2026-09-20-JAX-DEN",
@@ -364,9 +364,10 @@
       "kickoff_utc": "2026-09-20T20:05:00Z",
       "tv": "",
       "winner": null,
-      "away_score": null,
-      "home_score": null,
-      "week": 2
+      "away_score": 10,
+      "home_score": 3,
+      "week": 2,
+      "status": "in_progress"
     },
     {
       "game_id": "2026-09-20-LV-LAC",
@@ -377,9 +378,10 @@
       "kickoff_utc": "2026-09-20T20:05:00Z",
       "tv": "",
       "winner": null,
-      "away_score": null,
-      "home_score": null,
-      "week": 2
+      "away_score": 7,
+      "home_score": 7,
+      "week": 2,
+      "status": "in_progress"
     },
     {
       "game_id": "2026-09-20-SEA-ARI",
@@ -390,9 +392,10 @@
       "kickoff_utc": "2026-09-20T20:25:00Z",
       "tv": "",
       "winner": null,
-      "away_score": null,
-      "home_score": null,
-      "week": 2
+      "away_score": 7,
+      "home_score": 7,
+      "week": 2,
+      "status": "in_progress"
     },
     {
       "game_id": "2026-09-20-WAS-DAL",
@@ -403,9 +406,10 @@
       "kickoff_utc": "2026-09-20T20:25:00Z",
       "tv": "",
       "winner": null,
-      "away_score": null,
-      "home_score": null,
-      "week": 2
+      "away_score": 3,
+      "home_score": 17,
+      "week": 2,
+      "status": "in_progress"
     },
     {
       "game_id": "2026-09-20-MIA-SF",
@@ -416,9 +420,10 @@
       "kickoff_utc": "2026-09-20T20:25:00Z",
       "tv": "",
       "winner": null,
-      "away_score": null,
-      "home_score": null,
-      "week": 2
+      "away_score": 3,
+      "home_score": 14,
+      "week": 2,
+      "status": "in_progress"
     },
     {
       "game_id": "2026-09-20-IND-KC",
@@ -3567,5 +3572,5 @@
       "week": 18
     }
   ],
-  "scores_synced_at": "2026-09-20T19:22:49.878Z"
+  "scores_synced_at": "2026-09-20T21:25:32.898Z"
 }
