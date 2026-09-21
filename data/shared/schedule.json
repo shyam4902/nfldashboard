@@ -433,11 +433,11 @@
       "city": "",
       "kickoff_utc": "2026-09-21T00:20:00Z",
       "tv": "",
-      "winner": null,
-      "away_score": 13,
-      "home_score": 17,
+      "winner": "Kansas City Chiefs",
+      "away_score": 30,
+      "home_score": 33,
       "week": 2,
-      "status": "in_progress"
+      "status": "final"
     },
     {
       "game_id": "2026-09-21-NYG-LA",
@@ -3573,5 +3573,5 @@
       "week": 18
     }
   ],
-  "scores_synced_at": "2026-09-21T01:39:07.691Z"
+  "scores_synced_at": "2026-09-21T04:47:50.881Z"
 }
