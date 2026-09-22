@@ -1,8 +1,8 @@
 {
   "season": 2026,
-  "week": 2,
+  "week": 3,
   "total_weeks": 18,
-  "generated": "2026-09-21",
+  "generated": "2026-09-22",
   "source": "nflverse games.csv (matchups, kickoffs, stadiums); Week 1 enriched with TV/city",
   "games": [
     {
@@ -447,10 +447,11 @@
       "city": "",
       "kickoff_utc": "2026-09-22T00:15:00Z",
       "tv": "",
-      "winner": null,
-      "away_score": null,
-      "home_score": null,
-      "week": 2
+      "winner": "Los Angeles Rams",
+      "away_score": 6,
+      "home_score": 28,
+      "week": 2,
+      "status": "final"
     },
     {
       "game_id": "2026-09-24-ATL-GB",
@@ -3573,5 +3574,5 @@
       "week": 18
     }
   ],
-  "scores_synced_at": "2026-09-21T04:47:50.881Z"
+  "scores_synced_at": "2026-09-22T04:38:54.703Z"
 }
