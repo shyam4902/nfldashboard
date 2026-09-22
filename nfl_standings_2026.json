@@ -1,9 +1,9 @@
 {
   "artifact": "nfl_standings",
   "season": 2026,
-  "generated_at": "2026-09-21T11:20:06Z",
+  "generated_at": "2026-09-22T11:20:06Z",
   "through_week": 2,
-  "completed_games": 31,
+  "completed_games": 32,
   "completed_weeks": [
     1,
     2
@@ -285,21 +285,6 @@
       "division": "NFC East",
       "teams": [
         {
-          "team": "New York Giants",
-          "abbr": "NYG",
-          "division": "NFC East",
-          "conference": "NFC",
-          "wins": 1,
-          "losses": 0,
-          "ties": 0,
-          "played": 1,
-          "win_pct": 1,
-          "points_for": 28,
-          "points_against": 20,
-          "differential": 8,
-          "source": "actual"
-        },
-        {
           "team": "Philadelphia Eagles",
           "abbr": "PHI",
           "division": "NFC East",
@@ -327,6 +312,21 @@
           "points_for": 57,
           "points_against": 48,
           "differential": 9,
+          "source": "actual"
+        },
+        {
+          "team": "New York Giants",
+          "abbr": "NYG",
+          "division": "NFC East",
+          "conference": "NFC",
+          "wins": 1,
+          "losses": 1,
+          "ties": 0,
+          "played": 2,
+          "win_pct": 0.5,
+          "points_for": 34,
+          "points_against": 48,
+          "differential": -14,
           "source": "actual"
         },
         {
@@ -513,6 +513,21 @@
           "source": "actual"
         },
         {
+          "team": "Los Angeles Rams",
+          "abbr": "LAR",
+          "division": "NFC West",
+          "conference": "NFC",
+          "wins": 1,
+          "losses": 1,
+          "ties": 0,
+          "played": 2,
+          "win_pct": 0.5,
+          "points_for": 35,
+          "points_against": 33,
+          "differential": 2,
+          "source": "actual"
+        },
+        {
           "team": "Arizona Cardinals",
           "abbr": "ARI",
           "division": "NFC West",
@@ -525,21 +540,6 @@
           "points_for": 33,
           "points_against": 45,
           "differential": -12,
-          "source": "actual"
-        },
-        {
-          "team": "Los Angeles Rams",
-          "abbr": "LAR",
-          "division": "NFC West",
-          "conference": "NFC",
-          "wins": 0,
-          "losses": 1,
-          "ties": 0,
-          "played": 1,
-          "win_pct": 0,
-          "points_for": 7,
-          "points_against": 27,
-          "differential": -20,
           "source": "actual"
         }
       ]
@@ -821,14 +821,14 @@
       "abbr": "LAR",
       "division": "NFC West",
       "conference": "NFC",
-      "wins": 0,
+      "wins": 1,
       "losses": 1,
       "ties": 0,
-      "played": 1,
-      "win_pct": 0,
-      "points_for": 7,
-      "points_against": 27,
-      "differential": -20,
+      "played": 2,
+      "win_pct": 0.5,
+      "points_for": 35,
+      "points_against": 33,
+      "differential": 2,
       "source": "actual"
     },
     {
@@ -897,13 +897,13 @@
       "division": "NFC East",
       "conference": "NFC",
       "wins": 1,
-      "losses": 0,
+      "losses": 1,
       "ties": 0,
-      "played": 1,
-      "win_pct": 1,
-      "points_for": 28,
-      "points_against": 20,
-      "differential": 8,
+      "played": 2,
+      "win_pct": 0.5,
+      "points_for": 34,
+      "points_against": 48,
+      "differential": -14,
       "source": "actual"
     },
     {
