@@ -1,12 +1,13 @@
 {
   "artifact": "nfl_standings",
   "season": 2026,
-  "generated_at": "2026-09-24T11:20:05Z",
-  "through_week": 2,
-  "completed_games": 32,
+  "generated_at": "2026-09-25T11:20:06Z",
+  "through_week": 3,
+  "completed_games": 33,
   "completed_weeks": [
     1,
-    2
+    2,
+    3
   ],
   "source": "schedule.json completed regular-season results (final scores synced from ESPN by the score workflow)",
   "source_of_teams": "nfl_rosters_2026.json team/division catalogue",
@@ -401,13 +402,13 @@
           "division": "NFC North",
           "conference": "NFC",
           "wins": 1,
-          "losses": 1,
+          "losses": 2,
           "ties": 0,
-          "played": 2,
-          "win_pct": 0.5,
-          "points_for": 42,
-          "points_against": 56,
-          "differential": -14,
+          "played": 3,
+          "win_pct": 0.333,
+          "points_for": 56,
+          "points_against": 91,
+          "differential": -35,
           "source": "actual"
         }
       ]
@@ -447,6 +448,21 @@
           "source": "actual"
         },
         {
+          "team": "Atlanta Falcons",
+          "abbr": "ATL",
+          "division": "NFC South",
+          "conference": "NFC",
+          "wins": 1,
+          "losses": 2,
+          "ties": 0,
+          "played": 3,
+          "win_pct": 0.333,
+          "points_for": 51,
+          "points_against": 68,
+          "differential": -17,
+          "source": "actual"
+        },
+        {
           "team": "Tampa Bay Buccaneers",
           "abbr": "TB",
           "division": "NFC South",
@@ -459,21 +475,6 @@
           "points_for": 46,
           "points_against": 56,
           "differential": -10,
-          "source": "actual"
-        },
-        {
-          "team": "Atlanta Falcons",
-          "abbr": "ATL",
-          "division": "NFC South",
-          "conference": "NFC",
-          "wins": 0,
-          "losses": 2,
-          "ties": 0,
-          "played": 2,
-          "win_pct": 0,
-          "points_for": 16,
-          "points_against": 54,
-          "differential": -38,
           "source": "actual"
         }
       ]
@@ -566,14 +567,14 @@
       "abbr": "ATL",
       "division": "NFC South",
       "conference": "NFC",
-      "wins": 0,
+      "wins": 1,
       "losses": 2,
       "ties": 0,
-      "played": 2,
-      "win_pct": 0,
-      "points_for": 16,
-      "points_against": 54,
-      "differential": -38,
+      "played": 3,
+      "win_pct": 0.333,
+      "points_for": 51,
+      "points_against": 68,
+      "differential": -17,
       "source": "actual"
     },
     {
@@ -717,13 +718,13 @@
       "division": "NFC North",
       "conference": "NFC",
       "wins": 1,
-      "losses": 1,
+      "losses": 2,
       "ties": 0,
-      "played": 2,
-      "win_pct": 0.5,
-      "points_for": 42,
-      "points_against": 56,
-      "differential": -14,
+      "played": 3,
+      "win_pct": 0.333,
+      "points_for": 56,
+      "points_against": 91,
+      "differential": -35,
       "source": "actual"
     },
     {

@@ -1,7 +1,7 @@
 {
   "artifact": "nfl_stats",
   "season": 2026,
-  "generated_at": "2026-09-24T11:20:05Z",
+  "generated_at": "2026-09-25T11:20:06Z",
   "source": "Sleeper weekly stats API (api.sleeper.app/v1/stats/nfl/regular) — free, no key; names and team from the Sleeper player catalogue",
   "source_of_points": "schedule.json completed regular-season results",
   "season_kind": "actual",
@@ -3198,6 +3198,20 @@
       "differential": 9
     },
     {
+      "team": "Green Bay Packers",
+      "abbr": "GB",
+      "division": "NFC North",
+      "games": 2,
+      "pass_yards": 532,
+      "rush_yards": 129,
+      "total_yards": 661,
+      "offensive_tds": 4,
+      "points_for": 56,
+      "points_against": 91,
+      "yards_allowed": 524,
+      "differential": -35
+    },
+    {
       "team": "New Orleans Saints",
       "abbr": "NO",
       "division": "NFC South",
@@ -3252,6 +3266,20 @@
       "points_against": 27,
       "yards_allowed": 569,
       "differential": 26
+    },
+    {
+      "team": "Atlanta Falcons",
+      "abbr": "ATL",
+      "division": "NFC South",
+      "games": 2,
+      "pass_yards": 288,
+      "rush_yards": 277,
+      "total_yards": 565,
+      "offensive_tds": 1,
+      "points_for": 51,
+      "points_against": 68,
+      "yards_allowed": 604,
+      "differential": -17
     },
     {
       "team": "Minnesota Vikings",
@@ -3322,20 +3350,6 @@
       "points_against": 17,
       "yards_allowed": 428,
       "differential": 27
-    },
-    {
-      "team": "Green Bay Packers",
-      "abbr": "GB",
-      "division": "NFC North",
-      "games": 2,
-      "pass_yards": 532,
-      "rush_yards": 129,
-      "total_yards": 661,
-      "offensive_tds": 4,
-      "points_for": 42,
-      "points_against": 56,
-      "yards_allowed": 524,
-      "differential": -14
     },
     {
       "team": "Washington Commanders",
@@ -3518,20 +3532,6 @@
       "points_against": 33,
       "yards_allowed": 565,
       "differential": -10
-    },
-    {
-      "team": "Atlanta Falcons",
-      "abbr": "ATL",
-      "division": "NFC South",
-      "games": 2,
-      "pass_yards": 288,
-      "rush_yards": 277,
-      "total_yards": 565,
-      "offensive_tds": 1,
-      "points_for": 16,
-      "points_against": 54,
-      "yards_allowed": 604,
-      "differential": -38
     }
   ],
   "unmatched_team_codes": []
