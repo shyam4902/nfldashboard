@@ -2,7 +2,7 @@
   "season": 2026,
   "week": 3,
   "total_weeks": 18,
-  "generated": "2026-09-24",
+  "generated": "2026-09-25",
   "source": "nflverse games.csv (matchups, kickoffs, stadiums); Week 1 enriched with TV/city",
   "games": [
     {
@@ -462,9 +462,10 @@
       "kickoff_utc": "2026-09-25T00:15:00Z",
       "tv": "",
       "winner": null,
-      "away_score": null,
-      "home_score": null,
-      "week": 3
+      "away_score": 10,
+      "home_score": 7,
+      "week": 3,
+      "status": "in_progress"
     },
     {
       "game_id": "2026-09-27-LAC-BUF",
@@ -3574,5 +3575,5 @@
       "week": 18
     }
   ],
-  "scores_synced_at": "2026-09-22T04:38:54.703Z"
+  "scores_synced_at": "2026-09-25T01:22:56.019Z"
 }
