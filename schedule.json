@@ -476,9 +476,10 @@
       "kickoff_utc": "2026-09-27T17:00:00Z",
       "tv": "",
       "winner": null,
-      "away_score": null,
-      "home_score": null,
-      "week": 3
+      "away_score": 10,
+      "home_score": 3,
+      "week": 3,
+      "status": "in_progress"
     },
     {
       "game_id": "2026-09-27-CAR-CLE",
@@ -489,9 +490,10 @@
       "kickoff_utc": "2026-09-27T17:00:00Z",
       "tv": "",
       "winner": null,
-      "away_score": null,
-      "home_score": null,
-      "week": 3
+      "away_score": 0,
+      "home_score": 3,
+      "week": 3,
+      "status": "in_progress"
     },
     {
       "game_id": "2026-09-27-NYJ-DET",
@@ -502,9 +504,10 @@
       "kickoff_utc": "2026-09-27T17:00:00Z",
       "tv": "",
       "winner": null,
-      "away_score": null,
-      "home_score": null,
-      "week": 3
+      "away_score": 7,
+      "home_score": 10,
+      "week": 3,
+      "status": "in_progress"
     },
     {
       "game_id": "2026-09-27-HOU-IND",
@@ -515,9 +518,10 @@
       "kickoff_utc": "2026-09-27T17:00:00Z",
       "tv": "",
       "winner": null,
-      "away_score": null,
-      "home_score": null,
-      "week": 3
+      "away_score": 7,
+      "home_score": 10,
+      "week": 3,
+      "status": "in_progress"
     },
     {
       "game_id": "2026-09-27-NE-JAX",
@@ -528,9 +532,10 @@
       "kickoff_utc": "2026-09-27T17:00:00Z",
       "tv": "",
       "winner": null,
-      "away_score": null,
-      "home_score": null,
-      "week": 3
+      "away_score": 3,
+      "home_score": 14,
+      "week": 3,
+      "status": "in_progress"
     },
     {
       "game_id": "2026-09-27-KC-MIA",
@@ -541,9 +546,10 @@
       "kickoff_utc": "2026-09-27T17:00:00Z",
       "tv": "",
       "winner": null,
-      "away_score": null,
-      "home_score": null,
-      "week": 3
+      "away_score": 14,
+      "home_score": 7,
+      "week": 3,
+      "status": "in_progress"
     },
     {
       "game_id": "2026-09-27-TEN-NYG",
@@ -554,9 +560,10 @@
       "kickoff_utc": "2026-09-27T17:00:00Z",
       "tv": "",
       "winner": null,
-      "away_score": null,
-      "home_score": null,
-      "week": 3
+      "away_score": 0,
+      "home_score": 6,
+      "week": 3,
+      "status": "in_progress"
     },
     {
       "game_id": "2026-09-27-CIN-PIT",
@@ -567,9 +574,10 @@
       "kickoff_utc": "2026-09-27T17:00:00Z",
       "tv": "",
       "winner": null,
-      "away_score": null,
-      "home_score": null,
-      "week": 3
+      "away_score": 10,
+      "home_score": 17,
+      "week": 3,
+      "status": "in_progress"
     },
     {
       "game_id": "2026-09-27-SEA-WAS",
@@ -580,9 +588,10 @@
       "kickoff_utc": "2026-09-27T17:00:00Z",
       "tv": "",
       "winner": null,
-      "away_score": null,
-      "home_score": null,
-      "week": 3
+      "away_score": 7,
+      "home_score": 14,
+      "week": 3,
+      "status": "in_progress"
     },
     {
       "game_id": "2026-09-27-ARI-SF",
@@ -3575,5 +3584,5 @@
       "week": 18
     }
   ],
-  "scores_synced_at": "2026-09-25T07:37:36.937Z"
+  "scores_synced_at": "2026-09-27T18:15:39.278Z"
 }
