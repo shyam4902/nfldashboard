@@ -476,8 +476,8 @@
       "kickoff_utc": "2026-09-27T17:00:00Z",
       "tv": "",
       "winner": null,
-      "away_score": 10,
-      "home_score": 3,
+      "away_score": 13,
+      "home_score": 24,
       "week": 3,
       "status": "in_progress"
     },
@@ -490,8 +490,8 @@
       "kickoff_utc": "2026-09-27T17:00:00Z",
       "tv": "",
       "winner": null,
-      "away_score": 0,
-      "home_score": 3,
+      "away_score": 18,
+      "home_score": 13,
       "week": 3,
       "status": "in_progress"
     },
@@ -503,11 +503,11 @@
       "city": "",
       "kickoff_utc": "2026-09-27T17:00:00Z",
       "tv": "",
-      "winner": null,
-      "away_score": 7,
-      "home_score": 10,
+      "winner": "Detroit Lions",
+      "away_score": 24,
+      "home_score": 31,
       "week": 3,
-      "status": "in_progress"
+      "status": "final"
     },
     {
       "game_id": "2026-09-27-HOU-IND",
@@ -518,8 +518,8 @@
       "kickoff_utc": "2026-09-27T17:00:00Z",
       "tv": "",
       "winner": null,
-      "away_score": 7,
-      "home_score": 10,
+      "away_score": 17,
+      "home_score": 19,
       "week": 3,
       "status": "in_progress"
     },
@@ -531,11 +531,11 @@
       "city": "",
       "kickoff_utc": "2026-09-27T17:00:00Z",
       "tv": "",
-      "winner": null,
-      "away_score": 3,
-      "home_score": 14,
+      "winner": "Jacksonville Jaguars",
+      "away_score": 6,
+      "home_score": 35,
       "week": 3,
-      "status": "in_progress"
+      "status": "final"
     },
     {
       "game_id": "2026-09-27-KC-MIA",
@@ -545,11 +545,11 @@
       "city": "",
       "kickoff_utc": "2026-09-27T17:00:00Z",
       "tv": "",
-      "winner": null,
-      "away_score": 14,
-      "home_score": 7,
+      "winner": "Kansas City Chiefs",
+      "away_score": 24,
+      "home_score": 10,
       "week": 3,
-      "status": "in_progress"
+      "status": "final"
     },
     {
       "game_id": "2026-09-27-TEN-NYG",
@@ -559,11 +559,11 @@
       "city": "",
       "kickoff_utc": "2026-09-27T17:00:00Z",
       "tv": "",
-      "winner": null,
-      "away_score": 0,
-      "home_score": 6,
+      "winner": "New York Giants",
+      "away_score": 7,
+      "home_score": 12,
       "week": 3,
-      "status": "in_progress"
+      "status": "final"
     },
     {
       "game_id": "2026-09-27-CIN-PIT",
@@ -574,8 +574,8 @@
       "kickoff_utc": "2026-09-27T17:00:00Z",
       "tv": "",
       "winner": null,
-      "away_score": 10,
-      "home_score": 17,
+      "away_score": 27,
+      "home_score": 30,
       "week": 3,
       "status": "in_progress"
     },
@@ -588,8 +588,8 @@
       "kickoff_utc": "2026-09-27T17:00:00Z",
       "tv": "",
       "winner": null,
-      "away_score": 7,
-      "home_score": 14,
+      "away_score": 24,
+      "home_score": 27,
       "week": 3,
       "status": "in_progress"
     },
@@ -3584,5 +3584,5 @@
       "week": 18
     }
   ],
-  "scores_synced_at": "2026-09-27T18:15:39.278Z"
+  "scores_synced_at": "2026-09-27T20:04:30.722Z"
 }
