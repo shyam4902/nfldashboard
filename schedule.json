@@ -658,7 +658,7 @@
       "kickoff_utc": "2026-09-28T00:20:00Z",
       "tv": "",
       "winner": null,
-      "away_score": 0,
+      "away_score": 13,
       "home_score": 0,
       "week": 3,
       "status": "in_progress"
@@ -3589,5 +3589,5 @@
       "week": 18
     }
   ],
-  "scores_synced_at": "2026-09-28T00:30:58.613Z"
+  "scores_synced_at": "2026-09-28T01:34:25.404Z"
 }
