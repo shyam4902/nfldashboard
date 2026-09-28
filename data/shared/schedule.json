@@ -2,7 +2,7 @@
   "season": 2026,
   "week": 3,
   "total_weeks": 18,
-  "generated": "2026-09-27",
+  "generated": "2026-09-28",
   "source": "nflverse games.csv (matchups, kickoffs, stadiums); Week 1 enriched with TV/city",
   "games": [
     {
@@ -601,11 +601,11 @@
       "city": "",
       "kickoff_utc": "2026-09-27T20:05:00Z",
       "tv": "",
-      "winner": null,
-      "away_score": 27,
-      "home_score": 29,
+      "winner": "San Francisco 49ers",
+      "away_score": 30,
+      "home_score": 36,
       "week": 3,
-      "status": "in_progress"
+      "status": "final"
     },
     {
       "game_id": "2026-09-27-MIN-TB",
@@ -615,11 +615,11 @@
       "city": "",
       "kickoff_utc": "2026-09-27T20:05:00Z",
       "tv": "",
-      "winner": null,
-      "away_score": 17,
+      "winner": "Minnesota Vikings",
+      "away_score": 23,
       "home_score": 16,
       "week": 3,
-      "status": "in_progress"
+      "status": "final"
     },
     {
       "game_id": "2026-09-27-BAL-DAL",
@@ -629,11 +629,11 @@
       "city": "",
       "kickoff_utc": "2026-09-27T20:25:00Z",
       "tv": "",
-      "winner": null,
-      "away_score": 24,
-      "home_score": 21,
+      "winner": "Baltimore Ravens",
+      "away_score": 34,
+      "home_score": 31,
       "week": 3,
-      "status": "in_progress"
+      "status": "final"
     },
     {
       "game_id": "2026-09-27-LV-NO",
@@ -643,11 +643,11 @@
       "city": "",
       "kickoff_utc": "2026-09-27T20:25:00Z",
       "tv": "",
-      "winner": null,
-      "away_score": 22,
+      "winner": "Las Vegas Raiders",
+      "away_score": 35,
       "home_score": 27,
       "week": 3,
-      "status": "in_progress"
+      "status": "final"
     },
     {
       "game_id": "2026-09-27-LA-DEN",
@@ -658,9 +658,10 @@
       "kickoff_utc": "2026-09-28T00:20:00Z",
       "tv": "",
       "winner": null,
-      "away_score": null,
-      "home_score": null,
-      "week": 3
+      "away_score": 0,
+      "home_score": 0,
+      "week": 3,
+      "status": "in_progress"
     },
     {
       "game_id": "2026-09-28-PHI-CHI",
@@ -3588,5 +3589,5 @@
       "week": 18
     }
   ],
-  "scores_synced_at": "2026-09-27T22:58:55.978Z"
+  "scores_synced_at": "2026-09-28T00:30:58.613Z"
 }
