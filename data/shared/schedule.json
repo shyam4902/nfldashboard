@@ -657,11 +657,11 @@
       "city": "",
       "kickoff_utc": "2026-09-28T00:20:00Z",
       "tv": "",
-      "winner": null,
-      "away_score": 13,
-      "home_score": 0,
+      "winner": "Denver Broncos",
+      "away_score": 26,
+      "home_score": 30,
       "week": 3,
-      "status": "in_progress"
+      "status": "final"
     },
     {
       "game_id": "2026-09-28-PHI-CHI",
@@ -3589,5 +3589,5 @@
       "week": 18
     }
   ],
-  "scores_synced_at": "2026-09-28T01:34:25.404Z"
+  "scores_synced_at": "2026-09-28T05:15:10.399Z"
 }
