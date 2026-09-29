@@ -1,8 +1,8 @@
 {
   "season": 2026,
-  "week": 3,
+  "week": 4,
   "total_weeks": 18,
-  "generated": "2026-09-28",
+  "generated": "2026-09-29",
   "source": "nflverse games.csv (matchups, kickoffs, stadiums); Week 1 enriched with TV/city",
   "games": [
     {
@@ -672,9 +672,10 @@
       "kickoff_utc": "2026-09-29T00:15:00Z",
       "tv": "",
       "winner": null,
-      "away_score": null,
-      "home_score": null,
-      "week": 3
+      "away_score": 7,
+      "home_score": 10,
+      "week": 3,
+      "status": "in_progress"
     },
     {
       "game_id": "2026-10-01-PIT-CLE",
@@ -3589,5 +3590,5 @@
       "week": 18
     }
   ],
-  "scores_synced_at": "2026-09-28T05:15:10.399Z"
+  "scores_synced_at": "2026-09-29T01:45:32.739Z"
 }
