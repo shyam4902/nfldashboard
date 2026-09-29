@@ -912,6 +912,19 @@
       "week": 5
     },
     {
+      "game_id": "2026-10-11-CHI-GB",
+      "away_team": "Chicago Bears",
+      "home_team": "Green Bay Packers",
+      "venue": "Lambeau Field",
+      "city": "",
+      "kickoff_utc": "2026-10-11T17:00:00Z",
+      "tv": "",
+      "winner": null,
+      "away_score": null,
+      "home_score": null,
+      "week": 5
+    },
+    {
       "game_id": "2026-10-11-CIN-MIA",
       "away_team": "Cincinnati Bengals",
       "home_team": "Miami Dolphins",
@@ -1020,19 +1033,6 @@
       "away_team": "Detroit Lions",
       "home_team": "Arizona Cardinals",
       "venue": "State Farm Stadium",
-      "city": "",
-      "kickoff_utc": "2026-10-11T20:25:00Z",
-      "tv": "",
-      "winner": null,
-      "away_score": null,
-      "home_score": null,
-      "week": 5
-    },
-    {
-      "game_id": "2026-10-11-CHI-GB",
-      "away_team": "Chicago Bears",
-      "home_team": "Green Bay Packers",
-      "venue": "Lambeau Field",
       "city": "",
       "kickoff_utc": "2026-10-11T20:25:00Z",
       "tv": "",
