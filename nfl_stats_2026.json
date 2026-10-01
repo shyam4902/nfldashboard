@@ -1,7 +1,7 @@
 {
   "artifact": "nfl_stats",
   "season": 2026,
-  "generated_at": "2026-09-30T11:20:06Z",
+  "generated_at": "2026-10-01T11:20:05Z",
   "source": "Sleeper weekly stats API (api.sleeper.app/v1/stats/nfl/regular) — free, no key; names and team from the Sleeper player catalogue",
   "source_of_points": "schedule.json completed regular-season results",
   "season_kind": "actual",
@@ -1272,7 +1272,7 @@
         "rec_yd": 116,
         "rec_td": 1,
         "rec": 10,
-        "rec_tgt": 13
+        "rec_tgt": 14
       },
       {
         "player_id": "13330",
@@ -3948,7 +3948,7 @@
           "rec_yd": 116,
           "rec_td": 1,
           "rec": 10,
-          "rec_tgt": 13
+          "rec_tgt": 14
         },
         {
           "player_id": "6786",
