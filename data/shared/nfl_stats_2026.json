@@ -1,7 +1,7 @@
 {
   "artifact": "nfl_stats",
   "season": 2026,
-  "generated_at": "2026-10-01T11:20:05Z",
+  "generated_at": "2026-10-02T11:20:05Z",
   "source": "Sleeper weekly stats API (api.sleeper.app/v1/stats/nfl/regular) — free, no key; names and team from the Sleeper player catalogue",
   "source_of_points": "schedule.json completed regular-season results",
   "season_kind": "actual",
@@ -4326,6 +4326,20 @@
       "differential": 46
     },
     {
+      "team": "Cleveland Browns",
+      "abbr": "CLE",
+      "division": "AFC North",
+      "games": 3,
+      "pass_yards": 587,
+      "rush_yards": 263,
+      "total_yards": 850,
+      "offensive_tds": 5,
+      "points_for": 81,
+      "points_against": 95,
+      "yards_allowed": 1033,
+      "differential": -14
+    },
+    {
       "team": "New Orleans Saints",
       "abbr": "NO",
       "division": "NFC South",
@@ -4352,6 +4366,20 @@
       "points_against": 63,
       "yards_allowed": 1067,
       "differential": 17
+    },
+    {
+      "team": "Pittsburgh Steelers",
+      "abbr": "PIT",
+      "division": "AFC North",
+      "games": 3,
+      "pass_yards": 700,
+      "rush_yards": 287,
+      "total_yards": 987,
+      "offensive_tds": 5,
+      "points_for": 77,
+      "points_against": 87,
+      "yards_allowed": 917,
+      "differential": -10
     },
     {
       "team": "Seattle Seahawks",
@@ -4508,20 +4536,6 @@
       "differential": -14
     },
     {
-      "team": "Cleveland Browns",
-      "abbr": "CLE",
-      "division": "AFC North",
-      "games": 3,
-      "pass_yards": 587,
-      "rush_yards": 263,
-      "total_yards": 850,
-      "offensive_tds": 5,
-      "points_for": 54,
-      "points_against": 71,
-      "yards_allowed": 1033,
-      "differential": -17
-    },
-    {
       "team": "Houston Texans",
       "abbr": "HOU",
       "division": "AFC South",
@@ -4534,20 +4548,6 @@
       "points_against": 75,
       "yards_allowed": 976,
       "differential": -21
-    },
-    {
-      "team": "Pittsburgh Steelers",
-      "abbr": "PIT",
-      "division": "AFC North",
-      "games": 3,
-      "pass_yards": 700,
-      "rush_yards": 287,
-      "total_yards": 987,
-      "offensive_tds": 5,
-      "points_for": 53,
-      "points_against": 60,
-      "yards_allowed": 917,
-      "differential": -7
     },
     {
       "team": "Atlanta Falcons",
