@@ -685,11 +685,11 @@
       "city": "",
       "kickoff_utc": "2026-10-02T00:15:00Z",
       "tv": "",
-      "winner": null,
-      "away_score": 7,
-      "home_score": 14,
+      "winner": "Cleveland Browns",
+      "away_score": 24,
+      "home_score": 27,
       "week": 4,
-      "status": "in_progress"
+      "status": "final"
     },
     {
       "game_id": "2026-10-04-IND-WAS",
@@ -3591,5 +3591,5 @@
       "week": 18
     }
   ],
-  "scores_synced_at": "2026-10-02T01:32:52.372Z"
+  "scores_synced_at": "2026-10-02T08:22:13.492Z"
 }
