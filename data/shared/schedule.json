@@ -2,7 +2,7 @@
   "season": 2026,
   "week": 4,
   "total_weeks": 18,
-  "generated": "2026-10-01",
+  "generated": "2026-10-02",
   "source": "nflverse games.csv (matchups, kickoffs, stadiums); Week 1 enriched with TV/city",
   "games": [
     {
@@ -686,9 +686,10 @@
       "kickoff_utc": "2026-10-02T00:15:00Z",
       "tv": "",
       "winner": null,
-      "away_score": null,
-      "home_score": null,
-      "week": 4
+      "away_score": 7,
+      "home_score": 14,
+      "week": 4,
+      "status": "in_progress"
     },
     {
       "game_id": "2026-10-04-IND-WAS",
@@ -3590,5 +3591,5 @@
       "week": 18
     }
   ],
-  "scores_synced_at": "2026-09-29T08:19:00.206Z"
+  "scores_synced_at": "2026-10-02T01:32:52.372Z"
 }
