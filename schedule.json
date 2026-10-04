@@ -825,11 +825,11 @@
       "city": "",
       "kickoff_utc": "2026-10-04T20:05:00Z",
       "tv": "",
-      "winner": null,
-      "away_score": 0,
-      "home_score": 6,
+      "winner": "Minnesota Vikings",
+      "away_score": 10,
+      "home_score": 15,
       "week": 4,
-      "status": "in_progress"
+      "status": "final"
     },
     {
       "game_id": "2026-10-04-KC-LV",
@@ -840,8 +840,8 @@
       "kickoff_utc": "2026-10-04T20:25:00Z",
       "tv": "",
       "winner": null,
-      "away_score": 7,
-      "home_score": 7,
+      "away_score": 17,
+      "home_score": 16,
       "week": 4,
       "status": "in_progress"
     },
@@ -854,8 +854,8 @@
       "kickoff_utc": "2026-10-04T20:25:00Z",
       "tv": "",
       "winner": null,
-      "away_score": 3,
-      "home_score": 7,
+      "away_score": 13,
+      "home_score": 30,
       "week": 4,
       "status": "in_progress"
     },
@@ -868,8 +868,8 @@
       "kickoff_utc": "2026-10-04T20:25:00Z",
       "tv": "",
       "winner": null,
-      "away_score": 3,
-      "home_score": 0,
+      "away_score": 6,
+      "home_score": 16,
       "week": 4,
       "status": "in_progress"
     },
@@ -3604,5 +3604,5 @@
       "week": 18
     }
   ],
-  "scores_synced_at": "2026-10-04T21:14:09.830Z"
+  "scores_synced_at": "2026-10-04T23:03:52.626Z"
 }
