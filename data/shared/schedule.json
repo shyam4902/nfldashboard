@@ -713,11 +713,11 @@
       "city": "",
       "kickoff_utc": "2026-10-04T17:00:00Z",
       "tv": "",
-      "winner": null,
+      "winner": "Baltimore Ravens",
       "away_score": 18,
       "home_score": 24,
       "week": 4,
-      "status": "in_progress"
+      "status": "final"
     },
     {
       "game_id": "2026-10-04-NE-BUF",
@@ -727,11 +727,11 @@
       "city": "",
       "kickoff_utc": "2026-10-04T17:00:00Z",
       "tv": "",
-      "winner": null,
+      "winner": "New England Patriots",
       "away_score": 29,
       "home_score": 26,
       "week": 4,
-      "status": "in_progress"
+      "status": "final"
     },
     {
       "game_id": "2026-10-04-NYJ-CHI",
@@ -755,11 +755,11 @@
       "city": "",
       "kickoff_utc": "2026-10-04T17:00:00Z",
       "tv": "",
-      "winner": null,
+      "winner": "Jacksonville Jaguars",
       "away_score": 22,
       "home_score": 17,
       "week": 4,
-      "status": "in_progress"
+      "status": "final"
     },
     {
       "game_id": "2026-10-04-DAL-HOU",
@@ -769,11 +769,11 @@
       "city": "",
       "kickoff_utc": "2026-10-04T17:00:00Z",
       "tv": "",
-      "winner": null,
-      "away_score": 27,
+      "winner": "Dallas Cowboys",
+      "away_score": 34,
       "home_score": 30,
       "week": 4,
-      "status": "in_progress"
+      "status": "final"
     },
     {
       "game_id": "2026-10-04-ARI-NYG",
@@ -783,11 +783,11 @@
       "city": "",
       "kickoff_utc": "2026-10-04T17:00:00Z",
       "tv": "",
-      "winner": null,
+      "winner": "New York Giants",
       "away_score": 24,
-      "home_score": 30,
+      "home_score": 36,
       "week": 4,
-      "status": "in_progress"
+      "status": "final"
     },
     {
       "game_id": "2026-10-04-LA-PHI",
@@ -797,11 +797,11 @@
       "city": "",
       "kickoff_utc": "2026-10-04T17:00:00Z",
       "tv": "",
-      "winner": null,
-      "away_score": 17,
+      "winner": "Los Angeles Rams",
+      "away_score": 24,
       "home_score": 20,
       "week": 4,
-      "status": "in_progress"
+      "status": "final"
     },
     {
       "game_id": "2026-10-04-GB-TB",
@@ -826,9 +826,10 @@
       "kickoff_utc": "2026-10-04T20:05:00Z",
       "tv": "",
       "winner": null,
-      "away_score": null,
-      "home_score": null,
-      "week": 4
+      "away_score": 0,
+      "home_score": 6,
+      "week": 4,
+      "status": "in_progress"
     },
     {
       "game_id": "2026-10-04-KC-LV",
@@ -839,9 +840,10 @@
       "kickoff_utc": "2026-10-04T20:25:00Z",
       "tv": "",
       "winner": null,
-      "away_score": null,
-      "home_score": null,
-      "week": 4
+      "away_score": 7,
+      "home_score": 7,
+      "week": 4,
+      "status": "in_progress"
     },
     {
       "game_id": "2026-10-04-LAC-SEA",
@@ -852,9 +854,10 @@
       "kickoff_utc": "2026-10-04T20:25:00Z",
       "tv": "",
       "winner": null,
-      "away_score": null,
-      "home_score": null,
-      "week": 4
+      "away_score": 3,
+      "home_score": 7,
+      "week": 4,
+      "status": "in_progress"
     },
     {
       "game_id": "2026-10-04-DEN-SF",
@@ -865,9 +868,10 @@
       "kickoff_utc": "2026-10-04T20:25:00Z",
       "tv": "",
       "winner": null,
-      "away_score": null,
-      "home_score": null,
-      "week": 4
+      "away_score": 3,
+      "home_score": 0,
+      "week": 4,
+      "status": "in_progress"
     },
     {
       "game_id": "2026-10-04-DET-CAR",
@@ -3600,5 +3604,5 @@
       "week": 18
     }
   ],
-  "scores_synced_at": "2026-10-04T20:05:28.471Z"
+  "scores_synced_at": "2026-10-04T21:14:09.830Z"
 }
