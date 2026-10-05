@@ -881,11 +881,11 @@
       "city": "",
       "kickoff_utc": "2026-10-05T00:20:00Z",
       "tv": "",
-      "winner": null,
-      "away_score": 16,
-      "home_score": 16,
+      "winner": "Carolina Panthers",
+      "away_score": 26,
+      "home_score": 32,
       "week": 4,
-      "status": "in_progress"
+      "status": "final"
     },
     {
       "game_id": "2026-10-05-ATL-NO",
@@ -3605,5 +3605,5 @@
       "week": 18
     }
   ],
-  "scores_synced_at": "2026-10-05T01:53:09.960Z"
+  "scores_synced_at": "2026-10-05T05:27:36.800Z"
 }
