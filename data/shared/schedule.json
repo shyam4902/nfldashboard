@@ -2,7 +2,7 @@
   "season": 2026,
   "week": 4,
   "total_weeks": 18,
-  "generated": "2026-10-04",
+  "generated": "2026-10-05",
   "source": "nflverse games.csv (matchups, kickoffs, stadiums); Week 1 enriched with TV/city",
   "games": [
     {
@@ -839,11 +839,11 @@
       "city": "",
       "kickoff_utc": "2026-10-04T20:25:00Z",
       "tv": "",
-      "winner": null,
-      "away_score": 17,
-      "home_score": 16,
+      "winner": "Kansas City Chiefs",
+      "away_score": 30,
+      "home_score": 27,
       "week": 4,
-      "status": "in_progress"
+      "status": "final"
     },
     {
       "game_id": "2026-10-04-LAC-SEA",
@@ -853,11 +853,11 @@
       "city": "",
       "kickoff_utc": "2026-10-04T20:25:00Z",
       "tv": "",
-      "winner": null,
-      "away_score": 13,
+      "winner": "Seattle Seahawks",
+      "away_score": 23,
       "home_score": 30,
       "week": 4,
-      "status": "in_progress"
+      "status": "final"
     },
     {
       "game_id": "2026-10-04-DEN-SF",
@@ -867,11 +867,11 @@
       "city": "",
       "kickoff_utc": "2026-10-04T20:25:00Z",
       "tv": "",
-      "winner": null,
-      "away_score": 6,
-      "home_score": 16,
+      "winner": "San Francisco 49ers",
+      "away_score": 14,
+      "home_score": 24,
       "week": 4,
-      "status": "in_progress"
+      "status": "final"
     },
     {
       "game_id": "2026-10-04-DET-CAR",
@@ -882,9 +882,10 @@
       "kickoff_utc": "2026-10-05T00:20:00Z",
       "tv": "",
       "winner": null,
-      "away_score": null,
-      "home_score": null,
-      "week": 4
+      "away_score": 3,
+      "home_score": 0,
+      "week": 4,
+      "status": "in_progress"
     },
     {
       "game_id": "2026-10-05-ATL-NO",
@@ -3604,5 +3605,5 @@
       "week": 18
     }
   ],
-  "scores_synced_at": "2026-10-04T23:03:52.626Z"
+  "scores_synced_at": "2026-10-05T00:43:27.434Z"
 }
