@@ -1,7 +1,7 @@
 {
   "artifact": "nfl_stats",
   "season": 2026,
-  "generated_at": "2026-10-07T11:20:04Z",
+  "generated_at": "2026-10-09T11:20:06Z",
   "source": "Sleeper weekly stats API (api.sleeper.app/v1/stats/nfl/regular) — free, no key; names and team from the Sleeper player catalogue",
   "source_of_points": "schedule.json completed regular-season results",
   "season_kind": "actual",
@@ -5187,6 +5187,20 @@
   },
   "team_totals": [
     {
+      "team": "Dallas Cowboys",
+      "abbr": "DAL",
+      "division": "NFC East",
+      "games": 4,
+      "pass_yards": 1065,
+      "rush_yards": 358,
+      "total_yards": 1423,
+      "offensive_tds": 14,
+      "points_for": 138,
+      "points_against": 136,
+      "yards_allowed": 1558,
+      "differential": 2
+    },
+    {
       "team": "Buffalo Bills",
       "abbr": "BUF",
       "division": "AFC East",
@@ -5199,20 +5213,6 @@
       "points_against": 107,
       "yards_allowed": 1489,
       "differential": 20
-    },
-    {
-      "team": "Dallas Cowboys",
-      "abbr": "DAL",
-      "division": "NFC East",
-      "games": 4,
-      "pass_yards": 1065,
-      "rush_yards": 358,
-      "total_yards": 1423,
-      "offensive_tds": 14,
-      "points_for": 122,
-      "points_against": 112,
-      "yards_allowed": 1558,
-      "differential": 10
     },
     {
       "team": "San Francisco 49ers",
@@ -5369,6 +5369,20 @@
       "differential": -2
     },
     {
+      "team": "Tampa Bay Buccaneers",
+      "abbr": "TB",
+      "division": "NFC South",
+      "games": 4,
+      "pass_yards": 763,
+      "rush_yards": 424,
+      "total_yards": 1187,
+      "offensive_tds": 7,
+      "points_for": 100,
+      "points_against": 112,
+      "yards_allowed": 1131,
+      "differential": -12
+    },
+    {
       "team": "Cincinnati Bengals",
       "abbr": "CIN",
       "division": "AFC North",
@@ -5521,20 +5535,6 @@
       "points_against": 84,
       "yards_allowed": 1267,
       "differential": -8
-    },
-    {
-      "team": "Tampa Bay Buccaneers",
-      "abbr": "TB",
-      "division": "NFC South",
-      "games": 4,
-      "pass_yards": 763,
-      "rush_yards": 424,
-      "total_yards": 1187,
-      "offensive_tds": 7,
-      "points_for": 76,
-      "points_against": 96,
-      "yards_allowed": 1131,
-      "differential": -20
     },
     {
       "team": "Philadelphia Eagles",

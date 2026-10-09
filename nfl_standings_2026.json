@@ -1,14 +1,15 @@
 {
   "artifact": "nfl_standings",
   "season": 2026,
-  "generated_at": "2026-10-07T11:20:04Z",
-  "through_week": 4,
-  "completed_games": 64,
+  "generated_at": "2026-10-09T11:20:06Z",
+  "through_week": 5,
+  "completed_games": 65,
   "completed_weeks": [
     1,
     2,
     3,
-    4
+    4,
+    5
   ],
   "source": "schedule.json completed regular-season results (final scores synced from ESPN by the score workflow)",
   "source_of_teams": "nfl_rosters_2026.json team/division catalogue",
@@ -302,21 +303,6 @@
           "source": "actual"
         },
         {
-          "team": "Dallas Cowboys",
-          "abbr": "DAL",
-          "division": "NFC East",
-          "conference": "NFC",
-          "wins": 2,
-          "losses": 2,
-          "ties": 0,
-          "played": 4,
-          "win_pct": 0.5,
-          "points_for": 122,
-          "points_against": 112,
-          "differential": 10,
-          "source": "actual"
-        },
-        {
           "team": "Philadelphia Eagles",
           "abbr": "PHI",
           "division": "NFC East",
@@ -329,6 +315,21 @@
           "points_for": 75,
           "points_against": 93,
           "differential": -18,
+          "source": "actual"
+        },
+        {
+          "team": "Dallas Cowboys",
+          "abbr": "DAL",
+          "division": "NFC East",
+          "conference": "NFC",
+          "wins": 2,
+          "losses": 3,
+          "ties": 0,
+          "played": 5,
+          "win_pct": 0.4,
+          "points_for": 138,
+          "points_against": 136,
+          "differential": 2,
           "source": "actual"
         },
         {
@@ -468,14 +469,14 @@
           "abbr": "TB",
           "division": "NFC South",
           "conference": "NFC",
-          "wins": 0,
+          "wins": 1,
           "losses": 4,
           "ties": 0,
-          "played": 4,
-          "win_pct": 0,
-          "points_for": 76,
-          "points_against": 96,
-          "differential": -20,
+          "played": 5,
+          "win_pct": 0.2,
+          "points_for": 100,
+          "points_against": 112,
+          "differential": -12,
           "source": "actual"
         }
       ]
@@ -674,13 +675,13 @@
       "division": "NFC East",
       "conference": "NFC",
       "wins": 2,
-      "losses": 2,
+      "losses": 3,
       "ties": 0,
-      "played": 4,
-      "win_pct": 0.5,
-      "points_for": 122,
-      "points_against": 112,
-      "differential": 10,
+      "played": 5,
+      "win_pct": 0.4,
+      "points_for": 138,
+      "points_against": 136,
+      "differential": 2,
       "source": "actual"
     },
     {
@@ -988,14 +989,14 @@
       "abbr": "TB",
       "division": "NFC South",
       "conference": "NFC",
-      "wins": 0,
+      "wins": 1,
       "losses": 4,
       "ties": 0,
-      "played": 4,
-      "win_pct": 0,
-      "points_for": 76,
-      "points_against": 96,
-      "differential": -20,
+      "played": 5,
+      "win_pct": 0.2,
+      "points_for": 100,
+      "points_against": 112,
+      "differential": -12,
       "source": "actual"
     },
     {
