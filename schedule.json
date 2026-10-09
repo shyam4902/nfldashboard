@@ -909,11 +909,11 @@
       "city": "",
       "kickoff_utc": "2026-10-09T00:15:00Z",
       "tv": "",
-      "winner": null,
-      "away_score": 14,
-      "home_score": 10,
+      "winner": "Tampa Bay Buccaneers",
+      "away_score": 24,
+      "home_score": 16,
       "week": 5,
-      "status": "in_progress"
+      "status": "final"
     },
     {
       "game_id": "2026-10-11-PHI-JAX",
@@ -3607,5 +3607,5 @@
       "week": 18
     }
   ],
-  "scores_synced_at": "2026-10-09T01:57:47.595Z"
+  "scores_synced_at": "2026-10-09T08:51:28.184Z"
 }
