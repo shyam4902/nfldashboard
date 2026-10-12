@@ -2,7 +2,7 @@
   "season": 2026,
   "week": 5,
   "total_weeks": 18,
-  "generated": "2026-10-11",
+  "generated": "2026-10-12",
   "source": "nflverse games.csv (matchups, kickoffs, stadiums); Week 1 enriched with TV/city",
   "games": [
     {
@@ -1049,11 +1049,11 @@
       "city": "",
       "kickoff_utc": "2026-10-11T20:05:00Z",
       "tv": "",
-      "winner": null,
-      "away_score": 7,
-      "home_score": 0,
+      "winner": "Denver Broncos",
+      "away_score": 23,
+      "home_score": 17,
       "week": 5,
-      "status": "in_progress"
+      "status": "final"
     },
     {
       "game_id": "2026-10-11-DET-ARI",
@@ -1063,11 +1063,11 @@
       "city": "",
       "kickoff_utc": "2026-10-11T20:25:00Z",
       "tv": "",
-      "winner": null,
-      "away_score": 0,
-      "home_score": 7,
+      "winner": "Detroit Lions",
+      "away_score": 45,
+      "home_score": 21,
       "week": 5,
-      "status": "in_progress"
+      "status": "final"
     },
     {
       "game_id": "2026-10-11-SF-SEA",
@@ -1077,11 +1077,11 @@
       "city": "",
       "kickoff_utc": "2026-10-11T20:25:00Z",
       "tv": "",
-      "winner": null,
-      "away_score": 7,
-      "home_score": 7,
+      "winner": "San Francisco 49ers",
+      "away_score": 32,
+      "home_score": 29,
       "week": 5,
-      "status": "in_progress"
+      "status": "final"
     },
     {
       "game_id": "2026-10-11-BAL-ATL",
@@ -1092,9 +1092,10 @@
       "kickoff_utc": "2026-10-12T00:20:00Z",
       "tv": "",
       "winner": null,
-      "away_score": null,
-      "home_score": null,
-      "week": 5
+      "away_score": 0,
+      "home_score": 0,
+      "week": 5,
+      "status": "in_progress"
     },
     {
       "game_id": "2026-10-12-BUF-LA",
@@ -3619,5 +3620,5 @@
       "week": 18
     }
   ],
-  "scores_synced_at": "2026-10-11T20:55:18.659Z"
+  "scores_synced_at": "2026-10-12T00:25:44.441Z"
 }
