@@ -1,8 +1,8 @@
 {
   "season": 2026,
-  "week": 5,
+  "week": 6,
   "total_weeks": 18,
-  "generated": "2026-10-12",
+  "generated": "2026-10-13",
   "source": "nflverse games.csv (matchups, kickoffs, stadiums); Week 1 enriched with TV/city",
   "games": [
     {
@@ -1106,9 +1106,10 @@
       "kickoff_utc": "2026-10-13T00:15:00Z",
       "tv": "",
       "winner": null,
-      "away_score": null,
-      "home_score": null,
-      "week": 5
+      "away_score": 3,
+      "home_score": 0,
+      "week": 5,
+      "status": "in_progress"
     },
     {
       "game_id": "2026-10-15-SEA-DEN",
@@ -3620,5 +3621,5 @@
       "week": 18
     }
   ],
-  "scores_synced_at": "2026-10-12T05:47:45.536Z"
+  "scores_synced_at": "2026-10-13T00:31:21.521Z"
 }
