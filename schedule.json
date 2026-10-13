@@ -1105,11 +1105,11 @@
       "city": "",
       "kickoff_utc": "2026-10-13T00:15:00Z",
       "tv": "",
-      "winner": null,
-      "away_score": 3,
-      "home_score": 0,
+      "winner": "Buffalo Bills",
+      "away_score": 37,
+      "home_score": 34,
       "week": 5,
-      "status": "in_progress"
+      "status": "final"
     },
     {
       "game_id": "2026-10-15-SEA-DEN",
@@ -3621,5 +3621,5 @@
       "week": 18
     }
   ],
-  "scores_synced_at": "2026-10-13T00:31:21.521Z"
+  "scores_synced_at": "2026-10-13T07:36:35.728Z"
 }
