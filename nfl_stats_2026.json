@@ -1,7 +1,7 @@
 {
   "artifact": "nfl_stats",
   "season": 2026,
-  "generated_at": "2026-10-15T11:20:06Z",
+  "generated_at": "2026-10-16T11:20:06Z",
   "source": "Sleeper weekly stats API (api.sleeper.app/v1/stats/nfl/regular) — free, no key; names and team from the Sleeper player catalogue",
   "source_of_points": "schedule.json completed regular-season results",
   "season_kind": "actual",
@@ -6175,6 +6175,20 @@
       "differential": 61
     },
     {
+      "team": "Seattle Seahawks",
+      "abbr": "SEA",
+      "division": "NFC West",
+      "games": 5,
+      "pass_yards": 1191,
+      "rush_yards": 530,
+      "total_yards": 1721,
+      "offensive_tds": 15,
+      "points_for": 148,
+      "points_against": 122,
+      "yards_allowed": 1256,
+      "differential": 26
+    },
+    {
       "team": "Baltimore Ravens",
       "abbr": "BAL",
       "division": "AFC North",
@@ -6201,20 +6215,6 @@
       "points_against": 136,
       "yards_allowed": 1977,
       "differential": 2
-    },
-    {
-      "team": "Seattle Seahawks",
-      "abbr": "SEA",
-      "division": "NFC West",
-      "games": 5,
-      "pass_yards": 1191,
-      "rush_yards": 530,
-      "total_yards": 1721,
-      "offensive_tds": 15,
-      "points_for": 134,
-      "points_against": 105,
-      "yards_allowed": 1256,
-      "differential": 29
     },
     {
       "team": "Las Vegas Raiders",
@@ -6371,6 +6371,20 @@
       "differential": -34
     },
     {
+      "team": "Denver Broncos",
+      "abbr": "DEN",
+      "division": "AFC West",
+      "games": 5,
+      "pass_yards": 942,
+      "rush_yards": 431,
+      "total_yards": 1373,
+      "offensive_tds": 10,
+      "points_for": 114,
+      "points_against": 125,
+      "yards_allowed": 1737,
+      "differential": -11
+    },
+    {
       "team": "Pittsburgh Steelers",
       "abbr": "PIT",
       "division": "AFC North",
@@ -6481,20 +6495,6 @@
       "points_against": 112,
       "yards_allowed": 1497,
       "differential": -12
-    },
-    {
-      "team": "Denver Broncos",
-      "abbr": "DEN",
-      "division": "AFC West",
-      "games": 5,
-      "pass_yards": 942,
-      "rush_yards": 431,
-      "total_yards": 1373,
-      "offensive_tds": 10,
-      "points_for": 97,
-      "points_against": 111,
-      "yards_allowed": 1737,
-      "differential": -14
     },
     {
       "team": "Cleveland Browns",
