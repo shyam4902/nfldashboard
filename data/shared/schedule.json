@@ -1119,11 +1119,11 @@
       "city": "",
       "kickoff_utc": "2026-10-16T00:15:00Z",
       "tv": "",
-      "winner": null,
-      "away_score": 0,
-      "home_score": 0,
+      "winner": "Denver Broncos",
+      "away_score": 14,
+      "home_score": 17,
       "week": 6,
-      "status": "in_progress"
+      "status": "final"
     },
     {
       "game_id": "2026-10-18-HOU-JAX",
@@ -3622,5 +3622,5 @@
       "week": 18
     }
   ],
-  "scores_synced_at": "2026-10-16T00:19:44.248Z"
+  "scores_synced_at": "2026-10-16T05:44:08.760Z"
 }
