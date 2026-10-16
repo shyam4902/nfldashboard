@@ -2,7 +2,7 @@
   "season": 2026,
   "week": 6,
   "total_weeks": 18,
-  "generated": "2026-10-15",
+  "generated": "2026-10-16",
   "source": "nflverse games.csv (matchups, kickoffs, stadiums); Week 1 enriched with TV/city",
   "games": [
     {
@@ -1120,9 +1120,10 @@
       "kickoff_utc": "2026-10-16T00:15:00Z",
       "tv": "",
       "winner": null,
-      "away_score": null,
-      "home_score": null,
-      "week": 6
+      "away_score": 0,
+      "home_score": 0,
+      "week": 6,
+      "status": "in_progress"
     },
     {
       "game_id": "2026-10-18-HOU-JAX",
@@ -3621,5 +3622,5 @@
       "week": 18
     }
   ],
-  "scores_synced_at": "2026-10-13T07:36:35.728Z"
+  "scores_synced_at": "2026-10-16T00:19:44.248Z"
 }
