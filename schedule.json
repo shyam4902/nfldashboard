@@ -1245,11 +1245,11 @@
       "city": "",
       "kickoff_utc": "2026-10-18T20:05:00Z",
       "tv": "",
-      "winner": null,
-      "away_score": 15,
+      "winner": "Arizona Cardinals",
+      "away_score": 18,
       "home_score": 16,
       "week": 6,
-      "status": "in_progress"
+      "status": "final"
     },
     {
       "game_id": "2026-10-18-LAC-KC",
@@ -1259,11 +1259,11 @@
       "city": "",
       "kickoff_utc": "2026-10-18T20:25:00Z",
       "tv": "",
-      "winner": null,
+      "winner": "Kansas City Chiefs",
       "away_score": 6,
-      "home_score": 19,
+      "home_score": 22,
       "week": 6,
-      "status": "in_progress"
+      "status": "final"
     },
     {
       "game_id": "2026-10-18-BUF-LV",
@@ -1273,11 +1273,11 @@
       "city": "",
       "kickoff_utc": "2026-10-18T20:25:00Z",
       "tv": "",
-      "winner": null,
-      "away_score": 23,
-      "home_score": 16,
+      "winner": "Buffalo Bills",
+      "away_score": 33,
+      "home_score": 30,
       "week": 6,
-      "status": "in_progress"
+      "status": "final"
     },
     {
       "game_id": "2026-10-18-DAL-GB",
@@ -3633,5 +3633,5 @@
       "week": 18
     }
   ],
-  "scores_synced_at": "2026-10-18T22:58:33.370Z"
+  "scores_synced_at": "2026-10-18T23:44:05.916Z"
 }
