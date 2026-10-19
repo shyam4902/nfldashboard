@@ -2,7 +2,7 @@
   "season": 2026,
   "week": 6,
   "total_weeks": 18,
-  "generated": "2026-10-18",
+  "generated": "2026-10-19",
   "source": "nflverse games.csv (matchups, kickoffs, stadiums); Week 1 enriched with TV/city",
   "games": [
     {
@@ -1288,9 +1288,10 @@
       "kickoff_utc": "2026-10-19T00:20:00Z",
       "tv": "",
       "winner": null,
-      "away_score": null,
-      "home_score": null,
-      "week": 6
+      "away_score": 0,
+      "home_score": 7,
+      "week": 6,
+      "status": "in_progress"
     },
     {
       "game_id": "2026-10-19-WAS-SF",
@@ -3633,5 +3634,5 @@
       "week": 18
     }
   ],
-  "scores_synced_at": "2026-10-18T23:44:05.916Z"
+  "scores_synced_at": "2026-10-19T01:03:02.926Z"
 }
