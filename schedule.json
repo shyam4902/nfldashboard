@@ -1287,11 +1287,11 @@
       "city": "",
       "kickoff_utc": "2026-10-19T00:20:00Z",
       "tv": "",
-      "winner": null,
-      "away_score": 0,
-      "home_score": 17,
+      "winner": "Green Bay Packers",
+      "away_score": 13,
+      "home_score": 23,
       "week": 6,
-      "status": "in_progress"
+      "status": "final"
     },
     {
       "game_id": "2026-10-19-WAS-SF",
@@ -3634,5 +3634,5 @@
       "week": 18
     }
   ],
-  "scores_synced_at": "2026-10-19T01:51:24.040Z"
+  "scores_synced_at": "2026-10-19T04:30:51.907Z"
 }
