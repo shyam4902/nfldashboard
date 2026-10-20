@@ -1,8 +1,8 @@
 {
   "season": 2026,
-  "week": 6,
+  "week": 7,
   "total_weeks": 18,
-  "generated": "2026-10-19",
+  "generated": "2026-10-20",
   "source": "nflverse games.csv (matchups, kickoffs, stadiums); Week 1 enriched with TV/city",
   "games": [
     {
@@ -1301,10 +1301,11 @@
       "city": "",
       "kickoff_utc": "2026-10-20T00:15:00Z",
       "tv": "",
-      "winner": null,
-      "away_score": null,
-      "home_score": null,
-      "week": 6
+      "winner": "San Francisco 49ers",
+      "away_score": 17,
+      "home_score": 23,
+      "week": 6,
+      "status": "final"
     },
     {
       "game_id": "2026-10-22-NE-CHI",
@@ -3634,5 +3635,5 @@
       "week": 18
     }
   ],
-  "scores_synced_at": "2026-10-19T04:30:51.907Z"
+  "scores_synced_at": "2026-10-20T04:36:23.899Z"
 }
