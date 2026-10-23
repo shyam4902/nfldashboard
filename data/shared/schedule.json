@@ -1315,11 +1315,11 @@
       "city": "",
       "kickoff_utc": "2026-10-23T00:15:00Z",
       "tv": "",
-      "winner": null,
-      "away_score": 7,
-      "home_score": 13,
+      "winner": "Chicago Bears",
+      "away_score": 24,
+      "home_score": 30,
       "week": 7,
-      "status": "in_progress"
+      "status": "final"
     },
     {
       "game_id": "2026-10-25-PIT-NO",
@@ -3636,5 +3636,5 @@
       "week": 18
     }
   ],
-  "scores_synced_at": "2026-10-23T01:23:22.196Z"
+  "scores_synced_at": "2026-10-23T07:20:47.576Z"
 }
