@@ -32,6 +32,11 @@ a T1 finding needs a fix, and say so in the verdicts).
 - Keep the NFL page's palette (warm charcoal, single gold accent) and fonts. No new colors
   outside the existing CSS variables and the Tailwind config block.
 - Light text on dark must keep at least 4.5:1 contrast for body text.
+- The 30s live refresh in `showScores` repaints the loading state each time, so the
+  scores flash during live games. Refresh in place: keep the current cards on screen
+  until the new data is ready.
+- Already fixed by the orchestrator, leave as is: PCT shows `1.000` for unbeaten teams,
+  and team schedule results show both scores (`W 106-100`).
 - Done:
   - `node --test nba/nba.test.mjs` still passes.
   - `grep -c "tabular-nums" nba/index.html` ≥ 1.
