@@ -2,7 +2,7 @@
   "season": 2026,
   "week": 7,
   "total_weeks": 18,
-  "generated": "2026-10-22",
+  "generated": "2026-10-23",
   "source": "nflverse games.csv (matchups, kickoffs, stadiums); Week 1 enriched with TV/city",
   "games": [
     {
@@ -1316,9 +1316,10 @@
       "kickoff_utc": "2026-10-23T00:15:00Z",
       "tv": "",
       "winner": null,
-      "away_score": null,
-      "home_score": null,
-      "week": 7
+      "away_score": 7,
+      "home_score": 13,
+      "week": 7,
+      "status": "in_progress"
     },
     {
       "game_id": "2026-10-25-PIT-NO",
@@ -3635,5 +3636,5 @@
       "week": 18
     }
   ],
-  "scores_synced_at": "2026-10-20T04:36:23.899Z"
+  "scores_synced_at": "2026-10-23T01:23:22.196Z"
 }
