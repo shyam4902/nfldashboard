@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1134" height="566" viewBox="0 0 1134 566" font-family="'DejaVu Sans Mono', 'Menlo', 'Consolas', 'Liberation Mono', 'Courier New', monospace" font-size="14px">
+  <defs>
+    <marker id="rf08ccdad-arrow-5c5c7c" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#5c5c7c"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="1134" height="566" fill="#111111"/>
+  <path d="M363 40 H493 a8 8 0 0 1 8 8 V98 a8 8 0 0 1 -8 8 H363 a8 8 0 0 1 -8 -8 V48 a8 8 0 0 1 8 -8 Z" fill="#142814" stroke="#486544"/>
+  <text x="428" y="68.4" fill="#d9d9d9" text-anchor="middle">justscores.app</text>
+  <text x="428" y="87.4" fill="#d9d9d9" text-anchor="middle">(buy, $9.99)</text>
+  <path d="M350.5 162 H505.5 a8 8 0 0 1 8 8 V220 a8 8 0 0 1 -8 8 H350.5 a8 8 0 0 1 -8 -8 V170 a8 8 0 0 1 8 -8 Z" fill="#191728" stroke="#4f5367"/>
+  <text x="428" y="190.4" fill="#d9d9d9" text-anchor="middle">Cloudflare Pages</text>
+  <text x="428" y="209.4" fill="#d9d9d9" text-anchor="middle">nfldashboard repo</text>
+  <path d="M114.5 284 H278.5 a8 8 0 0 1 8 8 V342 a8 8 0 0 1 -8 8 H114.5 a8 8 0 0 1 -8 -8 V292 a8 8 0 0 1 8 -8 Z" fill="#191728" stroke="#4f5367"/>
+  <text x="196.5" y="312.4" fill="#d9d9d9" text-anchor="middle">/  NFL page</text>
+  <text x="196.5" y="331.4" fill="#d9d9d9" text-anchor="middle">index.html (as is)</text>
+  <path d="M577.5 284 H715.5 a8 8 0 0 1 8 8 V342 a8 8 0 0 1 -8 8 H577.5 a8 8 0 0 1 -8 -8 V292 a8 8 0 0 1 8 -8 Z" fill="#142814" stroke="#486544"/>
+  <text x="646.5" y="312.4" fill="#d9d9d9" text-anchor="middle">/nba/  NBA page</text>
+  <text x="646.5" y="331.4" fill="#d9d9d9" text-anchor="middle">nba/index.html</text>
+  <path d="M539.5 431.4 H753.5 a8 8 0 0 1 8 8 V508.4 a8 8 0 0 1 -8 8 H539.5 a8 8 0 0 1 -8 -8 V439.4 a8 8 0 0 1 8 -8 Z" fill="#191728" stroke="#4f5367"/>
+  <text x="646.5" y="459.8" fill="#d9d9d9" text-anchor="middle">ESPN NBA API</text>
+  <text x="646.5" y="478.8" fill="#d9d9d9" text-anchor="middle">scores, standings, teams</text>
+  <text x="646.5" y="497.8" fill="#d9d9d9" text-anchor="middle">keyless, browser fetch</text>
+  <path d="M871.9 284 H1085.9 a8 8 0 0 1 8 8 V342 a8 8 0 0 1 -8 8 H871.9 a8 8 0 0 1 -8 -8 V292 a8 8 0 0 1 8 -8 Z" fill="#191728" stroke="#8f3a3a"/>
+  <text x="978.9" y="312.4" fill="#d9d9d9" text-anchor="middle">freebuff</text>
+  <text x="978.9" y="331.4" fill="#d9d9d9" text-anchor="middle">builds nba/ page + tests</text>
+  <path d="M880.4 460 H1077.4 a8 8 0 0 1 8 8 V518 a8 8 0 0 1 -8 8 H880.4 a8 8 0 0 1 -8 -8 V468 a8 8 0 0 1 8 -8 Z" fill="#191728" stroke="#8f3a3a"/>
+  <text x="978.9" y="488.4" fill="#d9d9d9" text-anchor="middle">Gemini</text>
+  <text x="978.9" y="507.4" fill="#d9d9d9" text-anchor="middle">visual polish + review</text>
+  <path d="M48 40 H237 a8 8 0 0 1 8 8 V98 a8 8 0 0 1 -8 8 H48 a8 8 0 0 1 -8 -8 V48 a8 8 0 0 1 8 -8 Z" fill="#191728" stroke="#4f5367"/>
+  <text x="142.5" y="68.4" fill="#8b8b8b" text-anchor="middle">propstoday.app</text>
+  <text x="142.5" y="87.4" fill="#8b8b8b" text-anchor="middle">Edge betting terminal</text>
+  <g font-size="12px">
+  <text x="41.5" y="142.2" fill="#d9d9d9" text-anchor="start">Separate product. Buy later,</text>
+  <text x="41.5" y="158.2" fill="#d9d9d9" text-anchor="start">after the scores site ships.</text>
+  </g>
+  <line x1="428" y1="106" x2="428" y2="162" stroke="#5c5c7c" stroke-width="1.6" marker-end="url(#rf08ccdad-arrow-5c5c7c)"/>
+  <line x1="365.38" y1="228" x2="259.12" y2="284" stroke="#5c5c7c" stroke-width="1.6" marker-end="url(#rf08ccdad-arrow-5c5c7c)"/>
+  <line x1="487.1" y1="228" x2="587.4" y2="284" stroke="#5c5c7c" stroke-width="1.6" marker-end="url(#rf08ccdad-arrow-5c5c7c)"/>
+  <line x1="646.5" y1="350" x2="646.5" y2="431.4" stroke="#5c5c7c" stroke-width="1.6" marker-end="url(#rf08ccdad-arrow-5c5c7c)"/>
+  <rect x="599.5" y="381.2" width="94" height="19" fill="#111111"/>
+  <text x="646.5" y="395.6" fill="#d9d9d9" text-anchor="middle">live fetch</text>
+  <line x1="286.5" y1="317" x2="569.5" y2="317" stroke="#5c5c7c" stroke-width="1.6" marker-end="url(#rf08ccdad-arrow-5c5c7c)" marker-start="url(#rf08ccdad-arrow-5c5c7c)"/>
+  <rect x="372.5" y="307.5" width="111" height="19" fill="#111111"/>
+  <text x="428" y="321.9" fill="#8b8b8b" text-anchor="middle">sport switch</text>
+  <line x1="863.9" y1="317" x2="723.5" y2="317" stroke="#5c5c7c" stroke-width="1.6" marker-end="url(#rf08ccdad-arrow-5c5c7c)"/>
+  <rect x="754.7" y="307.5" width="78" height="19" fill="#111111"/>
+  <text x="793.7" y="321.9" fill="#d9d9d9" text-anchor="middle">PACKET 1</text>
+  <line x1="916.58" y1="460" x2="708.83" y2="350" stroke="#5c5c7c" stroke-width="1.6" marker-end="url(#rf08ccdad-arrow-5c5c7c)"/>
+  <rect x="773.7" y="395.5" width="78" height="19" fill="#111111"/>
+  <text x="812.7" y="409.9" fill="#d9d9d9" text-anchor="middle">PACKET 2</text>
+  <line x1="978.9" y1="350" x2="978.9" y2="460" stroke="#5c5c7c" stroke-width="1.6" marker-end="url(#rf08ccdad-arrow-5c5c7c)"/>
+  <rect x="956.9" y="395.5" width="44" height="19" fill="#111111"/>
+  <text x="978.9" y="409.9" fill="#8b8b8b" text-anchor="middle">then</text>
+</svg>

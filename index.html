@@ -1904,6 +1904,7 @@ body.theme-analyst .roster-summary .rs-value {
         <button onclick="showTab('teams')" class="tab-btn shrink-0" data-tab="teams">Teams</button>
         <button onclick="showTab('league')" class="tab-btn shrink-0" data-tab="league">League</button>
         <button onclick="showTab('projections')" class="tab-btn shrink-0" data-tab="projections">Projections</button>
+        <a href="/nba/" class="tab-btn shrink-0">NBA</a>
       </nav>
 
       <!-- Utility actions -->
@@ -2123,9 +2124,9 @@ body.theme-analyst .roster-summary .rs-value {
         <select id="matchupGame" onchange="matchupGameChanged()" class="flex-1 min-w-0 text-xs px-3 py-1.5 rounded border border-subtle bg-slate-900 text-slate-200 focus:outline-none focus:border-sky-500 font-medium"></select>
       </div>
       <div class="flex items-center gap-2 flex-wrap min-w-0">
-        <select id="matchupTeamA" onchange="renderMatchup()" class="min-w-0 max-w-full text-xs px-2.5 py-1.5 rounded border border-subtle bg-slate-900 text-rose-400 font-medium"></select>
+        <select id="matchupTeamA" onchange="matchupTeamSelected('A')" class="min-w-0 max-w-full text-xs px-2.5 py-1.5 rounded border border-subtle bg-slate-900 text-rose-400 font-medium"></select>
         <button onclick="swapMatchupTeams()" title="Swap Home/Away Teams" class="p-1 rounded bg-slate-800 hover:bg-slate-700 border border-subtle text-slate-300 text-xs font-bold transition shrink-0">⇄</button>
-        <select id="matchupTeamB" onchange="renderMatchup()" class="min-w-0 max-w-full text-xs px-2.5 py-1.5 rounded border border-subtle bg-slate-900 text-sky-400 font-medium"></select>
+        <select id="matchupTeamB" onchange="matchupTeamSelected('B')" class="min-w-0 max-w-full text-xs px-2.5 py-1.5 rounded border border-subtle bg-slate-900 text-sky-400 font-medium"></select>
         <button onclick="openMatchups101Modal()" class="text-[11px] px-2.5 py-1.5 rounded border border-subtle bg-slate-800 hover:bg-slate-700 text-slate-300 transition font-bold flex items-center gap-1 ml-2 shrink-0">
           <span>💡</span> 101
         </button>
@@ -4834,11 +4835,20 @@ function swapMatchupTeams() {
   const tmp = MATCHUP_STATE.teamA;
   MATCHUP_STATE.teamA = MATCHUP_STATE.teamB;
   MATCHUP_STATE.teamB = tmp;
+  const games = (SCHEDULE_DATA && SCHEDULE_DATA.games) || [];
+  const matched = games.find(g => g.away_team === MATCHUP_STATE.teamA && g.home_team === MATCHUP_STATE.teamB);
+  MATCHUP_STATE.gameId = matched ? matched.game_id : null;
   const selA = document.getElementById('matchupTeamA');
   const selB = document.getElementById('matchupTeamB');
   if (selA) selA.value = MATCHUP_STATE.teamA;
   if (selB) selB.value = MATCHUP_STATE.teamB;
+  const selGame = document.getElementById('matchupGame');
+  if (selGame && selGame.options.length) {
+    const want = `${MATCHUP_STATE.teamA}__${MATCHUP_STATE.teamB}`;
+    selGame.value = Array.from(selGame.options).some(o => o.value === want) ? want : '';
+  }
   renderMatchup();
+  writeHash('matchup');
 }
 
 const MATCHUP_OL_SLOTS = [
@@ -6066,7 +6076,7 @@ function renderMatchupPanels() {
   const tA = MATCHUP_STATE.teamA;
   const tB = MATCHUP_STATE.teamB;
   const games = (SCHEDULE_DATA && SCHEDULE_DATA.games) || [];
-  const curGame = games.find(g => g.away_team === tA && g.home_team === tB) || null;
+  const curGame = (MATCHUP_STATE.gameId ? games.find(g => g.game_id === MATCHUP_STATE.gameId) : null) || games.find(g => g.away_team === tA && g.home_team === tB) || null;
 
   const offGrade = [['QB'], ['RB'], ['WR'], ['TE'], ['OL']].map(u => matchupGrade(tA, u)).filter(v => v != null);
   const defGrade = [['DI'], ['ED'], ['LB'], ['CB'], ['S']].map(u => matchupGrade(tB, u)).filter(v => v != null);
@@ -6373,12 +6383,33 @@ function matchupGameChanged() {
     const [a, h] = v.split('__');
     MATCHUP_STATE.teamA = a;
     MATCHUP_STATE.teamB = h;
+    const games = (SCHEDULE_DATA && SCHEDULE_DATA.games) || [];
+    const matched = games.find(g => g.away_team === a && g.home_team === h);
+    MATCHUP_STATE.gameId = matched ? matched.game_id : null;
     const selA = document.getElementById('matchupTeamA');
     const selB = document.getElementById('matchupTeamB');
     if (selA) selA.value = a;
     if (selB) selB.value = h;
   }
   renderMatchup();
+  writeHash('matchup');
+}
+
+function matchupTeamSelected(which) {
+  const selA = document.getElementById('matchupTeamA');
+  const selB = document.getElementById('matchupTeamB');
+  if (selA) MATCHUP_STATE.teamA = selA.value;
+  if (selB) MATCHUP_STATE.teamB = selB.value;
+  const games = (SCHEDULE_DATA && SCHEDULE_DATA.games) || [];
+  const matched = games.find(g => g.away_team === MATCHUP_STATE.teamA && g.home_team === MATCHUP_STATE.teamB);
+  MATCHUP_STATE.gameId = matched ? matched.game_id : null;
+  const selGame = document.getElementById('matchupGame');
+  if (selGame && selGame.options.length) {
+    const want = `${MATCHUP_STATE.teamA}__${MATCHUP_STATE.teamB}`;
+    selGame.value = Array.from(selGame.options).some(o => o.value === want) ? want : '';
+  }
+  renderMatchup();
+  writeHash('matchup');
 }
 
 async function renderMatchup() {
@@ -6396,62 +6427,43 @@ async function renderMatchup() {
     try { await loadEfficiency(); } catch (e) {}
   }
 
-  // Ensure team selects are populated
+  // Ensure team selects are populated and kept in sync with MATCHUP_STATE
   const selA = document.getElementById('matchupTeamA');
   const selB = document.getElementById('matchupTeamB');
-  if (selA && selB && (!selA.options.length || !selB.options.length)) {
-    const teams = matchupTeamList();
-    for (const t of teams) {
-      selA.add(new Option(t, t));
-      selB.add(new Option(t, t));
+  if (selA && selB) {
+    if (!selA.options.length || !selB.options.length) {
+      const teams = matchupTeamList();
+      for (const t of teams) {
+        selA.add(new Option(t, t));
+        selB.add(new Option(t, t));
+      }
     }
-    if (teams.includes(MATCHUP_STATE.teamA)) selA.value = MATCHUP_STATE.teamA;
-    if (teams.includes(MATCHUP_STATE.teamB)) selB.value = MATCHUP_STATE.teamB;
-    if (!selA.value && teams.length) selA.value = teams[0];
-    if (!selB.value && teams.length) selB.value = teams[Math.min(1, teams.length - 1)];
+    if (MATCHUP_STATE.teamA && Array.from(selA.options).some(o => o.value === MATCHUP_STATE.teamA)) {
+      selA.value = MATCHUP_STATE.teamA;
+    }
+    if (MATCHUP_STATE.teamB && Array.from(selB.options).some(o => o.value === MATCHUP_STATE.teamB)) {
+      selB.value = MATCHUP_STATE.teamB;
+    }
+    if (!selA.value && selA.options.length) selA.value = selA.options[0].value;
+    if (!selB.value && selB.options.length) selB.value = selB.options[Math.min(1, selB.options.length - 1)].value;
+    MATCHUP_STATE.teamA = selA.value;
+    MATCHUP_STATE.teamB = selB.value;
   }
 
   // Populate the game picker from the dashboard schedule (all weeks).
   // Exact-event selection only: a selected game_id (scheduled mode) pins the
-  // active event and its header/kickoff/venue/market metadata. Manual team
-  // edits (hypothetical mode) clear gameId. No borrowed-game fallback.
+  // active event and its header/kickoff/venue/market metadata.
   const selGame = document.getElementById('matchupGame');
   const games = (SCHEDULE_DATA && SCHEDULE_DATA.games) || [];
-  if (selGame && !selGame.options.length && games.length) {
-    const sorted = games.slice().sort((a, b) => String(a.kickoff_utc || '').localeCompare(String(b.kickoff_utc || '')));
-    for (const g of sorted) {
-      const d = new Date(g.kickoff_utc);
-      const when = isNaN(d.getTime()) ? '' : d.toLocaleDateString([], { month: 'short', day: 'numeric' });
-      selGame.add(new Option(`Wk ${g.week}: ${g.away_team} @ ${g.home_team}${when ? ' · ' + when : ''}`, `${g.away_team}__${g.home_team}`));
+  if (selGame && games.length) {
+    if (!selGame.options.length) {
+      const sorted = games.slice().sort((a, b) => String(a.kickoff_utc || '').localeCompare(String(b.kickoff_utc || '')));
+      for (const g of sorted) {
+        const d = new Date(g.kickoff_utc);
+        const when = isNaN(d.getTime()) ? '' : d.toLocaleDateString([], { month: 'short', day: 'numeric' });
+        selGame.add(new Option(`Wk ${g.week}: ${g.away_team} @ ${g.home_team}${when ? ' · ' + when : ''}`, `${g.away_team}__${g.home_team}`));
+      }
     }
-    const matchesGame = sorted.find(g => g.away_team === MATCHUP_STATE.teamA && g.home_team === MATCHUP_STATE.teamB);
-    if (matchesGame && !MATCHUP_STATE.gameId) {
-      const want = `${matchesGame.away_team}__${matchesGame.home_team}`;
-      selGame.value = want;
-    } else if (matchesGame && MATCHUP_STATE.gameId) {
-      const want = `${matchesGame.away_team}__${matchesGame.home_team}`;
-      selGame.value = want === `${matchesGame.away_team}__${matchesGame.home_team}` ? want : '';
-    } else {
-      selGame.value = '';
-    }
-  }
-
-  // Manual team edits (via the team A/B selects) enter hypothetical mode:
-  // clear the pinned event so the preview is not labeled with a selected game's
-  // kickoff/venue/market metadata. Team changes from openMatchup() keep the
-  // pinned event because they do not route through selA/selB.value.
-  if (selA && selA.value !== MATCHUP_STATE.teamA) {
-    MATCHUP_STATE.teamA = selA.value;
-    MATCHUP_STATE.gameId = null;
-    if (selGame && selGame.options.length) selGame.value = '';
-  }
-  if (selB && selB.value !== MATCHUP_STATE.teamB) {
-    MATCHUP_STATE.teamB = selB.value;
-    MATCHUP_STATE.gameId = null;
-    if (selGame && selGame.options.length) selGame.value = '';
-  }
-
-  if (selGame && selGame.options.length) {
     const want = `${MATCHUP_STATE.teamA}__${MATCHUP_STATE.teamB}`;
     selGame.value = Array.from(selGame.options).some(o => o.value === want) ? want : '';
   }
@@ -6459,12 +6471,12 @@ async function renderMatchup() {
   // Exact-event selection: the selected game_id owns the header, kickoff, venue,
   // and market metadata. Unset when the user manually edits teams (hypothetical
   // mode). An unresolved non-null gameId is an error state (not a fallback).
-  let curGame = games.find(g => g.away_team === MATCHUP_STATE.teamA && g.home_team === MATCHUP_STATE.teamB);
-  if (curGame && MATCHUP_STATE.gameId && curGame.game_id !== MATCHUP_STATE.gameId) {
-    curGame = null; // current selection does not match the pinned event
-  }
-  if (!curGame && MATCHUP_STATE.gameId) {
+  let curGame = null;
+  if (MATCHUP_STATE.gameId) {
     curGame = games.find(g => g.game_id === MATCHUP_STATE.gameId) || null;
+  }
+  if (!curGame && MATCHUP_STATE.teamA && MATCHUP_STATE.teamB) {
+    curGame = games.find(g => g.away_team === MATCHUP_STATE.teamA && g.home_team === MATCHUP_STATE.teamB) || null;
   }
 
   // Render Hero Banner & Sidebar
@@ -8140,6 +8152,15 @@ function openMatchup(gameId){
   MATCHUP_STATE.teamA = game.away_team;
   MATCHUP_STATE.teamB = game.home_team;
   MATCHUP_STATE.gameId = game.game_id;
+  const selA = document.getElementById('matchupTeamA');
+  const selB = document.getElementById('matchupTeamB');
+  if (selA) selA.value = game.away_team;
+  if (selB) selB.value = game.home_team;
+  const selGame = document.getElementById('matchupGame');
+  if (selGame && selGame.options.length) {
+    const want = `${game.away_team}__${game.home_team}`;
+    selGame.value = Array.from(selGame.options).some(o => o.value === want) ? want : '';
+  }
   showTab('matchup');
   return true;
 }

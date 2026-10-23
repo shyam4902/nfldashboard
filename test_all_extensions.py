@@ -425,6 +425,27 @@ with sync_playwright() as p:
     page.evaluate("setMatchupSubTab('preview')")
     page.wait_for_timeout(400)
 
+    # Dynamic matchup switching without refresh
+    page.evaluate("showTab('schedule')")
+    page.wait_for_timeout(400)
+    cards = page.locator(".sch-card")
+    if cards.count() >= 2:
+        game_1_id = cards.nth(0).get_attribute("data-game")
+        game_2_id = cards.nth(1).get_attribute("data-game")
+        cards.nth(0).click()
+        page.wait_for_timeout(400)
+        hero_1 = page.locator("#matchupHeroBanner").inner_text()
+        page.evaluate("showTab('schedule')")
+        page.wait_for_timeout(400)
+        page.locator(".sch-card").nth(1).click()
+        page.wait_for_timeout(400)
+        hero_2 = page.locator("#matchupHeroBanner").inner_text()
+        hash_2 = page.evaluate("location.hash")
+        if hash_2 == f"#matchup/{game_2_id}" and hero_1 != hero_2 and len(hero_2) > 0:
+            successes.append("Clicking new matchup switches view immediately without full page refresh")
+        else:
+            failures.append("Clicking new matchup failed to update view without refresh")
+
     # Checkpoint 4: the failed-update banner is the owner-visible signal.
     # Healthy (ok) status -> no banner; failed status -> visible banner with
     # the failing step, run time, and recovery hint; absent file -> no claim.

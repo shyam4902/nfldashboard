@@ -1,0 +1,25 @@
+// What PACKET-2026-10-23-1 changes, 2026-10-23.
+// Read-only inputs are muted; new files are gold; the one edited existing file
+// is steel. Nothing else in the repo moves.
+style new    fill: theme-primary-subtle  border: theme-primary
+style edit   fill: theme-fill  border: theme-secondary
+style given  border: theme-border  text: (color: theme-muted)
+style agent  shape: none  text: (color: theme-muted)
+
+node repo   "nfldashboard / (Cloudflare Pages, branch main)"
+node nfl    "index.html / NFL page / +1 nav link -> /nba/"  below-left of repo  style: edit
+node page   "nba/index.html / new / scores · standings · game · team / hash routes, no deps"  below-right of repo  gap: wide  style: new
+node parsers "nba/nba.js / new / 6 pure parsers / no DOM, no network"  below page  style: new
+node tests  "nba/nba.test.mjs / new / node:test / 7 tests"  left of parsers  gap: wide  style: new
+node fixtures "nba/fixtures/*.json / committed 2026-10-23 / read-only in this packet"  below tests  style: given
+node espn   "ESPN public NBA API / keyless, browser fetch / scoreboard · standings v2 · summary · teams"  right of parsers  gap: wide  style: given
+node walk   "delegation/ / walkthrough.md + changes.reladraw + changes.svg"  above-right of page  gap: wide  style: agent
+
+edge repo -> nfl
+edge repo -> page  "adds one page"
+edge page -> parsers  "import"
+edge tests -> parsers  "import"
+edge tests -> fixtures  "fs.readFile"
+edge page -> espn  "live fetch / 30s poll while a game is in"
+edge nfl -> page  "NBA link only" (color: theme-muted)
+edge walk -> page

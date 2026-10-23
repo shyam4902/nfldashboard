@@ -76,3 +76,9 @@
 /moves_filtering.test.js / 302
 
 
+
+# NBA page internals (nba/index.html and nba/nba.js stay public)
+/nba/fixtures/* / 302
+/nba/nba.test.mjs / 302
+/delegation/* / 302
+/diagrams/* / 302

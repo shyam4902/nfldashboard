@@ -1,0 +1,24 @@
+// Plan, 2026-10-23: scores site on its own domain, NBA added as a second page.
+style new    fill: theme-primary-subtle  border: theme-primary
+style later  border: theme-border  text: (color: theme-muted)
+style agent  fill: theme-fill  border: theme-secondary
+
+node domain  "justscores.app / (buy, $9.99)"  style: new
+node pages   "Cloudflare Pages / nfldashboard repo"  below domain
+node nfl     "/  NFL page / index.html (as is)"  below-left of pages
+node nba     "/nba/  NBA page / nba/index.html"  below-right of pages  style: new
+node espn    "ESPN NBA API / scores, standings, teams / keyless, browser fetch"  below nba
+node fb      "freebuff / builds nba/ page + tests"  right of nba  gap: wide  style: agent
+node gem     "Gemini / visual polish + review"  below fb  style: agent
+node props   "propstoday.app / Edge betting terminal"  left of domain  gap: wide  style: later
+
+edge domain -> pages
+edge pages -> nfl
+edge pages -> nba
+edge nba -> espn  "live fetch"
+edge nfl <-> nba  "sport switch" (color: theme-muted)
+edge fb -> nba  "PACKET 1"
+edge gem -> nba  "PACKET 2"
+edge fb -> gem  "then" (color: theme-muted)
+
+node aside "Separate product. Buy later, / after the scores site ships." (wrap: 30)  shape: none  below props (gap: tight)

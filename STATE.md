@@ -1,9 +1,16 @@
 # NFL Dashboard state
 
-- Updated: 2026-09-16
+- Updated: 2026-10-23
 - Live: https://nfldashboard.pages.dev/
 - Repo: https://github.com/shyam4902/nfldashboard
 - App: static `index.html`, tracked JSON assets, and Supabase roster/transaction data
+
+## NBA page + matchup fix, 2026-10-23
+
+- New `/nba/` page (`nba/index.html`, `nba/nba.js`): scores by date, standings, team schedule and roster, box scores. Reads ESPN's keyless NBA API in the browser, no cron or Supabase. Tests: `node --test nba/nba.test.mjs` against `nba/fixtures/`.
+- NBA link added to the NFL header nav.
+- Ported the September matchup switching fix (opening a second matchup no longer shows the first). The rest of that September work, the Week 1 power rankings tab, is parked on local branch `wip/2026-09-power-rankings`.
+- Next: Gemini polish and review (`delegation/PACKET-2026-10-23-2-nba-polish-review.md`), then point matchupboard.com at this Pages project.
 
 ## Daily publication + actual standings/stats, 2026-09-16
 

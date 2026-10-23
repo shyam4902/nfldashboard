@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NBA Scores</title>
+<meta name="description" content="NBA scores, standings, box scores and team schedules from ESPN. A plain scores site: live games, final results and the league table.">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+/* ── NFL26 pregame-studio palette ──────────────────────────────────────────
+   The studio direction (home hero + schedule) is a warm charcoal base with a
+   single gold accent. Remapping Tailwind's ramps here re-skins every utility
+   class in the app at once, so `bg-slate-800` / `text-slate-400` and friends
+   resolve to studio surfaces instead of the old navy-blue scale. Semantic
+   families (green / red / steel) keep their meaning but drop the neon chroma.
+   Guarded: the CDN above can fail (offline, blocked), and an unguarded
+   assignment to `tailwind` would throw and abort the rest of the page. */
+window.tailwind = window.tailwind || {};
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        /* Warm charcoal neutrals — replaces the navy `slate` scale */
+        slate: {
+          50: '#f4f2ef', 100: '#e9e7e3', 200: '#dbd9d4', 300: '#c9ccd1',
+          400: '#8f9299', 500: '#868a91', 600: '#3d434c', 700: '#2b3037',
+          800: '#16191f', 900: '#101215', 950: '#08090b',
+        },
+        /* Studio gold — the single accent */
+        amber: {
+          50: '#faf3e4', 100: '#f5e7c4', 200: '#eed9a2', 300: '#eecb86',
+          400: '#d9a441', 500: '#d9a441', 600: '#c08f34', 700: '#a3782a',
+          800: '#7f5d20', 900: '#5c4317', 950: '#33260d',
+        },
+        yellow: {
+          300: '#eecb86', 400: '#d9a441', 500: '#d9a441', 600: '#c08f34',
+        },
+        orange: {
+          300: '#eec08a', 400: '#d99a4d', 500: '#c8853a', 600: '#a96c2c',
+        },
+        /* Muted broadcast steel — link / secondary accent */
+        blue: {
+          50: '#eef2f6', 100: '#dde5ed', 200: '#c4d2e0', 300: '#a8bfd8',
+          400: '#8fa6bf', 500: '#7590aa', 600: '#5c7490', 700: '#4a5e75',
+          800: '#38485a', 900: '#28333f', 950: '#161c23',
+        },
+        sky: {
+          200: '#c4d2e0', 300: '#a8bfd8', 400: '#8fa6bf', 500: '#7590aa',
+          600: '#5c7490', 700: '#4a5e75',
+        },
+        cyan: {
+          200: '#bfe2d9', 300: '#9fd3c7', 400: '#7ec0b0', 500: '#68ac9c',
+          600: '#548b7e', 700: '#436f66',
+        },
+        teal: {
+          300: '#9fd3c7', 400: '#7ec0b0', 500: '#68ac9c', 600: '#548b7e',
+        },
+        /* Field green — positive / value */
+        emerald: {
+          50: '#eef7f2', 100: '#d7ecdf', 200: '#b9dec9', 300: '#a3d9b8',
+          400: '#7cc49b', 500: '#63b487', 600: '#4e9a70', 700: '#3e7c5a',
+          800: '#316148', 900: '#254735', 950: '#12281c',
+        },
+        green: {
+          300: '#a3d9b8', 400: '#7cc49b', 500: '#63b487', 600: '#4e9a70',
+        },
+        /* Muted crimson — negative / alert */
+        red: {
+          50: '#fbefed', 100: '#f7dbd7', 200: '#f2c3bc', 300: '#f2b0a8',
+          400: '#e8877c', 500: '#d4635a', 600: '#b74e47', 700: '#963e39',
+          800: '#78322e', 900: '#5a2523', 950: '#331413',
+        },
+        rose: {
+          300: '#f2b0a8', 400: '#e8877c', 500: '#d4635a', 600: '#b74e47',
+        },
+        /* Desaturated violet — tertiary tags (draft rounds, etc.) */
+        indigo: {
+          300: '#c3badd', 400: '#a89ec9', 500: '#8f83b5', 600: '#746a97',
+        },
+        violet: {
+          300: '#c3badd', 400: '#a89ec9', 500: '#8f83b5', 600: '#746a97',
+        },
+        purple: {
+          300: '#c3badd', 400: '#a89ec9', 500: '#8f83b5', 600: '#746a97',
+        },
+      },
+    },
+  },
+};
+</script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800;900&family=Geist+Mono:wght@400;500;600;700&family=Archivo:wght@600;700;800;900&display=swap');
+
+:root {
+  --font-sans: 'Geist', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: 'Geist Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+  /* Default Theme: NFL26 Pregame Studio — warm charcoal + a single gold accent.
+     These surfaces match the home hero (.h2a-*) and schedule studio (.sch-*). */
+  --bg-body: #0b0d10;
+  --bg-card: #14161a;
+  --bg-card-hover: #1a1d22;
+  --bg-elevated: #16191f;
+  --bg-inset: #111317;
+  --bg-header: rgba(11, 13, 16, 0.92);
+  --border-card: #2b3037;
+  --border-muted: #262a31;
+  --border-strong: #474d57;
+  --text-main: #e9e7e3;
+  --text-muted: #8f9299;
+  --text-faint: #868a91;
+  --accent-brand: #d9a441;
+  --accent-brand-hover: #e6b556;
+  --accent-brand-ink: #17140f;
+  --accent-brand-subtle: rgba(217, 164, 65, 0.12);
+  --accent-steel: #8fa6bf;
+  --accent-positive: #7cc49b;
+  --accent-positive-bg: rgba(124, 196, 155, 0.12);
+  --accent-negative: #e8877c;
+  --accent-negative-bg: rgba(232, 135, 124, 0.12);
+  --accent-warning: #d9a441;
+  --accent-warning-bg: rgba(217, 164, 65, 0.12);
+  --card-shadow: 0 1px 3px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  --tab-active-bg: #d9a441;
+  --tab-active-text: #17140f;
+}
+
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  overflow-x: hidden;
+  background: var(--bg-body);
+  color: var(--text-main);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+a { color: inherit; text-decoration: none; }
+img { display: block; }
+.wrap { width: 100%; max-width: 1080px; margin: 0 auto; padding: 0 12px; }
+
+/* ── Header ─────────────────────────────────────────────────────────────── */
+.nba-header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: var(--bg-header);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--border-card);
+}
+.nba-header .bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  min-height: 52px;
+}
+.brand { display: flex; align-items: baseline; gap: 6px; min-width: 0; }
+.brand-mark {
+  font: 800 19px/1 var(--font-sans);
+  letter-spacing: -0.02em;
+  color: var(--accent-brand);
+}
+.brand-name { font: 700 15px/1 var(--font-sans); color: var(--text-main); }
+.sport-switch { display: flex; align-items: center; gap: 4px; flex-shrink: 0; }
+.sport-switch a {
+  font: 700 11px/1 var(--font-sans);
+  letter-spacing: 0.04em;
+  padding: 7px 10px;
+  border-radius: 6px;
+  border: 1px solid transparent;
+  color: var(--text-muted);
+}
+.sport-switch a:hover { color: var(--text-main); background: var(--bg-card-hover); }
+.sport-switch a[aria-current='page'] {
+  color: var(--tab-active-text);
+  background: var(--tab-active-bg);
+}
+.nba-tabs { display: flex; gap: 2px; padding-bottom: 6px; overflow-x: auto; }
+.nba-tabs a {
+  font: 700 12px/1 var(--font-sans);
+  padding: 7px 12px;
+  border-radius: 6px;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+.nba-tabs a:hover { color: var(--text-main); background: var(--bg-card-hover); }
+.nba-tabs a[aria-current='page'] { color: var(--text-main); background: var(--bg-card); border: 1px solid var(--border-card); }
+
+main { padding: 14px 0 48px; }
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-card);
+  border-radius: 10px;
+  box-shadow: var(--card-shadow);
+}
+h1, h2 { margin: 0; }
+h2 { font: 700 12px/1.2 var(--font-sans); text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); }
+
+/* ── States ─────────────────────────────────────────────────────────────── */
+.state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 48px 16px;
+  color: var(--text-muted);
+  font: 500 13px/1.4 var(--font-sans);
+  text-align: center;
+}
+.state .pulse { width: 7px; height: 7px; border-radius: 999px; background: var(--accent-brand); animation: pulse 1s ease-in-out infinite; }
+@keyframes pulse { 0%, 100% { opacity: 0.25; } 50% { opacity: 1; } }
+.retry {
+  font: 700 12px/1 var(--font-sans);
+  color: var(--tab-active-text);
+  background: var(--accent-brand);
+  border: 0;
+  border-radius: 6px;
+  padding: 9px 16px;
+  cursor: pointer;
+}
+.retry:hover { background: var(--accent-brand-hover); }
+
+/* ── Date bar ───────────────────────────────────────────────────────────── */
+.date-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 10px 12px;
+  margin-bottom: 10px;
+}
+.date-bar .nav {
+  font: 700 12px/1 var(--font-sans);
+  color: var(--text-muted);
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-card);
+  border-radius: 6px;
+  padding: 8px 10px;
+  white-space: nowrap;
+}
+.date-bar .nav:hover { color: var(--text-main); border-color: var(--border-strong); }
+.date-bar .nav.today { color: var(--accent-brand); }
+.date-bar .day { display: flex; flex-direction: column; align-items: center; gap: 2px; min-width: 0; }
+.date-bar .day strong { font: 700 14px/1.2 var(--font-sans); white-space: nowrap; }
+.date-bar .day span { font: 500 10px/1 var(--font-mono); color: var(--text-faint); letter-spacing: 0.04em; }
+
+/* ── Score cards ────────────────────────────────────────────────────────── */
+.games { display: grid; grid-template-columns: 1fr; gap: 10px; }
+@media (min-width: 700px) { .games { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.game-card {
+  display: block;
+  background: var(--bg-card);
+  border: 1px solid var(--border-card);
+  border-radius: 10px;
+  box-shadow: var(--card-shadow);
+  padding: 10px 12px;
+  transition: border-color 0.15s, background-color 0.15s;
+}
+.game-card:hover { border-color: var(--border-strong); background: var(--bg-card-hover); }
+.game-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font: 700 10px/1 var(--font-sans);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+.game-status.live { color: var(--accent-positive); }
+.game-status .dot { width: 6px; height: 6px; border-radius: 999px; background: currentColor; }
+.game-status.live .dot { animation: pulse 1.1s ease-in-out infinite; }
+.team-row {
+  display: grid;
+  grid-template-columns: 24px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 0;
+}
+.team-row .logo { width: 22px; height: 22px; object-fit: contain; }
+.team-row .team-id { display: flex; align-items: baseline; gap: 7px; min-width: 0; }
+.team-row .abbr { font: 800 14px/1 var(--font-sans); letter-spacing: -0.01em; }
+.team-row .record { font: 500 10px/1 var(--font-mono); color: var(--text-faint); }
+.team-row .score { font: 700 16px/1 var(--font-mono); font-variant-numeric: tabular-nums; color: var(--text-muted); }
+.team-row.winner .abbr, .team-row.winner .score { color: var(--text-main); }
+.team-row.winner .score { font-weight: 700; }
+.team-row.loser .abbr, .team-row.loser .score { color: var(--text-muted); opacity: 0.72; }
+.game-meta { margin-top: 6px; font: 500 10px/1 var(--font-mono); color: var(--text-faint); }
+
+/* ── Tables ─────────────────────────────────────────────────────────────── */
+.table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: 0 0 10px 10px; }
+table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+th, td { text-align: right; padding: 7px 8px; white-space: nowrap; }
+thead th {
+  font: 700 10px/1 var(--font-sans);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-faint);
+  border-bottom: 1px solid var(--border-muted);
+}
+tbody td { font: 500 12px/1.3 var(--font-mono); color: var(--text-muted); border-bottom: 1px solid var(--border-muted); }
+tbody tr:last-child td { border-bottom: 0; }
+th:first-child, td:first-child { text-align: left; }
+
+.standings-block { margin-bottom: 12px; overflow: hidden; }
+.standings-block h2 { padding: 10px 12px 0; }
+.standings { min-width: 460px; }
+.standings td { color: var(--text-main); }
+.standings td.seed { color: var(--text-faint); font-weight: 700; width: 34px; }
+.standings td.team { display: flex; align-items: center; gap: 7px; min-width: 0; }
+.standings td.team img { width: 18px; height: 18px; object-fit: contain; }
+.standings td.team a { font: 600 12px/1.3 var(--font-sans); overflow: hidden; text-overflow: ellipsis; }
+.standings td.team a:hover { color: var(--accent-brand); }
+.standings tr.cut td { border-bottom: 2px solid var(--accent-brand-subtle); }
+
+/* ── Game / box score ───────────────────────────────────────────────────── */
+.game-head { padding: 12px; margin-bottom: 12px; }
+.gh-status { font: 700 10px/1 var(--font-sans); text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); margin-bottom: 10px; }
+.gh-teams { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.gh-team { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.gh-team img { width: 34px; height: 34px; object-fit: contain; }
+.gh-team .gh-id { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.gh-team .gh-abbr { font: 800 15px/1 var(--font-sans); }
+.gh-team .gh-score { font: 700 22px/1 var(--font-mono); font-variant-numeric: tabular-nums; }
+.box-block { margin-bottom: 12px; overflow: hidden; }
+.box-block .box-title { display: flex; align-items: center; gap: 8px; padding: 10px 12px 8px; }
+.box-block .box-title img { width: 22px; height: 22px; object-fit: contain; }
+.box-block .box-title h2 { color: var(--text-main); font-size: 13px; }
+.box { min-width: 560px; }
+.box th.player-col, .box td.player-col {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  background: var(--bg-card);
+  text-align: left;
+  min-width: 130px;
+  box-shadow: 1px 0 0 var(--border-muted);
+}
+.box thead th.player-col { background: var(--bg-card); }
+.box td.player-col { font: 600 12px/1.3 var(--font-sans); color: var(--text-main); }
+.box td.player-col .pos { font: 500 9px/1 var(--font-mono); color: var(--text-faint); margin-left: 5px; }
+.box tr.bench-start td { border-top: 1px solid var(--border-card); }
+.box tr.totals td { background: var(--bg-inset); color: var(--text-main); font-weight: 700; border-top: 1px solid var(--border-strong); }
+.box tr.totals td.player-col { background: var(--bg-inset); }
+.dnp { padding: 8px 12px 12px; font: 500 11px/1.5 var(--font-sans); color: var(--text-faint); }
+.dnp b { color: var(--text-muted); font-weight: 700; }
+
+/* ── Team page ──────────────────────────────────────────────────────────── */
+.team-head { display: flex; align-items: center; gap: 12px; padding: 12px; margin-bottom: 12px; }
+.team-head img { width: 52px; height: 52px; object-fit: contain; }
+.team-head .team-meta { min-width: 0; }
+.team-head h1 { font: 800 20px/1.15 var(--font-sans); letter-spacing: -0.02em; }
+.team-head .record { font: 500 11px/1 var(--font-mono); color: var(--text-muted); margin-top: 4px; }
+.tabs-row { display: flex; gap: 4px; margin-bottom: 10px; }
+.tabs-row .tab {
+  font: 700 12px/1 var(--font-sans);
+  color: var(--text-muted);
+  background: transparent;
+  border: 1px solid var(--border-card);
+  border-radius: 6px;
+  padding: 8px 12px;
+  cursor: pointer;
+}
+.tabs-row .tab[aria-selected='true'] { color: var(--tab-active-text); background: var(--tab-active-bg); border-color: transparent; }
+.sched { overflow: hidden; }
+.sched-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 12px;
+  border-bottom: 1px solid var(--border-muted);
+  font: 500 11px/1.3 var(--font-mono);
+  color: var(--text-muted);
+}
+.sched-row:last-child { border-bottom: 0; }
+.sched-row:hover { background: var(--bg-card-hover); }
+.sched-row .sched-opp { display: flex; align-items: center; gap: 6px; font: 700 12px/1 var(--font-sans); color: var(--text-main); min-width: 0; }
+.sched-row .sched-opp img { width: 18px; height: 18px; object-fit: contain; }
+.sched-row .sched-opp .ha { font: 600 10px/1 var(--font-mono); color: var(--text-faint); }
+.sched-row .res { font-weight: 700; }
+.sched-row .res.win { color: var(--accent-positive); }
+.sched-row .res.loss { color: var(--accent-negative); }
+.sched-row .res.upcoming { color: var(--text-faint); font-weight: 500; }
+.roster-row {
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 12px;
+  border-bottom: 1px solid var(--border-muted);
+  font: 500 11px/1.3 var(--font-mono);
+  color: var(--text-muted);
+}
+.roster-row:last-child { border-bottom: 0; }
+.roster-row .jersey { color: var(--text-faint); }
+.roster-row .name { font: 600 12px/1.3 var(--font-sans); color: var(--text-main); overflow: hidden; text-overflow: ellipsis; }
+.roster-row .pos { font-weight: 700; color: var(--text-muted); }
+@media (max-width: 420px) {
+  .roster-row { grid-template-columns: 30px minmax(0, 1fr) auto; }
+  .roster-row .age { display: none; }
+  .gh-team img { width: 28px; height: 28px; }
+  .gh-team .gh-score { font-size: 19px; }
+}
+</style>
+</head>
+<body>
+
+<header class="nba-header">
+  <div class="wrap bar">
+    <a class="brand" href="#scores">
+      <span class="brand-mark">NBA</span><span class="brand-name">Scores</span>
+    </a>
+    <nav class="sport-switch" aria-label="Sport">
+      <a href="/">NFL</a>
+      <a href="/nba/" aria-current="page">NBA</a>
+    </nav>
+  </div>
+  <div class="wrap">
+    <nav class="nba-tabs" aria-label="NBA sections">
+      <a href="#scores" data-nav="scores">Scores</a>
+      <a href="#standings" data-nav="standings">Standings</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <div id="app">
+    <div class="state"><span class="pulse"></span>Loading…</div>
+  </div>
+</main>
+
+<script type="module">
+import { etDate, parseBoxScore, parseRoster, parseScoreboard, parseStandings, parseTeamSchedule } from './nba.js';
+
+const API = 'https://site.api.espn.com/apis/site/v2/sports/basketball/nba';
+const STANDINGS_API = 'https://site.api.espn.com/apis/v2/sports/basketball/nba/standings';
+const POLL_MS = 30000;
+const COLUMNS = ['MIN', 'PTS', 'FG', '3PT', 'FT', 'REB', 'AST', 'TO', 'STL', 'BLK', 'PF', '+/-'];
+
+const app = document.getElementById('app');
+let requestId = 0;
+let pollTimer = 0;
+
+const ESCAPES = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
+const esc = (value) => String(value == null ? '' : value).replace(/[&<>"']/g, (ch) => ESCAPES[ch]);
+
+function stopPolling() {
+  if (pollTimer) {
+    clearTimeout(pollTimer);
+    pollTimer = 0;
+  }
+}
+
+function loadingHTML() {
+  return '<div class="state"><span class="pulse"></span>Loading…</div>';
+}
+
+function showError(retry) {
+  app.innerHTML = '<div class="state"><span>Couldn\'t reach ESPN.</span><button class="retry" type="button">Retry</button></div>';
+  app.querySelector('.retry').addEventListener('click', retry);
+}
+
+async function fetchJSON(url) {
+  const res = await fetch(url, { cache: 'no-store' });
+  if (!res.ok) throw new Error('ESPN HTTP ' + res.status);
+  return res.json();
+}
+
+function parseHash() {
+  const raw = (location.hash || '').replace(/^#/, '');
+  const parts = raw.split('/').filter(Boolean);
+  return { view: parts[0] || 'scores', arg: parts[1] || '' };
+}
+
+/* ── Dates ──────────────────────────────────────────────────────────────── */
+function todayET() {
+  return etDate(new Date());
+}
+
+function isoOfDay(yyyymmdd) {
+  return yyyymmdd.slice(0, 4) + '-' + yyyymmdd.slice(4, 6) + '-' + yyyymmdd.slice(6, 8) + 'T12:00:00Z';
+}
+
+function isValidDay(value) {
+  return /^\d{8}$/.test(String(value || ''));
+}
+
+function shiftDay(yyyymmdd, offset) {
+  const day = new Date(isoOfDay(yyyymmdd));
+  day.setUTCDate(day.getUTCDate() + offset);
+  const y = day.getUTCFullYear();
+  const m = String(day.getUTCMonth() + 1).padStart(2, '0');
+  const d = String(day.getUTCDate()).padStart(2, '0');
+  return y + m + d;
+}
+
+function formatDay(yyyymmdd) {
+  const day = new Date(isoOfDay(yyyymmdd));
+  if (Number.isNaN(day.getTime())) return yyyymmdd;
+  return day.toLocaleDateString('en-US', {
+    timeZone: 'America/New_York', weekday: 'short', month: 'short', day: 'numeric',
+  });
+}
+
+function formatWhen(iso) {
+  const day = new Date(iso);
+  if (Number.isNaN(day.getTime())) return '';
+  return day.toLocaleString('en-US', {
+    timeZone: 'America/New_York', weekday: 'short', month: 'short', day: 'numeric',
+    hour: 'numeric', minute: '2-digit',
+  }) + ' ET';
+}
+
+function formatPct(pct) {
+  if (pct == null || Number.isNaN(pct)) return '—';
+  if (pct >= 1) return '1.000';
+  return '.' + String(Math.round(pct * 1000)).padStart(3, '0');
+}
+
+/* ── Scores ─────────────────────────────────────────────────────────────── */
+function teamRowHTML(side, state) {
+  const rank = side.winner ? ' winner' : (state === 'post' ? ' loser' : '');
+  const logo = side.logo ? '<img class="logo" src="' + esc(side.logo) + '" alt="" loading="lazy">' : '<span class="logo"></span>';
+  return '<div class="team-row' + rank + '">' + logo +
+    '<div class="team-id"><span class="abbr">' + esc(side.abbr) + '</span>' +
+    (side.record ? '<span class="record">' + esc(side.record) + '</span>' : '') + '</div>' +
+    '<span class="score">' + (side.score == null ? '–' : esc(side.score)) + '</span></div>';
+}
+
+function gameCardHTML(game) {
+  const live = game.state === 'in';
+  return '<a class="game-card" href="#game/' + esc(game.id) + '">' +
+    '<div class="game-status' + (live ? ' live' : '') + '"><span class="dot"></span>' + esc(game.statusText || 'Scheduled') + '</div>' +
+    teamRowHTML(game.away, game.state) +
+    teamRowHTML(game.home, game.state) +
+    (game.broadcast ? '<div class="game-meta">' + esc(game.broadcast) + '</div>' : '') +
+    '</a>';
+}
+
+function dateBarHTML(date) {
+  const isToday = date === todayET();
+  return '<div class="card date-bar">' +
+    '<a class="nav" href="#scores/' + shiftDay(date, -1) + '" aria-label="Previous day">‹</a>' +
+    '<div class="day"><strong>' + esc(isToday ? 'Today · ' + formatDay(date) : formatDay(date)) + '</strong><span>' + esc(date) + '</span></div>' +
+    '<a class="nav today" href="#scores"' + (isToday ? ' aria-current="date"' : '') + '>Today</a>' +
+    '<a class="nav" href="#scores/' + shiftDay(date, 1) + '" aria-label="Next day">›</a>' +
+    '</div>';
+}
+
+async function showScores(dateArg) {
+  stopPolling();
+  const token = ++requestId;
+  const date = isValidDay(dateArg) ? dateArg : todayET();
+  app.innerHTML = loadingHTML();
+
+  let games;
+  try {
+    games = parseScoreboard(await fetchJSON(API + '/scoreboard?dates=' + date));
+  } catch (err) {
+    if (token === requestId) showError(() => showScores(date));
+    return;
+  }
+  if (token !== requestId) return;
+
+  const order = { in: 0, pre: 1, post: 2 };
+  const sorted = games.slice().sort((a, b) => (order[a.state] ?? 3) - (order[b.state] ?? 3));
+
+  app.innerHTML = dateBarHTML(date) + (sorted.length
+    ? '<div class="games">' + sorted.map(gameCardHTML).join('') + '</div>'
+    : '<div class="state">No games</div>');
+
+  if (games.some((game) => game.state === 'in')) {
+    pollTimer = setTimeout(() => {
+      const route = parseHash();
+      if (route.view === 'scores' && (route.arg || todayET()) === date) showScores(date);
+    }, POLL_MS);
+  }
+}
+
+/* ── Standings ──────────────────────────────────────────────────────────── */
+function standingsTableHTML(title, rows) {
+  const body = rows.map((row, index) => {
+    const cut = index === 5 || index === 9 ? ' class="cut"' : '';
+    const logo = row.logo ? '<img src="' + esc(row.logo) + '" alt="" loading="lazy">' : '';
+    return '<tr' + cut + '>' +
+      '<td class="seed">' + esc(row.seed ?? index + 1) + '</td>' +
+      '<td class="team">' + logo + '<a href="#team/' + esc(row.teamId) + '">' + esc(row.name) + '</a></td>' +
+      '<td>' + (row.wins == null ? '—' : esc(row.wins)) + '</td>' +
+      '<td>' + (row.losses == null ? '—' : esc(row.losses)) + '</td>' +
+      '<td>' + esc(formatPct(row.pct)) + '</td>' +
+      '<td>' + esc(row.gb && row.gb !== '-' ? row.gb : '—') + '</td>' +
+      '<td>' + esc(row.last10 || '—') + '</td>' +
+      '<td>' + esc(row.streak || '—') + '</td>' +
+      '</tr>';
+  }).join('');
+
+  return '<section class="card standings-block"><h2>' + esc(title) + '</h2>' +
+    '<div class="table-wrap"><table class="standings"><thead><tr>' +
+    '<th>#</th><th>Team</th><th>W</th><th>L</th><th>PCT</th><th>GB</th><th>L10</th><th>STRK</th>' +
+    '</tr></thead><tbody>' + body + '</tbody></table></div></section>';
+}
+
+async function showStandings() {
+  stopPolling();
+  const token = ++requestId;
+  app.innerHTML = loadingHTML();
+
+  let standings;
+  try {
+    standings = parseStandings(await fetchJSON(STANDINGS_API));
+  } catch (err) {
+    if (token === requestId) showError(() => showStandings());
+    return;
+  }
+  if (token !== requestId) return;
+
+  app.innerHTML = standingsTableHTML('Eastern Conference', standings.East) +
+    standingsTableHTML('Western Conference', standings.West);
+}
+
+/* ── Game / box score ───────────────────────────────────────────────────── */
+function playerRowHTML(player) {
+  const cells = COLUMNS.map((label) => {
+    const value = player.stats[label];
+    return '<td>' + (value == null || value === '' ? '—' : esc(value)) + '</td>';
+  }).join('');
+  return '<tr><td class="player-col">' + esc(player.name) +
+    (player.pos ? '<span class="pos">' + esc(player.pos) + '</span>' : '') + '</td>' + cells + '</tr>';
+}
+
+function boxTableHTML(team) {
+  const totals = '<tr class="totals"><td class="player-col">Totals</td>' +
+    COLUMNS.map((label) => {
+      const value = team.totals[label];
+      return '<td>' + (value == null || value === '' ? '—' : esc(value)) + '</td>';
+    }).join('') + '</tr>';
+
+  const bench = team.bench.map((player, index) => {
+    const row = playerRowHTML(player);
+    return index === 0 ? row.replace('<tr>', '<tr class="bench-start">') : row;
+  }).join('');
+
+  const dnp = team.dnp.length
+    ? '<div class="dnp"><b>DNP:</b> ' + team.dnp.map((player) => esc(player.name) + ' (' + esc(player.reason) + ')').join(' · ') + '</div>'
+    : '';
+
+  return '<section class="card box-block">' +
+    '<div class="box-title">' + (team.logo ? '<img src="' + esc(team.logo) + '" alt="" loading="lazy">' : '') + '<h2>' + esc(team.name) + '</h2></div>' +
+    '<div class="table-wrap"><table class="box"><thead><tr>' +
+    '<th class="player-col">Player</th>' + COLUMNS.map((label) => '<th>' + esc(label) + '</th>').join('') +
+    '</tr></thead><tbody>' + team.starters.map(playerRowHTML).join('') + bench + totals + '</tbody></table></div>' + dnp + '</section>';
+}
+
+async function showGame(id) {
+  stopPolling();
+  const token = ++requestId;
+  app.innerHTML = loadingHTML();
+
+  let box;
+  try {
+    box = parseBoxScore(await fetchJSON(API + '/summary?event=' + encodeURIComponent(id)));
+  } catch (err) {
+    if (token === requestId) showError(() => showGame(id));
+    return;
+  }
+  if (token !== requestId) return;
+
+  if (!box.teams.length) {
+    app.innerHTML = '<div class="state">No box score for this game.<br><a class="nav" href="#scores">Back to scores</a></div>';
+    return;
+  }
+
+  const teams = box.teams.map((team) => '<div class="gh-team">' +
+    (team.logo ? '<img src="' + esc(team.logo) + '" alt="" loading="lazy">' : '') +
+    '<div class="gh-id"><span class="gh-abbr">' + esc(team.abbr) + '</span>' +
+    '<span class="gh-score">' + (team.score == null ? '–' : esc(team.score)) + '</span></div></div>').join('');
+
+  app.innerHTML = '<div class="card game-head"><div class="gh-status">' + esc(box.statusText || 'Game') + '</div>' +
+    '<div class="gh-teams">' + teams + '</div></div>' + box.teams.map(boxTableHTML).join('');
+}
+
+/* ── Team page ──────────────────────────────────────────────────────────── */
+function scheduleRowHTML(game) {
+  const opponent = '<span class="ha">' + (game.homeAway === 'home' ? 'vs' : '@') + '</span>' +
+    (game.opponent.logo ? '<img src="' + esc(game.opponent.logo) + '" alt="" loading="lazy">' : '') +
+    esc(game.opponent.abbr || game.opponent.name);
+  const result = game.result
+    ? '<span class="res ' + (game.result === 'W' ? 'win' : 'loss') + '">' + game.result + ' ' + (game.score == null ? '' : esc(game.score) + (game.oppScore == null ? '' : '-' + esc(game.oppScore))) + '</span>'
+    : '<span class="res upcoming">' + esc(formatWhen(game.startISO)) + '</span>';
+  return '<a class="sched-row" href="#game/' + esc(game.id) + '">' +
+    '<span class="sched-date">' + esc(formatDay(etDate(game.startISO) || '')) + '</span>' +
+    '<span class="sched-opp">' + opponent + '</span>' + result + '</a>';
+}
+
+function rosterRowHTML(player) {
+  return '<div class="roster-row"><span class="jersey">' + esc(player.jersey || '—') + '</span>' +
+    '<span class="name">' + esc(player.name) + '</span>' +
+    '<span class="pos">' + esc(player.pos || '—') + '</span>' +
+    '<span class="age">' + esc(player.height || '') + (player.age ? ' · ' + esc(player.age) : '') + '</span></div>';
+}
+
+async function showTeam(id) {
+  stopPolling();
+  const token = ++requestId;
+  app.innerHTML = loadingHTML();
+
+  let schedule;
+  let roster;
+  try {
+    const both = await Promise.all([
+      fetchJSON(API + '/teams/' + encodeURIComponent(id) + '/schedule').then(parseTeamSchedule),
+      fetchJSON(API + '/teams/' + encodeURIComponent(id) + '/roster').then(parseRoster),
+    ]);
+    schedule = both[0];
+    roster = both[1];
+  } catch (err) {
+    if (token === requestId) showError(() => showTeam(id));
+    return;
+  }
+  if (token !== requestId) return;
+
+  const team = schedule.team;
+  const head = '<div class="card team-head">' +
+    (team.logo ? '<img src="' + esc(team.logo) + '" alt="" loading="lazy">' : '') +
+    '<div class="team-meta"><h1>' + esc(team.name || 'Team') + '</h1>' +
+    (team.record ? '<div class="record">' + esc(team.record) + '</div>' : '') + '</div></div>';
+
+  const scheduleList = schedule.games.length
+    ? '<div class="card sched">' + schedule.games.map(scheduleRowHTML).join('') + '</div>'
+    : '<div class="state">No games</div>';
+  const rosterList = roster.length
+    ? '<div class="card sched">' + roster.map(rosterRowHTML).join('') + '</div>'
+    : '<div class="state">No roster</div>';
+
+  app.innerHTML = head +
+    '<div class="tabs-row" role="tablist">' +
+    '<button class="tab" type="button" role="tab" data-panel="schedule" aria-selected="true">Schedule</button>' +
+    '<button class="tab" type="button" role="tab" data-panel="roster" aria-selected="false">Roster</button>' +
+    '</div>' +
+    '<section data-view="schedule">' + scheduleList + '</section>' +
+    '<section data-view="roster" hidden>' + rosterList + '</section>';
+
+  const tabs = app.querySelectorAll('.tabs-row .tab');
+  tabs.forEach((tab) => tab.addEventListener('click', () => {
+    tabs.forEach((other) => other.setAttribute('aria-selected', String(other === tab)));
+    app.querySelectorAll('section[data-view]').forEach((panel) => {
+      panel.hidden = panel.getAttribute('data-view') !== tab.getAttribute('data-panel');
+    });
+  }));
+}
+
+/* ── Router ─────────────────────────────────────────────────────────────── */
+function markNav(view) {
+  document.querySelectorAll('[data-nav]').forEach((link) => {
+    link.setAttribute('aria-current', link.getAttribute('data-nav') === view ? 'page' : 'false');
+  });
+}
+
+function router() {
+  stopPolling();
+  const route = parseHash();
+  markNav(route.view);
+
+  if (route.view === 'standings') showStandings();
+  else if (route.view === 'game' && route.arg) showGame(route.arg);
+  else if (route.view === 'team' && route.arg) showTeam(route.arg);
+  else showScores(route.view === 'scores' ? route.arg : '');
+}
+
+window.addEventListener('hashchange', router);
+router();
+</script>
+</body>
+</html>
