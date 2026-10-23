@@ -247,7 +247,7 @@ h2 { font: 700 12px/1.2 var(--font-sans); text-transform: uppercase; letter-spac
 
 /* ── Score cards ────────────────────────────────────────────────────────── */
 .games { display: grid; grid-template-columns: 1fr; gap: 10px; }
-@media (min-width: 700px) { .games { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (min-width: 640px) { .games { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 .game-card {
   display: block;
   background: var(--bg-card);
@@ -258,6 +258,20 @@ h2 { font: 700 12px/1.2 var(--font-sans); text-transform: uppercase; letter-spac
   transition: border-color 0.15s, background-color 0.15s;
 }
 .game-card:hover { border-color: var(--border-strong); background: var(--bg-card-hover); }
+.game-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.game-card-top .game-meta {
+  font: 500 10px/1 var(--font-mono);
+  color: var(--text-faint);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 .game-status {
   display: flex;
   align-items: center;
@@ -266,9 +280,10 @@ h2 { font: 700 12px/1.2 var(--font-sans); text-transform: uppercase; letter-spac
   text-transform: uppercase;
   letter-spacing: 0.06em;
   color: var(--text-muted);
-  margin-bottom: 8px;
+  margin-left: auto;
+  white-space: nowrap;
 }
-.game-status.live { color: var(--accent-positive); }
+.game-status.live { color: var(--accent-brand); }
 .game-status .dot { width: 6px; height: 6px; border-radius: 999px; background: currentColor; }
 .game-status.live .dot { animation: pulse 1.1s ease-in-out infinite; }
 .team-row {
@@ -282,16 +297,15 @@ h2 { font: 700 12px/1.2 var(--font-sans); text-transform: uppercase; letter-spac
 .team-row .team-id { display: flex; align-items: baseline; gap: 7px; min-width: 0; }
 .team-row .abbr { font: 800 14px/1 var(--font-sans); letter-spacing: -0.01em; }
 .team-row .record { font: 500 10px/1 var(--font-mono); color: var(--text-faint); }
-.team-row .score { font: 700 16px/1 var(--font-mono); font-variant-numeric: tabular-nums; color: var(--text-muted); }
-.team-row.winner .abbr, .team-row.winner .score { color: var(--text-main); }
-.team-row.winner .score { font-weight: 700; }
-.team-row.loser .abbr, .team-row.loser .score { color: var(--text-muted); opacity: 0.72; }
-.game-meta { margin-top: 6px; font: 500 10px/1 var(--font-mono); color: var(--text-faint); }
+.team-row .score { font: 700 16px/1 var(--font-mono); font-variant-numeric: tabular-nums; text-align: right; color: var(--text-muted); }
+.team-row.winner .abbr, .team-row.winner .score { color: var(--text-main); font-weight: 700; }
+.team-row.loser .abbr, .team-row.loser .score { color: var(--text-muted); }
+.game-meta { font: 500 10px/1 var(--font-mono); color: var(--text-faint); }
 
 /* ── Tables ─────────────────────────────────────────────────────────────── */
 .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: 0 0 10px 10px; }
 table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
-th, td { text-align: right; padding: 7px 8px; white-space: nowrap; }
+th, td { text-align: right; padding: 7px 8px; white-space: nowrap; font-variant-numeric: tabular-nums; }
 thead th {
   font: 700 10px/1 var(--font-sans);
   text-transform: uppercase;
@@ -301,13 +315,13 @@ thead th {
 }
 tbody td { font: 500 12px/1.3 var(--font-mono); color: var(--text-muted); border-bottom: 1px solid var(--border-muted); }
 tbody tr:last-child td { border-bottom: 0; }
-th:first-child, td:first-child { text-align: left; }
 
 .standings-block { margin-bottom: 12px; overflow: hidden; }
 .standings-block h2 { padding: 10px 12px 0; }
-.standings { min-width: 460px; }
+.standings { min-width: 460px; font-variant-numeric: tabular-nums; }
 .standings td { color: var(--text-main); }
-.standings td.seed { color: var(--text-faint); font-weight: 700; width: 34px; }
+.standings th.seed, .standings td.seed { text-align: right; color: var(--text-faint); font-weight: 700; width: 34px; }
+.standings th.team, .standings td.team { text-align: left; }
 .standings td.team { display: flex; align-items: center; gap: 7px; min-width: 0; }
 .standings td.team img { width: 18px; height: 18px; object-fit: contain; }
 .standings td.team a { font: 600 12px/1.3 var(--font-sans); overflow: hidden; text-overflow: ellipsis; }
@@ -532,10 +546,12 @@ function teamRowHTML(side, state) {
 function gameCardHTML(game) {
   const live = game.state === 'in';
   return '<a class="game-card" href="#game/' + esc(game.id) + '">' +
+    '<div class="game-card-top">' +
+    (game.broadcast ? '<span class="game-meta">' + esc(game.broadcast) + '</span>' : '<span></span>') +
     '<div class="game-status' + (live ? ' live' : '') + '"><span class="dot"></span>' + esc(game.statusText || 'Scheduled') + '</div>' +
+    '</div>' +
     teamRowHTML(game.away, game.state) +
     teamRowHTML(game.home, game.state) +
-    (game.broadcast ? '<div class="game-meta">' + esc(game.broadcast) + '</div>' : '') +
     '</a>';
 }
 
@@ -549,17 +565,26 @@ function dateBarHTML(date) {
     '</div>';
 }
 
-async function showScores(dateArg) {
+async function showScores(dateArg, isRefresh = false) {
   stopPolling();
   const token = ++requestId;
   const date = isValidDay(dateArg) ? dateArg : todayET();
-  app.innerHTML = loadingHTML();
+  if (!isRefresh) app.innerHTML = loadingHTML();
 
   let games;
   try {
     games = parseScoreboard(await fetchJSON(API + '/scoreboard?dates=' + date));
   } catch (err) {
-    if (token === requestId) showError(() => showScores(date));
+    if (token === requestId) {
+      if (!isRefresh) {
+        showError(() => showScores(date));
+      } else {
+        pollTimer = setTimeout(() => {
+          const route = parseHash();
+          if (route.view === 'scores' && (route.arg || todayET()) === date) showScores(date, true);
+        }, POLL_MS);
+      }
+    }
     return;
   }
   if (token !== requestId) return;
@@ -574,7 +599,7 @@ async function showScores(dateArg) {
   if (games.some((game) => game.state === 'in')) {
     pollTimer = setTimeout(() => {
       const route = parseHash();
-      if (route.view === 'scores' && (route.arg || todayET()) === date) showScores(date);
+      if (route.view === 'scores' && (route.arg || todayET()) === date) showScores(date, true);
     }, POLL_MS);
   }
 }
@@ -598,7 +623,7 @@ function standingsTableHTML(title, rows) {
 
   return '<section class="card standings-block"><h2>' + esc(title) + '</h2>' +
     '<div class="table-wrap"><table class="standings"><thead><tr>' +
-    '<th>#</th><th>Team</th><th>W</th><th>L</th><th>PCT</th><th>GB</th><th>L10</th><th>STRK</th>' +
+    '<th class="seed">#</th><th class="team">Team</th><th>W</th><th>L</th><th>PCT</th><th>GB</th><th>L10</th><th>STRK</th>' +
     '</tr></thead><tbody>' + body + '</tbody></table></div></section>';
 }
 
