@@ -1,7 +1,7 @@
 {
   "artifact": "nfl_stats",
   "season": 2026,
-  "generated_at": "2026-10-20T11:20:05Z",
+  "generated_at": "2026-10-23T11:20:05Z",
   "source": "Sleeper weekly stats API (api.sleeper.app/v1/stats/nfl/regular) — free, no key; names and team from the Sleeper player catalogue",
   "source_of_points": "schedule.json completed regular-season results",
   "season_kind": "actual",
@@ -306,7 +306,7 @@
       },
       {
         "player_id": "11559",
-        "name": "Michael Penix",
+        "name": "Michael Penix Jr.",
         "pos": "QB",
         "team": "ATL",
         "games": 4,
@@ -601,7 +601,7 @@
     "rushing": [
       {
         "player_id": "8151",
-        "name": "Kenneth Walker",
+        "name": "Kenneth Walker III",
         "pos": "RB",
         "team": "KC",
         "games": 5,
@@ -627,7 +627,7 @@
       },
       {
         "player_id": "8138",
-        "name": "James Cook",
+        "name": "James Cook III",
         "pos": "RB",
         "team": "BUF",
         "games": 6,
@@ -697,7 +697,7 @@
       },
       {
         "player_id": "4199",
-        "name": "Aaron Jones",
+        "name": "Aaron Jones Sr.",
         "pos": "RB",
         "team": "MIN",
         "games": 4,
@@ -857,7 +857,7 @@
       },
       {
         "player_id": "12495",
-        "name": "Ollie Gordon",
+        "name": "Ollie Gordon II",
         "pos": "RB",
         "team": "MIA",
         "games": 2,
@@ -1001,7 +1001,7 @@
       },
       {
         "player_id": "8154",
-        "name": "Brian Robinson",
+        "name": "Brian Robinson Jr.",
         "pos": "RB",
         "team": "ATL",
         "games": 2,
@@ -1056,7 +1056,7 @@
       },
       {
         "player_id": "13305",
-        "name": "Mike Washington",
+        "name": "Mike Washington Jr.",
         "pos": "RB",
         "team": "LV",
         "games": 2,
@@ -1691,7 +1691,7 @@
       },
       {
         "player_id": "13276",
-        "name": "Omar Cooper",
+        "name": "Omar Cooper Jr.",
         "pos": "WR",
         "team": "NYJ",
         "games": 1,
@@ -2067,7 +2067,7 @@
       "rushing": [
         {
           "player_id": "8151",
-          "name": "Kenneth Walker",
+          "name": "Kenneth Walker III",
           "pos": "RB",
           "team": "KC",
           "games": 1,
@@ -2276,7 +2276,7 @@
         },
         {
           "player_id": "8138",
-          "name": "James Cook",
+          "name": "James Cook III",
           "pos": "RB",
           "team": "BUF",
           "games": 1,
@@ -2950,7 +2950,7 @@
       "rushing": [
         {
           "player_id": "8138",
-          "name": "James Cook",
+          "name": "James Cook III",
           "pos": "RB",
           "team": "BUF",
           "games": 1,
@@ -2961,7 +2961,7 @@
         },
         {
           "player_id": "8151",
-          "name": "Kenneth Walker",
+          "name": "Kenneth Walker III",
           "pos": "RB",
           "team": "KC",
           "games": 1,
@@ -2972,7 +2972,7 @@
         },
         {
           "player_id": "4199",
-          "name": "Aaron Jones",
+          "name": "Aaron Jones Sr.",
           "pos": "RB",
           "team": "MIN",
           "games": 1,
@@ -3181,7 +3181,7 @@
         },
         {
           "player_id": "8154",
-          "name": "Brian Robinson",
+          "name": "Brian Robinson Jr.",
           "pos": "RB",
           "team": "ATL",
           "games": 1,
@@ -3449,7 +3449,7 @@
           "player_id": "11421",
           "name": "Ryan Miller",
           "pos": "WR",
-          "team": null,
+          "team": "NE",
           "games": 1,
           "rec_yd": 77,
           "rec_td": 1,
@@ -3649,7 +3649,7 @@
         },
         {
           "player_id": "11559",
-          "name": "Michael Penix",
+          "name": "Michael Penix Jr.",
           "pos": "QB",
           "team": "ATL",
           "games": 1,
@@ -3844,7 +3844,7 @@
         },
         {
           "player_id": "8138",
-          "name": "James Cook",
+          "name": "James Cook III",
           "pos": "RB",
           "team": "BUF",
           "games": 1,
@@ -3998,7 +3998,7 @@
         },
         {
           "player_id": "8151",
-          "name": "Kenneth Walker",
+          "name": "Kenneth Walker III",
           "pos": "RB",
           "team": "KC",
           "games": 1,
@@ -4042,7 +4042,7 @@
         },
         {
           "player_id": "4199",
-          "name": "Aaron Jones",
+          "name": "Aaron Jones Sr.",
           "pos": "RB",
           "team": "MIN",
           "games": 1,
@@ -4053,7 +4053,7 @@
         },
         {
           "player_id": "7543",
-          "name": "Travis Etienne",
+          "name": "Travis Etienne Jr.",
           "pos": "RB",
           "team": "NO",
           "games": 1,
@@ -4097,7 +4097,7 @@
         },
         {
           "player_id": "13305",
-          "name": "Mike Washington",
+          "name": "Mike Washington Jr.",
           "pos": "RB",
           "team": "LV",
           "games": 1,
@@ -4610,7 +4610,7 @@
         },
         {
           "player_id": "11559",
-          "name": "Michael Penix",
+          "name": "Michael Penix Jr.",
           "pos": "QB",
           "team": "ATL",
           "games": 1,
@@ -4716,7 +4716,7 @@
       "rushing": [
         {
           "player_id": "8151",
-          "name": "Kenneth Walker",
+          "name": "Kenneth Walker III",
           "pos": "RB",
           "team": "KC",
           "games": 1,
@@ -4760,7 +4760,7 @@
         },
         {
           "player_id": "12495",
-          "name": "Ollie Gordon",
+          "name": "Ollie Gordon II",
           "pos": "RB",
           "team": "MIA",
           "games": 1,
@@ -4782,7 +4782,7 @@
         },
         {
           "player_id": "4199",
-          "name": "Aaron Jones",
+          "name": "Aaron Jones Sr.",
           "pos": "RB",
           "team": "MIN",
           "games": 1,
@@ -4826,7 +4826,7 @@
         },
         {
           "player_id": "8138",
-          "name": "James Cook",
+          "name": "James Cook III",
           "pos": "RB",
           "team": "BUF",
           "games": 1,
@@ -4881,7 +4881,7 @@
         },
         {
           "player_id": "8154",
-          "name": "Brian Robinson",
+          "name": "Brian Robinson Jr.",
           "pos": "RB",
           "team": "ATL",
           "games": 1,
@@ -5415,7 +5415,7 @@
         },
         {
           "player_id": "11559",
-          "name": "Michael Penix",
+          "name": "Michael Penix Jr.",
           "pos": "QB",
           "team": "ATL",
           "games": 1,
@@ -5643,7 +5643,7 @@
         },
         {
           "player_id": "4199",
-          "name": "Aaron Jones",
+          "name": "Aaron Jones Sr.",
           "pos": "RB",
           "team": "MIN",
           "games": 1,
@@ -5654,7 +5654,7 @@
         },
         {
           "player_id": "8138",
-          "name": "James Cook",
+          "name": "James Cook III",
           "pos": "RB",
           "team": "BUF",
           "games": 1,
@@ -5698,7 +5698,7 @@
         },
         {
           "player_id": "12495",
-          "name": "Ollie Gordon",
+          "name": "Ollie Gordon II",
           "pos": "RB",
           "team": "MIA",
           "games": 1,
@@ -6376,7 +6376,7 @@
         },
         {
           "player_id": "11559",
-          "name": "Michael Penix",
+          "name": "Michael Penix Jr.",
           "pos": "QB",
           "team": "ATL",
           "games": 1,
@@ -6482,7 +6482,7 @@
       "rushing": [
         {
           "player_id": "8151",
-          "name": "Kenneth Walker",
+          "name": "Kenneth Walker III",
           "pos": "RB",
           "team": "KC",
           "games": 1,
@@ -6504,7 +6504,7 @@
         },
         {
           "player_id": "8138",
-          "name": "James Cook",
+          "name": "James Cook III",
           "pos": "RB",
           "team": "BUF",
           "games": 1,
@@ -6625,7 +6625,7 @@
         },
         {
           "player_id": "10219",
-          "name": "Chris Rodriguez",
+          "name": "Chris Rodriguez Jr.",
           "pos": "RB",
           "team": "JAX",
           "games": 1,
@@ -6713,7 +6713,7 @@
         },
         {
           "player_id": "13305",
-          "name": "Mike Washington",
+          "name": "Mike Washington Jr.",
           "pos": "RB",
           "team": "LV",
           "games": 1,
@@ -6803,7 +6803,7 @@
         },
         {
           "player_id": "13276",
-          "name": "Omar Cooper",
+          "name": "Omar Cooper Jr.",
           "pos": "WR",
           "team": "NYJ",
           "games": 1,
@@ -6847,7 +6847,7 @@
         },
         {
           "player_id": "12519",
-          "name": "Luther Burden",
+          "name": "Luther Burden III",
           "pos": "WR",
           "team": "CHI",
           "games": 1,
@@ -7051,6 +7051,20 @@
       "differential": 26
     },
     {
+      "team": "Chicago Bears",
+      "abbr": "CHI",
+      "division": "NFC North",
+      "games": 6,
+      "pass_yards": 1476,
+      "rush_yards": 964,
+      "total_yards": 2440,
+      "offensive_tds": 18,
+      "points_for": 180,
+      "points_against": 143,
+      "yards_allowed": 1814,
+      "differential": 37
+    },
+    {
       "team": "San Francisco 49ers",
       "abbr": "SF",
       "division": "NFC West",
@@ -7091,6 +7105,20 @@
       "points_against": 162,
       "yards_allowed": 2230,
       "differential": 0
+    },
+    {
+      "team": "New England Patriots",
+      "abbr": "NE",
+      "division": "AFC East",
+      "games": 6,
+      "pass_yards": 1509,
+      "rush_yards": 784,
+      "total_yards": 2293,
+      "offensive_tds": 16,
+      "points_for": 160,
+      "points_against": 143,
+      "yards_allowed": 1805,
+      "differential": 17
     },
     {
       "team": "Baltimore Ravens",
@@ -7147,20 +7175,6 @@
       "points_against": 159,
       "yards_allowed": 2295,
       "differential": -8
-    },
-    {
-      "team": "Chicago Bears",
-      "abbr": "CHI",
-      "division": "NFC North",
-      "games": 6,
-      "pass_yards": 1476,
-      "rush_yards": 964,
-      "total_yards": 2440,
-      "offensive_tds": 18,
-      "points_for": 150,
-      "points_against": 119,
-      "yards_allowed": 1814,
-      "differential": 31
     },
     {
       "team": "Seattle Seahawks",
@@ -7259,20 +7273,6 @@
       "points_against": 128,
       "yards_allowed": 1845,
       "differential": 9
-    },
-    {
-      "team": "New England Patriots",
-      "abbr": "NE",
-      "division": "AFC East",
-      "games": 6,
-      "pass_yards": 1509,
-      "rush_yards": 784,
-      "total_yards": 2293,
-      "offensive_tds": 16,
-      "points_for": 136,
-      "points_against": 113,
-      "yards_allowed": 1805,
-      "differential": 23
     },
     {
       "team": "New York Giants",
