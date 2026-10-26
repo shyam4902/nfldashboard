@@ -1483,10 +1483,11 @@
       "city": "",
       "kickoff_utc": "2026-10-26T00:20:00Z",
       "tv": "",
-      "winner": null,
-      "away_score": null,
-      "home_score": null,
-      "week": 7
+      "winner": "Seattle Seahawks",
+      "away_score": 3,
+      "home_score": 20,
+      "week": 7,
+      "status": "final"
     },
     {
       "game_id": "2026-10-26-DAL-PHI",
@@ -3647,5 +3648,5 @@
       "week": 18
     }
   ],
-  "scores_synced_at": "2026-10-26T00:05:22.595Z"
+  "scores_synced_at": "2026-10-26T04:34:56.153Z"
 }
