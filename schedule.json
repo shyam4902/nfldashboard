@@ -1497,11 +1497,11 @@
       "city": "",
       "kickoff_utc": "2026-10-27T00:15:00Z",
       "tv": "",
-      "winner": null,
-      "away_score": 20,
-      "home_score": 14,
+      "winner": "Dallas Cowboys",
+      "away_score": 38,
+      "home_score": 21,
       "week": 7,
-      "status": "in_progress"
+      "status": "final"
     },
     {
       "game_id": "2026-10-29-CAR-GB",
@@ -3649,5 +3649,5 @@
       "week": 18
     }
   ],
-  "scores_synced_at": "2026-10-27T01:58:31.713Z"
+  "scores_synced_at": "2026-10-27T07:40:01.997Z"
 }
