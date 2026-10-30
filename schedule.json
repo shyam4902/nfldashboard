@@ -2,7 +2,7 @@
   "season": 2026,
   "week": 8,
   "total_weeks": 18,
-  "generated": "2026-10-29",
+  "generated": "2026-10-30",
   "source": "nflverse games.csv (matchups, kickoffs, stadiums); Week 1 enriched with TV/city",
   "games": [
     {
@@ -1512,9 +1512,10 @@
       "kickoff_utc": "2026-10-30T00:15:00Z",
       "tv": "",
       "winner": null,
-      "away_score": null,
-      "home_score": null,
-      "week": 8
+      "away_score": 10,
+      "home_score": 20,
+      "week": 8,
+      "status": "in_progress"
     },
     {
       "game_id": "2026-11-01-BAL-BUF",
@@ -3649,5 +3650,5 @@
       "week": 18
     }
   ],
-  "scores_synced_at": "2026-10-27T07:40:01.997Z"
+  "scores_synced_at": "2026-10-30T01:49:57.392Z"
 }
