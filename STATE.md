@@ -3,7 +3,8 @@
 - Updated: 2026-10-30
 - Live: https://matchupboard.com/ (also nfldashboard.pages.dev)
 - Repo: https://github.com/shyam4902/nfldashboard
-- App: static `index.html`, tracked JSON assets, and Supabase roster/transaction data
+- App: `/` sport picker (`index.html`), NFL at `nfl/index.html`, NBA at `nba/`; tracked JSON assets at the root and Supabase roster/transaction data
+- Start here: `docs/sessions/2026-10-23-to-30-matchup-board.md` (decisions, what shipped, how it works, open items)
 
 ## Matchup Board rebrand + NBA matchups, 2026-10-30
 

@@ -1,0 +1,23 @@
+// matchupboard.com as of 2026-10-30.
+style page  fill: theme-primary-subtle  border: theme-primary
+style data  border: theme-secondary
+style ext   border: theme-border  text: (color: theme-muted)
+
+node dns    "matchupboard.com / Cloudflare DNS + Pages (repo shyam4902/nfldashboard)"
+node root   "/  sport picker / index.html"  below dns  style: page
+node nfl    "/nfl/  NFL page / nfl/index.html"  below-left of root  style: page
+node nba    "/nba/  NBA page / nba/index.html + nba/nba.js"  below-right of root  style: page
+node files  "root data files / schedule.json, data/shared/*, props-board.json"  below nfl  style: data
+node bot    "GitHub Action / hourly score sync"  left of files  gap: wide  style: ext
+node pub    "daily publish job / (fantasyfootball launchd)"  below files  style: ext
+node espn   "ESPN public APIs / keyless, called from the browser"  below nba  style: ext
+node supa   "Supabase rosters"  right of espn  gap: wide  style: ext
+
+edge dns -> root
+edge root -> nfl
+edge root -> nba
+edge nfl -> files  "/data/... absolute paths"
+edge bot -> files  "commits"
+edge pub -> files  "writes"
+edge nba -> espn
+edge nfl -> supa

@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1482" height="685" viewBox="0 0 1482 685" font-family="'DejaVu Sans Mono', 'Menlo', 'Consolas', 'Liberation Mono', 'Courier New', monospace" font-size="14px">
+  <defs>
+    <marker id="r5e176d5a-arrow-5c5c7c" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#5c5c7c"/>
+    </marker>
+    <mask id="r5e176d5a-cut-1" maskUnits="userSpaceOnUse" x="0" y="0" width="1482" height="685">
+      <rect x="0" y="0" width="1482" height="685" fill="white"/>
+      <circle cx="1020.4" cy="385.3" r="6.2" fill="black"/>
+    </mask>
+  </defs>
+  <rect x="0" y="0" width="1482" height="685" fill="#111111"/>
+  <path d="M535.4 40 H984.4 a8 8 0 0 1 8 8 V98 a8 8 0 0 1 -8 8 H535.4 a8 8 0 0 1 -8 -8 V48 a8 8 0 0 1 8 -8 Z" fill="#191728" stroke="#4f5367"/>
+  <text x="759.9" y="68.4" fill="#d9d9d9" text-anchor="middle">matchupboard.com</text>
+  <text x="759.9" y="87.4" fill="#d9d9d9" text-anchor="middle">Cloudflare DNS + Pages (repo shyam4902/nfldashboard)</text>
+  <path d="M690.9 162 H828.9 a8 8 0 0 1 8 8 V220 a8 8 0 0 1 -8 8 H690.9 a8 8 0 0 1 -8 -8 V170 a8 8 0 0 1 8 -8 Z" fill="#142814" stroke="#486544"/>
+  <text x="759.9" y="190.4" fill="#d9d9d9" text-anchor="middle">/  sport picker</text>
+  <text x="759.9" y="209.4" fill="#d9d9d9" text-anchor="middle">index.html</text>
+  <path d="M480.9 284 H618.9 a8 8 0 0 1 8 8 V342 a8 8 0 0 1 -8 8 H480.9 a8 8 0 0 1 -8 -8 V292 a8 8 0 0 1 8 -8 Z" fill="#142814" stroke="#486544"/>
+  <text x="549.9" y="312.4" fill="#d9d9d9" text-anchor="middle">/nfl/  NFL page</text>
+  <text x="549.9" y="331.4" fill="#d9d9d9" text-anchor="middle">nfl/index.html</text>
+  <path d="M900.9 284 H1139.9 a8 8 0 0 1 8 8 V342 a8 8 0 0 1 -8 8 H900.9 a8 8 0 0 1 -8 -8 V292 a8 8 0 0 1 8 -8 Z" fill="#142814" stroke="#486544"/>
+  <text x="1020.4" y="312.4" fill="#d9d9d9" text-anchor="middle">/nba/  NBA page</text>
+  <text x="1020.4" y="331.4" fill="#d9d9d9" text-anchor="middle">nba/index.html + nba/nba.js</text>
+  <path d="M350.4 431.4 H749.4 a8 8 0 0 1 8 8 V489.4 a8 8 0 0 1 -8 8 H350.4 a8 8 0 0 1 -8 -8 V439.4 a8 8 0 0 1 8 -8 Z" fill="#191728" stroke="#8f3a3a"/>
+  <text x="549.9" y="459.8" fill="#d9d9d9" text-anchor="middle">root data files</text>
+  <text x="549.9" y="478.8" fill="#d9d9d9" text-anchor="middle">schedule.json, data/shared/*, props-board.json</text>
+  <path d="M48 431.4 H203 a8 8 0 0 1 8 8 V489.4 a8 8 0 0 1 -8 8 H48 a8 8 0 0 1 -8 -8 V439.4 a8 8 0 0 1 8 -8 Z" fill="#191728" stroke="#4f5367"/>
+  <text x="125.5" y="459.8" fill="#8b8b8b" text-anchor="middle">GitHub Action</text>
+  <text x="125.5" y="478.8" fill="#8b8b8b" text-anchor="middle">hourly score sync</text>
+  <path d="M438.9 578.8 H660.9 a8 8 0 0 1 8 8 V636.8 a8 8 0 0 1 -8 8 H438.9 a8 8 0 0 1 -8 -8 V586.8 a8 8 0 0 1 8 -8 Z" fill="#191728" stroke="#4f5367"/>
+  <text x="549.9" y="607.2" fill="#8b8b8b" text-anchor="middle">daily publish job</text>
+  <text x="549.9" y="626.2" fill="#8b8b8b" text-anchor="middle">(fantasyfootball launchd)</text>
+  <path d="M879.9 406 H1160.9 a8 8 0 0 1 8 8 V464 a8 8 0 0 1 -8 8 H879.9 a8 8 0 0 1 -8 -8 V414 a8 8 0 0 1 8 -8 Z" fill="#191728" stroke="#4f5367"/>
+  <text x="1020.4" y="434.4" fill="#8b8b8b" text-anchor="middle">ESPN public APIs</text>
+  <text x="1020.4" y="453.4" fill="#8b8b8b" text-anchor="middle">keyless, called from the browser</text>
+  <path d="M1286.9 415.5 H1433.9 a8 8 0 0 1 8 8 V454.5 a8 8 0 0 1 -8 8 H1286.9 a8 8 0 0 1 -8 -8 V423.5 a8 8 0 0 1 8 -8 Z" fill="#191728" stroke="#4f5367"/>
+  <text x="1360.4" y="443.9" fill="#8b8b8b" text-anchor="middle">Supabase rosters</text>
+  <line x1="759.9" y1="106" x2="759.9" y2="162" stroke="#5c5c7c" stroke-width="1.6" marker-end="url(#r5e176d5a-arrow-5c5c7c)"/>
+  <line x1="703.1" y1="228" x2="606.7" y2="284" stroke="#5c5c7c" stroke-width="1.6" marker-end="url(#r5e176d5a-arrow-5c5c7c)"/>
+  <line x1="830.36" y1="228" x2="949.94" y2="284" stroke="#5c5c7c" stroke-width="1.6" marker-end="url(#r5e176d5a-arrow-5c5c7c)"/>
+  <line x1="549.9" y1="350" x2="549.9" y2="431.4" stroke="#5c5c7c" stroke-width="1.6" marker-end="url(#r5e176d5a-arrow-5c5c7c)"/>
+  <rect x="443.9" y="381.2" width="212" height="19" fill="#111111"/>
+  <text x="549.9" y="395.6" fill="#d9d9d9" text-anchor="middle">/data/... absolute paths</text>
+  <line x1="211" y1="464.4" x2="342.4" y2="464.4" stroke="#5c5c7c" stroke-width="1.6" marker-end="url(#r5e176d5a-arrow-5c5c7c)"/>
+  <rect x="242.2" y="454.9" width="69" height="19" fill="#111111"/>
+  <text x="276.7" y="469.3" fill="#d9d9d9" text-anchor="middle">commits</text>
+  <line x1="549.9" y1="578.8" x2="549.9" y2="497.4" stroke="#5c5c7c" stroke-width="1.6" marker-end="url(#r5e176d5a-arrow-5c5c7c)"/>
+  <rect x="519.4" y="528.6" width="61" height="19" fill="#111111"/>
+  <text x="549.9" y="543" fill="#d9d9d9" text-anchor="middle">writes</text>
+  <line x1="1020.4" y1="350" x2="1020.4" y2="406" stroke="#5c5c7c" stroke-width="1.6" marker-end="url(#r5e176d5a-arrow-5c5c7c)"/>
+  <path d="M 565.9 350 L 565.9 350 C 565.9 380.05, 1247.7 380.05, 1247.7 410.1 L 1247.7 410.1 C 1247.7 426.06, 1256.65 439, 1267.7 439 L 1278.9 439" fill="none" stroke="#5c5c7c" stroke-width="1.6" marker-end="url(#r5e176d5a-arrow-5c5c7c)" mask="url(#r5e176d5a-cut-1)"/>
+</svg>
