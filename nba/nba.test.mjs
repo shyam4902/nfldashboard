@@ -3,11 +3,16 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import {
   etDate,
+  parseAthlete,
   parseBoxScore,
+  parseGameLog,
+  parsePlayerOverview,
+  parsePreGame,
   parseRoster,
   parseScoreboard,
   parseStandings,
   parseTeamSchedule,
+  parseTeamStats,
 } from './nba.js';
 
 function fixture(name) {
@@ -124,4 +129,132 @@ test('every parser returns an empty result for {}', () => {
   assert.deepEqual(parseBoxScore({}).teams, []);
   assert.deepEqual(parseTeamSchedule({}).games, []);
   assert.deepEqual(parseRoster({}), []);
+});
+
+test('parseTeamStats reads the 76ers season averages', () => {
+  const stats = parseTeamStats(fixture('team-20-statistics.json'));
+
+  assert.equal(typeof stats.gamesPlayed, 'number');
+  assert.ok(stats.gamesPlayed > 0, `gamesPlayed: ${stats.gamesPlayed}`);
+  for (const key of ['fgPct', 'threePct', 'reb', 'ast']) {
+    assert.equal(typeof stats[key], 'number', key);
+  }
+  assert.equal(stats.ppg, null);
+});
+
+test('standings rows carry points for and against', () => {
+  const standings = parseStandings(fixture('standings.json'));
+  const rows = [...standings.East, ...standings.West];
+
+  assert.equal(rows.length, 30);
+  for (const row of rows) {
+    assert.equal(typeof row.ppg, 'number', `${row.abbr} ppg`);
+    assert.equal(typeof row.oppPpg, 'number', `${row.abbr} oppPpg`);
+  }
+});
+
+test('parsePreGame reads the BOS at ORL matchup before tip-off', () => {
+  const game = parsePreGame(fixture('summary-401909903-pre.json'));
+
+  assert.equal(game.away.abbr, 'BOS');
+  assert.equal(game.home.abbr, 'ORL');
+  assert.equal(game.id, '401909903');
+  assert.ok(game.startISO);
+  assert.ok(game.venue);
+  assert.ok(game.seasonSeries.length >= 1);
+
+  for (const abbr of [game.away.abbr, game.home.abbr]) {
+    assert.ok(Array.isArray(game.lastFive[abbr]) && game.lastFive[abbr].length >= 1, `${abbr} last five`);
+    for (const result of game.lastFive[abbr]) {
+      assert.ok(result.id && result.date);
+      assert.ok(result.result === 'W' || result.result === 'L');
+    }
+  }
+
+  const forbidden = ['odds', 'pickcenter', 'predictor', 'winprobability'];
+  const walk = (value, path) => {
+    if (!value || typeof value !== 'object') return;
+    for (const [key, child] of Object.entries(value)) {
+      assert.ok(!forbidden.includes(key), `forbidden key ${path}${key}`);
+      walk(child, `${path}${key}.`);
+    }
+  };
+  walk(game, '');
+});
+
+test('parseAthlete reads Tyrese Maxey', () => {
+  const player = parseAthlete(fixture('athlete-4431678.json'));
+
+  assert.equal(player.id, '4431678');
+  assert.equal(player.name, 'Tyrese Maxey');
+  assert.equal(player.team.abbr, 'PHI');
+  assert.equal(player.team.id, '20');
+  assert.ok(player.headshot);
+  assert.equal(typeof player.age, 'number');
+});
+
+test('parsePlayerOverview lines up labels with season and career', () => {
+  const overview = parsePlayerOverview(fixture('athlete-4431678-overview.json'));
+
+  assert.ok(overview.labels.includes('PTS'));
+  assert.ok('PTS' in overview.season, 'season PTS');
+  assert.ok('PTS' in overview.career, 'career PTS');
+  assert.equal(typeof overview.season.PTS, 'number');
+  assert.equal(typeof overview.career.PTS, 'number');
+  assert.equal(Object.keys(overview.season).length, overview.labels.length);
+});
+
+test('parseGameLog joins per-game stats to events, newest first', () => {
+  const log = parseGameLog(fixture('athlete-4431678-gamelog.json'));
+
+  assert.ok(log.labels.includes('PTS'));
+  assert.ok(log.games.length >= 5, `games: ${log.games.length}`);
+  for (let i = 1; i < log.games.length; i += 1) {
+    assert.ok(
+      new Date(log.games[i - 1].date).getTime() >= new Date(log.games[i].date).getTime(),
+      `sorted newest first at ${i}`,
+    );
+  }
+  for (const game of log.games) {
+    assert.ok(game.opponentAbbr, `${game.id} opponent`);
+    assert.equal(typeof game.stats.PTS, 'number', `${game.id} PTS`);
+  }
+});
+
+test('the new parsers return empty results for {}', () => {
+  assert.deepEqual(parseTeamStats({}), {
+    gamesPlayed: null,
+    ppg: null,
+    fgPct: null,
+    threePct: null,
+    ftPct: null,
+    reb: null,
+    ast: null,
+    tov: null,
+    stl: null,
+    blk: null,
+    astTo: null,
+  });
+
+  const pre = parsePreGame({});
+  assert.equal(pre.away, null);
+  assert.equal(pre.home, null);
+  assert.deepEqual(pre.seasonSeries, []);
+  assert.deepEqual(pre.lastFive, {});
+  assert.deepEqual(pre.injuries, {});
+  assert.deepEqual(pre.leaders, {});
+
+  assert.deepEqual(parseAthlete({}), {
+    id: '',
+    name: '',
+    jersey: '',
+    pos: '',
+    height: '',
+    weight: '',
+    age: null,
+    headshot: '',
+    team: { id: '', abbr: '', name: '' },
+  });
+  assert.deepEqual(parsePlayerOverview({}), { labels: [], season: {}, career: {} });
+  assert.deepEqual(parseGameLog({}), { labels: [], games: [] });
 });

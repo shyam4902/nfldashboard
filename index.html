@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NFL 2026 Season Hub · Live Intelligence & Analytics</title>
+<title>Matchup Board · NFL scores, matchups and stats</title>
+<meta name="description" content="Matchup Board: NFL scores, matchups and team stats in one clean layout.">
 <script src="https://cdn.tailwindcss.com"></script>
 <script>
 /* ── NFL26 pregame-studio palette ──────────────────────────────────────────
@@ -1875,7 +1876,20 @@ body.theme-analyst .roster-summary .rs-value {
 .adv-badge-5 {
   box-shadow: 0 0 12px rgba(245, 158, 11, 0.4);
 }
+  /* Sport switch in the header brand: tab-btn look, aria-current state (showTab sweeps .active). */
+  .hdr-sport { display: flex; align-items: center; gap: 2px; }
+  .hdr-sport a[aria-current='page'] { background: var(--tab-active-bg); color: var(--tab-active-text); }
 </style>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="canonical" href="https://matchupboard.com/">
+<meta property="og:title" content="Matchup Board · NFL scores, matchups and stats">
+<meta property="og:description" content="NFL scores, matchups and team stats in one clean layout.">
+<meta property="og:url" content="https://matchupboard.com/">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://matchupboard.com/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
 </head>
 <body class="min-h-screen">
 
@@ -1885,9 +1899,12 @@ body.theme-analyst .roster-summary .rs-value {
     <!-- Brand / Title -->
     <div class="flex items-center gap-2.5 shrink-0">
       <div class="hdr-brand flex items-center whitespace-nowrap">
-        <span class="hdr-brand-mark">NFL</span><span class="hdr-brand-year">2026</span>
-        <span class="hdr-brand-badge ml-2 shrink-0">Pro Hub</span>
+        <span class="hdr-brand-mark">Matchup</span><span class="hdr-brand-year">Board</span>
       </div>
+      <nav class="hdr-sport shrink-0" aria-label="Sport">
+        <a href="/" class="tab-btn shrink-0" aria-current="page">NFL</a>
+        <a href="/nba/" class="tab-btn shrink-0">NBA</a>
+      </nav>
       <span class="hdr-season hidden 2xl:inline-block">2026 Season</span>
     </div>
 
@@ -1904,7 +1921,6 @@ body.theme-analyst .roster-summary .rs-value {
         <button onclick="showTab('teams')" class="tab-btn shrink-0" data-tab="teams">Teams</button>
         <button onclick="showTab('league')" class="tab-btn shrink-0" data-tab="league">League</button>
         <button onclick="showTab('projections')" class="tab-btn shrink-0" data-tab="projections">Projections</button>
-        <a href="/nba/" class="tab-btn shrink-0">NBA</a>
       </nav>
 
       <!-- Utility actions -->

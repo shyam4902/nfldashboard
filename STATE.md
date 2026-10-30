@@ -5,6 +5,14 @@
 - Repo: https://github.com/shyam4902/nfldashboard
 - App: static `index.html`, tracked JSON assets, and Supabase roster/transaction data
 
+## Matchup Board rebrand + NBA matchups, 2026-10-30
+
+- Both pages are branded **Matchup Board** now, with one `NFL | NBA` switch in the header. The old NBA nav link on the NFL page is gone, so there is one way to switch sports.
+- Titles, descriptions, rel=icon, canonical, Open Graph and Twitter tags on `/` and `/nba/`. New root files: `favicon.svg`, `og-image.svg` (rendered to `og-image.png` out of band), `robots.txt`, `sitemap.xml`.
+- NBA views: `#compare` and `#compare/<idA>/<idB>` (two team pickers, 13-row comp table with the better value in gold, each team's last five, head-to-head games), the pre-game matchup on `#game/<id>` when a game is `pre` and has no box score players (season series, last five, injuries, team leaders, full-comparison link), and `#player/<id>` (averages for season and career, game log). Box-score and roster names link to player pages, and the team page header links to `#compare/<id>`.
+- `nba/nba.js` gained five parsers — `parseTeamStats`, `parsePreGame`, `parseAthlete`, `parsePlayerOverview`, `parseGameLog` — and standings rows now carry `ppg` / `oppPpg`. The pre-game parser reads only header, gameInfo, lastFiveGames, seasonseries, injuries and leaders; betting, prediction and news sections are never read. `nba/nba.test.mjs` is 14 tests against committed fixtures.
+- Compare and pre-game share one compare-table renderer; standings are fetched once per page load and cached in memory. Only the scores view polls, and every view stops the timer before painting.
+
 ## NBA page + matchup fix, 2026-10-23
 
 - New `/nba/` page (`nba/index.html`, `nba/nba.js`): scores by date, standings, team schedule and roster, box scores. Reads ESPN's keyless NBA API in the browser, no cron or Supabase. Tests: `node --test nba/nba.test.mjs` against `nba/fixtures/`.

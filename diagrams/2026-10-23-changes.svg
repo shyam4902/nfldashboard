@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1146" height="416" viewBox="0 0 1146 416" font-family="'DejaVu Sans Mono', 'Menlo', 'Consolas', 'Liberation Mono', 'Courier New', monospace" font-size="14px">
+  <defs>
+    <marker id="r2ccf74da-arrow-5c5c7c" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#5c5c7c"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="1146" height="416" fill="#111111"/>
+  <path d="M418 40 H741 a8 8 0 0 1 8 8 V98 a8 8 0 0 1 -8 8 H418 a8 8 0 0 1 -8 -8 V48 a8 8 0 0 1 8 -8 Z" fill="#191728" stroke="#4f5367"/>
+  <text x="579.5" y="68.4" fill="#d9d9d9" text-anchor="middle">main</text>
+  <text x="579.5" y="87.4" fill="#d9d9d9" text-anchor="middle">synced with GitHub (+110 bot commits)</text>
+  <path d="M48 162 H346 a8 8 0 0 1 8 8 V220 a8 8 0 0 1 -8 8 H48 a8 8 0 0 1 -8 -8 V170 a8 8 0 0 1 8 -8 Z" fill="#142814" stroke="#486544"/>
+  <text x="197" y="190.4" fill="#d9d9d9" text-anchor="middle">/nba/ page</text>
+  <text x="197" y="209.4" fill="#d9d9d9" text-anchor="middle">scores, standings, team, box score</text>
+  <path d="M813 187.4 H1002 a8 8 0 0 1 8 8 V245.4 a8 8 0 0 1 -8 8 H813 a8 8 0 0 1 -8 -8 V195.4 a8 8 0 0 1 8 -8 Z" fill="#142814" stroke="#486544"/>
+  <text x="907.5" y="215.8" fill="#d9d9d9" text-anchor="middle">Matchup switching fix</text>
+  <text x="907.5" y="234.8" fill="#d9d9d9" text-anchor="middle">ported from September</text>
+  <path d="M867 40 H1098 a8 8 0 0 1 8 8 V98 a8 8 0 0 1 -8 8 H867 a8 8 0 0 1 -8 -8 V48 a8 8 0 0 1 8 -8 Z" fill="#191728" stroke="#4f5367"/>
+  <text x="982.5" y="68.4" fill="#d9d9d9" text-anchor="middle">wip/2026-09-power-rankings</text>
+  <text x="982.5" y="87.4" fill="#d9d9d9" text-anchor="middle">local branch, not pushed</text>
+  <path d="M52 309.4 H342 a8 8 0 0 1 8 8 V348.4 a8 8 0 0 1 -8 8 H52 a8 8 0 0 1 -8 -8 V317.4 a8 8 0 0 1 8 -8 Z" fill="#142814" stroke="#486544"/>
+  <text x="197" y="337.8" fill="#d9d9d9" text-anchor="middle">Live: nfldashboard.pages.dev/nba/</text>
+  <path d="M813 309.4 H1002 a8 8 0 0 1 8 8 V367.4 a8 8 0 0 1 -8 8 H813 a8 8 0 0 1 -8 -8 V317.4 a8 8 0 0 1 8 -8 Z" fill="#191728" stroke="#4f5367"/>
+  <text x="907.5" y="337.8" fill="#d9d9d9" text-anchor="middle">Next: Gemini packet 2</text>
+  <text x="907.5" y="356.8" fill="#d9d9d9" text-anchor="middle">polish + review</text>
+  <line x1="476.04" y1="106" x2="300.46" y2="162" stroke="#5c5c7c" stroke-width="1.6" marker-end="url(#r2ccf74da-arrow-5c5c7c)"/>
+  <line x1="652.93" y1="106" x2="834.07" y2="187.4" stroke="#5c5c7c" stroke-width="1.6" marker-end="url(#r2ccf74da-arrow-5c5c7c)"/>
+  <line x1="965.71" y1="106" x2="924.29" y2="187.4" stroke="#5c5c7c" stroke-width="1.6" marker-end="url(#r2ccf74da-arrow-5c5c7c)"/>
+  <rect x="847.5" y="137.2" width="195" height="19" fill="#111111"/>
+  <text x="945" y="151.6" fill="#8b8b8b" text-anchor="middle">only the fix came over</text>
+  <line x1="197" y1="228" x2="197" y2="309.4" stroke="#5c5c7c" stroke-width="1.6" marker-end="url(#r2ccf74da-arrow-5c5c7c)"/>
+  <rect x="166.5" y="259.2" width="61" height="19" fill="#111111"/>
+  <text x="197" y="273.6" fill="#d9d9d9" text-anchor="middle">pushed</text>
+</svg>

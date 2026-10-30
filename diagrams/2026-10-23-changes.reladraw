@@ -1,0 +1,15 @@
+// What changed in nfldashboard on 2026-10-23.
+style new    fill: theme-primary-subtle  border: theme-primary
+style parked border: theme-border
+
+node main   "main / synced with GitHub (+110 bot commits)"
+node nba    "/nba/ page / scores, standings, team, box score"  below-left of main  style: new
+node fix    "Matchup switching fix / ported from September"  below-right of main  style: new
+node wip    "wip/2026-09-power-rankings / local branch, not pushed"  right of main  gap: wide  style: parked
+node live   "Live: nfldashboard.pages.dev/nba/"  below nba  style: new
+node gem    "Next: Gemini packet 2 / polish + review"  below fix
+
+edge main -> nba
+edge main -> fix
+edge wip -> fix  "only the fix came over" (color: theme-muted)
+edge nba -> live  "pushed"

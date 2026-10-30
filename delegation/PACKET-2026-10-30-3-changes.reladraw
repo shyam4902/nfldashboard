@@ -1,0 +1,32 @@
+// What PACKET-2026-10-30-3 changes, 2026-10-30.
+// Gold = new files/views, steel = edited existing files, muted = read-only inputs.
+// Single column on purpose: the layout is the reader's map, the edges carry the meaning.
+style new   fill: theme-primary-subtle  border: theme-primary
+style edit  fill: theme-fill  border: theme-secondary
+style given border: theme-border  text: (color: theme-muted)
+
+node repo  "nfldashboard / matchupboard.com / Cloudflare Pages"
+node nfl   "index.html / head: title, icon, canonical, OG / header: Matchup Board + NFL|NBA switch / -1 nav link"  below repo  style: edit
+node nba   "nba/index.html / brand + Compare tab / compare, pre-game, player views"  below nfl  style: edit
+node meta  "favicon.svg / og-image.svg / robots.txt / sitemap.xml / new at root"  below nba  style: new
+node js    "nba/nba.js / +5 parsers / standings ppg + oppPpg"  below meta  style: edit
+node test  "nba/nba.test.mjs / +7 tests, 14 total"  below js  style: edit
+node cmp   "#compare/a/b / pickers, 13-stat table, last five, head to head"  below test  style: new
+node pre   "#game/id (pre) / series, injuries, leaders"  below cmp  style: new
+node plr   "#player/id / averages + game log"  below pre  style: new
+node espn  "ESPN NBA API / S teams + summary / W athletes"  below plr  style: given
+node png   "og-image.png / rendered out of band"  below espn  style: given
+
+edge repo -> nfl  "head + header only"
+edge repo -> nba
+edge nba -> js  "import"
+edge test -> js
+edge nba -> cmp
+edge nba -> pre
+edge nba -> plr
+edge pre -> cmp  "reuses the renderer" (color: theme-muted)
+edge cmp -> espn
+edge pre -> espn
+edge plr -> espn
+edge repo -> meta
+edge meta -> png

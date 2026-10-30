@@ -158,6 +158,8 @@ function standingsRow(entry) {
   const gbStat = statValue(index, ['gamesBehind'], ['gamesbehind']);
   const streakStat = statValue(index, ['streak'], ['streak']);
   const last10Stat = statValue(index, ['Last Ten Games'], ['lasttengames']);
+  const ppgStat = statValue(index, ['avgPointsFor'], ['avgpointsfor']);
+  const oppPpgStat = statValue(index, ['avgPointsAgainst'], ['avgpointsagainst']);
 
   return {
     teamId: str(team.id),
@@ -171,6 +173,8 @@ function standingsRow(entry) {
     streak: statText(streakStat),
     last10: statText(last10Stat),
     seed: num(seedStat?.value ?? seedStat?.displayValue),
+    ppg: num(ppgStat?.value ?? ppgStat?.displayValue),
+    oppPpg: num(oppPpgStat?.value ?? oppPpgStat?.displayValue),
   };
 }
 
@@ -294,6 +298,227 @@ export function parseTeamSchedule(json) {
   }
 
   return { team, games };
+}
+
+function flatStats(categories) {
+  const index = new Map();
+  for (const category of arr(categories)) {
+    for (const stat of arr(category?.stats)) {
+      if (!stat || typeof stat !== 'object') continue;
+      const name = str(stat.name);
+      if (name && !index.has(name)) index.set(name, stat);
+    }
+  }
+  return index;
+}
+
+// Team season averages. Points for and against live in the standings payload,
+// not here, so the caller fills ppg from parseStandings.
+export function parseTeamStats(json) {
+  const stats = flatStats(json?.results?.stats?.categories);
+  const read = (name) => {
+    const stat = stats.get(name);
+    return stat ? num(stat.value ?? stat.displayValue) : null;
+  };
+  return {
+    gamesPlayed: read('gamesPlayed'),
+    ppg: null,
+    fgPct: read('fieldGoalPct'),
+    threePct: read('threePointPct'),
+    ftPct: read('freeThrowPct'),
+    reb: read('avgRebounds'),
+    ast: read('avgAssists'),
+    tov: read('avgTurnovers'),
+    stl: read('avgSteals'),
+    blk: read('avgBlocks'),
+    astTo: read('assistTurnoverRatio'),
+  };
+}
+
+function labelMap(labels, values) {
+  const out = {};
+  arr(labels).forEach((label, i) => {
+    const key = str(label);
+    if (!key) return;
+    const raw = arr(values)[i];
+    if (raw == null || raw === '') {
+      out[key] = null;
+      return;
+    }
+    const asNumber = num(raw);
+    out[key] = asNumber == null ? str(raw) : asNumber;
+  });
+  return out;
+}
+
+function seriesRow(event) {
+  const competitors = arr(event?.competitors);
+  const away = competitors.find((c) => c?.homeAway === 'away');
+  const home = competitors.find((c) => c?.homeAway === 'home');
+  if (!away || !home) return null;
+  const winner = competitors.find((c) => c?.winner === true);
+  return {
+    id: str(event.id),
+    date: str(event.date),
+    state: str(event?.statusType?.state || event?.status),
+    away: str(away.team?.abbreviation),
+    home: str(home.team?.abbreviation),
+    awayScore: scoreOf(away),
+    homeScore: scoreOf(home),
+    winnerAbbr: str(winner?.team?.abbreviation),
+  };
+}
+
+function preGameSide(competitor, fallbackId) {
+  if (!competitor) return null;
+  const team = competitor.team || {};
+  return {
+    id: str(team.id ?? fallbackId),
+    abbr: str(team.abbreviation),
+    name: str(team.displayName || team.name),
+    logo: logoOf(team),
+    record: str(competitor.record?.summary || arr(competitor.records)[0]?.summary),
+  };
+}
+
+// Pre-tip-off summary. Reads only header, gameInfo, lastFiveGames, seasonseries,
+// injuries and leaders; the payload's other sections are never touched.
+export function parsePreGame(json) {
+  const competition = arr(json?.header?.competitions)[0] || {};
+  const competitors = arr(competition.competitors);
+
+  const seasonSeries = [];
+  for (const series of arr(json?.seasonseries)) {
+    for (const event of arr(series?.events)) {
+      const row = seriesRow(event);
+      if (row) seasonSeries.push(row);
+    }
+  }
+
+  const lastFive = {};
+  for (const key of Object.keys(json?.lastFiveGames || {})) {
+    const block = json.lastFiveGames[key];
+    const abbr = str(block?.team?.abbreviation);
+    if (!abbr) continue;
+    lastFive[abbr] = arr(block.events).map((event) => ({
+      id: str(event?.id),
+      date: str(event?.gameDate),
+      atVs: str(event?.atVs),
+      opponentAbbr: str(event?.opponent?.abbreviation),
+      result: str(event?.gameResult),
+      score: str(event?.score),
+    }));
+  }
+
+  const injuries = {};
+  for (const key of Object.keys(json?.injuries || {})) {
+    const block = json.injuries[key];
+    const abbr = str(block?.team?.abbreviation);
+    if (!abbr) continue;
+    injuries[abbr] = arr(block.injuries).map((entry) => ({
+      name: str(entry?.athlete?.displayName || entry?.athlete?.fullName),
+      pos: str(entry?.athlete?.position?.abbreviation),
+      status: str(entry?.status),
+      detail: str(entry?.details?.type?.description || entry?.details?.detail),
+    }));
+  }
+
+  const leaders = {};
+  for (const block of arr(json?.leaders)) {
+    const abbr = str(block?.team?.abbreviation);
+    if (!abbr) continue;
+    leaders[abbr] = arr(block.leaders).map((category) => {
+      const top = arr(category?.leaders)[0];
+      return {
+        category: str(category?.displayName || category?.name),
+        name: str(top?.athlete?.displayName || top?.athlete?.fullName),
+        value: str(top?.displayValue ?? top?.value),
+      };
+    });
+  }
+
+  return {
+    id: str(json?.header?.id || competition.id),
+    startISO: str(competition.date),
+    venue: str(json?.gameInfo?.venue?.fullName || json?.gameInfo?.venue?.shortName),
+    broadcast: arr(competition.broadcasts).map((b) => str(b?.media?.shortName)).filter(Boolean).join(', '),
+    status: statusTextOf(competition.status),
+    away: preGameSide(competitors.find((c) => c?.homeAway === 'away')),
+    home: preGameSide(competitors.find((c) => c?.homeAway === 'home')),
+    seasonSeries,
+    lastFive,
+    injuries,
+    leaders,
+  };
+}
+
+export function parseAthlete(json) {
+  const athlete = json?.athlete || {};
+  return {
+    id: str(athlete.id),
+    name: str(athlete.displayName || athlete.fullName),
+    jersey: str(athlete.jersey),
+    pos: str(athlete.position?.abbreviation || athlete.position?.name),
+    height: str(athlete.displayHeight),
+    weight: str(athlete.displayWeight),
+    age: num(athlete.age),
+    headshot: str(athlete.headshot?.href),
+    team: {
+      id: str(athlete.team?.id),
+      abbr: str(athlete.team?.abbreviation),
+      name: str(athlete.team?.displayName || athlete.team?.name),
+    },
+  };
+}
+
+// Averages split by label. Only the statistics block is read.
+export function parsePlayerOverview(json) {
+  const labels = arr(json?.statistics?.labels).map(str);
+  const splits = arr(json?.statistics?.splits);
+  const findSplit = (name) => splits.find((split) => str(split?.displayName).toLowerCase() === name);
+  const seasonSplit = findSplit('regular season') || splits.find((split) => /regular season/i.test(str(split?.displayName)));
+  const careerSplit = findSplit('career');
+  return {
+    labels,
+    season: seasonSplit ? labelMap(labels, seasonSplit.stats) : {},
+    career: careerSplit ? labelMap(labels, careerSplit.stats) : {},
+  };
+}
+
+export function parseGameLog(json) {
+  const labels = arr(json?.labels).map(str);
+  const statsByEvent = new Map();
+  for (const seasonType of arr(json?.seasonTypes)) {
+    const regular = /regular season/i.test(str(seasonType?.displayName));
+    for (const category of arr(seasonType?.categories)) {
+      for (const entry of arr(category?.events)) {
+        const id = str(entry?.eventId);
+        if (!id) continue;
+        if (!statsByEvent.has(id) || regular) statsByEvent.set(id, entry?.stats);
+      }
+    }
+  }
+
+  const games = [];
+  for (const [id, event] of Object.entries(json?.events || {})) {
+    if (!event || typeof event !== 'object') continue;
+    games.push({
+      id: str(id),
+      date: str(event.gameDate),
+      atVs: str(event.atVs),
+      opponentAbbr: str(event?.opponent?.abbreviation),
+      result: str(event.gameResult),
+      score: str(event.score),
+      stats: labelMap(labels, statsByEvent.get(str(id))),
+    });
+  }
+
+  const time = (game) => {
+    const parsed = new Date(game.date);
+    return Number.isNaN(parsed.getTime()) ? 0 : parsed.getTime();
+  };
+  games.sort((a, b) => time(b) - time(a));
+  return { labels, games };
 }
 
 export function parseRoster(json) {
