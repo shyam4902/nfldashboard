@@ -13,6 +13,16 @@
 - `nba/nba.js` gained five parsers — `parseTeamStats`, `parsePreGame`, `parseAthlete`, `parsePlayerOverview`, `parseGameLog` — and standings rows now carry `ppg` / `oppPpg`. The pre-game parser reads only header, gameInfo, lastFiveGames, seasonseries, injuries and leaders; betting, prediction and news sections are never read. `nba/nba.test.mjs` is 14 tests against committed fixtures.
 - Compare and pre-game share one compare-table renderer; standings are fetched once per page load and cached in memory. Only the scores view polls, and every view stops the timer before painting.
 
+### NBA depth, same day
+
+- `#leaders` (Leaders tab): six boards — Points, Rebounds, Assists, Steals, Blocks, 3PM — each fetched and painted independently, cached in memory for the page session. `parseLeaders(json, category, stat)` reads values by stat name from the matching category and ranks 1–10.
+- Player search in the header: 250 ms debounce, 2-character minimum, `AbortController` on the previous request, up to 8 NBA-only results, arrow keys / Enter / Escape. `parseSearch` drops every non-NBA league the ESPN search returns.
+- Live games: `#game/<id>` with state `in` refetches every 30 s and re-renders in place with no loading flash, and shows “Live · updates every 30s”. Polling stops on final, on error it re-arms, and any view change clears the timer.
+- `parseGameLog` now returns `{ labels, seasons[], games }` split by `seasonTypes[].displayName` (Regular Season stays the top-level `games`). The player page shows Regular Season by default with a tab for the other types.
+- Team statistics and schedules are cached for 5 minutes in one `teamData(id)` helper shared by compare, pre-game and the team page.
+- Season-series rows bold the winner's abbreviation and score and mute the loser. Standings gained PPG / OPP / DIFF (signed, gold for positive, no new colours, table scrolls inside its wrapper). The scores date bar has a native date picker next to prev/next and Today.
+- `nba/nba.test.mjs` is 18 tests.
+
 ## NBA page + matchup fix, 2026-10-23
 
 - New `/nba/` page (`nba/index.html`, `nba/nba.js`): scores by date, standings, team schedule and roster, box scores. Reads ESPN's keyless NBA API in the browser, no cron or Supabase. Tests: `node --test nba/nba.test.mjs` against `nba/fixtures/`.

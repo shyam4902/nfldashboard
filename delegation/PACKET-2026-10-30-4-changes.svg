@@ -1,0 +1,86 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="649" height="1358" viewBox="-64 0 649 1358" font-family="'DejaVu Sans Mono', 'Menlo', 'Consolas', 'Liberation Mono', 'Courier New', monospace" font-size="14px">
+  <defs>
+    <marker id="r875def0c-arrow-5c5c7c" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#5c5c7c"/>
+    </marker>
+    <mask id="r875def0c-cut-1" maskUnits="userSpaceOnUse" x="-64" y="0" width="649" height="1358">
+      <rect x="-64" y="0" width="649" height="1358" fill="white"/>
+      <circle cx="9.17" cy="127.37" r="6.2" fill="black"/>
+      <circle cx="-7.2" cy="777.56" r="6.2" fill="black"/>
+    </mask>
+    <mask id="r875def0c-cut-2" maskUnits="userSpaceOnUse" x="-64" y="0" width="649" height="1358">
+      <rect x="-64" y="0" width="649" height="1358" fill="white"/>
+      <circle cx="512" cy="143.44" r="6.2" fill="black"/>
+      <circle cx="528" cy="1021.56" r="6.2" fill="black"/>
+    </mask>
+    <mask id="r875def0c-cut-3" maskUnits="userSpaceOnUse" x="-64" y="0" width="649" height="1358">
+      <rect x="-64" y="0" width="649" height="1358" fill="white"/>
+      <circle cx="8.8" cy="778" r="6.2" fill="black"/>
+      <circle cx="8.8" cy="899.56" r="6.2" fill="black"/>
+    </mask>
+    <mask id="r875def0c-cut-4" maskUnits="userSpaceOnUse" x="-64" y="0" width="649" height="1358">
+      <rect x="-64" y="0" width="649" height="1358" fill="white"/>
+      <circle cx="32.5" cy="778" r="6.2" fill="black"/>
+      <circle cx="32.5" cy="900" r="6.2" fill="black"/>
+      <circle cx="32.5" cy="1269" r="6.2" fill="black"/>
+    </mask>
+    <mask id="r875def0c-cut-5" maskUnits="userSpaceOnUse" x="-64" y="0" width="649" height="1358">
+      <rect x="-64" y="0" width="649" height="1358" fill="white"/>
+      <circle cx="495.5" cy="1022" r="6.2" fill="black"/>
+      <circle cx="495.5" cy="1153.5" r="6.2" fill="black"/>
+    </mask>
+    <mask id="r875def0c-cut-6" maskUnits="userSpaceOnUse" x="-64" y="0" width="649" height="1358">
+      <rect x="-64" y="0" width="649" height="1358" fill="white"/>
+      <circle cx="51.24" cy="1269" r="6.2" fill="black"/>
+    </mask>
+  </defs>
+  <rect x="-64" y="0" width="649" height="1358" fill="#111111"/>
+  <path d="M132 40 H396 a8 8 0 0 1 8 8 V174 a8 8 0 0 1 -8 8 H132 a8 8 0 0 1 -8 -8 V48 a8 8 0 0 1 8 -8 Z" fill="#191728" stroke="#4f5367"/>
+  <text x="264" y="68.4" fill="#d9d9d9" text-anchor="middle">nba/index.html</text>
+  <text x="264" y="87.4" fill="#d9d9d9" text-anchor="middle">header search + Leaders tab</text>
+  <text x="264" y="106.4" fill="#d9d9d9" text-anchor="middle">live box poll</text>
+  <text x="264" y="125.4" fill="#d9d9d9" text-anchor="middle">season tabs</text>
+  <text x="264" y="144.4" fill="#d9d9d9" text-anchor="middle">team cache</text>
+  <text x="264" y="163.4" fill="#d9d9d9" text-anchor="middle">series, standings, date picker</text>
+  <path d="M148.5 238 H379.5 a8 8 0 0 1 8 8 V315 a8 8 0 0 1 -8 8 H148.5 a8 8 0 0 1 -8 -8 V246 a8 8 0 0 1 8 -8 Z" fill="#191728" stroke="#8f3a3a"/>
+  <text x="264" y="266.4" fill="#d9d9d9" text-anchor="middle">nba/nba.js</text>
+  <text x="264" y="285.4" fill="#d9d9d9" text-anchor="middle">parseLeaders + parseSearch</text>
+  <text x="264" y="304.4" fill="#d9d9d9" text-anchor="middle">parseGameLog seasons</text>
+  <path d="M190.5 379 H337.5 a8 8 0 0 1 8 8 V437 a8 8 0 0 1 -8 8 H190.5 a8 8 0 0 1 -8 -8 V387 a8 8 0 0 1 8 -8 Z" fill="#191728" stroke="#8f3a3a"/>
+  <text x="264" y="407.4" fill="#d9d9d9" text-anchor="middle">nba/nba.test.mjs</text>
+  <text x="264" y="426.4" fill="#d9d9d9" text-anchor="middle">18 tests</text>
+  <path d="M48 501 H480 a8 8 0 0 1 8 8 V559 a8 8 0 0 1 -8 8 H48 a8 8 0 0 1 -8 -8 V509 a8 8 0 0 1 8 -8 Z" fill="#142814" stroke="#486544"/>
+  <text x="264" y="529.4" fill="#d9d9d9" text-anchor="middle">#leaders</text>
+  <text x="264" y="548.4" fill="#d9d9d9" text-anchor="middle">six boards, one fetch each, painted as they arrive</text>
+  <path d="M90 623 H438 a8 8 0 0 1 8 8 V681 a8 8 0 0 1 -8 8 H90 a8 8 0 0 1 -8 -8 V631 a8 8 0 0 1 8 -8 Z" fill="#142814" stroke="#486544"/>
+  <text x="264" y="651.4" fill="#d9d9d9" text-anchor="middle">player search</text>
+  <text x="264" y="670.4" fill="#d9d9d9" text-anchor="middle">250 ms debounce, abort, keyboard listbox</text>
+  <path d="M132 745 H396 a8 8 0 0 1 8 8 V803 a8 8 0 0 1 -8 8 H132 a8 8 0 0 1 -8 -8 V753 a8 8 0 0 1 8 -8 Z" fill="#142814" stroke="#486544"/>
+  <text x="264" y="773.4" fill="#d9d9d9" text-anchor="middle">#game/id while live</text>
+  <text x="264" y="792.4" fill="#d9d9d9" text-anchor="middle">30 s refetch, no loading flash</text>
+  <path d="M64.5 867 H463.5 a8 8 0 0 1 8 8 V925 a8 8 0 0 1 -8 8 H64.5 a8 8 0 0 1 -8 -8 V875 a8 8 0 0 1 8 -8 Z" fill="#142814" stroke="#486544"/>
+  <text x="264" y="895.4" fill="#d9d9d9" text-anchor="middle">player page</text>
+  <text x="264" y="914.4" fill="#d9d9d9" text-anchor="middle">Regular Season tab plus the other season types</text>
+  <path d="M90 989 H438 a8 8 0 0 1 8 8 V1047 a8 8 0 0 1 -8 8 H90 a8 8 0 0 1 -8 -8 V997 a8 8 0 0 1 8 -8 Z" fill="#142814" stroke="#486544"/>
+  <text x="264" y="1017.4" fill="#d9d9d9" text-anchor="middle">teamData(id)</text>
+  <text x="264" y="1036.4" fill="#d9d9d9" text-anchor="middle">statistics + schedule, 5 minutes, shared</text>
+  <path d="M165.5 1111 H362.5 a8 8 0 0 1 8 8 V1188 a8 8 0 0 1 -8 8 H165.5 a8 8 0 0 1 -8 -8 V1119 a8 8 0 0 1 8 -8 Z" fill="#142814" stroke="#486544"/>
+  <text x="264" y="1139.4" fill="#d9d9d9" text-anchor="middle">series winner bold</text>
+  <text x="264" y="1158.4" fill="#d9d9d9" text-anchor="middle">standings PPG OPP DIFF</text>
+  <text x="264" y="1177.4" fill="#d9d9d9" text-anchor="middle">native date picker</text>
+  <path d="M119 1252 H409 a8 8 0 0 1 8 8 V1310 a8 8 0 0 1 -8 8 H119 a8 8 0 0 1 -8 -8 V1260 a8 8 0 0 1 8 -8 Z" fill="#191728" stroke="#4f5367"/>
+  <text x="264" y="1280.4" fill="#8b8b8b" text-anchor="middle">ESPN API</text>
+  <text x="264" y="1299.4" fill="#8b8b8b" text-anchor="middle">byathlete, search, summary, teams</text>
+  <line x1="264" y1="182" x2="264" y2="238" stroke="#5c5c7c" stroke-width="1.6" marker-end="url(#r875def0c-arrow-5c5c7c)"/>
+  <path d="M 124 111 L 28.8 111 C 17.75 111, 8.8 119.95, 8.8 131 L 8.8 414 C 8.8 480.28, 17.75 534, 28.8 534 L 40 534" fill="none" stroke="#5c5c7c" stroke-width="1.6" marker-end="url(#r875def0c-arrow-5c5c7c)"/>
+  <path d="M 404 111 L 486.99 111 C 500.8 111, 512 123.44, 512 138.79 L 512 536 C 512 602.28, 487.47 656, 457.2 656 L 446 656" fill="none" stroke="#5c5c7c" stroke-width="1.6" marker-end="url(#r875def0c-arrow-5c5c7c)"/>
+  <path d="M 124 95 L 39.44 95 C 4.84 95, -23.2 123.04, -23.2 157.64 L -23.2 758 C -23.2 769.05, -14.25 778, -3.2 778 L 124 778" fill="none" stroke="#5c5c7c" stroke-width="1.6" marker-end="url(#r875def0c-arrow-5c5c7c)"/>
+  <path d="M 124 127 L 12.8 127 C 1.75 127, -7.2 135.95, -7.2 147 L -7.2 880 C -7.2 891.05, 1.75 900, 12.8 900 L 56.5 900" fill="none" stroke="#5c5c7c" stroke-width="1.6" marker-end="url(#r875def0c-arrow-5c5c7c)" mask="url(#r875def0c-cut-1)"/>
+  <path d="M 404 95 L 457.3 95 C 505.18 95, 544 133.82, 544 181.7 L 544 1002 C 544 1013.05, 535.05 1022, 524 1022 L 446 1022" fill="none" stroke="#5c5c7c" stroke-width="1.6" marker-end="url(#r875def0c-arrow-5c5c7c)"/>
+  <path d="M 404 143 L 508 143 C 519.05 143, 528 151.95, 528 163 L 528 1125.71 C 528 1141.06, 515.56 1153.5, 500.21 1153.5 L 370.5 1153.5" fill="none" stroke="#5c5c7c" stroke-width="1.6" marker-end="url(#r875def0c-arrow-5c5c7c)" mask="url(#r875def0c-cut-2)"/>
+  <line x1="264" y1="323" x2="264" y2="379" stroke="#5c5c7c" stroke-width="1.6" marker-end="url(#r875def0c-arrow-5c5c7c)"/>
+  <path d="M 40 550 L 40 550 C 22.77 550, 8.8 603.72, 8.8 670 L 8.8 1245.38 C 8.8 1258.42, 17.75 1269, 28.8 1269 L 111 1269" fill="none" stroke="#5c5c7c" stroke-width="1.6" marker-end="url(#r875def0c-arrow-5c5c7c)" mask="url(#r875def0c-cut-3)"/>
+  <path d="M 82 656 L 82 656 C 54.66 656, 32.5 709.72, 32.5 776 L 32.5 1273.21 C 32.5 1288.56, 41.45 1301, 52.5 1301 L 111 1301" fill="none" stroke="#5c5c7c" stroke-width="1.6" marker-end="url(#r875def0c-arrow-5c5c7c)" mask="url(#r875def0c-cut-4)"/>
+  <path d="M 404 778 L 404 778 C 454.54 778, 495.5 831.72, 495.5 898 L 495.5 1165 C 495.5 1231.28, 465.37 1285, 428.2 1285 L 417 1285" fill="none" stroke="#5c5c7c" stroke-width="1.6" marker-end="url(#r875def0c-arrow-5c5c7c)" mask="url(#r875def0c-cut-5)"/>
+  <path d="M 82 1022 L 82 1022 C 64.77 1022, 50.8 1075.72, 50.8 1142 L 50.8 1265 C 50.8 1276.05, 59.75 1285, 70.8 1285 L 111 1285" fill="none" stroke="#5c5c7c" stroke-width="1.6" marker-end="url(#r875def0c-arrow-5c5c7c)" mask="url(#r875def0c-cut-6)"/>
+</svg>

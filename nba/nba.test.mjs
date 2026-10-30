@@ -6,10 +6,12 @@ import {
   parseAthlete,
   parseBoxScore,
   parseGameLog,
+  parseLeaders,
   parsePlayerOverview,
   parsePreGame,
   parseRoster,
   parseScoreboard,
+  parseSearch,
   parseStandings,
   parseTeamSchedule,
   parseTeamStats,
@@ -221,6 +223,47 @@ test('parseGameLog joins per-game stats to events, newest first', () => {
   }
 });
 
+test('parseSearch keeps only NBA players', () => {
+  const players = parseSearch(fixture('search-maxey.json'));
+
+  assert.equal(players.length, 1);
+  assert.equal(players[0].id, '4431678');
+  assert.equal(players[0].name, 'Tyrese Maxey');
+  assert.equal(players[0].teamAbbr, 'PHI');
+  assert.ok(players[0].headshot);
+});
+
+test('parseLeaders builds the points board', () => {
+  const rows = parseLeaders(fixture('leaders-points.json'), 'offensive', 'avgPoints');
+
+  assert.equal(rows.length, 10);
+  assert.deepEqual(rows.map((row) => row.rank), [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+  for (const row of rows) {
+    assert.equal(typeof row.value, 'number');
+    assert.ok(row.id, 'id');
+    assert.ok(row.name, 'name');
+    assert.ok(row.teamAbbr, 'team');
+  }
+  const values = rows.map((row) => row.value);
+  assert.deepEqual(values, [...values].sort((a, b) => b - a));
+});
+
+test('parseGameLog splits season types and keeps regular season as games', () => {
+  const log = parseGameLog(fixture('athlete-4431678-gamelog.json'));
+
+  assert.ok(log.seasons.length >= 1);
+  const regular = log.seasons.find((season) => /regular season/i.test(season.name));
+  assert.ok(regular, 'regular season block');
+  assert.ok(regular.games.length >= 1);
+  for (const game of regular.games) assert.equal(typeof game.stats.PTS, 'number');
+  assert.deepEqual(log.games, regular.games);
+});
+
+test('parseLeaders and parseSearch return [] for {}', () => {
+  assert.deepEqual(parseLeaders({}, 'offensive', 'avgPoints'), []);
+  assert.deepEqual(parseSearch({}), []);
+});
+
 test('the new parsers return empty results for {}', () => {
   assert.deepEqual(parseTeamStats({}), {
     gamesPlayed: null,
@@ -256,5 +299,5 @@ test('the new parsers return empty results for {}', () => {
     team: { id: '', abbr: '', name: '' },
   });
   assert.deepEqual(parsePlayerOverview({}), { labels: [], season: {}, career: {} });
-  assert.deepEqual(parseGameLog({}), { labels: [], games: [] });
+  assert.deepEqual(parseGameLog({}), { labels: [], seasons: [], games: [] });
 });

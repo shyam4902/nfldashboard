@@ -1,0 +1,30 @@
+// What PACKET-2026-10-30-4 changes, 2026-10-30.
+// Gold = new views, steel = edited files, muted = read-only inputs.
+// One column on purpose: the layout is the map, the edges carry the meaning.
+style new   fill: theme-primary-subtle  border: theme-primary
+style edit  fill: theme-fill  border: theme-secondary
+style given border: theme-border  text: (color: theme-muted)
+
+node page  "nba/index.html / header search + Leaders tab / live box poll / season tabs / team cache / series, standings, date picker"
+node js    "nba/nba.js / parseLeaders + parseSearch / parseGameLog seasons"  below page  style: edit
+node test  "nba/nba.test.mjs / 18 tests"  below js  style: edit
+node lead  "#leaders / six boards, one fetch each, painted as they arrive"  below test  style: new
+node srch  "player search / 250 ms debounce, abort, keyboard listbox"  below lead  style: new
+node live  "#game/id while live / 30 s refetch, no loading flash"  below srch  style: new
+node seas  "player page / Regular Season tab plus the other season types"  below live  style: new
+node cache "teamData(id) / statistics + schedule, 5 minutes, shared"  below seas  style: new
+node rows  "series winner bold / standings PPG OPP DIFF / native date picker"  below cache  style: new
+node espn  "ESPN API / byathlete, search, summary, teams"  below rows  style: given
+
+edge page -> js
+edge page -> lead
+edge page -> srch
+edge page -> live
+edge page -> seas
+edge page -> cache
+edge page -> rows
+edge js -> test
+edge lead -> espn
+edge srch -> espn
+edge live -> espn
+edge cache -> espn

@@ -485,40 +485,100 @@ export function parsePlayerOverview(json) {
   };
 }
 
+function timeOf(iso) {
+  const parsed = new Date(iso);
+  return Number.isNaN(parsed.getTime()) ? 0 : parsed.getTime();
+}
+
+// Game log split by season type. `games` stays the Regular Season list so
+// existing callers keep working; `seasons` carries every type, newest first.
 export function parseGameLog(json) {
   const labels = arr(json?.labels).map(str);
-  const statsByEvent = new Map();
+  const events = json?.events && typeof json.events === 'object' ? json.events : {};
+  const seasons = [];
+
   for (const seasonType of arr(json?.seasonTypes)) {
-    const regular = /regular season/i.test(str(seasonType?.displayName));
+    const name = str(seasonType?.displayName) || 'Season';
+    const statsById = new Map();
     for (const category of arr(seasonType?.categories)) {
       for (const entry of arr(category?.events)) {
         const id = str(entry?.eventId);
-        if (!id) continue;
-        if (!statsByEvent.has(id) || regular) statsByEvent.set(id, entry?.stats);
+        if (id && !statsById.has(id)) statsById.set(id, entry?.stats);
       }
     }
+
+    const games = [];
+    for (const [id, stats] of statsById) {
+      const event = events[id];
+      if (!event || typeof event !== 'object') continue;
+      games.push({
+        id,
+        date: str(event.gameDate),
+        atVs: str(event.atVs),
+        opponentAbbr: str(event?.opponent?.abbreviation),
+        result: str(event.gameResult),
+        score: str(event.score),
+        stats: labelMap(labels, stats),
+      });
+    }
+    if (!games.length) continue;
+    games.sort((a, b) => timeOf(b.date) - timeOf(a.date));
+    seasons.push({ name, games });
   }
 
-  const games = [];
-  for (const [id, event] of Object.entries(json?.events || {})) {
-    if (!event || typeof event !== 'object') continue;
-    games.push({
-      id: str(id),
-      date: str(event.gameDate),
-      atVs: str(event.atVs),
-      opponentAbbr: str(event?.opponent?.abbreviation),
-      result: str(event.gameResult),
-      score: str(event.score),
-      stats: labelMap(labels, statsByEvent.get(str(id))),
+  seasons.sort((a, b) => timeOf(b.games[0]?.date) - timeOf(a.games[0]?.date));
+  const regular = seasons.find((season) => /regular season/i.test(season.name)) || seasons[0];
+  return { labels, seasons, games: regular ? regular.games : [] };
+}
+
+// League leaderboard. Values are read by stat name out of the category whose
+// `name` matches, then ranked 1..10 by value.
+export function parseLeaders(json, category, stat) {
+  const categories = arr(json?.categories);
+  const names = arr(categories.find((entry) => str(entry?.name) === str(category))?.names).map(str);
+  const index = names.indexOf(str(stat));
+  if (index < 0) return [];
+
+  const gpIndex = arr(categories.find((entry) => str(entry?.name) === 'general')?.names)
+    .map(str)
+    .indexOf('gamesPlayed');
+
+  const rows = [];
+  for (const entry of arr(json?.athletes)) {
+    const block = arr(entry?.categories).find((value) => str(value?.name) === str(category));
+    const value = num(arr(block?.totals)[index]);
+    if (value == null) continue;
+    const general = arr(entry?.categories).find((value) => str(value?.name) === 'general');
+    const athlete = entry?.athlete || {};
+    rows.push({
+      rank: 0,
+      id: str(athlete.id),
+      name: str(athlete.displayName || athlete.fullName),
+      teamAbbr: str(athlete.teamShortName || athlete.team?.abbreviation),
+      headshot: str(athlete?.headshot?.href),
+      value,
+      gp: gpIndex >= 0 ? num(arr(general?.totals)[gpIndex]) : null,
     });
   }
 
-  const time = (game) => {
-    const parsed = new Date(game.date);
-    return Number.isNaN(parsed.getTime()) ? 0 : parsed.getTime();
-  };
-  games.sort((a, b) => time(b) - time(a));
-  return { labels, games };
+  rows.sort((a, b) => b.value - a.value);
+  return rows.slice(0, 10).map((row, i) => ({ ...row, rank: i + 1 }));
+}
+
+// ESPN search returns every sport; only NBA players are kept.
+export function parseSearch(json) {
+  const players = [];
+  for (const item of arr(json?.items)) {
+    if (str(item?.league).toLowerCase() !== 'nba') continue;
+    const team = arr(item?.teamRelationships).find((relation) => relation?.type === 'team');
+    players.push({
+      id: str(item.id),
+      name: str(item.displayName || item.fullName),
+      teamAbbr: str(team?.core?.abbreviation),
+      headshot: str(item?.headshot?.href),
+    });
+  }
+  return players;
 }
 
 export function parseRoster(json) {
