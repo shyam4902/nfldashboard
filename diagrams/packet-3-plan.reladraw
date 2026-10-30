@@ -1,0 +1,24 @@
+// PACKET-2026-10-30-3: Matchup Board rebrand + NBA matchups (one freebuff hour).
+style new   fill: theme-primary-subtle  border: theme-primary
+style touch border: theme-secondary
+style me    border: theme-border  text: (color: theme-muted)
+
+node site   "matchupboard.com"
+node nfl    "/  NFL page / brand + head tags only"  below-left of site  style: touch
+node nba    "/nba/  NBA page"  below-right of site  style: touch
+node meta   "favicon.svg, og-image.svg / robots.txt, sitemap.xml"  below site  style: new
+node cmp    "#compare/a/b / team vs team"  below-left of nba  style: new
+node plr    "#player/id / averages + game log"  below nba  style: new
+node pre    "#game/id before tip / shows the matchup"  below-right of nba  style: new
+node js     "nba.js / 4 new parsers + tests"  below plr  style: new
+node png    "og-image.png / Claude renders after"  below meta  style: me
+
+edge site -> nfl
+edge site -> nba
+edge site -> meta
+edge nba -> cmp
+edge nba -> plr
+edge nba -> pre
+edge pre -> cmp  "reuses" (color: theme-muted)
+edge js -> plr
+edge meta -> png
