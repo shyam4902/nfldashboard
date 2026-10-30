@@ -55,7 +55,7 @@ with sync_playwright() as p:
     page.on("pageerror", handle_pageerror)
     browser_fixtures.install(page, DASHBOARD_DIR)
 
-    page.goto(f"http://127.0.0.1:{PORT}/index.html")
+    page.goto(f"http://127.0.0.1:{PORT}/nfl/")
     page.wait_for_load_state("networkidle")
     page.wait_for_timeout(2500)
     page.screenshot(path=f"{SCREENSHOT_DIR}/01_home_default.png")
@@ -473,7 +473,7 @@ with sync_playwright() as p:
             }),
         ),
     )
-    failed_page.goto(f"http://127.0.0.1:{PORT}/index.html")
+    failed_page.goto(f"http://127.0.0.1:{PORT}/nfl/")
     failed_page.wait_for_load_state("networkidle")
     failed_page.wait_for_timeout(1500)
     failed_banner = failed_page.locator("#pipelineStatusBanner")
@@ -492,7 +492,7 @@ with sync_playwright() as p:
     browser_fixtures.install(absent_page, DASHBOARD_DIR)
     absent_page.route("**/data/shared/pipeline-status.json",
                       lambda route: route.fulfill(status=204))
-    absent_page.goto(f"http://127.0.0.1:{PORT}/index.html")
+    absent_page.goto(f"http://127.0.0.1:{PORT}/nfl/")
     absent_page.wait_for_load_state("networkidle")
     absent_page.wait_for_timeout(1200)
     if absent_page.locator("#pipelineStatusBanner").is_hidden() \
@@ -513,7 +513,7 @@ with sync_playwright() as p:
                          lambda route: route.fulfill(status=200,
                                                       content_type="text/html",
                                                       body="<html>not json</html>"))
-    malformed_page.goto(f"http://127.0.0.1:{PORT}/index.html")
+    malformed_page.goto(f"http://127.0.0.1:{PORT}/nfl/")
     malformed_page.wait_for_load_state("networkidle")
     malformed_page.wait_for_timeout(1200)
     if malformed_page.locator("#pipelineStatusBanner").is_hidden() \

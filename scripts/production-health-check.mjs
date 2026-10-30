@@ -77,7 +77,7 @@ async function check() {
   });
 
   // 5. Moves default list contains no draft rows
-  const indexHtml = fs.readFileSync("index.html", "utf8");
+  const indexHtml = fs.readFileSync("nfl/index.html", "utf8");
   const defaultFilterMatch = indexHtml.match(/let txTypeFilter\s*=\s*'([a-z]+)';/);
   const defaultFilter = defaultFilterMatch ? defaultFilterMatch[1] : "unknown";
   const defaultNoDraft = defaultFilter === "moves";
@@ -95,7 +95,7 @@ async function check() {
     detail: hasDraftButton ? "typeButton('draft', 'Draft') present" : "Draft filter missing"
   });
 
-  // 7. Madden does not mutate identity fields in index.html
+  // 7. Madden does not mutate identity fields in nfl/index.html
   const maddenMutatesAge = indexHtml.includes("p.age = match.age");
   const maddenMutatesJersey = indexHtml.includes("p.jersey = match.jersey");
   const passMaddenIsolation = !maddenMutatesAge && !maddenMutatesJersey;

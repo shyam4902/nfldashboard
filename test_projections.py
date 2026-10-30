@@ -51,7 +51,7 @@ try:
         page.on("console", lambda msg: console_msgs.append(f"[{msg.type}] {msg.text}"))
         browser_fixtures.install(page, DASHBOARD_DIR)
 
-        page.goto("http://127.0.0.1:8766/index.html")
+        page.goto("http://127.0.0.1:8766/nfl/")
         page.wait_for_load_state("networkidle")
         page.wait_for_timeout(3000)
         page.screenshot(path=f"{SCREENSHOT_DIR}/01_home.png", full_page=False)

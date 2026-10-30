@@ -23,8 +23,8 @@ import { extname, join } from 'node:path';
 import { installFixtures } from './test-fixtures/supabase-fixtures.mjs';
 
 const root = process.cwd();
-await access(join(root, 'index.html'));
-const sourceHtml = await readFile(join(root, 'index.html'), 'utf8');
+await access(join(root, 'nfl', 'index.html'));
+const sourceHtml = await readFile(join(root, 'nfl', 'index.html'), 'utf8');
 const walkthrough = await readFile(join(root, 'WALKTHROUGH.md'), 'utf8');
 const hasUnsupportedWalkthroughRanking = /\*\*Top WR:\*\*/.test(walkthrough);
 if (hasUnsupportedWalkthroughRanking) throw new Error('WALKTHROUGH.md contains unsupported global Top WR ranking claim');
@@ -42,7 +42,8 @@ console.log('--- browser-side summer override removed:', !hasBrowserSummerOverri
 const types = { '.html': 'text/html', '.js': 'text/javascript', '.json': 'application/json', '.css': 'text/css' };
 const server = createServer(async (req, res) => {
   try {
-    const path = req.url === '/' ? '/index.html' : req.url.split('?')[0];
+    // '/' is the sport picker now; the NFL checks run against the NFL sub-page.
+    const path = req.url === '/' ? '/nfl/index.html' : req.url.split('?')[0];
     // Serve the VERSIONED data/shared copies (nfldashboard/data/shared) — the
     // same bytes the git-connected Cloudflare Pages deploy ships. The
     // unversioned ../data/shared workspace handoff is the sync script's input,

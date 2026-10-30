@@ -20,8 +20,8 @@
 // ═══════════════════════════════════════════════════════════════════════════
 
 const TEAM_TENDENCIES_URLS = [
-  './data/shared/team_tendencies_2025.json',
-  './team_tendencies_2025.json',
+  '/data/shared/team_tendencies_2025.json',
+  '/team_tendencies_2025.json',
 ];
 
 const TEAM_TENDENCIES_REQUIRED_TOP = [

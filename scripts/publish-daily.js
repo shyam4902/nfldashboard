@@ -315,7 +315,7 @@ async function main() {
   // The builder is resolved later (checkout first, then this script's own
   // directory), so it is deliberately not a precondition — the first run after
   // a fresh clone may predate it reaching origin/main.
-  for (const required of ['index.html', 'scripts/validate-data.js', 'schedule.json']) {
+  for (const required of ['nfl/index.html', 'scripts/validate-data.js', 'schedule.json']) {
     if (!fs.existsSync(path.join(opts.root, required))) {
       throw new Error(`not a dashboard checkout (missing ${required}): ${opts.root}`);
     }

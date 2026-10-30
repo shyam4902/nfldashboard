@@ -78,7 +78,7 @@ with sync_playwright() as p:
     page.on("pageerror", handle_pageerror)
     browser_fixtures.install(page, DASHBOARD_DIR)
 
-    page.goto(f"http://127.0.0.1:{PORT}/index.html")
+    page.goto(f"http://127.0.0.1:{PORT}/nfl/")
     page.wait_for_load_state("networkidle")
     page.wait_for_timeout(2500)
     page.screenshot(path=f"{SHOT_DIR}/cp5_desktop_home.png")
