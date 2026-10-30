@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="575" height="1198" viewBox="-41 0 575 1198" font-family="'DejaVu Sans Mono', 'Menlo', 'Consolas', 'Liberation Mono', 'Courier New', monospace" font-size="14px">
+  <defs>
+    <marker id="r8abbf033-arrow-5c5c7c" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#5c5c7c"/>
+    </marker>
+    <mask id="r8abbf033-cut-1" maskUnits="userSpaceOnUse" x="-41" y="0" width="575" height="1198">
+      <rect x="-41" y="0" width="575" height="1198" fill="white"/>
+      <circle cx="16" cy="531.44" r="6.2" fill="black"/>
+    </mask>
+    <mask id="r8abbf033-cut-2" maskUnits="userSpaceOnUse" x="-41" y="0" width="575" height="1198">
+      <rect x="-41" y="0" width="575" height="1198" fill="white"/>
+      <circle cx="477.2" cy="1002.56" r="6.2" fill="black"/>
+    </mask>
+  </defs>
+  <rect x="-41" y="0" width="575" height="1198" fill="#111111"/>
+  <path d="M169.5 40 H316.5 a8 8 0 0 1 8 8 V174 a8 8 0 0 1 -8 8 H169.5 a8 8 0 0 1 -8 -8 V48 a8 8 0 0 1 8 -8 Z" fill="#191728" stroke="#4f5367"/>
+  <text x="243" y="68.4" fill="#d9d9d9" text-anchor="middle">nba/index.html</text>
+  <text x="243" y="87.4" fill="#d9d9d9" text-anchor="middle">card leader line</text>
+  <text x="243" y="106.4" fill="#d9d9d9" text-anchor="middle">phone search</text>
+  <text x="243" y="125.4" fill="#d9d9d9" text-anchor="middle">leader avatars</text>
+  <text x="243" y="144.4" fill="#d9d9d9" text-anchor="middle">team stats card</text>
+  <text x="243" y="163.4" fill="#d9d9d9" text-anchor="middle">#players</text>
+  <path d="M115 238 H371 a8 8 0 0 1 8 8 V296 a8 8 0 0 1 -8 8 H115 a8 8 0 0 1 -8 -8 V246 a8 8 0 0 1 8 -8 Z" fill="#191728" stroke="#8f3a3a"/>
+  <text x="243" y="266.4" fill="#d9d9d9" text-anchor="middle">nba/nba.js</text>
+  <text x="243" y="285.4" fill="#d9d9d9" text-anchor="middle">parseScoreboard gains leaders</text>
+  <path d="M169.5 360 H316.5 a8 8 0 0 1 8 8 V418 a8 8 0 0 1 -8 8 H169.5 a8 8 0 0 1 -8 -8 V368 a8 8 0 0 1 8 -8 Z" fill="#191728" stroke="#8f3a3a"/>
+  <text x="243" y="388.4" fill="#d9d9d9" text-anchor="middle">nba/nba.test.mjs</text>
+  <text x="243" y="407.4" fill="#d9d9d9" text-anchor="middle">19 tests</text>
+  <path d="M111 482 H375 a8 8 0 0 1 8 8 V540 a8 8 0 0 1 -8 8 H111 a8 8 0 0 1 -8 -8 V490 a8 8 0 0 1 8 -8 Z" fill="#142814" stroke="#486544"/>
+  <text x="243" y="510.4" fill="#d9d9d9" text-anchor="middle">score cards</text>
+  <text x="243" y="529.4" fill="#d9d9d9" text-anchor="middle">one muted points line per side</text>
+  <path d="M48 604 H438 a8 8 0 0 1 8 8 V662 a8 8 0 0 1 -8 8 H48 a8 8 0 0 1 -8 -8 V612 a8 8 0 0 1 8 -8 Z" fill="#142814" stroke="#486544"/>
+  <text x="243" y="632.4" fill="#d9d9d9" text-anchor="middle">header search</text>
+  <text x="243" y="651.4" fill="#d9d9d9" text-anchor="middle">outside tap, Searching…, below-header overlay</text>
+  <path d="M111 726 H375 a8 8 0 0 1 8 8 V784 a8 8 0 0 1 -8 8 H111 a8 8 0 0 1 -8 -8 V734 a8 8 0 0 1 8 -8 Z" fill="#142814" stroke="#486544"/>
+  <text x="243" y="754.4" fill="#d9d9d9" text-anchor="middle">leaders</text>
+  <text x="243" y="773.4" fill="#d9d9d9" text-anchor="middle">3PM per game, initials avatars</text>
+  <path d="M90 848 H396 a8 8 0 0 1 8 8 V906 a8 8 0 0 1 -8 8 H90 a8 8 0 0 1 -8 -8 V856 a8 8 0 0 1 8 -8 Z" fill="#142814" stroke="#486544"/>
+  <text x="243" y="876.4" fill="#d9d9d9" text-anchor="middle">team page</text>
+  <text x="243" y="895.4" fill="#d9d9d9" text-anchor="middle">PPG OPP Diff FG 3P REB AST TOV card</text>
+  <path d="M98 970 H388 a8 8 0 0 1 8 8 V1028 a8 8 0 0 1 -8 8 H98 a8 8 0 0 1 -8 -8 V978 a8 8 0 0 1 8 -8 Z" fill="#142814" stroke="#486544"/>
+  <text x="243" y="998.4" fill="#d9d9d9" text-anchor="middle">#players/a/b</text>
+  <text x="243" y="1017.4" fill="#d9d9d9" text-anchor="middle">two pickers, shared compare table</text>
+  <path d="M73 1092 H413 a8 8 0 0 1 8 8 V1150 a8 8 0 0 1 -8 8 H73 a8 8 0 0 1 -8 -8 V1100 a8 8 0 0 1 8 -8 Z" fill="#191728" stroke="#4f5367"/>
+  <text x="243" y="1120.4" fill="#8b8b8b" text-anchor="middle">ESPN API</text>
+  <text x="243" y="1139.4" fill="#8b8b8b" text-anchor="middle">scoreboard, byathlete, search, athletes</text>
+  <line x1="243" y1="182" x2="243" y2="238" stroke="#5c5c7c" stroke-width="1.6" marker-end="url(#r8abbf033-arrow-5c5c7c)"/>
+  <line x1="243" y1="304" x2="243" y2="360" stroke="#5c5c7c" stroke-width="1.6" marker-end="url(#r8abbf033-arrow-5c5c7c)"/>
+  <path d="M 324.5 143 L 324.5 143 C 374.04 143, 414.2 196.72, 414.2 263 L 414.2 395 C 414.2 461.28, 405.25 515, 394.2 515 L 383 515" fill="none" stroke="#5c5c7c" stroke-width="1.6" marker-end="url(#r8abbf033-arrow-5c5c7c)"/>
+  <path d="M 324.5 111 L 438.73 111 C 459.98 111, 477.2 128.22, 477.2 149.47 L 477.2 617 C 477.2 628.05, 468.25 637, 457.2 637 L 446 637" fill="none" stroke="#5c5c7c" stroke-width="1.6" marker-end="url(#r8abbf033-arrow-5c5c7c)"/>
+  <path d="M 161.5 127 L 136 127 C 69.72 127, 16 180.72, 16 247 L 16 639 C 16 705.28, 49.94 759, 91.8 759 L 103 759" fill="none" stroke="#5c5c7c" stroke-width="1.6" marker-end="url(#r8abbf033-arrow-5c5c7c)"/>
+  <path d="M 324.5 127 L 341.2 127 C 407.48 127, 461.2 180.72, 461.2 247 L 461.2 761 C 461.2 827.28, 440.61 881, 415.2 881 L 404 881" fill="none" stroke="#5c5c7c" stroke-width="1.6" marker-end="url(#r8abbf033-arrow-5c5c7c)"/>
+  <path d="M 324.5 95 L 419.51 95 C 460.21 95, 493.2 127.99, 493.2 168.7 L 493.2 983 C 493.2 994.05, 484.25 1003, 473.2 1003 L 396 1003" fill="none" stroke="#5c5c7c" stroke-width="1.6" marker-end="url(#r8abbf033-arrow-5c5c7c)"/>
+  <path d="M 103 531 L 20 531 C 8.95 531, 0 539.95, 0 551 L 0 1005 C 0 1071.28, 24.09 1125, 53.8 1125 L 65 1125" fill="none" stroke="#5c5c7c" stroke-width="1.6" marker-end="url(#r8abbf033-arrow-5c5c7c)" mask="url(#r8abbf033-cut-1)"/>
+  <path d="M 446 653 L 457.2 653 C 468.25 653, 477.2 661.95, 477.2 673 L 477.2 1005 C 477.2 1071.28, 457.05 1125, 432.2 1125 L 421 1125" fill="none" stroke="#5c5c7c" stroke-width="1.6" marker-end="url(#r8abbf033-arrow-5c5c7c)" mask="url(#r8abbf033-cut-2)"/>
+  <line x1="243" y1="1036" x2="243" y2="1092" stroke="#5c5c7c" stroke-width="1.6" marker-end="url(#r8abbf033-arrow-5c5c7c)"/>
+</svg>

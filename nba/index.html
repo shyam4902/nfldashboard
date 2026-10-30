@@ -635,27 +635,91 @@ tbody tr:last-child td { border-bottom: 0; }
 .ss-team.loser { color: var(--text-faint); font-weight: 500; }
 .sched-row .ss-wrap { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
 @media (max-width: 560px) {
-  .search-input { display: none; }
+  .nba-header .search-input { display: none; }
   .search-toggle { display: inline-flex; }
   .nba-search { flex: 0 0 auto; max-width: none; }
-  .nba-header.search-open .brand, .nba-header.search-open .sport-switch { visibility: hidden; }
   .nba-search.open {
     position: absolute;
-    top: 8px;
-    left: 12px;
-    right: 12px;
+    top: 100%;
+    left: 0;
+    right: 0;
     max-width: none;
     z-index: 30;
+    padding: 8px 12px;
     background: var(--bg-header);
+    border-bottom: 1px solid var(--border-card);
   }
   .nba-search.open .search-input { display: block; }
-  .nba-search.open .search-results { left: 0; right: 0; }
+  .nba-search.open .search-results { left: 12px; right: 12px; }
   .leader-row { grid-template-columns: 18px 24px minmax(0, 1fr) auto; gap: 6px; }
   .leader-row .gp { display: none; }
+  .ps-fields { grid-template-columns: 1fr; }
 }
 @media (max-width: 480px) {
   .date-bar { flex-wrap: wrap; row-gap: 6px; }
 }
+
+/* ── Polish: card leaders, avatars, team stats, player compare ───────────── */
+.game-leader {
+  padding: 0 0 2px 32px;
+  font: 500 10px/1.35 var(--font-mono);
+  color: var(--text-faint);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.game-leader b { font-weight: 700; color: var(--text-muted); }
+.avatar {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 999px;
+  background: var(--bg-inset);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.avatar .avatar-ini { font: 700 9px/1 var(--font-mono); color: var(--text-muted); letter-spacing: 0.02em; }
+.avatar img { position: absolute; inset: 0; width: 26px; height: 26px; object-fit: cover; background: var(--bg-inset); }
+.team-stats { padding: 10px 12px; margin-bottom: 12px; }
+.stat-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+.stat-cell { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.stat-lbl { font: 700 9px/1 var(--font-sans); text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-faint); }
+.stat-val { font: 700 14px/1 var(--font-mono); color: var(--text-main); }
+.stat-val.diff-pos { color: var(--accent-brand); }
+.ps-fields {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 8px;
+  padding: 12px;
+  margin-bottom: 12px;
+}
+.ps-field { position: relative; display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+.ps-field label {
+  font: 700 10px/1 var(--font-sans);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-faint);
+}
+.player-cmp-head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  gap: 8px;
+  padding: 12px;
+  margin-bottom: 12px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-card);
+  border-radius: 10px;
+}
+.player-cmp-head .ps-side { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.player-cmp-head .ps-side.right { flex-direction: row-reverse; text-align: right; }
+.player-cmp-head img { width: 44px; height: 44px; border-radius: 999px; object-fit: cover; background: var(--bg-inset); flex-shrink: 0; }
+.player-cmp-head .ps-name { display: block; font: 700 14px/1.2 var(--font-sans); color: var(--text-main); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.player-cmp-head .ps-team { font: 500 10px/1.2 var(--font-mono); color: var(--text-faint); }
+.player-head .cmp-link { flex-shrink: 0; padding: 8px 0 8px 10px; }
 </style>
 </head>
 <body>
@@ -809,6 +873,13 @@ function teamRowHTML(side, state) {
     '<span class="score">' + (side.score == null ? '–' : esc(side.score)) + '</span></div>';
 }
 
+function leaderLineHTML(game, side) {
+  if (!game.leaders || game.state === 'pre') return '';
+  const entry = side === 'home' ? game.leaders.home : game.leaders.away;
+  if (!entry || !entry.name) return '';
+  return '<div class="game-leader">' + esc(entry.name) + ' <b>' + esc(entry.line) + '</b></div>';
+}
+
 function gameCardHTML(game) {
   const live = game.state === 'in';
   return '<a class="game-card" href="#game/' + esc(game.id) + '">' +
@@ -816,8 +887,8 @@ function gameCardHTML(game) {
     (game.broadcast ? '<span class="game-meta">' + esc(game.broadcast) + '</span>' : '<span></span>') +
     '<div class="game-status' + (live ? ' live' : '') + '"><span class="dot"></span>' + esc(game.statusText || 'Scheduled') + '</div>' +
     '</div>' +
-    teamRowHTML(game.away, game.state) +
-    teamRowHTML(game.home, game.state) +
+    teamRowHTML(game.away, game.state) + leaderLineHTML(game, 'away') +
+    teamRowHTML(game.home, game.state) + leaderLineHTML(game, 'home') +
     '</a>';
 }
 
@@ -1034,8 +1105,8 @@ const COMPARE_ROWS = [
   { label: 'AST/TO', value: (team) => team.stats.astTo, text: (team) => ratioDecimal(team.stats.astTo) },
 ];
 
-function compareTableHTML(left, right) {
-  const rows = COMPARE_ROWS.map((row) => {
+function compareTableHTML(left, right, rowSet = COMPARE_ROWS) {
+  const rows = rowSet.map((row) => {
     const a = row.value(left);
     const b = row.value(right);
     let aBetter = false;
@@ -1168,14 +1239,28 @@ const LEADER_BOARDS = [
   { key: 'assists', label: 'Assists', category: 'offensive', stat: 'avgAssists' },
   { key: 'steals', label: 'Steals', category: 'defensive', stat: 'avgSteals' },
   { key: 'blocks', label: 'Blocks', category: 'defensive', stat: 'avgBlocks' },
-  { key: 'threes', label: '3PM', category: 'offensive', stat: 'avgThreePointFieldGoalsMade' },
+  { key: 'threes', label: '3PM per game', category: 'offensive', stat: 'avgThreePointFieldGoalsMade' },
 ];
 const leadersCache = new Map();
+
+function initialsOf(name) {
+  return String(name || '').split(/\s+/).filter(Boolean).slice(0, 2)
+    .map((part) => part.charAt(0).toUpperCase()).join('');
+}
+
+// Initials sit under the image, so a missing or broken headshot swaps down to
+// the circle with no layout shift.
+function avatarHTML(src, name) {
+  return '<span class="avatar">' +
+    '<span class="avatar-ini" aria-hidden="true">' + esc(initialsOf(name) || '?') + '</span>' +
+    (src ? '<img src="' + esc(src) + '" alt="" width="26" height="26" loading="lazy" decoding="async" onerror="this.remove()">' : '') +
+    '</span>';
+}
 
 function leaderRowHTML(row) {
   return '<div class="leader-row">' +
     '<span class="rank">' + esc(row.rank) + '</span>' +
-    (row.headshot ? '<img src="' + esc(row.headshot) + '" alt="" loading="lazy">' : '<span></span>') +
+    avatarHTML(row.headshot, row.name) +
     '<span class="who"><a href="#player/' + esc(row.id) + '">' + esc(row.name) + '</a>' +
     (row.teamAbbr ? '<span class="team"> ' + esc(row.teamAbbr) + '</span>' : '') + '</span>' +
     '<span class="val">' + esc(oneDecimal(row.value)) +
@@ -1230,6 +1315,32 @@ function highlightSearchResult() {
   });
 }
 
+function searchOptionHTML(player, prefix) {
+  return '<li role="option"' + (prefix ? ' id="' + esc(prefix) + esc(player.id) + '"' : '') +
+    ' data-id="' + esc(player.id) + '" aria-selected="false">' +
+    (player.headshot ? '<img src="' + esc(player.headshot) + '" alt="" loading="lazy">' : '') +
+    '<span>' + esc(player.name) + '</span>' +
+    (player.teamAbbr ? '<span class="sr-team">' + esc(player.teamAbbr) + '</span>' : '') +
+    '</li>';
+}
+
+async function searchPlayers(query, signal) {
+  const response = await fetch(SEARCH_API + encodeURIComponent(query) + '&limit=10&type=player', { cache: 'no-store', signal });
+  if (!response.ok) throw new Error('ESPN HTTP ' + response.status);
+  return parseSearch(await response.json()).slice(0, 8);
+}
+
+function paintSearchMessage(message) {
+  const list = document.getElementById('searchResults');
+  const input = document.getElementById('searchInput');
+  if (!list || !input) return;
+  searchResults = [];
+  searchActive = -1;
+  list.innerHTML = '<li class="sr-empty" role="presentation">' + esc(message) + '</li>';
+  list.hidden = false;
+  input.setAttribute('aria-expanded', 'true');
+}
+
 function paintSearchResults(items) {
   const list = document.getElementById('searchResults');
   const input = document.getElementById('searchInput');
@@ -1237,11 +1348,7 @@ function paintSearchResults(items) {
   searchResults = items;
   searchActive = items.length ? 0 : -1;
   list.innerHTML = items.length
-    ? items.map((player) => '<li role="option" id="search-opt-' + esc(player.id) + '" data-id="' + esc(player.id) + '" aria-selected="false">' +
-        (player.headshot ? '<img src="' + esc(player.headshot) + '" alt="" loading="lazy">' : '') +
-        '<span>' + esc(player.name) + '</span>' +
-        (player.teamAbbr ? '<span class="sr-team">' + esc(player.teamAbbr) + '</span>' : '') +
-        '</li>').join('')
+    ? items.map((player) => searchOptionHTML(player, 'search-opt-')).join('')
     : '<li class="sr-empty" role="presentation">No NBA players found</li>';
   list.hidden = false;
   input.setAttribute('aria-expanded', 'true');
@@ -1268,8 +1375,6 @@ function closeSearch() {
   if (input) input.setAttribute('aria-expanded', 'false');
   if (toggle) toggle.setAttribute('aria-expanded', 'false');
   if (shell) shell.classList.remove('open');
-  const header = document.querySelector('.nba-header');
-  if (header) header.classList.remove('search-open');
   searchResults = [];
   searchActive = -1;
 }
@@ -1284,10 +1389,9 @@ async function runSearch(query) {
   if (searchAbort) searchAbort.abort();
   searchAbort = new AbortController();
   const signal = searchAbort.signal;
+  paintSearchMessage('Searching…');
   try {
-    const response = await fetch(SEARCH_API + encodeURIComponent(query) + '&limit=10&type=player', { cache: 'no-store', signal });
-    if (!response.ok) throw new Error('ESPN HTTP ' + response.status);
-    const players = parseSearch(await response.json()).slice(0, 8);
+    const players = await searchPlayers(query, signal);
     if (signal.aborted) return;
     paintSearchResults(players);
   } catch (err) {
@@ -1342,11 +1446,19 @@ function initSearch() {
   toggle.addEventListener('click', () => {
     const open = !shell.classList.contains('open');
     shell.classList.toggle('open', open);
-    document.querySelector('.nba-header').classList.toggle('search-open', open);
     toggle.setAttribute('aria-expanded', String(open));
     if (open) input.focus();
     else closeSearch();
   });
+
+  // Tapping anywhere outside the search closes it, so the brand and the sport
+  // switch stay reachable while the phone overlay is open.
+  if (typeof document.addEventListener === 'function') {
+    document.addEventListener('click', (event) => {
+      if (shell.contains && shell.contains(event.target)) return;
+      closeSearch();
+    });
+  }
 }
 
 /* ── Player page ────────────────────────────────────────────────────────── */
@@ -1439,12 +1551,183 @@ async function showPlayer(id) {
     (athlete.team.id
       ? '<div class="p-sub"><a href="#team/' + esc(athlete.team.id) + '">' + esc(athlete.team.name || athlete.team.abbr) + '</a></div>'
       : '') +
-    '</div></div>';
+    '</div>' +
+    '<a class="cmp-link" href="#players/' + esc(athlete.id || id) + '">Compare</a></div>';
 
   app.innerHTML = head +
     '<section class="card standings-block"><h2>Averages</h2>' + averagesHTML(overview) + '</section>' +
     '<section class="card standings-block"><h2>Game log</h2>' + gameLogHTML(log) + '</section>';
   wireSeasonTabs();
+}
+
+/* ── Player vs player ───────────────────────────────────────────────────── */
+const PLAYER_COMPARE_ROWS = [
+  { label: 'PTS', value: (p) => p.season.PTS, text: (p) => oneDecimal(p.season.PTS) },
+  { label: 'REB', value: (p) => p.season.REB, text: (p) => oneDecimal(p.season.REB) },
+  { label: 'AST', value: (p) => p.season.AST, text: (p) => oneDecimal(p.season.AST) },
+  { label: 'STL', value: (p) => p.season.STL, text: (p) => oneDecimal(p.season.STL) },
+  { label: 'BLK', value: (p) => p.season.BLK, text: (p) => oneDecimal(p.season.BLK) },
+  { label: 'TO', value: (p) => p.season.TO, text: (p) => oneDecimal(p.season.TO), lower: true },
+  { label: 'FG%', value: (p) => p.season['FG%'], text: (p) => oneDecimal(p.season['FG%']) },
+  { label: '3P%', value: (p) => p.season['3P%'], text: (p) => oneDecimal(p.season['3P%']) },
+  { label: 'FT%', value: (p) => p.season['FT%'], text: (p) => oneDecimal(p.season['FT%']) },
+  { label: 'MIN', value: (p) => p.season.MIN, text: (p) => oneDecimal(p.season.MIN) },
+];
+
+function playerPickerHTML() {
+  const field = (id, listId, label) =>
+    '<div class="ps-field"><label for="' + id + '">' + label + '</label>' +
+    '<input class="search-input" id="' + id + '" type="search" autocomplete="off" role="combobox" ' +
+    'aria-expanded="false" aria-controls="' + listId + '" aria-autocomplete="list" aria-label="' + label + '">' +
+    '<ul class="search-results" id="' + listId + '" role="listbox" aria-label="' + label + ' results" hidden></ul></div>';
+  return '<div class="card ps-fields">' + field('psA', 'psListA', 'Player A') + field('psB', 'psListB', 'Player B') + '</div>';
+}
+
+function playerCompareHeadHTML(left, right) {
+  const side = (entry, cls) => '<a class="ps-side' + (cls ? ' ' + cls : '') + '" href="#player/' + esc(entry.id) + '">' +
+    avatarHTML(entry.athlete.headshot, entry.athlete.name) +
+    '<span><span class="ps-name">' + esc(entry.athlete.name || 'Player') + '</span>' +
+    '<span class="ps-team">' + esc(entry.athlete.team.abbr || '') + '</span></span></a>';
+  return '<div class="player-cmp-head">' + side(left, '') +
+    '<span class="cmp-vs">vs</span>' + side(right, 'right') + '</div>';
+}
+
+// Same search component as the header, mounted on a picker field.
+function bindPlayerSearch(inputId, listId, onPick) {
+  const input = document.getElementById(inputId);
+  const list = document.getElementById(listId);
+  if (!input || !list) return;
+  let timer = 0;
+  let controller = null;
+  let results = [];
+  let active = -1;
+
+  const close = () => {
+    if (timer) clearTimeout(timer);
+    if (controller) controller.abort();
+    list.hidden = true;
+    list.innerHTML = '';
+    results = [];
+    active = -1;
+    input.setAttribute('aria-expanded', 'false');
+  };
+
+  const paint = () => {
+    list.innerHTML = results.length
+      ? results.map((player) => searchOptionHTML(player, inputId + '-opt-')).join('')
+      : '<li class="sr-empty" role="presentation">No NBA players found</li>';
+    list.hidden = false;
+    input.setAttribute('aria-expanded', 'true');
+    list.querySelectorAll('[role="option"]').forEach((option, index) => {
+      option.setAttribute('aria-selected', String(index === active));
+    });
+  };
+
+  input.addEventListener('input', () => {
+    if (timer) clearTimeout(timer);
+    if (controller) controller.abort();
+    const query = input.value.trim();
+    if (query.length < 2) {
+      close();
+      return;
+    }
+    list.innerHTML = '<li class="sr-empty" role="presentation">Searching…</li>';
+    list.hidden = false;
+    input.setAttribute('aria-expanded', 'true');
+    timer = setTimeout(async () => {
+      controller = new AbortController();
+      const signal = controller.signal;
+      try {
+        results = await searchPlayers(query, signal);
+        if (signal.aborted) return;
+        active = results.length ? 0 : -1;
+        paint();
+      } catch (err) {
+        if (signal.aborted) return;
+        results = [];
+        active = -1;
+        paint();
+      }
+    }, 250);
+  });
+
+  input.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') {
+      close();
+      return;
+    }
+    if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+      if (!results.length) return;
+      event.preventDefault();
+      active = (active + (event.key === 'ArrowDown' ? 1 : -1) + results.length) % results.length;
+      paint();
+      return;
+    }
+    if (event.key === 'Enter' && results.length) {
+      event.preventDefault();
+      const picked = results[Math.max(0, active)];
+      if (picked) onPick(picked.id);
+    }
+  });
+
+  list.addEventListener('click', (event) => {
+    const option = event.target.closest('[data-id]');
+    if (option) onPick(option.getAttribute('data-id'));
+  });
+}
+
+async function playerEntry(id) {
+  const [athleteJson, overviewJson] = await Promise.all([
+    fetchJSON(WEB + '/athletes/' + encodeURIComponent(id)),
+    fetchJSON(WEB + '/athletes/' + encodeURIComponent(id) + '/overview'),
+  ]);
+  return {
+    id: String(id),
+    athlete: parseAthlete(athleteJson),
+    season: parsePlayerOverview(overviewJson).season,
+  };
+}
+
+function playersHash(a, b) {
+  return '#players' + (a ? '/' + a : '') + (a && b ? '/' + b : '');
+}
+
+async function showPlayers(idA, idB) {
+  stopPolling();
+  const token = ++requestId;
+  const a = String(idA || '');
+  const b = String(idB || '');
+  const go = (nextA, nextB) => {
+    const hash = playersHash(nextA, nextB);
+    if (location.hash !== hash) location.hash = hash;
+  };
+
+  if (!a || !b) {
+    app.innerHTML = playerPickerHTML() + '<div class="state">' +
+      esc(a || b ? 'Pick the second player to compare.' : 'Search for two players to compare their season averages.') + '</div>';
+    bindPlayerSearch('psA', 'psListA', (id) => go(id, b));
+    bindPlayerSearch('psB', 'psListB', (id) => go(a, id));
+    return;
+  }
+
+  app.innerHTML = playerPickerHTML() + loadingHTML();
+  bindPlayerSearch('psA', 'psListA', (id) => go(id, b));
+  bindPlayerSearch('psB', 'psListB', (id) => go(a, id));
+
+  let left;
+  let right;
+  try {
+    [left, right] = await Promise.all([playerEntry(a), playerEntry(b)]);
+  } catch (err) {
+    if (token === requestId) showError(() => showPlayers(a, b));
+    return;
+  }
+  if (token !== requestId) return;
+
+  app.innerHTML = playerPickerHTML() + playerCompareHeadHTML(left, right) +
+    compareTableHTML(left, right, PLAYER_COMPARE_ROWS);
+  bindPlayerSearch('psA', 'psListA', (id) => go(id, b));
+  bindPlayerSearch('psB', 'psListB', (id) => go(a, id));
 }
 
 /* ── Game / box score ───────────────────────────────────────────────────── */
@@ -1638,19 +1921,37 @@ function rosterRowHTML(player) {
     '<span class="age">' + esc(player.height || '') + (player.age ? ' · ' + esc(player.age) : '') + '</span></div>';
 }
 
+function teamStatsHTML(bundle) {
+  const diff = bundle.ppg == null || bundle.oppPpg == null ? null : bundle.ppg - bundle.oppPpg;
+  const cells = [
+    ['PPG', oneDecimal(bundle.ppg)],
+    ['Opp PPG', oneDecimal(bundle.oppPpg)],
+    ['Diff', signedDecimal(diff)],
+    ['FG%', oneDecimal(bundle.stats.fgPct)],
+    ['3P%', oneDecimal(bundle.stats.threePct)],
+    ['REB', oneDecimal(bundle.stats.reb)],
+    ['AST', oneDecimal(bundle.stats.ast)],
+    ['TOV', oneDecimal(bundle.stats.tov)],
+  ];
+  return '<section class="card team-stats"><h2>Season stats</h2><div class="stat-grid">' +
+    cells.map(([label, value]) => '<div class="stat-cell"><span class="stat-lbl">' + esc(label) + '</span>' +
+      '<span class="stat-val' + (label === 'Diff' && diff != null && diff > 0 ? ' diff-pos' : '') + '">' + esc(value) + '</span></div>').join('') +
+    '</div></section>';
+}
+
 async function showTeam(id) {
   stopPolling();
   const token = ++requestId;
   app.innerHTML = loadingHTML();
 
-  let schedule;
+  let bundle;
   let roster;
   try {
     const both = await Promise.all([
-      teamData(id).then((data) => data.schedule),
+      teamBundle(id),
       fetchJSON(API + '/teams/' + encodeURIComponent(id) + '/roster').then(parseRoster),
     ]);
-    schedule = both[0];
+    bundle = both[0];
     roster = both[1];
   } catch (err) {
     if (token === requestId) showError(() => showTeam(id));
@@ -1658,6 +1959,7 @@ async function showTeam(id) {
   }
   if (token !== requestId) return;
 
+  const schedule = bundle.schedule;
   const team = schedule.team;
   const head = '<div class="card team-head">' +
     (team.logo ? '<img src="' + esc(team.logo) + '" alt="" loading="lazy">' : '') +
@@ -1672,7 +1974,7 @@ async function showTeam(id) {
     ? '<div class="card sched">' + roster.map(rosterRowHTML).join('') + '</div>'
     : '<div class="state">No roster</div>';
 
-  app.innerHTML = head +
+  app.innerHTML = head + teamStatsHTML(bundle) +
     '<div class="tabs-row" role="tablist">' +
     '<button class="tab" type="button" role="tab" data-panel="schedule" aria-selected="true">Schedule</button>' +
     '<button class="tab" type="button" role="tab" data-panel="roster" aria-selected="false">Roster</button>' +
@@ -1706,6 +2008,7 @@ function router() {
   else if (route.view === 'team' && route.arg) showTeam(route.arg);
   else if (route.view === 'compare') showCompare(route.args[0], route.args[1]);
   else if (route.view === 'leaders') showLeaders();
+  else if (route.view === 'players') showPlayers(route.args[0], route.args[1]);
   else if (route.view === 'player' && route.arg) showPlayer(route.arg);
   else showScores(route.view === 'scores' ? route.arg : '');
 }

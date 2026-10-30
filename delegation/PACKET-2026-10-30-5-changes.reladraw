@@ -1,0 +1,26 @@
+// What PACKET-2026-10-30-5 changes, 2026-10-30.
+// Gold = new, steel = edited, muted = read-only input.
+style new   fill: theme-primary-subtle  border: theme-primary
+style edit  fill: theme-fill  border: theme-secondary
+style given border: theme-border  text: (color: theme-muted)
+
+node page "nba/index.html / card leader line / phone search / leader avatars / team stats card / #players"
+node js   "nba/nba.js / parseScoreboard gains leaders"  below page  style: edit
+node test "nba/nba.test.mjs / 19 tests"  below js  style: edit
+node card "score cards / one muted points line per side"  below test  style: new
+node srch "header search / outside tap, Searching…, below-header overlay"  below card  style: new
+node lead "leaders / 3PM per game, initials avatars"  below srch  style: new
+node team "team page / PPG OPP Diff FG 3P REB AST TOV card"  below lead  style: new
+node pvp  "#players/a/b / two pickers, shared compare table"  below team  style: new
+node espn "ESPN API / scoreboard, byathlete, search, athletes"  below pvp  style: given
+
+edge page -> js
+edge js -> test
+edge page -> card
+edge page -> srch
+edge page -> lead
+edge page -> team
+edge page -> pvp
+edge card -> espn
+edge srch -> espn
+edge pvp -> espn

@@ -40,6 +40,20 @@ test('parseScoreboard reads the 2026-10-22 card', () => {
   assert.equal(games[0].away.winner, false);
 });
 
+test('parseScoreboard adds a points leader for each side', () => {
+  const games = parseScoreboard(fixture('scoreboard-20261022.json'));
+
+  assert.ok(games.length >= 1);
+  for (const game of games) {
+    assert.ok(game.leaders, `${game.id} leaders`);
+    assert.ok(game.leaders.away && game.leaders.home, `${game.id} both sides`);
+    assert.ok(game.leaders.away.name.length > 0, `${game.id} away name`);
+    assert.ok(game.leaders.home.name.length > 0, `${game.id} home name`);
+    assert.ok(/PTS$/.test(game.leaders.away.line), `${game.id} away line`);
+    assert.ok(/PTS$/.test(game.leaders.home.line), `${game.id} home line`);
+  }
+});
+
 test('parseStandings reads both conferences by stat name', () => {
   const standings = parseStandings(fixture('standings.json'));
 

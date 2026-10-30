@@ -22,6 +22,7 @@
 - Team statistics and schedules are cached for 5 minutes in one `teamData(id)` helper shared by compare, pre-game and the team page.
 - Season-series rows bold the winner's abbreviation and score and mute the loser. Standings gained PPG / OPP / DIFF (signed, gold for positive, no new colours, table scrolls inside its wrapper). The scores date bar has a native date picker next to prev/next and Today.
 - `nba/nba.test.mjs` is 18 tests.
+- Polish pass (PACKET-2026-10-30-5): final and live score cards show each side's points leader, phone search opens as a row below the header so the brand and NFL | NBA switch stay reachable (outside tap closes it) and shows a “Searching…” state, the 3PM board is labelled per game with initials avatars as headshot fallbacks, `#team/<id>` has a season-stats card, and `#players/<idA>/<idB>` compares two players with the shared compare table (19 tests).
 
 ## NBA page + matchup fix, 2026-10-23
 

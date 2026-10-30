@@ -78,6 +78,15 @@ export function etDate(dateOrIso) {
   return `${parts.year}${parts.month}${parts.day}`;
 }
 
+function pointsLeader(competitor) {
+  const points = arr(competitor?.leaders).find((category) => str(category?.name) === 'points');
+  const top = arr(points?.leaders)[0];
+  if (!top) return null;
+  const name = str(top.athlete?.displayName || top.athlete?.fullName);
+  if (!name) return null;
+  return { name, line: str(top.displayValue) + ' PTS' };
+}
+
 export function parseScoreboard(json) {
   const games = [];
   for (const event of arr(json?.events)) {
@@ -85,6 +94,7 @@ export function parseScoreboard(json) {
     if (!competition) continue;
 
     const sides = { home: null, away: null };
+    const raw = { home: null, away: null };
     for (const competitor of arr(competition.competitors)) {
       const side = {
         ...teamOf(competitor),
@@ -92,8 +102,13 @@ export function parseScoreboard(json) {
         record: recordOf(competitor),
         winner: competitor.winner === true,
       };
-      if (competitor.homeAway === 'home') sides.home = side;
-      else if (competitor.homeAway === 'away') sides.away = side;
+      if (competitor.homeAway === 'home') {
+        sides.home = side;
+        raw.home = competitor;
+      } else if (competitor.homeAway === 'away') {
+        sides.away = side;
+        raw.away = competitor;
+      }
     }
     if (!sides.home || !sides.away) continue;
 
@@ -111,6 +126,9 @@ export function parseScoreboard(json) {
       broadcast,
       away: sides.away,
       home: sides.home,
+      leaders: pointsLeader(raw.away) || pointsLeader(raw.home)
+        ? { away: pointsLeader(raw.away), home: pointsLeader(raw.home) }
+        : null,
     });
   }
   return games;
