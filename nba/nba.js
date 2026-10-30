@@ -7,6 +7,35 @@
 
 const STAT_KEYS = ['MIN', 'PTS', 'FG', '3PT', 'FT', 'REB', 'AST', 'TO', 'STL', 'BLK', 'PF', '+/-'];
 
+// ESPN serves the full-size original unless its resizer is asked for a copy: a
+// headshot is ~207KB and a logo ~37KB at full size, versus ~8KB and ~2KB
+// resized. `w`/`h` are the 2x sizes of what the page actually displays. Any
+// non-espncdn URL, and any URL already going through the resizer, is untouched.
+const ESPN_CDN = 'https://a.espncdn.com';
+
+export function smallImg(url, w, h) {
+  const value = str(url);
+  if (!value) return '';
+  if (!value.startsWith(ESPN_CDN + '/')) return value;
+  const width = Math.round(Number(w) || 0);
+  const height = Math.round(Number(h) || 0);
+  if (!width || !height) return value;
+  const path = value.slice(ESPN_CDN.length);
+  if (path.startsWith('/combiner') || path.includes('?')) return value;
+  return ESPN_CDN + '/combiner/i?img=' + path + '&w=' + width + '&h=' + height;
+}
+
+// Box-score totals arrive as made-attempted strings ("39-87") and carry no
+// percentage field, so the percentage has to be computed from the shot line.
+export function shotPct(value) {
+  const match = /^(\d+)\s*-\s*(\d+)$/.exec(str(value).trim());
+  if (!match) return null;
+  const made = Number(match[1]);
+  const attempted = Number(match[2]);
+  if (!attempted) return null;
+  return (made / attempted) * 100;
+}
+
 function arr(value) {
   return Array.isArray(value) ? value : [];
 }
@@ -263,6 +292,7 @@ export function parseBoxScore(json) {
 
     const team = teamOf(side?.team, side?.team?.id);
     const headerSide = arr(headerCompetition?.competitors).find((c) => str(c?.team?.id) === team.id);
+    const totals = mapStats(labels, block?.totals);
     teams.push({
       abbr: team.abbr,
       name: team.name,
@@ -271,7 +301,12 @@ export function parseBoxScore(json) {
       starters,
       bench,
       dnp,
-      totals: mapStats(labels, block?.totals),
+      totals,
+      shooting: {
+        fg: shotPct(totals.FG),
+        three: shotPct(totals['3PT']),
+        ft: shotPct(totals.FT),
+      },
     });
   }
 

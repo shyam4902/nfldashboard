@@ -15,6 +15,8 @@ import {
   parseStandings,
   parseTeamSchedule,
   parseTeamStats,
+  shotPct,
+  smallImg,
 } from './nba.js';
 
 function fixture(name) {
@@ -102,6 +104,36 @@ test('parseBoxScore splits starters, bench and DNP and adds up points', () => {
   const first = cavs.starters[0];
   assert.deepEqual(Object.keys(first.stats).sort(), ['+/-', '3PT', 'AST', 'BLK', 'FG', 'FT', 'MIN', 'PF', 'PTS', 'REB', 'STL', 'TO']);
   assert.equal(first.stats.FG.split('-').length, 2);
+});
+
+test('smallImg asks the ESPN resizer for 2x copies and leaves other URLs alone', () => {
+  assert.equal(
+    smallImg('https://a.espncdn.com/i/headshots/nba/players/full/3945274.png', 52, 52),
+    'https://a.espncdn.com/combiner/i?img=/i/headshots/nba/players/full/3945274.png&w=52&h=52',
+  );
+  assert.equal(smallImg('https://example.com/logo.png', 52, 52), 'https://example.com/logo.png');
+  assert.equal(smallImg('', 52, 52), '');
+  // A URL that already goes through the resizer is not wrapped twice.
+  const already = 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/nba/500/bos.png&w=40&h=40';
+  assert.equal(smallImg(already, 52, 52), already);
+});
+
+test('box-score totals compute shooting percentages from made-attempted', () => {
+  const { teams } = parseBoxScore(fixture('summary-401909093.json'));
+
+  assert.equal(teams.length, 2);
+  for (const team of teams) {
+    const [made, attempted] = team.totals.FG.split('-').map(Number);
+    const expected = Math.round((made / attempted) * 1000) / 10;
+    assert.equal(Math.round(team.shooting.fg * 10) / 10, expected, team.abbr + ' FG%');
+    assert.ok(team.shooting.three != null && team.shooting.ft != null, team.abbr + ' 3PT/FT');
+  }
+
+  const cle = teams.find((team) => team.abbr === 'CLE');
+  assert.equal(Math.round(cle.shooting.fg * 10) / 10, 44.8);
+  assert.equal(shotPct(''), null);
+  assert.equal(shotPct('0-0'), null);
+  assert.equal(shotPct('1-2'), 50);
 });
 
 test('parseTeamSchedule reads the 76ers season', () => {

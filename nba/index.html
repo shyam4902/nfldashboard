@@ -148,6 +148,36 @@ a { color: inherit; text-decoration: none; }
 img { display: block; }
 .wrap { width: 100%; max-width: 1080px; margin: 0 auto; padding: 0 12px; }
 
+/* Accessible to a screen reader, never drawn. */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+.skip-link {
+  position: absolute;
+  left: 8px;
+  top: -44px;
+  z-index: 100;
+  padding: 9px 12px;
+  border-radius: 6px;
+  background: var(--accent-brand);
+  color: var(--accent-brand-ink);
+  font: 700 12px/1 var(--font-sans);
+}
+.skip-link:focus { top: 8px; }
+/* One gold focus ring for every interactive element, keyboard only. */
+a:focus-visible, button:focus-visible, select:focus-visible, input:focus-visible {
+  outline: 2px solid var(--accent-brand);
+  outline-offset: 2px;
+}
+
 /* ── Header ─────────────────────────────────────────────────────────────── */
 .nba-header {
   position: sticky;
@@ -556,7 +586,7 @@ tbody tr:last-child td { border-bottom: 0; }
   border-radius: 6px;
   padding: 8px 10px;
 }
-.search-input:focus { outline: none; border-color: var(--border-strong); }
+.search-input:focus { border-color: var(--border-strong); }
 .search-toggle {
   display: none;
   align-items: center;
@@ -618,6 +648,18 @@ tbody tr:last-child td { border-bottom: 0; }
 .leader-row .team { font: 500 10px/1.2 var(--font-mono); color: var(--text-faint); }
 .leader-row .val { text-align: right; font: 700 13px/1 var(--font-mono); color: var(--text-main); }
 .leader-row .gp { font: 500 9px/1 var(--font-mono); color: var(--text-faint); }
+.standings-switch { display: flex; gap: 6px; margin-bottom: 10px; }
+.standings-switch a {
+  font: 700 11px/1 var(--font-sans);
+  letter-spacing: 0.04em;
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid var(--border-card);
+  color: var(--text-muted);
+  background: var(--bg-elevated);
+}
+.standings-switch a:hover { color: var(--text-main); border-color: var(--border-strong); }
+.standings-switch a[aria-current='page'] { color: var(--tab-active-text); background: var(--tab-active-bg); border-color: transparent; }
 .standings td.diff-pos { color: var(--accent-brand); font-weight: 700; }
 .standings td.diff-neg { color: var(--text-faint); }
 .date-bar .date-pick {
@@ -655,8 +697,25 @@ tbody tr:last-child td { border-bottom: 0; }
   .leader-row .gp { display: none; }
   .ps-fields { grid-template-columns: 1fr; }
 }
+/* One row at 375px: prev, date, next and Today. The date field shrinks to a
+   tappable calendar button instead of pushing the next arrow onto a new line. */
 @media (max-width: 480px) {
-  .date-bar { flex-wrap: wrap; row-gap: 6px; }
+  .date-bar { flex-wrap: nowrap; gap: 6px; padding: 8px; }
+  .date-bar .nav { padding: 7px 8px; }
+  .date-bar .day { flex: 1 1 auto; min-width: 0; }
+  .date-bar .day strong { font-size: 12px; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+  .date-bar .day span { display: none; }
+  .date-bar .date-pick {
+    flex: 0 0 auto;
+    width: 36px;
+    min-width: 36px;
+    max-width: 36px;
+    padding: 7px 0;
+    text-align: center;
+    overflow: hidden;
+  }
+  .date-bar .date-pick::-webkit-datetime-edit { display: none; }
+  .date-bar .date-pick::-webkit-calendar-picker-indicator { margin: 0 auto; }
 }
 
 /* ── Polish: card leaders, avatars, team stats, player compare ───────────── */
@@ -724,6 +783,8 @@ tbody tr:last-child td { border-bottom: 0; }
 </head>
 <body>
 
+<a class="skip-link" href="#app">Skip to content</a>
+
 <header class="nba-header">
   <div class="wrap bar">
     <a class="brand" href="#scores">
@@ -750,7 +811,7 @@ tbody tr:last-child td { border-bottom: 0; }
 </header>
 
 <main class="wrap">
-  <div id="app">
+  <div id="app" tabindex="-1">
     <div class="state"><span class="pulse"></span>Loading…</div>
   </div>
 </main>
@@ -770,6 +831,7 @@ import {
   parseStandings,
   parseTeamSchedule,
   parseTeamStats,
+  smallImg,
 } from './nba.js';
 
 const API = 'https://site.api.espn.com/apis/site/v2/sports/basketball/nba';
@@ -782,6 +844,29 @@ const app = document.getElementById('app');
 let requestId = 0;
 let pollTimer = 0;
 let gameTimer = 0;
+// Debounce timers owned by the player-compare pickers. Every hash change runs
+// stopPolling(), which closes them, so a pending callback can never write into
+// a node that a re-render already replaced.
+let pickerClosers = [];
+
+const SITE = 'Matchup Board';
+const DEFAULT_TITLE = SITE + ' · NBA scores, matchups and stats';
+let currentTitle = '';
+
+// Tabs, history and shared links get the view's name once its data has loaded;
+// the default title stays put while a view is still fetching.
+function setTitle(text) {
+  const next = text ? text + ' · ' + SITE : DEFAULT_TITLE;
+  if (next === currentTitle) return;
+  currentTitle = next;
+  if (typeof document !== 'undefined' && document) document.title = next;
+}
+
+function lastName(name) {
+  const parts = String(name || '').trim().split(/\s+/).filter(Boolean);
+  while (parts.length > 1 && /^(jr|sr|ii|iii|iv|v)$/i.test(parts[parts.length - 1])) parts.pop();
+  return parts[parts.length - 1] || '';
+}
 
 const ESCAPES = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
 const esc = (value) => String(value == null ? '' : value).replace(/[&<>"']/g, (ch) => ESCAPES[ch]);
@@ -795,6 +880,8 @@ function stopPolling() {
     clearTimeout(gameTimer);
     gameTimer = 0;
   }
+  pickerClosers.forEach((close) => close());
+  pickerClosers = [];
 }
 
 function loadingHTML() {
@@ -866,7 +953,8 @@ function formatPct(pct) {
 /* ── Scores ─────────────────────────────────────────────────────────────── */
 function teamRowHTML(side, state) {
   const rank = side.winner ? ' winner' : (state === 'post' ? ' loser' : '');
-  const logo = side.logo ? '<img class="logo" src="' + esc(side.logo) + '" alt="" loading="lazy">' : '<span class="logo"></span>';
+  // No loading="lazy": these logos are the first screen of the scores view.
+  const logo = side.logo ? '<img class="logo" src="' + esc(smallImg(side.logo, 44, 44)) + '" alt="" width="22" height="22" decoding="async">' : '<span class="logo"></span>';
   return '<div class="team-row' + rank + '">' + logo +
     '<div class="team-id"><span class="abbr">' + esc(side.abbr) + '</span>' +
     (side.record ? '<span class="record">' + esc(side.record) + '</span>' : '') + '</div>' +
@@ -943,6 +1031,8 @@ async function showScores(dateArg, isRefresh = false) {
   const order = { in: 0, pre: 1, post: 2 };
   const sorted = games.slice().sort((a, b) => (order[a.state] ?? 3) - (order[b.state] ?? 3));
 
+  setTitle('NBA Scores · ' + formatDay(date));
+
   app.innerHTML = dateBarHTML(date) + (sorted.length
     ? '<div class="games">' + sorted.map(gameCardHTML).join('') + '</div>'
     : '<div class="state">No games</div>');
@@ -957,13 +1047,14 @@ async function showScores(dateArg, isRefresh = false) {
 }
 
 /* ── Standings ──────────────────────────────────────────────────────────── */
-function standingsTableHTML(title, rows) {
+function standingsTableHTML(title, rows, options = {}) {
+  const league = options.league === true;
   const body = rows.map((row, index) => {
-    const cut = index === 5 || index === 9 ? ' class="cut"' : '';
-    const logo = row.logo ? '<img src="' + esc(row.logo) + '" alt="" loading="lazy">' : '';
-    const diff = row.ppg == null || row.oppPpg == null ? null : row.ppg - row.oppPpg;
+    const cut = !league && (index === 5 || index === 9) ? ' class="cut"' : '';
+    const logo = row.logo ? '<img src="' + esc(smallImg(row.logo, 36, 36)) + '" alt="" width="18" height="18" loading="lazy" decoding="async">' : '';
+    const diff = pointDiff(row);
     return '<tr' + cut + '>' +
-      '<td class="seed">' + esc(row.seed ?? index + 1) + '</td>' +
+      '<td class="seed">' + esc(league ? index + 1 : (row.seed ?? index + 1)) + '</td>' +
       '<td class="team">' + logo + '<a href="#team/' + esc(row.teamId) + '">' + esc(row.name) + '</a></td>' +
       '<td>' + (row.wins == null ? '—' : esc(row.wins)) + '</td>' +
       '<td>' + (row.losses == null ? '—' : esc(row.losses)) + '</td>' +
@@ -978,28 +1069,39 @@ function standingsTableHTML(title, rows) {
   }).join('');
 
   return '<section class="card standings-block"><h2>' + esc(title) + '</h2>' +
-    '<div class="table-wrap"><table class="standings"><thead><tr>' +
+    '<div class="table-wrap"><table class="standings">' +
+    '<caption class="sr-only">' + esc(title) + ' standings</caption><thead><tr>' +
     '<th class="seed">#</th><th class="team">Team</th><th>W</th><th>L</th><th>PCT</th><th>GB</th>' +
     '<th>PPG</th><th>OPP</th><th>DIFF</th><th>L10</th><th>STRK</th>' +
     '</tr></thead><tbody>' + body + '</tbody></table></div></section>';
 }
 
-async function showStandings() {
+async function showStandings(mode) {
   stopPolling();
   const token = ++requestId;
+  const league = mode === 'league';
   app.innerHTML = loadingHTML();
 
   let standings;
   try {
     standings = parseStandings(await fetchJSON(STANDINGS_API));
   } catch (err) {
-    if (token === requestId) showError(() => showStandings());
+    if (token === requestId) showError(() => showStandings(mode));
     return;
   }
   if (token !== requestId) return;
 
-  app.innerHTML = standingsTableHTML('Eastern Conference', standings.East) +
-    standingsTableHTML('Western Conference', standings.West);
+  const switchHTML = '<nav class="standings-switch" aria-label="Standings view">' +
+    '<a href="#standings"' + (league ? '' : ' aria-current="page"') + '>Conference</a>' +
+    '<a href="#standings/league"' + (league ? ' aria-current="page"' : '') + '>League</a></nav>';
+
+  setTitle('NBA Standings');
+
+  app.innerHTML = league
+    ? switchHTML + standingsTableHTML('League · all 30 teams',
+      [...standings.East, ...standings.West].slice().sort(byLeague), { league: true })
+    : switchHTML + standingsTableHTML('Eastern Conference', standings.East) +
+      standingsTableHTML('Western Conference', standings.West);
 }
 
 /* ── Compare ────────────────────────────────────────────────────────────── */
@@ -1068,6 +1170,12 @@ function oneDecimal(value) {
   return (Math.round(value * 10) / 10).toFixed(1);
 }
 
+// Box-score counts are whole numbers; oneDecimal would show 46 rebounds as 46.0.
+function wholeNumber(value) {
+  if (value == null || Number.isNaN(Number(value))) return '—';
+  return String(Math.round(Number(value)));
+}
+
 function signedDecimal(value) {
   if (value == null || Number.isNaN(value)) return '—';
   const rounded = Math.round(value * 10) / 10;
@@ -1077,6 +1185,22 @@ function signedDecimal(value) {
 function ratioDecimal(value) {
   if (value == null || Number.isNaN(value)) return '—';
   return (Math.round(value * 100) / 100).toFixed(2);
+}
+
+function pointDiff(row) {
+  return row.ppg == null || row.oppPpg == null ? null : row.ppg - row.oppPpg;
+}
+
+// League view: one table of 30 by win percentage, then point differential.
+function byLeague(a, b) {
+  const pct = (b.pct ?? -1) - (a.pct ?? -1);
+  if (pct !== 0) return pct;
+  const diffA = pointDiff(a);
+  const diffB = pointDiff(b);
+  if (diffA != null && diffB != null && diffA !== diffB) return diffB - diffA;
+  if (diffA != null && diffB == null) return -1;
+  if (diffA == null && diffB != null) return 1;
+  return a.name.localeCompare(b.name);
 }
 
 const COMPARE_ROWS = [
@@ -1105,7 +1229,7 @@ const COMPARE_ROWS = [
   { label: 'AST/TO', value: (team) => team.stats.astTo, text: (team) => ratioDecimal(team.stats.astTo) },
 ];
 
-function compareTableHTML(left, right, rowSet = COMPARE_ROWS) {
+function compareTableHTML(left, right, rowSet = COMPARE_ROWS, caption = 'Team comparison') {
   const rows = rowSet.map((row) => {
     const a = row.value(left);
     const b = row.value(right);
@@ -1121,13 +1245,14 @@ function compareTableHTML(left, right, rowSet = COMPARE_ROWS) {
       '<td class="cmp-val right' + (bBetter ? ' better' : '') + '">' + esc(row.text(right)) + '</td></tr>';
   }).join('');
 
-  return '<section class="card standings-block"><div class="table-wrap"><table class="cmp-table"><tbody>' +
+  return '<section class="card standings-block"><div class="table-wrap"><table class="cmp-table">' +
+    '<caption class="sr-only">' + esc(caption) + '</caption><tbody>' +
     rows + '</tbody></table></div></section>';
 }
 
 function compareHeadHTML(left, right, flat) {
   const side = (team, cls) => '<a class="cmp-side' + (cls ? ' ' + cls : '') + '" href="#team/' + esc(team.id) + '">' +
-    (team.logo ? '<img src="' + esc(team.logo) + '" alt="" loading="lazy">' : '') +
+    (team.logo ? '<img src="' + esc(smallImg(team.logo, 68, 68)) + '" alt="" width="34" height="34" loading="lazy" decoding="async">' : '') +
     '<span class="cmp-id"><span class="cmp-abbr">' + esc(team.abbr) + '</span>' +
     '<span class="cmp-name">' + esc(team.name) + '</span>' +
     '<span class="cmp-rec">' + esc(team.record || '—') + '</span></span></a>';
@@ -1141,7 +1266,7 @@ function comparePickerHTML(teams, a, b) {
     esc(row.name) + '</option>').join('');
   return '<div class="card cmp-pickers">' +
     '<label>Team A<select id="cmpA">' + options(a) + '</select></label>' +
-    '<button class="cmp-swap" type="button" id="cmpSwap" title="Swap teams">⇄</button>' +
+    '<button class="cmp-swap" type="button" id="cmpSwap" title="Swap teams" aria-label="Swap teams">⇄</button>' +
     '<label>Team B<select id="cmpB">' + options(b) + '</select></label></div>';
 }
 
@@ -1218,9 +1343,11 @@ async function showCompare(idA, idB) {
       '</section>';
   };
 
+  setTitle(left.abbr + ' vs ' + right.abbr + ' · Compare');
+
   app.innerHTML = comparePickerHTML(teams, a, b) +
     compareHeadHTML(left, right) +
-    compareTableHTML(left, right) +
+    compareTableHTML(left, right, COMPARE_ROWS, left.abbr + ' vs ' + right.abbr + ' · season comparison') +
     lastFive(left) + lastFive(right) +
     '<section class="card standings-block"><h2>This season · head to head</h2>' +
     (headToHead.length
@@ -1253,7 +1380,7 @@ function initialsOf(name) {
 function avatarHTML(src, name) {
   return '<span class="avatar">' +
     '<span class="avatar-ini" aria-hidden="true">' + esc(initialsOf(name) || '?') + '</span>' +
-    (src ? '<img src="' + esc(src) + '" alt="" width="26" height="26" loading="lazy" decoding="async" onerror="this.remove()">' : '') +
+    (src ? '<img src="' + esc(smallImg(src, 52, 52)) + '" alt="' + esc(name || '') + '" width="26" height="26" loading="lazy" decoding="async" onerror="this.remove()">' : '') +
     '</span>';
 }
 
@@ -1283,6 +1410,8 @@ async function showLeaders() {
       (cached ? leaderBoardHTML(cached) : '<div class="state"><span class="pulse"></span>Loading…</div>') +
       '</div></section>';
   }).join('');
+
+  setTitle('NBA Leaders');
 
   await Promise.all(LEADER_BOARDS.map(async (board, index) => {
     if (leadersCache.has(board.key)) return;
@@ -1318,7 +1447,7 @@ function highlightSearchResult() {
 function searchOptionHTML(player, prefix) {
   return '<li role="option"' + (prefix ? ' id="' + esc(prefix) + esc(player.id) + '"' : '') +
     ' data-id="' + esc(player.id) + '" aria-selected="false">' +
-    (player.headshot ? '<img src="' + esc(player.headshot) + '" alt="" loading="lazy">' : '') +
+    (player.headshot ? '<img src="' + esc(smallImg(player.headshot, 48, 48)) + '" alt="' + esc(player.name) + '" width="24" height="24" loading="lazy" decoding="async">' : '') +
     '<span>' + esc(player.name) + '</span>' +
     (player.teamAbbr ? '<span class="sr-team">' + esc(player.teamAbbr) + '</span>' : '') +
     '</li>';
@@ -1473,7 +1602,8 @@ function averagesHTML(overview) {
   const row = (title, values) => '<tr><td>' + esc(title) + '</td>' +
     overview.labels.map((label) => '<td>' + (values[label] == null ? '—' : esc(values[label])) + '</td>').join('') +
     '</tr>';
-  return '<div class="table-wrap"><table class="log avg"><thead><tr><th class="sticky-col">Split</th>' +
+  return '<div class="table-wrap"><table class="log avg">' +
+    '<caption class="sr-only">Season and career averages</caption><thead><tr><th class="sticky-col">Split</th>' +
     overview.labels.map((label) => '<th>' + esc(label) + '</th>').join('') +
     '</tr></thead><tbody>' + row('Season', overview.season) + row('Career', overview.career) +
     '</tbody></table></div>';
@@ -1487,7 +1617,8 @@ function seasonTableHTML(labels, games) {
     '<td>' + esc((game.result ? game.result + ' ' : '') + game.score) + '</td>' +
     labels.map((label) => '<td>' + (game.stats[label] == null ? '—' : esc(game.stats[label])) + '</td>').join('') +
     '</tr>').join('');
-  return '<div class="table-wrap"><table class="log"><thead><tr>' + head + '</tr></thead><tbody>' + rows + '</tbody></table></div>';
+  return '<div class="table-wrap"><table class="log">' +
+    '<caption class="sr-only">Game log</caption><thead><tr>' + head + '</tr></thead><tbody>' + rows + '</tbody></table></div>';
 }
 
 function gameLogHTML(log) {
@@ -1544,8 +1675,10 @@ async function showPlayer(id) {
     athlete.age == null ? '' : athlete.age + ' yrs',
   ].filter(Boolean).map((fact) => esc(fact)).join(' · ');
 
+  setTitle(athlete.name);
+
   const head = '<div class="card player-head">' +
-    (athlete.headshot ? '<img src="' + esc(athlete.headshot) + '" alt="" loading="lazy">' : '') +
+    (athlete.headshot ? '<img src="' + esc(smallImg(athlete.headshot, 128, 128)) + '" alt="' + esc(athlete.name || '') + '" width="64" height="64" loading="lazy" decoding="async">' : '') +
     '<div class="p-meta"><h1>' + esc(athlete.name || 'Player') + '</h1>' +
     (facts ? '<div class="p-sub">' + facts + '</div>' : '') +
     (athlete.team.id
@@ -1574,13 +1707,17 @@ const PLAYER_COMPARE_ROWS = [
   { label: 'MIN', value: (p) => p.season.MIN, text: (p) => oneDecimal(p.season.MIN) },
 ];
 
-function playerPickerHTML() {
-  const field = (id, listId, label) =>
+// The chosen names are written back into the fields, so a re-render after a
+// pick (fetch, hash change) does not drop them.
+function playerPickerHTML(nameA = '', nameB = '') {
+  const field = (id, listId, label, value) =>
     '<div class="ps-field"><label for="' + id + '">' + label + '</label>' +
     '<input class="search-input" id="' + id + '" type="search" autocomplete="off" role="combobox" ' +
-    'aria-expanded="false" aria-controls="' + listId + '" aria-autocomplete="list" aria-label="' + label + '">' +
+    'aria-expanded="false" aria-controls="' + listId + '" aria-autocomplete="list" aria-label="' + label + '"' +
+    (value ? ' value="' + esc(value) + '"' : '') + '>' +
     '<ul class="search-results" id="' + listId + '" role="listbox" aria-label="' + label + ' results" hidden></ul></div>';
-  return '<div class="card ps-fields">' + field('psA', 'psListA', 'Player A') + field('psB', 'psListB', 'Player B') + '</div>';
+  return '<div class="card ps-fields">' + field('psA', 'psListA', 'Player A', nameA) +
+    field('psB', 'psListB', 'Player B', nameB) + '</div>';
 }
 
 function playerCompareHeadHTML(left, right) {
@@ -1674,6 +1811,9 @@ function bindPlayerSearch(inputId, listId, onPick) {
     const option = event.target.closest('[data-id]');
     if (option) onPick(option.getAttribute('data-id'));
   });
+
+  // Registered so stopPolling() (every hash change) closes this picker too.
+  pickerClosers.push(close);
 }
 
 async function playerEntry(id) {
@@ -1724,8 +1864,11 @@ async function showPlayers(idA, idB) {
   }
   if (token !== requestId) return;
 
-  app.innerHTML = playerPickerHTML() + playerCompareHeadHTML(left, right) +
-    compareTableHTML(left, right, PLAYER_COMPARE_ROWS);
+  setTitle(lastName(left.athlete.name) + ' vs ' + lastName(right.athlete.name));
+
+  app.innerHTML = playerPickerHTML(left.athlete.name, right.athlete.name) +
+    playerCompareHeadHTML(left, right) +
+    compareTableHTML(left, right, PLAYER_COMPARE_ROWS, 'Player comparison');
   bindPlayerSearch('psA', 'psListA', (id) => go(id, b));
   bindPlayerSearch('psB', 'psListB', (id) => go(a, id));
 }
@@ -1762,8 +1905,9 @@ function boxTableHTML(team) {
     : '';
 
   return '<section class="card box-block">' +
-    '<div class="box-title">' + (team.logo ? '<img src="' + esc(team.logo) + '" alt="" loading="lazy">' : '') + '<h2>' + esc(team.name) + '</h2></div>' +
-    '<div class="table-wrap"><table class="box"><thead><tr>' +
+    '<div class="box-title">' + (team.logo ? '<img src="' + esc(smallImg(team.logo, 44, 44)) + '" alt="" width="22" height="22" loading="lazy" decoding="async">' : '') + '<h2>' + esc(team.name) + '</h2></div>' +
+    '<div class="table-wrap"><table class="box">' +
+    '<caption class="sr-only">' + esc(team.name) + ' box score</caption><thead><tr>' +
     '<th class="player-col">Player</th>' + COLUMNS.map((label) => '<th>' + esc(label) + '</th>').join('') +
     '</tr></thead><tbody>' + team.starters.map(playerRowHTML).join('') + bench + totals + '</tbody></table></div>' + dnp + '</section>';
 }
@@ -1834,12 +1978,14 @@ async function showPreGame(pre, token) {
 
   const section = (title, body) => '<section class="card standings-block"><h2>' + esc(title) + '</h2>' + body + '</section>';
 
+  setTitle(pre.away.abbr + ' vs ' + pre.home.abbr);
+
   app.innerHTML =
     '<div class="card mu-head">' + compareHeadHTML(away, home, true) +
       '<div class="mu-when"><b>' + esc(formatWhen(pre.startISO)) + '</b>' +
       (pre.venue ? ' · ' + esc(pre.venue) : '') +
       (pre.broadcast ? ' · ' + esc(pre.broadcast) : '') + '</div></div>' +
-    compareTableHTML(away, home) +
+    compareTableHTML(away, home, COMPARE_ROWS, pre.away.abbr + ' at ' + pre.home.abbr + ' · season comparison') +
     section('Season series', seriesHTML(pre)) +
     section('Last 5 · ' + pre.away.abbr, lastFiveHTML(pre, pre.away.abbr)) +
     section('Last 5 · ' + pre.home.abbr, lastFiveHTML(pre, pre.home.abbr)) +
@@ -1889,22 +2035,48 @@ async function showGame(id, isRefresh = false) {
   app.innerHTML = '<div class="state">No box score for this game.<br><a class="nav" href="#scores">Back to scores</a></div>';
 }
 
+// Team comparison from the box-score totals, for live and final games. Made -
+// attempted lines are compared on the percentage the shot line implies.
+const BOX_ROWS = [
+  { label: 'FG', value: (team) => team.shooting.fg, text: (team) => team.totals.FG || '—' },
+  { label: 'FG%', value: (team) => team.shooting.fg, text: (team) => oneDecimal(team.shooting.fg) },
+  { label: '3PT', value: (team) => team.shooting.three, text: (team) => team.totals['3PT'] || '—' },
+  { label: '3P%', value: (team) => team.shooting.three, text: (team) => oneDecimal(team.shooting.three) },
+  { label: 'FT', value: (team) => team.shooting.ft, text: (team) => team.totals.FT || '—' },
+  { label: 'FT%', value: (team) => team.shooting.ft, text: (team) => oneDecimal(team.shooting.ft) },
+  { label: 'REB', value: (team) => team.totals.REB, text: (team) => wholeNumber(team.totals.REB) },
+  { label: 'AST', value: (team) => team.totals.AST, text: (team) => wholeNumber(team.totals.AST) },
+  { label: 'TOV', value: (team) => team.totals.TO, text: (team) => wholeNumber(team.totals.TO), lower: true },
+  { label: 'STL', value: (team) => team.totals.STL, text: (team) => wholeNumber(team.totals.STL) },
+  { label: 'BLK', value: (team) => team.totals.BLK, text: (team) => wholeNumber(team.totals.BLK) },
+];
+
+function boxCompareHTML(box) {
+  const left = box.teams[0];
+  const right = box.teams[1];
+  if (!left || !right) return '';
+  return compareTableHTML(left, right, BOX_ROWS, left.abbr + ' vs ' + right.abbr + ' · game stats');
+}
+
 function renderBoxScore(box, live) {
   const teams = box.teams.map((team) => '<div class="gh-team">' +
-    (team.logo ? '<img src="' + esc(team.logo) + '" alt="" loading="lazy">' : '') +
+    (team.logo ? '<img src="' + esc(smallImg(team.logo, 68, 68)) + '" alt="" width="34" height="34" loading="lazy" decoding="async">' : '') +
     '<div class="gh-id"><span class="gh-abbr">' + esc(team.abbr) + '</span>' +
     '<span class="gh-score">' + (team.score == null ? '–' : esc(team.score)) + '</span></div></div>').join('');
+
+  setTitle(box.teams.map((team) => team.abbr).filter(Boolean).join(' vs '));
 
   app.innerHTML = '<div class="card game-head"><div class="gh-status">' + esc(box.statusText || 'Game') + '</div>' +
     '<div class="gh-teams">' + teams + '</div>' +
     (live ? '<div class="gh-live">Live · updates every 30s</div>' : '') + '</div>' +
+    boxCompareHTML(box) +
     box.teams.map(boxTableHTML).join('');
 }
 
 /* ── Team page ──────────────────────────────────────────────────────────── */
 function scheduleRowHTML(game) {
   const opponent = '<span class="ha">' + (game.homeAway === 'home' ? 'vs' : '@') + '</span>' +
-    (game.opponent.logo ? '<img src="' + esc(game.opponent.logo) + '" alt="" loading="lazy">' : '') +
+    (game.opponent.logo ? '<img src="' + esc(smallImg(game.opponent.logo, 36, 36)) + '" alt="" width="18" height="18" loading="lazy" decoding="async">' : '') +
     esc(game.opponent.abbr || game.opponent.name);
   const result = game.result
     ? '<span class="res ' + (game.result === 'W' ? 'win' : 'loss') + '">' + game.result + ' ' + (game.score == null ? '' : esc(game.score) + (game.oppScore == null ? '' : '-' + esc(game.oppScore))) + '</span>'
@@ -1961,8 +2133,10 @@ async function showTeam(id) {
 
   const schedule = bundle.schedule;
   const team = schedule.team;
+  setTitle(team.name);
+
   const head = '<div class="card team-head">' +
-    (team.logo ? '<img src="' + esc(team.logo) + '" alt="" loading="lazy">' : '') +
+    (team.logo ? '<img src="' + esc(smallImg(team.logo, 104, 104)) + '" alt="" width="52" height="52" loading="lazy" decoding="async">' : '') +
     '<div class="team-meta"><h1>' + esc(team.name || 'Team') + '</h1>' +
     (team.record ? '<div class="record">' + esc(team.record) + '</div>' : '') + '</div>' +
     '<a class="cmp-link" href="#compare/' + esc(id) + '">Compare</a></div>';
@@ -2003,7 +2177,7 @@ function router() {
   const route = parseHash();
   markNav(route.view);
 
-  if (route.view === 'standings') showStandings();
+  if (route.view === 'standings') showStandings(route.args[0]);
   else if (route.view === 'game' && route.arg) showGame(route.arg);
   else if (route.view === 'team' && route.arg) showTeam(route.arg);
   else if (route.view === 'compare') showCompare(route.args[0], route.args[1]);

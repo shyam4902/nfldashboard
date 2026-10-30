@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="962" height="869" viewBox="0 0 962 869" font-family="'DejaVu Sans Mono', 'Menlo', 'Consolas', 'Liberation Mono', 'Courier New', monospace" font-size="14px">
+  <defs>
+    <marker id="r8c9b6156-arrow-5c5c7c" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#5c5c7c"/>
+    </marker>
+    <mask id="r8c9b6156-cut-1" maskUnits="userSpaceOnUse" x="0" y="0" width="962" height="869">
+      <rect x="0" y="0" width="962" height="869" fill="white"/>
+      <circle cx="521.5" cy="335.56" r="6.2" fill="black"/>
+    </mask>
+    <mask id="r8c9b6156-cut-2" maskUnits="userSpaceOnUse" x="0" y="0" width="962" height="869">
+      <rect x="0" y="0" width="962" height="869" fill="white"/>
+      <circle cx="569.5" cy="438.56" r="6.2" fill="black"/>
+    </mask>
+    <mask id="r8c9b6156-cut-3" maskUnits="userSpaceOnUse" x="0" y="0" width="962" height="869">
+      <rect x="0" y="0" width="962" height="869" fill="white"/>
+      <circle cx="667.24" cy="200.18" r="6.2" fill="black"/>
+      <circle cx="667.5" cy="439" r="6.2" fill="black"/>
+    </mask>
+    <mask id="r8c9b6156-cut-4" maskUnits="userSpaceOnUse" x="0" y="0" width="962" height="869">
+      <rect x="0" y="0" width="962" height="869" fill="white"/>
+      <circle cx="505.5" cy="336" r="6.2" fill="black"/>
+      <circle cx="505.5" cy="448.06" r="6.2" fill="black"/>
+      <circle cx="505.5" cy="570.5" r="6.2" fill="black"/>
+    </mask>
+    <mask id="r8c9b6156-cut-5" maskUnits="userSpaceOnUse" x="0" y="0" width="962" height="869">
+      <rect x="0" y="0" width="962" height="869" fill="white"/>
+      <circle cx="585.5" cy="439" r="6.2" fill="black"/>
+    </mask>
+  </defs>
+  <rect x="0" y="0" width="962" height="869" fill="#111111"/>
+  <path d="M447.5 49.5 H627.5 a8 8 0 0 1 8 8 V107.5 a8 8 0 0 1 -8 8 H447.5 a8 8 0 0 1 -8 -8 V57.5 a8 8 0 0 1 8 -8 Z" fill="#191728" stroke="#4f5367"/>
+  <text x="537.5" y="77.9" fill="#d9d9d9" text-anchor="middle">nba/index.html</text>
+  <text x="537.5" y="96.9" fill="#d9d9d9" text-anchor="middle">the only page edited</text>
+  <path d="M699.5 40 H913.5 a8 8 0 0 1 8 8 V117 a8 8 0 0 1 -8 8 H699.5 a8 8 0 0 1 -8 -8 V48 a8 8 0 0 1 8 -8 Z" fill="#142814" stroke="#486544"/>
+  <text x="806.5" y="68.4" fill="#d9d9d9" text-anchor="middle">nba.js</text>
+  <text x="806.5" y="87.4" fill="#d9d9d9" text-anchor="middle">+ smallImg() + shotPct()</text>
+  <text x="806.5" y="106.4" fill="#d9d9d9" text-anchor="middle">per-team shooting block</text>
+  <path d="M750 181 H863 a8 8 0 0 1 8 8 V239 a8 8 0 0 1 -8 8 H750 a8 8 0 0 1 -8 -8 V189 a8 8 0 0 1 8 -8 Z" fill="#142814" stroke="#486544"/>
+  <text x="806.5" y="209.4" fill="#d9d9d9" text-anchor="middle">nba.test.mjs</text>
+  <text x="806.5" y="228.4" fill="#d9d9d9" text-anchor="middle">21 tests</text>
+  <path d="M703.5 303 H909.5 a8 8 0 0 1 8 8 V342 a8 8 0 0 1 -8 8 H703.5 a8 8 0 0 1 -8 -8 V311 a8 8 0 0 1 8 -8 Z" fill="#142814" stroke="#486544"/>
+  <text x="806.5" y="331.4" fill="#d9d9d9" text-anchor="middle">document.title per view</text>
+  <path d="M703.5 406 H909.5 a8 8 0 0 1 8 8 V464 a8 8 0 0 1 -8 8 H703.5 a8 8 0 0 1 -8 -8 V414 a8 8 0 0 1 8 -8 Z" fill="#142814" stroke="#486544"/>
+  <text x="806.5" y="434.4" fill="#d9d9d9" text-anchor="middle">box-score team compare</text>
+  <text x="806.5" y="453.4" fill="#d9d9d9" text-anchor="middle">FG% from made-attempted</text>
+  <path d="M720.5 528 H892.5 a8 8 0 0 1 8 8 V586 a8 8 0 0 1 -8 8 H720.5 a8 8 0 0 1 -8 -8 V536 a8 8 0 0 1 8 -8 Z" fill="#142814" stroke="#486544"/>
+  <text x="806.5" y="556.4" fill="#d9d9d9" text-anchor="middle">standings</text>
+  <text x="806.5" y="575.4" fill="#d9d9d9" text-anchor="middle">Conference | League</text>
+  <path d="M144.5 171.5 H375.5 a8 8 0 0 1 8 8 V248.5 a8 8 0 0 1 -8 8 H144.5 a8 8 0 0 1 -8 -8 V179.5 a8 8 0 0 1 8 -8 Z" fill="#142814" stroke="#486544"/>
+  <text x="260" y="199.9" fill="#d9d9d9" text-anchor="middle">images</text>
+  <text x="260" y="218.9" fill="#d9d9d9" text-anchor="middle">combiner resizer at 2x</text>
+  <text x="260" y="237.9" fill="#d9d9d9" text-anchor="middle">width, height, lazy, async</text>
+  <path d="M48 312.5 H472 a8 8 0 0 1 8 8 V351.5 a8 8 0 0 1 -8 8 H48 a8 8 0 0 1 -8 -8 V320.5 a8 8 0 0 1 8 -8 Z" fill="#142814" stroke="#486544"/>
+  <text x="260" y="340.9" fill="#d9d9d9" text-anchor="middle">focus ring, captions, skip link, alt, aria-labels</text>
+  <path d="M73 415.5 H447 a8 8 0 0 1 8 8 V473.5 a8 8 0 0 1 -8 8 H73 a8 8 0 0 1 -8 -8 V423.5 a8 8 0 0 1 8 -8 Z" fill="#142814" stroke="#486544"/>
+  <text x="260" y="443.9" fill="#d9d9d9" text-anchor="middle">date bar</text>
+  <text x="260" y="462.9" fill="#d9d9d9" text-anchor="middle">prev, date, next, Today on one row at 375px</text>
+  <path d="M77.5 537.5 H442.5 a8 8 0 0 1 8 8 V595.5 a8 8 0 0 1 -8 8 H77.5 a8 8 0 0 1 -8 -8 V545.5 a8 8 0 0 1 8 -8 Z" fill="#142814" stroke="#486544"/>
+  <text x="260" y="565.9" fill="#d9d9d9" text-anchor="middle">player pickers</text>
+  <text x="260" y="584.9" fill="#d9d9d9" text-anchor="middle">names kept, debounce closed on hash change</text>
+  <path d="M199 659.5 H321 a8 8 0 0 1 8 8 V717.5 a8 8 0 0 1 -8 8 H199 a8 8 0 0 1 -8 -8 V667.5 a8 8 0 0 1 8 -8 Z" fill="#142814" stroke="#486544"/>
+  <text x="260" y="687.9" fill="#d9d9d9" text-anchor="middle">404.html</text>
+  <text x="260" y="706.9" fill="#d9d9d9" text-anchor="middle">unknown paths</text>
+  <path d="M107 781.5 H413 a8 8 0 0 1 8 8 V820.5 a8 8 0 0 1 -8 8 H107 a8 8 0 0 1 -8 -8 V789.5 a8 8 0 0 1 8 -8 Z" fill="#191728" stroke="#4f5367"/>
+  <text x="260" y="809.9" fill="#8b8b8b" text-anchor="middle">STATE.md, walkthrough, this diagram</text>
+  <line x1="691.5" y1="82.5" x2="635.5" y2="82.5" stroke="#5c5c7c" stroke-width="1.6" marker-end="url(#r8c9b6156-arrow-5c5c7c)"/>
+  <line x1="806.5" y1="125" x2="806.5" y2="181" stroke="#5c5c7c" stroke-width="1.6" marker-end="url(#r8c9b6156-arrow-5c5c7c)"/>
+  <line x1="349.69" y1="171.5" x2="467.86" y2="115.5" stroke="#5c5c7c" stroke-width="1.6" marker-end="url(#r8c9b6156-arrow-5c5c7c)"/>
+  <path d="M 480 336 L 517.5 336 C 528.55 336, 537.5 327.05, 537.5 316 L 537.5 115.5" fill="none" stroke="#5c5c7c" stroke-width="1.6" marker-end="url(#r8c9b6156-arrow-5c5c7c)"/>
+  <path d="M 455 448.5 L 501.5 448.5 C 512.55 448.5, 521.5 439.55, 521.5 428.5 L 521.5 115.5" fill="none" stroke="#5c5c7c" stroke-width="1.6" marker-end="url(#r8c9b6156-arrow-5c5c7c)" mask="url(#r8c9b6156-cut-1)"/>
+  <line x1="780.59" y1="303" x2="573.88" y2="115.5" stroke="#5c5c7c" stroke-width="1.6" marker-end="url(#r8c9b6156-arrow-5c5c7c)"/>
+  <path d="M 450.5 570.5 L 507.38 570.5 C 541.69 570.5, 569.5 542.46, 569.5 507.86 L 569.5 115.5" fill="none" stroke="#5c5c7c" stroke-width="1.6" marker-end="url(#r8c9b6156-arrow-5c5c7c)"/>
+  <path d="M 695.5 439 L 573.5 439 C 562.45 439, 553.5 430.05, 553.5 419 L 553.5 115.5" fill="none" stroke="#5c5c7c" stroke-width="1.6" marker-end="url(#r8c9b6156-arrow-5c5c7c)" mask="url(#r8c9b6156-cut-2)"/>
+  <path d="M 712.5 561 L 712.5 561 C 687.65 561, 667.5 507.28, 667.5 441 L 667.5 218.5 C 667.5 152.22, 658.19 98.5, 646.7 98.5 L 635.5 98.5" fill="none" stroke="#5c5c7c" stroke-width="1.6" marker-end="url(#r8c9b6156-arrow-5c5c7c)" mask="url(#r8c9b6156-cut-3)"/>
+  <path d="M 329 692.5 L 385.5 692.5 C 451.78 692.5, 505.5 638.78, 505.5 572.5 L 505.5 115.5" fill="none" stroke="#5c5c7c" stroke-width="1.6" marker-end="url(#r8c9b6156-arrow-5c5c7c)" mask="url(#r8c9b6156-cut-4)"/>
+  <path d="M 421 805 L 465.5 805 C 531.78 805, 585.5 751.28, 585.5 685 L 585.5 115.5" fill="none" stroke="#5c5c7c" stroke-width="1.6" marker-end="url(#r8c9b6156-arrow-5c5c7c)" mask="url(#r8c9b6156-cut-5)"/>
+</svg>

@@ -1,0 +1,29 @@
+// PACKET-2026-10-30-7: NBA finish pass. Everything below hangs off the page.
+style new   fill: theme-primary-subtle  border: theme-primary
+style touch border: theme-secondary
+style me    border: theme-border  text: (color: theme-muted)
+
+node page   "nba/index.html / the only page edited"
+node js     "nba.js / + smallImg() + shotPct() / per-team shooting block"  right of page  style: new
+node test   "nba.test.mjs / 21 tests"  below js  style: new
+node title  "document.title per view"  below test  style: new
+node stats  "box-score team compare / FG% from made-attempted"  below title  style: new
+node stand  "standings / Conference | League"  below stats  style: new
+node img    "images / combiner resizer at 2x / width, height, lazy, async"  below-left of page  style: new
+node a11y   "focus ring, captions, skip link, alt, aria-labels"  below img  style: new
+node bar    "date bar / prev, date, next, Today on one row at 375px"  below a11y  style: new
+node pick   "player pickers / names kept, debounce closed on hash change"  below bar  style: new
+node tfo    "404.html / unknown paths"  below pick  style: new
+node docs   "STATE.md, walkthrough, this diagram"  below tfo  style: me
+
+edge js -> page
+edge js -> test
+edge img -> page
+edge a11y -> page
+edge bar -> page
+edge title -> page
+edge pick -> page
+edge stats -> page
+edge stand -> page
+edge tfo -> page
+edge docs -> page

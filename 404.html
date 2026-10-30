@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Page not found · Matchup Board</title>
+<meta name="description" content="That page doesn't exist on Matchup Board. Pick a league.">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta name="robots" content="noindex">
+<meta property="og:title" content="Page not found · Matchup Board">
+<meta property="og:description" content="That page doesn't exist on Matchup Board. Pick a league.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://matchupboard.com/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800;900&family=Archivo:wght@600;700;800;900&display=swap');
+
+:root {
+  --font-sans: 'Geist', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --bg-body: #0b0d10;
+  --bg-card: #14161a;
+  --bg-card-hover: #1a1d22;
+  --bg-elevated: #16191f;
+  --border-card: #2b3037;
+  --border-strong: #474d57;
+  --text-main: #e9e7e3;
+  --text-muted: #8f9299;
+  --text-faint: #868a91;
+  --accent-brand: #d9a441;
+  --card-shadow: 0 1px 3px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  min-height: 100vh;
+  overflow-x: hidden;
+  background: var(--bg-body);
+  color: var(--text-main);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+a { color: inherit; text-decoration: none; }
+a:focus-visible {
+  outline: 2px solid var(--accent-brand);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+.notfound-header {
+  border-bottom: 1px solid var(--border-card);
+  background: rgba(11, 13, 16, 0.92);
+  backdrop-filter: blur(14px);
+}
+.notfound-header .bar {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  min-height: 52px;
+}
+.wordmark { display: flex; align-items: baseline; gap: 6px; }
+.wordmark .gold { font: 800 19px/1 var(--font-sans); letter-spacing: -0.02em; color: var(--accent-brand); }
+.wordmark .white { font: 800 19px/1 var(--font-sans); color: var(--text-main); }
+
+main.notfound {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 48px 16px 56px;
+}
+main.notfound h1 {
+  margin: 0 0 8px;
+  font: 800 26px/1.15 var(--font-sans);
+  letter-spacing: -0.02em;
+}
+main.notfound p {
+  margin: 0 0 22px;
+  font: 500 13px/1.6 var(--font-sans);
+  color: var(--text-muted);
+}
+.links { display: grid; grid-template-columns: 1fr; gap: 10px; }
+@media (min-width: 480px) { .links { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.links a {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-card);
+  border-radius: 10px;
+  box-shadow: var(--card-shadow);
+}
+.links a:hover { border-color: var(--border-strong); background: var(--bg-card-hover); }
+.links .league { font: 800 18px/1 'Archivo', sans-serif; letter-spacing: -0.02em; }
+.links .what { font: 500 12px/1.4 var(--font-sans); color: var(--text-muted); }
+.foot { margin-top: 26px; font: 500 10px/1.5 var(--font-sans); color: var(--text-faint); }
+</style>
+</head>
+<body>
+
+<header class="notfound-header">
+  <div class="bar">
+    <a class="wordmark" href="/"><span class="gold">Matchup</span><span class="white">Board</span></a>
+  </div>
+</header>
+
+<main class="notfound">
+  <h1>That page doesn't exist</h1>
+  <p>The link may be old or mistyped. Both leagues are one tap away.</p>
+  <div class="links">
+    <a href="/nfl/"><span class="league">NFL</span><span class="what">Scores, schedules, matchups and team stats.</span></a>
+    <a href="/nba/"><span class="league">NBA</span><span class="what">Scores, standings, matchups and player stats.</span></a>
+  </div>
+  <p class="foot">Scores and stats only. No props, odds or predictions.</p>
+</main>
+</body>
+</html>
