@@ -1511,11 +1511,11 @@
       "city": "",
       "kickoff_utc": "2026-10-30T00:15:00Z",
       "tv": "",
-      "winner": null,
-      "away_score": 10,
-      "home_score": 20,
+      "winner": "Green Bay Packers",
+      "away_score": 19,
+      "home_score": 27,
       "week": 8,
-      "status": "in_progress"
+      "status": "final"
     },
     {
       "game_id": "2026-11-01-BAL-BUF",
@@ -3650,5 +3650,5 @@
       "week": 18
     }
   ],
-  "scores_synced_at": "2026-10-30T01:49:57.392Z"
+  "scores_synced_at": "2026-10-30T08:29:19.866Z"
 }
