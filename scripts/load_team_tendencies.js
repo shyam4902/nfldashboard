@@ -279,7 +279,8 @@ function asHref(input) {
   if (input.startsWith('http://') || input.startsWith('https://')) return input;
   if (input.startsWith('file://')) return input;
   try {
-    const raw = input.startsWith('/') ? 'file://' + input : input;
+    // ponytail: a leading / is a filesystem path only outside the browser
+    const raw = input.startsWith('/') && typeof location === 'undefined' ? 'file://' + input : input;
     return new URL(raw, typeof location !== 'undefined' && location.href ? location.origin : 'file:///').href;
   } catch {
     return input;

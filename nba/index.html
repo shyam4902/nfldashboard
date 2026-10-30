@@ -286,7 +286,7 @@ h2 { font: 700 12px/1.2 var(--font-sans); text-transform: uppercase; letter-spac
 .date-bar .day span { font: 500 10px/1 var(--font-mono); color: var(--text-faint); letter-spacing: 0.04em; }
 
 /* ── Score cards ────────────────────────────────────────────────────────── */
-.games { display: grid; grid-template-columns: 1fr; gap: 10px; }
+.games { display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; }
 @media (min-width: 640px) { .games { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 .game-card {
   display: block;
@@ -306,6 +306,7 @@ h2 { font: 700 12px/1.2 var(--font-sans); text-transform: uppercase; letter-spac
   margin-bottom: 8px;
 }
 .game-card-top .game-meta {
+  min-width: 0;
   font: 500 10px/1 var(--font-mono);
   color: var(--text-faint);
   overflow: hidden;
