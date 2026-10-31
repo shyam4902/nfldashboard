@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>03 Ledger · Matchup Board NFL</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0d0e10;--sheet:#121316;--head:#17181c;--line:#24262b;--line2:#2f3238;--text:#e9eaec;--muted:#9fa3ab;--faint:#8a8d95;--hl:#1b1d22;--f:'Archivo',system-ui,sans-serif}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font:13px/1.3 var(--f);font-variation-settings:"wdth" 92;font-variant-numeric:tabular-nums;-webkit-font-smoothing:antialiased}
+::selection{background:#e9eaec;color:#0d0e10}
+html{scrollbar-color:#33363d var(--bg)}
+a{color:inherit;text-decoration:none}
+:focus-visible{outline:2px solid #e9eaec;outline-offset:-2px}
+.cond{font-variation-settings:"wdth" 68}
+
+.bar{display:flex;align-items:stretch;height:40px;border-bottom:1px solid var(--line);background:var(--head);position:sticky;top:0;z-index:10}
+.bar>*{display:flex;align-items:center;padding:0 14px;border-right:1px solid var(--line)}
+.mark{font-weight:800;font-size:15px;letter-spacing:-.01em;gap:8px;font-variation-settings:"wdth" 75}
+.mark i{display:grid;grid-template-columns:repeat(4,4px);grid-auto-rows:4px;gap:1px}
+.lg{gap:0;padding:0}
+.lg a{height:100%;display:flex;align-items:center;padding:0 14px;color:var(--muted);font-weight:600}
+.lg a[aria-current]{color:var(--text);background:var(--sheet);box-shadow:inset 0 -2px 0 var(--text)}
+.tabs{padding:0;flex:1}
+.tabs a{height:100%;display:flex;align-items:center;padding:0 12px;color:var(--muted)}
+.tabs a[aria-current]{color:var(--text)}
+.tabs a:hover{color:var(--text);background:var(--hl)}
+.meta{color:var(--faint);border-right:0 !important;white-space:nowrap}
+
+.fx{display:flex;align-items:center;height:30px;border-bottom:1px solid var(--line);font-size:12px;color:var(--muted)}
+.fx b{padding:0 12px;height:100%;display:flex;align-items:center;border-right:1px solid var(--line);color:var(--faint);font-weight:600;font-style:italic;font-family:Georgia,serif}
+.fx span{padding:0 12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+.grid{display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);align-items:start}
+.pane{border-right:1px solid var(--line);min-width:0}
+.pane:last-child{border-right:0}
+.ph{display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:16px 12px 10px;border-bottom:1px solid var(--line)}
+.ph h2{font-size:22px;font-weight:800;letter-spacing:-.02em;font-variation-settings:"wdth" 70;line-height:1}
+.ph p{color:var(--faint);font-size:12px;text-align:right}
+
+table{border-collapse:collapse;width:100%;white-space:nowrap}
+th,td{height:30px;padding:0 10px;border-bottom:1px solid var(--line);border-right:1px solid var(--line);text-align:left}
+th:last-child,td:last-child{border-right:0}
+thead th{position:sticky;top:40px;background:var(--head);color:var(--faint);font-weight:600;font-size:11px;letter-spacing:.02em;height:26px;z-index:2}
+th.n,td.n{text-align:right}
+td.sw{width:46px;padding:0;text-align:center;font-weight:800;font-size:12px;font-variation-settings:"wdth" 75}
+td.idx{color:var(--faint);width:30px;text-align:right}
+td.tm{font-weight:600}
+td.tm small{color:var(--muted);font-weight:400;margin-left:6px}
+td.sc{font-weight:700;font-size:14px;text-align:right;width:44px}
+td.lo{color:var(--faint)}
+td.slot{color:var(--muted);font-size:11.5px}
+tr:hover td{background:var(--hl)}
+tr.feat td{background:#16181c}
+tr.sub td{height:24px;background:var(--sheet);color:var(--faint);font-size:11px;font-weight:600}
+.diff{display:flex;align-items:center;gap:8px;justify-content:flex-end}
+.diff i{display:block;height:10px}
+.sortable th[data-k]{cursor:pointer;user-select:none}
+.sortable th[data-k]:hover{color:var(--text)}
+.sortable th[aria-sort]{color:var(--text)}
+.sortable th[aria-sort=descending]::after{content:" ↓"}
+.sortable th[aria-sort=ascending]::after{content:" ↑"}
+td.colhl{background:var(--hl)}
+.seg{display:flex;gap:0;padding:8px 12px;border-bottom:1px solid var(--line)}
+.seg button{font:600 12px var(--f);color:var(--muted);background:var(--sheet);border:1px solid var(--line2);padding:4px 10px;cursor:pointer;margin-right:-1px}
+.seg button[aria-pressed=true]{background:var(--text);color:var(--bg);border-color:var(--text)}
+footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:14px 12px 40px;color:var(--faint);font-size:12px;border-top:1px solid var(--line)}
+
+@media (max-width:1100px){.grid{grid-template-columns:1fr}.pane{border-right:0}}
+@media (max-width:720px){
+  .bar{overflow-x:auto}
+  .tabs a:not([aria-current]){display:none}
+  .meta{display:none !important}
+  .fx span:nth-child(n+4){display:none}
+  .scroll{overflow-x:auto}
+  thead th{top:0}
+  td.sticky,th.sticky{position:sticky;left:0;z-index:1;background:var(--bg)}
+  .ph{flex-direction:column;align-items:flex-start}
+  .ph p{text-align:left}
+}
+</style>
+</head>
+<body>
+<header class="bar">
+  <a class="mark" href="#"><i id="mark"></i>Matchup Board</a>
+  <nav class="lg" aria-label="League"><a href="../nfl/" aria-current="page">NFL</a><a href="../nba/">NBA</a></nav>
+  <nav class="tabs" aria-label="Sections"><a href="#" aria-current="page">Home</a><a href="#">Schedule</a><a href="#">Teams</a><a href="#">League</a><a href="#">Projections</a></nav>
+  <span class="meta" id="meta"></span>
+</header>
+<div class="fx" id="fx"></div>
+
+<div class="grid">
+  <div class="pane">
+    <div class="ph"><h2 id="wk"></h2><p id="wkSub"></p></div>
+    <div class="scroll"><table id="slate"></table></div>
+    <div class="ph"><h2>Week <span id="lw"></span> results</h2><p>Final scores, winner listed first</p></div>
+    <div class="scroll"><table id="last"></table></div>
+    <div class="ph"><h2>Leaders</h2><p id="ldSub"></p></div>
+    <div class="seg" role="group" aria-label="Leader category"><button data-k="passing" aria-pressed="true">Passing</button><button data-k="rushing" aria-pressed="false">Rushing</button><button data-k="receiving" aria-pressed="false">Receiving</button></div>
+    <div class="scroll"><table id="leaders"></table></div>
+  </div>
+  <div class="pane">
+    <div class="ph"><h2>League table</h2><p id="stSub"></p></div>
+    <div class="scroll"><table id="table" class="sortable"></table></div>
+  </div>
+</div>
+<footer><span>Scores from schedule.json (ESPN sync). Standings are actual results only. Clay W is Mike Clay's preseason projection, a separate model.</span><span id="sync"></span></footer>
+
+<script src="data.js"></script>
+<script src="kit.js"></script>
+<script>
+const { MB, T, rec, on, ink, kick, thisWeek, lastWeek, slot, winner, synced, featured, esc, ranked } = KIT;
+document.getElementById('mark').innerHTML = ['BUF','MIA','NE','NYJ','PIT','BAL','CIN','CLE'].map(a => `<b style="background:${T(a).color}"></b>`).join('');
+document.getElementById('meta').textContent = `${MB.season} · Week ${MB.week} of ${MB.totalWeeks} · synced ${synced}`;
+const best = ranked[0], hiPF = [...ranked].sort((a, b) => b.pf - a.pf)[0], loPA = [...ranked].filter(t => t.played !== 0).sort((a, b) => a.pa - b.pa)[0];
+document.getElementById('fx').innerHTML = `<span>Best record ${best.abbr} ${rec(best.abbr)}</span><span>Most points ${hiPF.abbr} ${hiPF.pf}</span><span>Fewest allowed ${loPA.abbr} ${loPA.pa}</span><span>Byes ${KIT.byes.join(' ')}</span>`;
+document.getElementById('wk').textContent = `Week ${MB.week}`;
+document.getElementById('wkSub').textContent = `${thisWeek.length} games · times ET · records thru Wk ${MB.standingsThrough}`;
+const sw = a => { const c = T(a).color; return `<td class="sw" style="background:${c};color:${on(c)}">${a}</td>`; };
+
+function slateRows(){
+  let h = `<thead><tr><th>Slot</th><th>Kick</th><th class="sticky" colspan="2">Away</th><th class="n">Rec</th><th class="n">Pts</th><th colspan="2">Home</th><th class="n">Rec</th><th class="n">Pts</th><th>Venue</th><th>TV</th></tr></thead><tbody>`;
+  let cur = '';
+  for (const g of thisWeek) {
+    const k = kick(g.kickoff); const s = slot(g); const w = winner(g);
+    const day = `${k.day} ${k.date}`;
+    if (day !== cur) { cur = day; h += `<tr class="sub"><td colspan="12">${day}</td></tr>`; }
+    h += `<tr class="${g === featured ? 'feat' : ''}"><td class="slot">${s}</td><td>${g.final ? 'Final' : k.time}</td>${sw(g.away)}<td class="tm sticky ${w && w !== g.away ? 'lo' : ''}">${T(g.away).nick}</td><td class="n">${rec(g.away)}</td><td class="sc ${w && w !== g.away ? 'lo' : ''}">${g.as ?? ''}</td>${sw(g.home)}<td class="tm ${w && w !== g.home ? 'lo' : ''}">${T(g.home).nick}</td><td class="n">${rec(g.home)}</td><td class="sc ${w && w !== g.home ? 'lo' : ''}">${g.hs ?? ''}</td><td class="slot">${esc(g.venue)}</td><td class="slot">${esc(g.tv) || '—'}</td></tr>`;
+  }
+  document.getElementById('slate').innerHTML = h + '</tbody>';
+}
+function lastRows(){
+  document.getElementById('lw').textContent = MB.week - 1;
+  document.getElementById('last').innerHTML = `<thead><tr><th colspan="2">Winner</th><th class="n">Pts</th><th colspan="2">Loser</th><th class="n">Pts</th><th class="n">Margin</th></tr></thead><tbody>` +
+    lastWeek.map(g => { const aw = g.as > g.hs; const W = aw ? g.away : g.home, L = aw ? g.home : g.away; const ws = Math.max(g.as, g.hs), ls = Math.min(g.as, g.hs);
+      return `<tr>${sw(W)}<td class="tm">${T(W).nick}</td><td class="sc">${ws}</td>${sw(L)}<td class="tm lo">${T(L).nick}</td><td class="sc lo">${ls}</td><td class="n">${ws - ls}</td></tr>`; }).join('') + '</tbody>';
+}
+const LK = { passing: [['pass_yd','Yds'],['pass_td','TD'],['pass_int','INT'],['pass_cmp_pct','Cmp%'],['games','G']], rushing: [['rush_yd','Yds'],['rush_td','TD'],['rush_att','Att'],['rush_avg','Avg'],['games','G']], receiving: [['rec_yd','Yds'],['rec_td','TD'],['rec','Rec'],['rec_tgt','Tgt'],['games','G']] };
+function leaders(k){
+  document.querySelectorAll('.seg button').forEach(b => b.setAttribute('aria-pressed', b.dataset.k === k));
+  document.getElementById('leaders').innerHTML = `<thead><tr><th class="n">#</th><th class="sticky">Player</th><th>Tm</th>${LK[k].map(c => `<th class="n">${c[1]}</th>`).join('')}</tr></thead><tbody>` +
+    MB.leaders[k].map((r, i) => `<tr><td class="idx">${i + 1}</td><td class="tm sticky">${esc(r.name)}</td>${sw(r.team)}${LK[k].map(c => `<td class="n">${r[c[0]] ?? '—'}</td>`).join('')}</tr>`).join('') + '</tbody>';
+}
+document.querySelector('.seg').addEventListener('click', e => { const b = e.target.closest('button'); if (b) leaders(b.dataset.k); });
+document.getElementById('ldSub').textContent = `Weeks ${MB.statsWeeks[0]}–${MB.statsWeeks.at(-1)} · Sleeper`;
+
+// League table: sortable, crosshair hover.
+const COLS = [['idx','#'],['abbr',''],['nick','Team'],['div','Div'],['w','W'],['l','L'],['t','T'],['pct','Pct'],['pf','PF'],['pa','PA'],['diff','Diff'],['clay','Clay W']];
+let sort = { k: 'pct', dir: -1 };
+const maxD = Math.max(...Object.values(MB.teams).map(t => Math.abs(t.diff)));
+function table(){
+  const rows = Object.values(MB.teams).map(t => ({ ...t, clay: MB.clayWins[t.abbr] }))
+    .sort((a, b) => { const x = a[sort.k], y = b[sort.k]; if (typeof x === 'string') return sort.dir * x.localeCompare(y); return sort.dir * ((x ?? -1) - (y ?? -1)) || b.diff - a.diff; });
+  document.getElementById('stSub').textContent = `Thru Week ${MB.standingsThrough} · ${MB.divisions.length} divisions · click a column to sort`;
+  document.getElementById('table').innerHTML = `<thead><tr>${COLS.map(([k, l], i) => `<th class="${i > 3 ? 'n' : ''} ${i === 2 ? 'sticky' : ''}" ${i === 0 || i === 1 ? '' : `data-k="${k}"`} data-c="${i}" ${sort.k === k ? `aria-sort="${sort.dir < 0 ? 'descending' : 'ascending'}"` : ''}>${l}</th>`).join('')}</tr></thead><tbody>` +
+    rows.map((t, i) => `<tr><td class="idx" data-c="0">${i + 1}</td><td class="sw" data-c="1" style="background:${t.color};color:${on(t.color)}">${t.abbr}</td><td class="tm sticky" data-c="2">${t.nick}</td><td class="slot" data-c="3">${t.div.replace('AFC ', 'A-').replace('NFC ', 'N-')}</td><td class="n" data-c="4">${t.w}</td><td class="n" data-c="5">${t.l}</td><td class="n${t.t ? '' : ' lo'}" data-c="6">${t.t}</td><td class="n" data-c="7">${t.pct == null ? '—' : t.pct.toFixed(3).replace(/^0/, '')}</td><td class="n" data-c="8">${t.pf}</td><td class="n" data-c="9">${t.pa}</td><td class="n" data-c="10"><span class="diff"><i style="width:${Math.abs(t.diff) / maxD * 44}px;background:${t.diff >= 0 ? t.color : '#3a3d44'}"></i>${t.diff > 0 ? '+' : ''}${t.diff}</span></td><td class="n" data-c="11">${t.clay.toFixed(1)}</td></tr>`).join('') + '</tbody>';
+}
+document.getElementById('table').addEventListener('click', e => { const th = e.target.closest('th[data-k]'); if (!th) return; const k = th.dataset.k; sort = { k, dir: sort.k === k ? -sort.dir : (['nick','div','l','pa'].includes(k) ? 1 : -1) }; table(); });
+document.getElementById('table').addEventListener('mouseover', e => { const td = e.target.closest('[data-c]'); document.querySelectorAll('#table .colhl').forEach(x => x.classList.remove('colhl')); if (td && td.tagName === 'TD' && +td.dataset.c > 3) document.querySelectorAll(`#table td[data-c="${td.dataset.c}"]`).forEach(x => x.classList.add('colhl')); });
+document.getElementById('table').addEventListener('mouseleave', () => document.querySelectorAll('#table .colhl').forEach(x => x.classList.remove('colhl')));
+document.getElementById('sync').textContent = 'Last score sync ' + synced;
+slateRows(); lastRows(); leaders('passing'); table();
+</script>
+</body>
+</html>

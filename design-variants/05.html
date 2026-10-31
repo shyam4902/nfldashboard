@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>05 Season Matrix · Matchup Board NFL</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700;800;900&family=Red+Hat+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0f1011;--s1:#16171a;--s2:#1c1d21;--line:#26282d;--text:#ebecee;--muted:#a1a4ab;--faint:#8a8d95;
+  --f:'Schibsted Grotesk',system-ui,sans-serif;--m:'Red Hat Mono',ui-monospace,monospace;--cell:42px}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font:13.5px/1.4 var(--f);-webkit-font-smoothing:antialiased}
+::selection{background:#ebecee;color:#0f1011}
+html{scrollbar-color:#31343a var(--bg)}
+a{color:inherit;text-decoration:none}
+:focus-visible{outline:2px solid #fff;outline-offset:1px}
+.m{font-family:var(--m);font-variant-numeric:tabular-nums}
+
+header{display:flex;align-items:center;gap:20px;padding:0 20px;height:52px;border-bottom:1px solid var(--line)}
+.logo{font-weight:800;font-size:16px;letter-spacing:-.01em}
+.lg{display:flex;border:1px solid var(--line);border-radius:999px;padding:2px}
+.lg a{padding:3px 12px;border-radius:999px;color:var(--muted);font-weight:600;font-size:12.5px}
+.lg a[aria-current]{background:var(--text);color:var(--bg)}
+nav.tabs{display:flex;gap:2px}
+nav.tabs a{padding:6px 10px;color:var(--muted);font-weight:500;border-radius:6px}
+nav.tabs a[aria-current]{color:var(--text);background:var(--s2)}
+.sync{margin-left:auto;color:var(--faint);font-size:12px}
+
+.rail{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));border-bottom:1px solid var(--line)}
+.rail .g:nth-child(7n){border-right:0}.rail .g:nth-child(-n+7){border-bottom:1px solid var(--line)}
+.g{padding:10px 10px 12px;border-right:1px solid var(--line);min-width:0}
+.g:last-child{border-right:0}
+.g .when{font:500 11px var(--m);color:var(--faint);margin-bottom:6px;white-space:nowrap}
+.g .tm{display:grid;grid-template-columns:4px 1fr auto;gap:7px;align-items:center;font-weight:700;font-size:13px;line-height:1.6}
+.g .tm i{height:14px}
+.g .tm span:last-child{font:600 12px var(--m)}
+.g .tm.l{color:var(--faint)}
+.g.feat{background:var(--s1)}
+
+main{display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:0;align-items:start}
+.mx-wrap{padding:24px 20px 28px;border-right:1px solid var(--line);min-width:0}
+.hd{display:flex;align-items:baseline;justify-content:space-between;gap:16px;margin-bottom:14px}
+h1,h2{font-weight:800;letter-spacing:-.02em}
+h1{font-size:26px}
+h2{font-size:18px}
+.hd p{color:var(--muted);font-size:12.5px}
+.legend{display:flex;gap:16px;flex-wrap:wrap;color:var(--muted);font-size:12px;margin-bottom:12px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:18px;height:12px;display:inline-block}
+.scroller{overflow-x:auto}
+table.mx{border-collapse:separate;border-spacing:2px;font:600 10.5px var(--m);width:100%;min-width:860px}
+.mx th{font:500 10.5px var(--m);color:var(--faint);height:22px;text-align:center}
+.mx th.now{color:var(--text);background:var(--s2)}
+.mx td{width:var(--cell);height:24px;text-align:center;padding:0;position:relative}
+.mx td.team{width:96px;text-align:left;padding:0 10px 0 0;font:700 12.5px var(--f);white-space:nowrap;position:sticky;left:0;background:var(--bg);z-index:1}
+.mx td.team i{display:inline-block;width:8px;height:14px;vertical-align:-2px;margin-right:7px}
+.mx td.team small{font:500 11px var(--m);color:var(--faint);margin-left:6px}
+.mx td.c{cursor:default}
+.mx td.c.L{opacity:.32}
+.mx td.c.W::after{content:"";position:absolute;left:3px;right:3px;bottom:2px;height:2px;background:currentColor}
+.mx td.c.T{opacity:.6}
+.mx td.c.fut{background:var(--s1) !important;color:var(--muted) !important;box-shadow:inset 0 -3px 0 var(--ring)}
+.mx td.bye{color:#4b4e55;font-size:9px}
+.mx td.now{outline:1px solid #ebecee;outline-offset:0}
+.mx tr.dv td{height:16px;font:600 10.5px var(--f);color:var(--faint);text-align:left;position:sticky;left:0}
+.mx tbody tr:hover td.team{color:#fff}
+.mx.hasrow tbody tr:not(.on):not(.dv) td.c{filter:saturate(.25) brightness(.55)}
+
+aside{padding:24px 20px}
+.diff{margin-bottom:28px}
+.dr{display:grid;grid-template-columns:34px 1fr 1fr 40px;align-items:center;gap:0;height:19px;font-size:12px}
+.dr b{font-weight:700}
+.dr .neg{display:flex;justify-content:flex-end}
+.dr .bar{height:12px}
+.dr .v{text-align:right;font:500 11.5px var(--m);color:var(--muted)}
+.axis{border-left:1px solid var(--line)}
+.ld{margin-bottom:24px}
+.ld h3{font-size:13px;font-weight:700;color:var(--muted);margin-bottom:6px;display:flex;justify-content:space-between}
+.lr{display:grid;grid-template-columns:4px 1fr auto;gap:9px;align-items:center;padding:4px 0;border-top:1px solid var(--line)}
+.lr i{height:16px}
+.lr small{color:var(--faint);font-family:var(--m);font-size:11px;margin-left:6px}
+footer{border-top:1px solid var(--line);color:var(--faint);font-size:12px;padding:16px 20px 40px}
+
+@media (max-width:1240px){main{grid-template-columns:1fr}.mx-wrap{border-right:0}aside{display:grid;grid-template-columns:1fr 1fr;gap:24px;border-top:1px solid var(--line)}}
+@media (max-width:720px){
+  header{overflow-x:auto;padding:0 12px;gap:12px}
+  nav.tabs a:not([aria-current]),.sync{display:none}
+  .rail{display:flex;overflow-x:auto;scroll-snap-type:x mandatory}
+  .rail .g{flex:0 0 128px;scroll-snap-align:start;border-bottom:0 !important;border-right:1px solid var(--line) !important}
+  .mx-wrap{padding:20px 12px}
+  .hd{flex-direction:column;gap:4px}
+  aside{display:block;padding:20px 12px}
+}
+</style>
+</head>
+<body>
+<header>
+  <a class="logo" href="#">Matchup Board</a>
+  <nav class="lg" aria-label="League"><a href="../nfl/" aria-current="page">NFL</a><a href="../nba/">NBA</a></nav>
+  <nav class="tabs" aria-label="Sections"><a href="#" aria-current="page">Home</a><a href="#">Schedule</a><a href="#">Teams</a><a href="#">League</a><a href="#">Projections</a></nav>
+  <span class="sync m" id="sync"></span>
+</header>
+<section class="rail" id="rail" aria-label="This week's games"></section>
+<main>
+  <section class="mx-wrap">
+    <div class="hd"><h1 id="h1"></h1><p id="h1sub"></p></div>
+    <div class="legend"><span><i style="background:#E31837;box-shadow:inset 0 -2px 0 #fff"></i>Win · cell is the opponent's colour</span><span><i style="background:#E31837;opacity:.32"></i>Loss</span><span><i style="background:#16171a;box-shadow:inset 0 -3px 0 #E31837"></i>To play</span><span>Hover a team to trace its season</span></div>
+    <div class="scroller"><table class="mx" id="mx"></table></div>
+  </section>
+  <aside>
+    <section class="diff"><div class="hd"><h2>Point differential</h2><p class="m" id="dsub"></p></div><div id="diff"></div></section>
+    <section id="leaders"></section>
+  </aside>
+</main>
+<footer id="foot"></footer>
+<script src="data.js"></script>
+<script src="kit.js"></script>
+<script>
+const { MB, T, rec, on, ink, kick, thisWeek, slot, winner, synced, featured, esc } = KIT;
+document.getElementById('sync').textContent = 'synced ' + synced;
+document.getElementById('rail').innerHTML = thisWeek.map(g => { const k = kick(g.kickoff), w = winner(g);
+  const row = (a, s) => `<div class="tm${w && w !== a ? ' l' : ''}"><i style="background:${T(a).color}"></i><span>${a}</span><span>${s ?? rec(a)}</span></div>`;
+  return `<div class="g${g === featured ? ' feat' : ''}"><div class="when">${g.final ? 'FINAL' : `${k.day.toUpperCase()} ${k.time}`}${['TNF','SNF','MNF'].includes(slot(g)) ? ' · ' + slot(g) : ''}</div>${row(g.away, g.as)}${row(g.home, g.hs)}</div>`; }).join('');
+
+document.getElementById('h1').textContent = `${MB.season} season, week by week`;
+document.getElementById('h1sub').textContent = `Weeks 1–${MB.totalWeeks} · current week ${MB.week} outlined`;
+// team -> week -> {opp, res}
+const sched = {};
+for (const a in MB.teams) sched[a] = {};
+for (const g of MB.games) {
+  const w = winner(g);
+  sched[g.away][g.week] = { opp: g.home, res: g.final ? (w === 'TIE' ? 'T' : w === g.away ? 'W' : 'L') : null, g, home: false };
+  sched[g.home][g.week] = { opp: g.away, res: g.final ? (w === 'TIE' ? 'T' : w === g.home ? 'W' : 'L') : null, g, home: true };
+}
+const weeks = Array.from({ length: MB.totalWeeks }, (_, i) => i + 1);
+let h = `<thead><tr><th></th>${weeks.map(w => `<th class="${w === MB.week ? 'now' : ''}">${w}</th>`).join('')}</tr></thead><tbody>`;
+for (const d of MB.divisions) {
+  h += `<tr class="dv"><td colspan="${weeks.length + 1}">${d.div}</td></tr>`;
+  for (const a of d.teams) {
+    const t = T(a);
+    h += `<tr data-t="${a}"><td class="team"><i style="background:${t.color}"></i>${a}<small>${rec(a)}</small></td>` + weeks.map(w => {
+      const c = sched[a][w]; const now = w === MB.week ? ' now' : '';
+      if (!c) return `<td class="bye${now}">BYE</td>`;
+      const o = T(c.opp); const k = kick(c.g.kickoff);
+      const tip = `Week ${w}: ${t.nick} ${c.home ? 'vs' : 'at'} ${o.nick}` + (c.res ? ` · ${c.res} ${c.home ? c.g.hs : c.g.as}-${c.home ? c.g.as : c.g.hs}` : ` · ${k.day} ${k.date}`);
+      return `<td class="c ${c.res || 'fut'}${now}" title="${tip}" style="background:${o.color};color:${on(o.color)};--ring:${o.color}">${c.home ? '' : '@'}${c.opp}</td>`;
+    }).join('') + '</tr>';
+  }
+}
+const mx = document.getElementById('mx');
+mx.innerHTML = h + '</tbody>';
+mx.addEventListener('mouseover', e => { const tr = e.target.closest('tr[data-t]'); mx.querySelectorAll('tr.on').forEach(x => x.classList.remove('on')); mx.classList.toggle('hasrow', !!tr); if (tr) tr.classList.add('on'); });
+mx.addEventListener('mouseleave', () => { mx.classList.remove('hasrow'); mx.querySelectorAll('tr.on').forEach(x => x.classList.remove('on')); });
+
+const byDiff = Object.values(MB.teams).sort((a, b) => b.diff - a.diff);
+const maxD = Math.max(...byDiff.map(t => Math.abs(t.diff)));
+document.getElementById('dsub').textContent = `thru Wk ${MB.standingsThrough}`;
+document.getElementById('diff').innerHTML = byDiff.map(t => `<div class="dr"><b>${t.abbr}</b><span class="neg">${t.diff < 0 ? `<span class="bar" style="width:${(-t.diff / maxD * 100).toFixed(1)}%;background:${t.color}"></span>` : ''}</span><span class="axis">${t.diff > 0 ? `<span class="bar" style="display:block;width:${(t.diff / maxD * 100).toFixed(1)}%;background:${t.color}"></span>` : ''}</span><span class="v">${t.diff > 0 ? '+' : ''}${t.diff}</span></div>`).join('');
+
+const LB = [['Passing yards','passing','pass_yd', r => `${r.pass_td} TD`],['Rushing yards','rushing','rush_yd', r => `${r.rush_td} TD`],['Receiving yards','receiving','rec_yd', r => `${r.rec_td} TD`]];
+document.getElementById('leaders').innerHTML = LB.map(([title, k, key, sub]) => `<div class="ld"><h3>${title}<span class="m">wk ${MB.statsWeeks[0]}–${MB.statsWeeks.at(-1)}</span></h3>` +
+  MB.leaders[k].slice(0, 5).map(r => `<div class="lr"><i style="background:${T(r.team).color}"></i><span>${esc(r.name)}<small>${r.team} · ${sub(r)}</small></span><span class="m">${r[key].toLocaleString()}</span></div>`).join('') + '</div>').join('');
+document.getElementById('foot').textContent = 'Results and fixtures from schedule.json (final scores synced from ESPN). Records are actual results; stats from Sleeper.';
+</script>
+</body>
+</html>

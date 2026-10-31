@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>04 Gameday Posters · Matchup Board NFL</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700;800;900&family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0a0b;--s1:#141416;--line:#232327;--text:#f2f1ee;--muted:#a9a8a3;--faint:#8d8b86;
+  --d:'Big Shoulders Display',Impact,sans-serif;--b:'Public Sans',system-ui,sans-serif}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font:14px/1.45 var(--b);font-variant-numeric:tabular-nums;-webkit-font-smoothing:antialiased}
+::selection{background:#E31837;color:#fff}
+html{scrollbar-color:#2e2e33 var(--bg)}
+a{color:inherit;text-decoration:none}
+:focus-visible{outline:3px solid #fff;outline-offset:2px}
+.wrap{max-width:1400px;margin:0 auto;padding:0 28px}
+.d{font-family:var(--d);text-transform:uppercase;line-height:.86;letter-spacing:.005em}
+
+header{display:flex;align-items:center;gap:26px;padding:16px 0}
+.logo{font:900 30px/1 var(--d);text-transform:uppercase;letter-spacing:.01em}
+.logo span{color:var(--muted)}
+.lg{display:flex;font:800 15px var(--d);text-transform:uppercase;letter-spacing:.04em}
+.lg a{padding:6px 12px;color:var(--muted)}
+.lg a[aria-current]{background:var(--text);color:var(--bg)}
+nav.tabs{display:flex;gap:4px;margin-left:auto}
+nav.tabs a{padding:8px 12px;font-weight:600;color:var(--muted)}
+nav.tabs a[aria-current],nav.tabs a:hover{color:var(--text)}
+nav.tabs a[aria-current]{background:var(--s1)}
+
+.hero{position:relative;display:grid;grid-template-columns:1fr 1fr;min-height:440px;margin-top:6px}
+.hero .side{position:relative;padding:28px 32px;display:flex;flex-direction:column;justify-content:space-between;overflow:hidden}
+.hero .side.r{text-align:right;align-items:flex-end}
+.hero .big{font-size:clamp(120px,15vw,232px)}
+.hero .nm{font:800 34px var(--d);text-transform:uppercase;letter-spacing:.01em}
+.hero .rc{font-weight:600;opacity:.9}
+.hero .mid{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);background:var(--bg);padding:18px 22px;min-width:220px;text-align:center}
+.hero .mid .at{font:900 44px var(--d)}
+.hero .mid p{color:var(--muted);font-size:13px}
+.hero .mid b{display:block;color:var(--text);font:800 22px var(--d);text-transform:uppercase;letter-spacing:.02em;margin:4px 0}
+.cmp{display:grid;grid-template-columns:repeat(4,1fr);background:var(--s1)}
+.cmp div{padding:14px 18px;border-right:1px solid var(--line)}
+.cmp div:last-child{border-right:0}
+.cmp span{display:block;color:var(--faint);font-size:12px;font-weight:600}
+.cmp b{font:800 26px var(--d)}
+.cmp b i{font-style:normal;color:var(--faint);margin:0 8px;font-size:20px}
+
+.sh{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;margin:64px 0 16px}
+.sh h2{font:900 56px/0.9 var(--d);text-transform:uppercase}
+.sh p{color:var(--muted);max-width:48ch;text-align:right}
+
+.posters{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.poster{position:relative;height:210px;overflow:hidden;display:grid;grid-template-columns:1fr 1fr}
+.poster .half{padding:14px 16px;display:flex;flex-direction:column;justify-content:space-between}
+.poster .half.r{text-align:right;align-items:flex-end}
+.poster .ab{font-size:86px}
+.poster .sc{font:900 54px var(--d)}
+.poster .meta{font-weight:600;font-size:12.5px;opacity:.92}
+.poster .lose{opacity:.42}
+.poster .tag{position:absolute;left:50%;top:0;transform:translateX(-50%);background:var(--bg);color:var(--text);font:800 15px var(--d);text-transform:uppercase;letter-spacing:.04em;padding:6px 12px;white-space:nowrap}
+.poster .ven{position:absolute;left:50%;bottom:0;transform:translateX(-50%);background:var(--bg);color:var(--muted);font-size:11.5px;padding:4px 10px;white-space:nowrap}
+
+.poster:last-child{grid-column:1/-1}
+.confs{display:grid;grid-template-columns:1fr 1fr;gap:28px}
+.conf h3{font:900 34px var(--d);text-transform:uppercase;margin-bottom:10px}
+.drow{display:grid;grid-template-columns:110px repeat(4,1fr);gap:6px;margin-bottom:6px}
+.drow .dn{font:800 18px var(--d);text-transform:uppercase;color:var(--muted);display:flex;align-items:center}
+.tile{padding:8px 10px 9px;min-height:74px;display:flex;flex-direction:column;justify-content:space-between}
+.tile .ab{font-size:26px}
+.tile .w{font:900 30px var(--d)}
+.tile .w small{font-size:16px;opacity:.8;margin-left:4px}
+.tile.first{outline:2px solid var(--text);outline-offset:-2px}
+
+.lead3{display:grid;grid-template-columns:repeat(3,1fr) 1fr;gap:12px}
+.lb{background:var(--s1);padding:18px 18px 10px}
+.lb h3{font:800 22px var(--d);text-transform:uppercase;color:var(--muted);margin-bottom:12px}
+.top1{display:flex;align-items:flex-end;justify-content:space-between;gap:10px;padding-bottom:14px;margin-bottom:6px;border-bottom:1px solid var(--line)}
+.top1 .n{font:900 34px/0.92 var(--d);text-transform:uppercase}
+.top1 .v{font:900 56px/0.85 var(--d)}
+.top1 small{display:block;font:600 12px var(--b);color:var(--muted);margin-top:6px;text-transform:none}
+.ln{display:grid;grid-template-columns:42px 1fr auto;gap:10px;align-items:center;padding:6px 0}
+.ln .t{font:800 13px var(--d);letter-spacing:.04em;text-align:center;padding:3px 0}
+.ln .v{font:800 20px var(--d)}
+.pw .ln{grid-template-columns:22px 42px 1fr auto}
+footer{margin-top:72px;padding:22px 0 44px;border-top:1px solid var(--line);color:var(--faint);display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+
+@media (max-width:1180px){.posters{grid-template-columns:repeat(2,1fr)}.confs{grid-template-columns:1fr}.lead3{grid-template-columns:1fr 1fr}}
+@media (max-width:720px){
+  .wrap{padding:0 12px}
+  header{flex-wrap:wrap;gap:12px}
+  nav.tabs{order:3;width:100%;margin:0;overflow-x:auto}
+  .hero{min-height:0}
+  .hero .side{padding:16px 14px 18px;min-height:250px}
+  .hero .big{font-size:96px}
+  .hero .nm{font-size:22px}
+  .hero .mid{position:static;transform:none;grid-column:1/-1;order:3;min-width:0;text-align:left;display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 14px}
+  .hero .mid .at{display:none}
+  .cmp{grid-template-columns:1fr 1fr}
+  .cmp div:nth-child(2){border-right:0}
+  .cmp div:nth-child(-n+2){border-bottom:1px solid var(--line)}
+  .sh{flex-direction:column;align-items:flex-start;margin-top:48px}
+  .sh h2{font-size:44px}
+  .sh p{text-align:left}
+  .posters{grid-template-columns:1fr}
+  .poster{height:170px}
+  .poster .ven{display:none}
+  .poster .ab{font-size:68px}
+  .drow{grid-template-columns:repeat(4,1fr)}
+  .drow .dn{grid-column:1/-1;margin-top:6px}
+  .tile .ab{font-size:22px}.tile .w{font-size:24px}
+  .lead3{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <a class="logo" href="#">Matchup <span>Board</span></a>
+    <nav class="lg" aria-label="League"><a href="../nfl/" aria-current="page">NFL</a><a href="../nba/">NBA</a></nav>
+    <nav class="tabs" aria-label="Sections"><a href="#" aria-current="page">Home</a><a href="#">Schedule</a><a href="#">Teams</a><a href="#">League</a><a href="#">Projections</a></nav>
+  </header>
+
+  <section class="hero" id="hero" aria-label="Featured matchup"></section>
+  <div class="cmp" id="cmp"></div>
+
+  <div class="sh"><h2 id="wk"></h2><p id="wkSub"></p></div>
+  <section class="posters" id="posters"></section>
+
+  <div class="sh"><h2>Standings</h2><p id="stSub"></p></div>
+  <section class="confs" id="confs"></section>
+
+  <div class="sh"><h2>Leaders</h2><p id="ldSub"></p></div>
+  <section class="lead3" id="lead3"></section>
+
+  <footer><span>Scores from schedule.json (ESPN sync) · standings are actual results · stats from Sleeper</span><span id="sync"></span></footer>
+</div>
+<script src="data.js"></script>
+<script src="kit.js"></script>
+<script>
+const { MB, T, rec, on, ink, kick, thisWeek, slot, power, winner, synced, featured, esc } = KIT;
+const F = featured, A = T(F.away), H = T(F.home), fk = kick(F.kickoff);
+document.getElementById('hero').innerHTML = `
+  <div class="side" style="background:${A.color};color:${on(A.color)}"><div><div class="nm">${A.city}</div><div class="nm">${A.nick}</div></div><div><div class="big d">${A.abbr}</div><div class="rc">${rec(A.abbr)} · ${A.div}</div></div></div>
+  <div class="side r" style="background:${H.color};color:${on(H.color)}"><div><div class="nm">${H.city}</div><div class="nm">${H.nick}</div></div><div><div class="big d">${H.abbr}</div><div class="rc">${rec(H.abbr)} · ${H.div}</div></div></div>
+  <div class="mid"><div class="at">at</div><div><b>${slot(F) === 'SNF' ? 'Sunday Night' : slot(F)}</b><p>${fk.day} ${fk.date} · ${fk.time} ET</p></div><p>${esc(F.venue)}</p></div>`;
+const cell = (label, a, h) => `<div><span>${label}</span><b>${a}<i>/</i>${h}</b></div>`;
+const sgn = n => (n > 0 ? '+' : '') + n;
+document.getElementById('cmp').innerHTML = cell('Record', rec(A.abbr), rec(H.abbr)) + cell('Points for', A.pf, H.pf) + cell('Point diff', sgn(A.diff), sgn(H.diff)) + cell('Clay proj. wins', MB.clayWins[A.abbr].toFixed(1), MB.clayWins[H.abbr].toFixed(1));
+
+document.getElementById('wk').textContent = `Week ${MB.week}`;
+document.getElementById('wkSub').textContent = `${thisWeek.length} games, kickoffs in Eastern. Bye: ${KIT.byes.map(a => T(a).nick).join(', ')}.`;
+const half = (a, s, r, lose, meta) => { const t = T(a); return `<div class="half${r ? ' r' : ''}" style="background:${t.color};color:${on(t.color)}"><div class="${lose ? 'lose' : ''}"><div class="ab d">${a}</div></div><div class="${lose ? 'lose' : ''}">${s != null ? `<div class="sc">${s}</div>` : `<div class="meta">${meta}</div>`}</div></div>`; };
+document.getElementById('posters').innerHTML = thisWeek.filter(g => g !== F).map(g => { const k = kick(g.kickoff), w = winner(g);
+  return `<article class="poster" aria-label="${T(g.away).name} at ${T(g.home).name}">${half(g.away, g.as, false, w && w !== g.away, `${T(g.away).nick} · ${rec(g.away)}`)}${half(g.home, g.hs, true, w && w !== g.home, `${T(g.home).nick} · ${rec(g.home)}`)}<span class="tag">${g.final ? 'Final' : `${k.day} ${k.time}`}</span><span class="ven">${esc(g.venue)}</span></article>`; }).join('');
+
+document.getElementById('stSub').textContent = `Actual results through Week ${MB.standingsThrough}. Outlined tile leads its division.`;
+document.getElementById('confs').innerHTML = ['AFC', 'NFC'].map(c => `<div class="conf"><h3>${c}</h3>` + MB.divisions.filter(d => d.conf === c).map(d => `<div class="drow"><span class="dn">${d.div.replace(c + ' ', '')}</span>` +
+  d.teams.map((a, i) => { const t = T(a); return `<div class="tile${i === 0 ? ' first' : ''}" style="background:${t.color};color:${on(t.color)}"><span class="ab d">${a}</span><span class="w">${t.w}-${t.l}${t.t ? `<small>${t.t}T</small>` : ''}</span></div>`; }).join('') + '</div>').join('') + '</div>').join('');
+
+const LB = [['Passing yards','passing','pass_yd', r => `${r.pass_td} TD, ${r.pass_int} INT`],['Rushing yards','rushing','rush_yd', r => `${r.rush_td} TD, ${r.rush_avg} per carry`],['Receiving yards','receiving','rec_yd', r => `${r.rec} catches, ${r.rec_td} TD`]];
+const chip = a => { const t = T(a); return `<span class="t" style="background:${t.color};color:${on(t.color)}">${a}</span>`; };
+document.getElementById('ldSub').textContent = `Season to date, weeks ${MB.statsWeeks[0]}–${MB.statsWeeks.at(-1)}. Power is Mike Clay's preseason projected wins.`;
+document.getElementById('lead3').innerHTML = LB.map(([title, k, key, sub]) => { const [r1, ...rest] = MB.leaders[k];
+  return `<div class="lb"><h3>${title}</h3><div class="top1"><div class="n">${esc(r1.name)}<small>${T(r1.team).nick} · ${sub(r1)}</small></div><div class="v" style="color:${ink(T(r1.team).color, '#141416')}">${r1[key].toLocaleString()}</div></div>` +
+  rest.slice(0, 4).map(r => `<div class="ln">${chip(r.team)}<span>${esc(r.name)}</span><span class="v">${r[key].toLocaleString()}</span></div>`).join('') + '</div>'; }).join('') +
+  `<div class="lb pw"><h3>Power index</h3>${power.slice(0, 8).map((p, i) => `<div class="ln"><span style="color:var(--faint);font-weight:700">${i + 1}</span>${chip(p.abbr)}<span>${T(p.abbr).nick}</span><span class="v">${p.wins.toFixed(1)}</span></div>`).join('')}</div>`;
+document.getElementById('sync').textContent = 'Last score sync ' + synced;
+</script>
+</body>
+</html>

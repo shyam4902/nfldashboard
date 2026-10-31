@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>08 Mosaic · Matchup Board NFL</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;600;700;800&family=Geologica:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0e0e0f;--s1:#151516;--s2:#1c1c1e;--line:#262628;--text:#eeedeb;--muted:#a5a39f;--faint:#8d8b86;
+  --u:'Unbounded',system-ui,sans-serif;--f:'Geologica',system-ui,sans-serif}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font:14px/1.45 var(--f);font-variant-numeric:tabular-nums;-webkit-font-smoothing:antialiased}
+::selection{background:#eeedeb;color:#0e0e0f}
+html{scrollbar-color:#2e2e31 var(--bg)}
+a{color:inherit;text-decoration:none}
+:focus-visible{outline:2px solid #fff;outline-offset:2px}
+.wrap{max-width:1380px;margin:0 auto;padding:0 28px}
+
+header{display:flex;align-items:center;gap:22px;height:64px}
+.logo{font:700 16px var(--u);letter-spacing:-.02em;display:flex;align-items:center;gap:10px}
+.logo i{display:grid;grid-template-columns:10px 6px;grid-template-rows:10px 6px;gap:2px}
+.logo i b{display:block}
+.lg{display:flex;gap:2px;background:var(--s1);padding:3px;border-radius:8px}
+.lg a{padding:4px 11px;border-radius:6px;font-weight:600;font-size:13px;color:var(--muted)}
+.lg a[aria-current]{background:var(--text);color:var(--bg)}
+nav.tabs{display:flex;gap:4px;margin-left:auto}
+nav.tabs a{padding:7px 12px;border-radius:8px;color:var(--muted);font-weight:500}
+nav.tabs a[aria-current]{background:var(--s1);color:var(--text)}
+
+h1,h2{font-family:var(--u);font-weight:700;letter-spacing:-.035em;line-height:1}
+.sh{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;margin:40px 0 16px}
+.sh h2{font-size:30px}
+.sh p{color:var(--muted);max-width:52ch;text-align:right}
+
+.slots{display:grid;grid-template-columns:1fr 2fr 1fr 1fr 1fr;gap:8px;align-items:start}
+.slot{background:var(--s1);border-radius:10px;padding:10px}
+.slot h3{display:flex;justify-content:space-between;font:600 12.5px var(--f);color:var(--muted);margin-bottom:8px}
+.slot h3 b{color:var(--text);font-weight:600}
+.slot .gs{display:grid;gap:6px}
+.slot.early .gs{grid-template-columns:1fr 1fr}
+.gm{display:grid;grid-template-columns:1fr 1fr;height:54px;border-radius:6px;overflow:hidden}
+.gm span{display:flex;flex-direction:column;justify-content:center;padding:0 9px;line-height:1.1}
+.gm span:last-child{text-align:right;align-items:flex-end}
+.gm b{font:700 15px var(--u);letter-spacing:-.02em}
+.gm small{font-size:11.5px;opacity:.88}
+.gm .lo{filter:saturate(.3) brightness(.6)}
+.slot.feat{background:var(--s2)}
+.slot.feat .gm{height:116px}
+.slot.feat .gm b{font-size:26px}
+
+.ctrl{display:flex;gap:2px;background:var(--s1);padding:3px;border-radius:9px}
+.ctrl button{font:600 13px var(--f);color:var(--muted);background:none;border:0;border-radius:7px;padding:6px 12px;cursor:pointer}
+.ctrl button[aria-pressed=true]{background:var(--text);color:var(--bg)}
+.mapbar{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:10px;flex-wrap:wrap}
+.mapbar p{color:var(--muted);font-size:13px}
+.map{position:relative;height:640px;border-radius:12px;overflow:hidden;background:var(--bg)}
+.tile{position:absolute;padding:2px;transition:left .55s cubic-bezier(.16,1,.3,1),top .55s cubic-bezier(.16,1,.3,1),width .55s cubic-bezier(.16,1,.3,1),height .55s cubic-bezier(.16,1,.3,1)}
+.tile>div{width:100%;height:100%;border-radius:6px;padding:10px 11px;display:flex;flex-direction:column;justify-content:space-between;overflow:hidden}
+.tile .ab{font-family:var(--u);font-weight:800;letter-spacing:-.04em;line-height:.9}
+.tile .nm{font-size:12.5px;font-weight:500;opacity:.9;white-space:nowrap}
+.tile .v{font-family:var(--u);font-weight:600;letter-spacing:-.03em}
+.tile .rc{font-size:12px;opacity:.9}
+.dlab{position:absolute;z-index:2;font:600 11.5px var(--f);letter-spacing:.01em;color:var(--muted);white-space:nowrap;pointer-events:none;transition:left .55s cubic-bezier(.16,1,.3,1),top .55s cubic-bezier(.16,1,.3,1)}
+
+.lower{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.lb{background:var(--s1);border-radius:10px;padding:14px}
+.lb h3{font:600 13px var(--f);color:var(--muted);margin-bottom:10px;display:flex;justify-content:space-between}
+.l1{border-radius:7px;padding:12px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:flex-end;gap:10px}
+.l1 b{font:700 18px/1.05 var(--u);letter-spacing:-.03em}
+.l1 small{display:block;font-size:12px;opacity:.9;margin-top:4px}
+.l1 .v{font:700 30px/1 var(--u);letter-spacing:-.04em}
+.lr{display:grid;grid-template-columns:10px 1fr auto;gap:10px;align-items:center;padding:6px 2px;border-top:1px solid var(--line)}
+.lr i{width:10px;height:10px;border-radius:3px}
+.lr small{color:var(--faint);margin-left:4px}
+.lr .v{font-weight:600}
+footer{margin-top:56px;border-top:1px solid var(--line);color:var(--faint);font-size:12.5px;padding:18px 0 44px;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+@media (prefers-reduced-motion:reduce){.tile,.dlab{transition:none}}
+@media (max-width:1180px){.slots{grid-template-columns:1fr 1fr}.slot.early{grid-column:1/-1}.lower{grid-template-columns:1fr}}
+@media (max-width:720px){
+  .wrap{padding:0 12px}
+  header{height:auto;flex-wrap:wrap;gap:10px;padding:12px 0}
+  nav.tabs{order:3;width:100%;margin:0;overflow-x:auto}
+  .sh{flex-direction:column;align-items:flex-start;margin-top:32px}
+  .sh h2{font-size:24px}
+  .sh p{text-align:left}
+  .slots{grid-template-columns:1fr}
+  .slot.early .gs{grid-template-columns:1fr}
+  .slot.feat .gm{height:84px}
+  .map{height:620px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <a class="logo" href="#"><i id="logo"></i>Matchup Board</a>
+    <nav class="lg" aria-label="League"><a href="../nfl/" aria-current="page">NFL</a><a href="../nba/">NBA</a></nav>
+    <nav class="tabs" aria-label="Sections"><a href="#" aria-current="page">Home</a><a href="#">Schedule</a><a href="#">Teams</a><a href="#">League</a><a href="#">Projections</a></nav>
+  </header>
+
+  <div class="sh" style="margin-top:20px"><h2 id="wk"></h2><p id="wkSub"></p></div>
+  <section class="slots" id="slots" aria-label="This week by kickoff window"></section>
+
+  <div class="sh"><h2>The league</h2><p>Every team as a field of its own colour, grouped by division. Tile area follows the measure you pick.</p></div>
+  <div class="mapbar"><div class="ctrl" role="group" aria-label="Size tiles by"><button data-m="pf" aria-pressed="true">Points scored</button><button data-m="wins" aria-pressed="false">Wins</button><button data-m="clay" aria-pressed="false">Clay projection</button></div><p id="mapNote"></p></div>
+  <section class="map" id="map" aria-label="League treemap"></section>
+
+  <div class="sh"><h2>Leaders</h2><p id="ldSub"></p></div>
+  <section class="lower" id="lower"></section>
+
+  <footer><span>Scores from schedule.json (ESPN sync) · standings are actual results · stats from Sleeper · Clay is a separate preseason model</span><span id="sync"></span></footer>
+</div>
+<script src="data.js"></script>
+<script src="kit.js"></script>
+<script>
+const { MB, T, rec, on, ink, kick, thisWeek, slot, winner, synced, featured, esc } = KIT;
+document.getElementById('logo').innerHTML = ['KC','SEA','BUF','PIT'].map(a => `<b style="background:${T(a).color};border-radius:2px"></b>`).join('');
+document.getElementById('wk').textContent = `Week ${MB.week}`;
+document.getElementById('wkSub').textContent = `By kickoff window, Eastern time. On bye: ${KIT.byes.join(', ')}.`;
+const WIN = [['TNF', 'Thursday night'], ['Early', 'Sunday 1 PM'], ['Late', 'Sunday late'], ['SNF', 'Sunday night'], ['MNF', 'Monday night']];
+const half = (a, s, lo) => { const t = T(a); return `<span class="${lo ? 'lo' : ''}" style="background:${t.color};color:${on(t.color)}"><b>${a}</b><small>${s != null ? s : rec(a)}</small></span>`; };
+document.getElementById('slots').innerHTML = WIN.map(([k, label]) => { const gs = thisWeek.filter(g => slot(g) === k); if (!gs.length) return '';
+  const kk = kick(gs[0].kickoff); const times = [...new Set(gs.map(g => kick(g.kickoff).time))].join(' / ');
+  return `<div class="slot ${k === 'Early' ? 'early' : ''} ${gs.includes(featured) ? 'feat' : ''}"><h3><b>${label}</b><span>${gs.every(g => g.final) ? 'Final' : times}</span></h3><div class="gs">` +
+    gs.map(g => { const w = winner(g); return `<div class="gm" title="${T(g.away).name} at ${T(g.home).name} · ${esc(g.venue)}">${half(g.away, g.as, w && w !== g.away)}${half(g.home, g.hs, w && w !== g.home)}</div>`; }).join('') + '</div></div>'; }).join('');
+
+// Squarified treemap.
+function squarify(items, x, y, w, h){
+  const out = []; const total = items.reduce((s, i) => s + i.v, 0); if (!total) return out;
+  const scale = (w * h) / total; let rest = items.map(i => ({ ...i, a: i.v * scale }));
+  while (rest.length) {
+    const short = Math.min(w, h); let row = [], best = Infinity;
+    for (const it of rest) { const r = [...row, it]; const s = r.reduce((a, b) => a + b.a, 0); const mx = Math.max(...r.map(z => z.a)), mn = Math.min(...r.map(z => z.a));
+      const worst = Math.max(short * short * mx / (s * s), (s * s) / (short * short * mn)); if (worst > best) break; best = worst; row = r; }
+    const s = row.reduce((a, b) => a + b.a, 0);
+    if (w >= h) { const cw = s / h; let cy = y; for (const it of row) { const ch = it.a / cw; out.push({ ...it, x, y: cy, w: cw, h: ch }); cy += ch; } x += cw; w -= cw; }
+    else { const rh = s / w; let cx = x; for (const it of row) { const cw = it.a / rh; out.push({ ...it, x: cx, y, w: cw, h: rh }); cx += cw; } y += rh; h -= rh; }
+    rest = rest.slice(row.length);
+  }
+  return out;
+}
+const MEAS = {
+  pf: { val: t => t.pf, show: t => `${t.pf} pts`, note: `Points scored through Week ${MB.standingsThrough}.` },
+  wins: { val: t => t.w + t.t * 0.5 + 0.35, show: t => rec(t.abbr), note: `Wins through Week ${MB.standingsThrough} (ties count half; winless teams keep a sliver so they stay visible).` },
+  clay: { val: t => MB.clayWins[t.abbr], show: t => `${MB.clayWins[t.abbr].toFixed(1)} proj. W`, note: `Mike Clay's preseason projected wins (${MB.clayUpdated}). A separate model, not results.` },
+};
+const map = document.getElementById('map');
+map.innerHTML = Object.values(MB.teams).map(t => `<div class="tile" data-t="${t.abbr}" title="${t.name}"><div style="background:${t.color};color:${on(t.color)}"><div><div class="ab">${t.abbr}</div><div class="nm">${t.nick}</div></div><div><div class="v"></div><div class="rc"></div></div></div></div>`).join('') +
+  MB.divisions.map(d => `<span class="dlab" data-d="${d.div}">${d.div}</span>`).join('');
+let metric = 'pf';
+function layout(){
+  const W = map.clientWidth, H = map.clientHeight; const M = MEAS[metric];
+  const divs = MB.divisions.map(d => ({ id: d.div, teams: d.teams, v: d.teams.reduce((s, a) => s + M.val(T(a)), 0) })).sort((a, b) => b.v - a.v);
+  for (const d of squarify(divs, 0, 0, W, H)) {
+    const lab = map.querySelector(`[data-d="${d.id}"]`); lab.style.left = d.x + 6 + 'px'; lab.style.top = d.y + 4 + 'px';
+    const items = d.teams.map(a => ({ id: a, v: M.val(T(a)) })).sort((a, b) => b.v - a.v);
+    for (const r of squarify(items, d.x + 3, d.y + 22, d.w - 6, d.h - 25)) {
+      const el = map.querySelector(`[data-t="${r.id}"]`); const t = T(r.id);
+      Object.assign(el.style, { left: r.x + 'px', top: r.y + 'px', width: r.w + 'px', height: r.h + 'px' });
+      const m = Math.min(r.w, r.h); const fs = Math.max(12, Math.min(56, r.h * 0.3, (r.w - 22) / (r.id.length * 0.9)));
+      el.querySelector('.ab').style.fontSize = fs + 'px';
+      el.querySelector('.ab').style.visibility = r.w > 30 * (r.id.length / 2) && r.h > 26 ? '' : 'hidden';
+      el.querySelector('.nm').style.display = m > 80 && r.w > 96 ? '' : 'none';
+      el.querySelector('.v').style.fontSize = Math.max(11, Math.min(20, m * 0.12)) + 'px';
+      el.querySelector('.v').textContent = m > 58 ? M.show(t) : '';
+      el.querySelector('.rc').textContent = m > 104 && metric !== 'wins' ? rec(r.id) : '';
+    }
+  }
+  document.getElementById('mapNote').textContent = M.note;
+  document.querySelectorAll('.ctrl button').forEach(b => b.setAttribute('aria-pressed', b.dataset.m === metric));
+}
+document.querySelector('.ctrl').addEventListener('click', e => { const b = e.target.closest('button'); if (b) { metric = b.dataset.m; layout(); } });
+addEventListener('resize', layout);
+layout();
+
+const LB = [['Passing yards','passing','pass_yd', r => `${r.pass_td} TD · ${r.pass_int} INT`],['Rushing yards','rushing','rush_yd', r => `${r.rush_td} TD · ${r.rush_avg} avg`],['Receiving yards','receiving','rec_yd', r => `${r.rec} rec · ${r.rec_td} TD`]];
+document.getElementById('ldSub').textContent = `Season to date, weeks ${MB.statsWeeks[0]}–${MB.statsWeeks.at(-1)} (Sleeper).`;
+document.getElementById('lower').innerHTML = LB.map(([title, k, key, sub]) => { const [r1, ...rest] = MB.leaders[k]; const t = T(r1.team);
+  return `<div class="lb"><h3>${title}<span>yds</span></h3><div class="l1" style="background:${t.color};color:${on(t.color)}"><div><b>${esc(r1.name)}</b><small>${t.nick} · ${sub(r1)}</small></div><span class="v">${r1[key].toLocaleString()}</span></div>` +
+  rest.slice(0, 5).map(r => `<div class="lr"><i style="background:${T(r.team).color}"></i><span>${esc(r.name)}<small>${r.team}</small></span><span class="v">${r[key].toLocaleString()}</span></div>`).join('') + '</div>'; }).join('');
+document.getElementById('sync').textContent = 'Last score sync ' + synced;
+</script>
+</body>
+</html>

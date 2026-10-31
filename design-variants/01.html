@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>01 Inspector · Matchup Board NFL</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --chrome:#17181a; --panel:#1d1e21; --canvas:#111214; --line:#2b2d32; --line-2:#36383e;
+  --text:#ececee; --muted:#a2a4ab; --faint:#8a8d95; --sel:#3d8bff;
+  --sans:'Figtree',system-ui,sans-serif; --mono:'JetBrains Mono',ui-monospace,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{background:var(--canvas);color:var(--text);font:13px/1.4 var(--sans);font-feature-settings:"tnum";-webkit-font-smoothing:antialiased}
+::selection{background:var(--sel);color:#fff}
+*{scrollbar-width:thin;scrollbar-color:#3a3c42 transparent}
+a{color:inherit;text-decoration:none}
+:focus-visible{outline:2px solid var(--sel);outline-offset:2px;border-radius:3px}
+.num{font-family:var(--mono);font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+
+.app{display:grid;grid-template-columns:256px 1fr 300px;grid-template-rows:44px 1fr;height:100vh}
+.top{grid-column:1/-1;display:flex;align-items:center;gap:18px;padding:0 12px;background:var(--chrome);border-bottom:1px solid var(--line)}
+.brand{font-weight:800;font-size:14px;letter-spacing:-.01em;display:flex;align-items:center;gap:8px}
+.brand i{display:grid;grid-template-columns:repeat(3,5px);gap:1.5px}
+.brand i b{width:5px;height:5px;border-radius:1px}
+.seg{display:flex;background:#0e0f10;border:1px solid var(--line);border-radius:6px;padding:2px}
+.seg a{padding:3px 10px;border-radius:4px;font-weight:600;font-size:12px;color:var(--muted)}
+.seg a[aria-current]{background:#2a2c31;color:var(--text)}
+.tabs{display:flex;gap:2px;margin-left:8px}
+.tabs a{padding:6px 10px;border-radius:5px;color:var(--muted);font-weight:500}
+.tabs a:hover{color:var(--text);background:#232428}
+.tabs a[aria-current]{color:var(--text);background:#26282c}
+.top .sp{flex:1}
+.zoom{color:var(--faint);font-size:12px}
+.search{width:220px;height:28px;border-radius:6px;border:1px solid var(--line);background:#0e0f10;color:var(--text);padding:0 10px;font:inherit;caret-color:var(--sel)}
+.search::placeholder{color:var(--faint)}
+
+.panel{background:var(--panel);overflow:auto}
+.layers{border-right:1px solid var(--line)}
+.inspect{border-left:1px solid var(--line)}
+.ph{display:flex;justify-content:space-between;align-items:center;padding:10px 12px 8px;font-weight:700;font-size:12px;position:sticky;top:0;background:var(--panel);z-index:1;border-bottom:1px solid var(--line)}
+.ph span{color:var(--faint);font-weight:500}
+.grp{padding:6px 0}
+.grp+ .grp{border-top:1px solid var(--line)}
+.gh{display:flex;align-items:center;gap:6px;padding:4px 12px;color:var(--muted);font-weight:600;font-size:11.5px}
+.gh svg{width:10px;height:10px;opacity:.7}
+.lr{display:grid;grid-template-columns:14px 34px 1fr auto;align-items:center;gap:8px;padding:4px 12px 4px 26px;cursor:pointer;border-radius:0}
+.lr:hover{background:#25272b}
+.lr.on{background:#1f3352}
+.sw{width:12px;height:12px;border-radius:2px;box-shadow:inset 0 0 0 1px rgba(255,255,255,.14)}
+.lr .ab{font-weight:700;font-size:12px}
+.lr .nm{color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lr .rc{color:var(--muted);font-size:11.5px}
+
+.canvas{overflow:auto;position:relative;background-color:var(--canvas);background-image:radial-gradient(#26282c 1px,transparent 1px);background-size:16px 16px;background-position:-8px -8px;padding:32px 40px 80px}
+.board{max-width:1060px;margin:0 auto}
+.fl{display:flex;justify-content:space-between;gap:8px;color:var(--muted);font-size:11.5px;margin-bottom:6px;white-space:nowrap}
+.fl b{color:var(--text);font-weight:600}
+.sec-h{display:flex;align-items:baseline;gap:12px;margin:0 0 14px}
+.sec-h h2{font-size:20px;font-weight:800;letter-spacing:-.02em}
+.sec-h p{color:var(--muted)}
+.slate{display:grid;grid-template-columns:repeat(auto-fill,minmax(232px,1fr));gap:26px 22px;margin-bottom:56px}
+.frame{position:relative;cursor:pointer}
+.fbody{border-radius:2px;overflow:hidden;background:#000}
+.band{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:10px;padding:12px 14px;min-height:62px}
+.band .a{font-weight:800;font-size:26px;letter-spacing:-.03em;line-height:1}
+.band .n{font-size:12px;line-height:1.25;opacity:.9}
+.band .n small{display:block;font-family:var(--mono);font-size:11px;opacity:.85}
+.band .s{font-family:var(--mono);font-weight:600;font-size:24px}
+.band.lost{filter:saturate(.35) brightness(.62)}
+.frame.sel .fbody{outline:1.5px solid var(--sel);outline-offset:3px}
+.frame.sel::before,.frame.sel::after,.frame.sel .h1,.frame.sel .h2{content:"";position:absolute;width:7px;height:7px;background:#fff;border:1.5px solid var(--sel);z-index:2}
+.frame.sel::before{left:-7px;top:16px}.frame.sel::after{right:-7px;top:16px}
+.frame.sel .h1{left:-7px;bottom:-7px}.frame.sel .h2{right:-7px;bottom:-7px}
+.frame:not(.sel):hover .fbody{outline:1px solid #6aa5ff;outline-offset:3px}
+
+.row2{display:grid;grid-template-columns:1.15fr 1fr;gap:22px;align-items:start}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:3px}
+.lead{display:grid;grid-template-columns:22px 1fr auto;gap:10px;align-items:center;padding:7px 12px;border-top:1px solid var(--line)}
+.lead:first-of-type{border-top:0}
+.lead .r{color:var(--faint)}
+.lead .p b{font-weight:600}
+.lead .p small{color:var(--muted);margin-left:6px}
+.lead .v{font-family:var(--mono);font-weight:600}
+.tabset{display:flex;gap:2px;padding:6px;border-bottom:1px solid var(--line)}
+.tabset button{font:600 12px var(--sans);color:var(--muted);background:none;border:0;padding:5px 10px;border-radius:4px;cursor:pointer}
+.tabset button[aria-pressed=true]{background:#2a2c31;color:var(--text)}
+.pw{display:grid;grid-template-columns:22px 40px 1fr 44px;gap:10px;align-items:center;padding:6px 12px}
+.pw .bar{height:10px;border-radius:1px}
+.pw .v{text-align:right}
+
+.ib{padding:12px;border-bottom:1px solid var(--line)}
+.ib h3{font-size:11.5px;font-weight:700;color:var(--muted);margin-bottom:10px}
+.vs{display:grid;grid-template-columns:1fr auto 1fr;gap:8px;align-items:center}
+.vs .t{display:flex;flex-direction:column;gap:2px}
+.vs .t:last-child{text-align:right}
+.vs .t b{font-size:22px;font-weight:800;letter-spacing:-.03em}
+.vs .at{color:var(--faint)}
+.fill{display:grid;grid-template-columns:28px 1fr auto;gap:8px;align-items:center;padding:5px 0}
+.fill .sw{width:28px;height:28px;border-radius:3px}
+.kv{display:grid;grid-template-columns:1fr auto auto;gap:6px 12px;align-items:center}
+.kv span{color:var(--muted)}
+.kv .h{color:var(--faint);font-size:11px;font-weight:600}
+.kv b{font-family:var(--mono);font-weight:500;text-align:right}
+.meter{display:flex;height:6px;border-radius:1px;overflow:hidden;margin-top:10px;gap:2px}
+.foot{color:var(--faint);font-size:11.5px;padding:12px}
+.better{color:#fff}
+
+@media (max-width:1100px){
+  .app{grid-template-columns:220px 1fr;}
+  .inspect{grid-column:1/-1;border-left:0;border-top:1px solid var(--line)}
+  .app{height:auto;grid-template-rows:44px auto auto}
+  .panel,.canvas{overflow:visible}
+}
+@media (max-width:720px){
+  .app{display:flex;flex-direction:column;height:auto}
+  .canvas{order:1}.inspect{order:2}.layers{order:3}
+  .top{position:sticky;top:0;z-index:5;overflow-x:auto;gap:10px}
+  .tabs a:not([aria-current]){display:none}
+  .zoom,.search{display:none}
+  .canvas{padding:20px 14px 30px}
+  .slate{grid-template-columns:1fr;gap:18px}
+  .row2{grid-template-columns:1fr}
+  .layers{border-right:0;border-top:1px solid var(--line)}
+  .lr{padding-left:14px}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <a class="brand" href="#"><i id="mark"></i>Matchup Board</a>
+    <nav class="seg" aria-label="League"><a href="../nfl/" aria-current="page">NFL</a><a href="../nba/">NBA</a></nav>
+    <nav class="tabs" aria-label="Sections"><a href="#" aria-current="page">Home</a><a href="#">Schedule</a><a href="#">Teams</a><a href="#">League</a><a href="#">Projections</a></nav>
+    <span class="sp"></span>
+    <input class="search" type="search" placeholder="Search players, teams  ⌘K" aria-label="Search">
+    <span class="zoom num" id="sync"></span>
+  </header>
+
+  <aside class="panel layers" aria-label="Standings">
+    <div class="ph">Standings <span id="thru"></span></div>
+    <div id="layers"></div>
+  </aside>
+
+  <main class="canvas">
+    <div class="board">
+      <div class="sec-h"><h2 id="wk"></h2><p id="wkSub"></p></div>
+      <div class="slate" id="slate"></div>
+      <div class="row2">
+        <section>
+          <div class="fl"><b>Season leaders</b><span id="ldrNote"></span></div>
+          <div class="card">
+            <div class="tabset" role="group" aria-label="Leader category">
+              <button aria-pressed="true" data-k="passing">Passing</button><button aria-pressed="false" data-k="rushing">Rushing</button><button aria-pressed="false" data-k="receiving">Receiving</button>
+            </div>
+            <div id="leaders"></div>
+          </div>
+        </section>
+        <section>
+          <div class="fl"><b>Power index</b><span id="clayNote"></span></div>
+          <div class="card" id="power" style="padding:6px 0"></div>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <aside class="panel inspect" aria-label="Matchup inspector">
+    <div class="ph">Inspector <span id="insSlot"></span></div>
+    <div id="inspector"></div>
+  </aside>
+</div>
+
+<script src="data.js"></script>
+<script src="kit.js"></script>
+<script>
+const { MB, T, rec, ink, on, kick, thisWeek, slot, power, winner, synced, featured, esc } = KIT;
+const PANEL = '#1d1e21';
+document.getElementById('mark').innerHTML = ['KC','BUF','GB','MIA','PIT','SEA','LAR','CIN','MIN'].map(a => `<b style="background:${T(a).color}"></b>`).join('');
+document.getElementById('sync').textContent = 'Scores ' + synced;
+document.getElementById('thru').textContent = 'thru Wk ' + MB.standingsThrough;
+document.getElementById('wk').textContent = `Week ${MB.week}`;
+document.getElementById('wkSub').textContent = `${thisWeek.length} games · byes ${KIT.byes.join(', ')}`;
+
+let selected = featured.id;
+const caret = '<svg viewBox="0 0 10 10"><path d="M2 3.5 5 6.5 8 3.5" fill="none" stroke="currentColor" stroke-width="1.4"/></svg>';
+function renderLayers(){
+  document.getElementById('layers').innerHTML = MB.divisions.map(d => `<div class="grp"><div class="gh">${caret}${d.div}</div>` +
+    d.teams.map(a => { const t = T(a); const g = thisWeek.find(x => x.away === a || x.home === a);
+      return `<div class="lr${g && g.id === selected ? ' on' : ''}" data-g="${g ? g.id : ''}" tabindex="0"><span class="sw" style="background:${t.color}"></span><span class="ab">${a}</span><span class="nm">${t.nick}</span><span class="rc num">${rec(a)}</span></div>`;}).join('') + '</div>').join('');
+}
+function band(a, score, lost){
+  const t = T(a);
+  return `<div class="band${lost ? ' lost' : ''}" style="background:${t.color};color:${on(t.color)}"><span class="a">${a}</span><span class="n">${t.nick}<small>${rec(a)}</small></span><span class="s">${score ?? ''}</span></div>`;
+}
+function renderSlate(){
+  document.getElementById('slate').innerHTML = thisWeek.map(g => {
+    const k = kick(g.kickoff); const w = winner(g);
+    return `<div class="frame${g.id === selected ? ' sel' : ''}" data-g="${g.id}" tabindex="0" role="button" aria-label="${T(g.away).name} at ${T(g.home).name}">
+      <div class="fl"><b>${g.final ? 'Final' : `${k.day} ${k.time}`}</b><span>${slot(g)} · ${esc(g.venue)}</span></div>
+      <div class="fbody">${band(g.away, g.as, w && w !== g.away)}${band(g.home, g.hs, w && w !== g.home)}</div><i class="h1"></i><i class="h2"></i></div>`;
+  }).join('');
+}
+function renderInspector(){
+  const g = MB.games.find(x => x.id === selected); const A = T(g.away), H = T(g.home); const k = kick(g.kickoff);
+  document.getElementById('insSlot').textContent = slot(g);
+  const row = (label, a, h, hi) => { const ba = hi === 'hi' ? a > h : a < h; const bh = hi === 'hi' ? h > a : h < a;
+    return `<span>${label}</span><b class="${ba ? 'better' : ''}" style="color:${ba ? ink(A.color, PANEL) : ''}">${a}</b><b style="color:${bh ? ink(H.color, PANEL) : ''}">${h}</b>`; };
+  const pa = (A.pct ?? 0), ph = (H.pct ?? 0);
+  const divRank = a => { const d = MB.divisions.find(d => d.teams.includes(a)); return `${d.teams.indexOf(a) + 1}${['st','nd','rd','th'][Math.min(d.teams.indexOf(a),3)]} ${d.div}`; };
+  document.getElementById('inspector').innerHTML = `
+    <div class="ib"><div class="vs"><div class="t"><b style="color:${ink(A.color, PANEL)}">${A.abbr}</b><span>${A.name}</span></div><span class="at">${g.final ? 'final' : 'at'}</span><div class="t"><b style="color:${ink(H.color, PANEL)}">${H.abbr}</b><span>${H.name}</span></div></div>
+      ${g.final ? `<div class="vs num" style="margin-top:8px;font-size:22px;font-weight:600"><span>${g.as}</span><span></span><span style="text-align:right">${g.hs}</span></div>` : ''}
+      <div class="meter" title="Win percentage through Week ${MB.standingsThrough}"><span style="flex:${pa || .01};background:${A.color}"></span><span style="flex:${ph || .01};background:${H.color}"></span></div></div>
+    <div class="ib"><h3>Fill</h3>
+      ${[A, H].map(t => `<div class="fill"><span class="sw" style="background:${t.color}"></span><span>${t.nick}</span><span class="num" style="color:var(--muted)">${t.color.toUpperCase()}</span></div>`).join('')}</div>
+    <div class="ib"><h3>Season, thru Week ${MB.standingsThrough}</h3>
+      <div class="kv"><span class="h"></span><b class="h">${A.abbr}</b><b class="h">${H.abbr}</b>
+      ${row('Record', rec(A.abbr), rec(H.abbr), 'none')}
+      ${row('Win %', A.pct?.toFixed(3) ?? '—', H.pct?.toFixed(3) ?? '—', 'hi')}
+      ${row('Points for', A.pf, H.pf, 'hi')}
+      ${row('Points against', A.pa, H.pa, 'lo')}
+      ${row('Point diff', (A.diff > 0 ? '+' : '') + A.diff, (H.diff > 0 ? '+' : '') + H.diff, 'none')}
+      ${row('Clay proj. wins', MB.clayWins[A.abbr].toFixed(1), MB.clayWins[H.abbr].toFixed(1), 'hi')}</div></div>
+    <div class="ib"><h3>Division</h3><div class="kv"><span>${A.abbr}</span><b style="grid-column:span 2">${divRank(A.abbr)}</b><span>${H.abbr}</span><b style="grid-column:span 2">${divRank(H.abbr)}</b></div></div>
+    <div class="ib"><h3>Kickoff</h3><div class="kv"><span>When</span><b style="grid-column:span 2">${k.day} ${k.date}, ${k.time} ET</b><span>Where</span><b style="grid-column:span 2;font-family:var(--sans)">${esc(g.venue)}</b>${g.tv ? `<span>TV</span><b style="grid-column:span 2;font-family:var(--sans)">${esc(g.tv)}</b>` : ''}</div></div>
+    <p class="foot">Records and point totals are actual results. Clay wins are his preseason projection (${MB.clayUpdated}), a separate model.</p>`;
+}
+function select(id){ if (!id) return; selected = id; renderSlate(); renderLayers(); renderInspector(); }
+document.addEventListener('click', e => { const el = e.target.closest('[data-g]'); if (el) select(el.dataset.g); });
+document.addEventListener('keydown', e => { if ((e.key === 'Enter' || e.key === ' ') && e.target.dataset?.g) { e.preventDefault(); select(e.target.dataset.g); } });
+
+const LK = { passing: ['pass_yd','yds', r => `${r.pass_td} TD · ${r.pass_int} INT`], rushing: ['rush_yd','yds', r => `${r.rush_td} TD · ${r.rush_avg} avg`], receiving: ['rec_yd','yds', r => `${r.rec} rec · ${r.rec_td} TD`] };
+function renderLeaders(k){
+  const [key,, sub] = LK[k];
+  document.getElementById('leaders').innerHTML = MB.leaders[k].slice(0, 6).map((r, i) => `<div class="lead"><span class="r num">${i + 1}</span><span class="p"><span class="sw" style="display:inline-block;vertical-align:-1px;margin-right:7px;background:${T(r.team).color}"></span><b>${esc(r.name)}</b><small>${r.team} · ${sub(r)}</small></span><span class="v">${r[key].toLocaleString()}</span></div>`).join('');
+  document.querySelectorAll('.tabset button').forEach(b => b.setAttribute('aria-pressed', b.dataset.k === k));
+}
+document.querySelector('.tabset').addEventListener('click', e => { const b = e.target.closest('button'); if (b) renderLeaders(b.dataset.k); });
+document.getElementById('ldrNote').textContent = `Weeks ${MB.statsWeeks[0]}–${MB.statsWeeks.at(-1)} · Sleeper`;
+document.getElementById('clayNote').textContent = 'Clay projected wins';
+const max = power[0].wins;
+document.getElementById('power').innerHTML = power.slice(0, 10).map((p, i) => `<div class="pw"><span class="num" style="color:var(--faint)">${i + 1}</span><b>${p.abbr}</b><span class="bar" style="width:${(p.wins / max * 100).toFixed(1)}%;background:${T(p.abbr).color}"></span><span class="v num">${p.wins.toFixed(1)}</span></div>`).join('');
+
+renderLeaders('passing'); select(selected);
+</script>
+</body>
+</html>
