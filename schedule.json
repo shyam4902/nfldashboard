@@ -1527,7 +1527,7 @@
       "tv": "",
       "winner": null,
       "away_score": 10,
-      "home_score": 23,
+      "home_score": 29,
       "week": 8,
       "status": "in_progress"
     },
@@ -1540,8 +1540,8 @@
       "kickoff_utc": "2026-11-01T18:00:00Z",
       "tv": "",
       "winner": null,
-      "away_score": 21,
-      "home_score": 21,
+      "away_score": 34,
+      "home_score": 29,
       "week": 8,
       "status": "in_progress"
     },
@@ -1554,8 +1554,8 @@
       "kickoff_utc": "2026-11-01T18:00:00Z",
       "tv": "",
       "winner": null,
-      "away_score": 10,
-      "home_score": 24,
+      "away_score": 24,
+      "home_score": 27,
       "week": 8,
       "status": "in_progress"
     },
@@ -1568,8 +1568,8 @@
       "kickoff_utc": "2026-11-01T18:00:00Z",
       "tv": "",
       "winner": null,
-      "away_score": 7,
-      "home_score": 12,
+      "away_score": 15,
+      "home_score": 19,
       "week": 8,
       "status": "in_progress"
     },
@@ -1581,11 +1581,11 @@
       "city": "",
       "kickoff_utc": "2026-11-01T18:00:00Z",
       "tv": "",
-      "winner": null,
+      "winner": "Jacksonville Jaguars",
       "away_score": 7,
       "home_score": 42,
       "week": 8,
-      "status": "in_progress"
+      "status": "final"
     },
     {
       "game_id": "2026-11-01-LV-NYJ",
@@ -1595,11 +1595,11 @@
       "city": "",
       "kickoff_utc": "2026-11-01T18:00:00Z",
       "tv": "",
-      "winner": null,
-      "away_score": 35,
-      "home_score": 30,
+      "winner": "Las Vegas Raiders",
+      "away_score": 38,
+      "home_score": 33,
       "week": 8,
-      "status": "in_progress"
+      "status": "final"
     },
     {
       "game_id": "2026-11-01-CLE-PIT",
@@ -1623,11 +1623,11 @@
       "city": "",
       "kickoff_utc": "2026-11-01T18:00:00Z",
       "tv": "",
-      "winner": null,
+      "winner": "Tampa Bay Buccaneers",
       "away_score": 0,
       "home_score": 16,
       "week": 8,
-      "status": "in_progress"
+      "status": "final"
     },
     {
       "game_id": "2026-11-01-LAC-LA",
@@ -1638,9 +1638,10 @@
       "kickoff_utc": "2026-11-01T21:05:00Z",
       "tv": "",
       "winner": null,
-      "away_score": null,
-      "home_score": null,
-      "week": 8
+      "away_score": 0,
+      "home_score": 0,
+      "week": 8,
+      "status": "in_progress"
     },
     {
       "game_id": "2026-11-01-KC-DEN",
@@ -3658,5 +3659,5 @@
       "week": 18
     }
   ],
-  "scores_synced_at": "2026-11-01T20:25:55.677Z"
+  "scores_synced_at": "2026-11-01T21:07:06.959Z"
 }
