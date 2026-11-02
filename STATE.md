@@ -262,3 +262,9 @@ to the first game of the week, so it sat on a game already played.
 ## Blockers
 
 - None.
+
+## 2026-11-02 NBA theme: team, compare, leaders, players
+- `nba/index.html` views `team` (`tm-*`), `compare` (`cp-*`, reuses `gm-*` scorebug and tape), `leaders` (`ld-*`), `player` / `players` (`pl-*`) now share the game page's grammar: team-colour hero blocks, centre-out tale of the tape, W/L chips, gold only on tabs.
+- Compare opens on tonight's first game (else the latest game of the last 8 days) via `pickCompareGame`; league ranks on the team page come from standings rows only (PPG, Opp PPG, Diff, Win %) via `leagueRank`. No extra endpoints.
+- Phones: `.wrap` is `box-sizing: border-box` at <=720px (it was 24px wider than the viewport).
+- Old `.team-head`, `.player-head`, `.cmp-head`, `.leader-row` CSS is now unused.

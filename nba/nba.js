@@ -286,6 +286,8 @@ function standingsRow(entry) {
   const gbStat = statValue(index, ['gamesBehind'], ['gamesbehind']);
   const streakStat = statValue(index, ['streak'], ['streak']);
   const last10Stat = statValue(index, ['Last Ten Games'], ['lasttengames']);
+  const homeStat = statValue(index, ['Home'], ['home']);
+  const roadStat = statValue(index, ['Road'], ['road']);
   const ppgStat = statValue(index, ['avgPointsFor'], ['avgpointsfor']);
   const oppPpgStat = statValue(index, ['avgPointsAgainst'], ['avgpointsagainst']);
 
@@ -300,6 +302,8 @@ function standingsRow(entry) {
     gb: statText(gbStat),
     streak: statText(streakStat),
     last10: statText(last10Stat),
+    home: statText(homeStat),
+    road: statText(roadStat),
     seed: num(seedStat?.value ?? seedStat?.displayValue),
     ppg: num(ppgStat?.value ?? ppgStat?.displayValue),
     oppPpg: num(oppPpgStat?.value ?? oppPpgStat?.displayValue),
@@ -324,6 +328,7 @@ export function parseStandings(json) {
       const pct = (b.pct ?? 0) - (a.pct ?? 0);
       return pct !== 0 ? pct : a.name.localeCompare(b.name);
     });
+    rows.forEach((row) => { row.conf = key; });
     conferences[key] = rows;
   }
   return conferences;
@@ -822,6 +827,34 @@ export function barShares(a, b, lower = false) {
   return { a: share(sa), b: share(sb) };
 }
 
+// League rank of one team on a value taken from every standings row. Rows with
+// no value are skipped; `lower` ranks the smallest first. Ties share a rank.
+// Returns null when the team has no value, so the caller can omit the badge.
+export function leagueRank(rows, teamId, read, lower = false) {
+  const scored = arr(rows).map((row) => ({ id: str(row?.teamId), v: read(row) }))
+    .filter((row) => row.v != null && !Number.isNaN(row.v));
+  const mine = scored.find((row) => row.id === str(teamId));
+  if (!mine) return null;
+  const ahead = scored.filter((row) => (lower ? row.v < mine.v : row.v > mine.v)).length;
+  return { rank: ahead + 1, of: scored.length };
+}
+
+export function ordinal(n) {
+  if (!Number.isFinite(n)) return '';
+  const tail = Math.abs(n) % 100;
+  if (tail >= 11 && tail <= 13) return n + 'th';
+  return n + ({ 1: 'st', 2: 'nd', 3: 'rd' }[Math.abs(n) % 10] || 'th');
+}
+
+// Default game for the compare page, from one day's scoreboard games: the first
+// tip-off of the day, or (which = 'last') the latest one for a past day.
+export function pickCompareGame(games, which = 'first') {
+  const list = arr(games).filter((game) => game?.away?.id && game?.home?.id && game.startISO);
+  if (!list.length) return null;
+  const time = (game) => new Date(game.startISO).getTime();
+  return list.slice().sort((a, b) => (which === 'last' ? time(b) - time(a) : time(a) - time(b)))[0];
+}
+
 export function parseAthlete(json) {
   const athlete = json?.athlete || {};
   return {
@@ -962,6 +995,7 @@ export function parseRoster(json) {
       pos: str(athlete.position?.abbreviation || athlete.position?.name),
       height: str(athlete.displayHeight),
       age: num(athlete.age),
+      headshot: str(athlete.headshot?.href),
     };
     if (player.id || player.name) players.push(player);
   }

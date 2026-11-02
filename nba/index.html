@@ -1413,6 +1413,152 @@ body.gm-wide .wrap { max-width: 1240px; }
   .gm-ld, .gm-l5 { grid-template-columns: minmax(0, 1fr); gap: 18px; }
   .gm-sr { grid-template-columns: 78px minmax(0, 1fr) auto; }
 }
+
+/* ── Team, compare, leaders, players (tm-*, cp-*, ld-*, pl-*) ─────────────
+   Same grammar as the game page: dark chrome, team colour on the hero blocks,
+   chips and bars, gold only on tabs. Every grid is minmax(0,..) so a phone
+   never scrolls sideways. */
+.tm-sw { display: inline-block; flex: none; width: 9px; height: 9px; border-radius: 2px; }
+.tm-wl {
+  display: inline-flex; align-items: center; justify-content: center; flex: none;
+  width: 18px; height: 18px; border-radius: 4px; margin-right: 6px;
+  font: 800 10px/1 var(--font-sans); color: var(--bg-body);
+}
+.tm-wl.W { background: var(--accent-positive); }
+.tm-wl.L { background: var(--accent-negative); }
+.tm-ch, .ld-h { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; margin-bottom: 10px; }
+.tm-ch span, .ld-h span { font: 500 10px/1 var(--font-mono); letter-spacing: 0.04em; text-transform: uppercase; color: var(--text-faint); }
+
+.tm-hero, .pl-hero { display: flex; flex-direction: column; gap: 16px; margin-bottom: 12px; padding: 20px 22px 16px; border-radius: 12px; }
+.tm-id { display: flex; align-items: center; gap: 14px; min-width: 0; }
+.tm-logo { display: inline-flex; flex: none; align-items: center; justify-content: center; width: 62px; height: 62px; border-radius: 999px; background: rgba(255, 255, 255, 0.92); }
+.tm-logo img { width: 46px; height: 46px; object-fit: contain; }
+.tm-nm { flex: 1; min-width: 0; }
+.tm-nm h1 { font: 900 clamp(24px, 4.2vw, 42px)/1 'Archivo', var(--font-sans); letter-spacing: -0.02em; text-transform: uppercase; overflow-wrap: anywhere; }
+.tm-rec { display: block; margin-top: 8px; font: 700 14px/1 var(--font-mono); }
+.tm-rec i { margin-left: 10px; font-style: normal; opacity: 0.8; }
+.tm-cmp, .pl-cmp { flex: none; padding: 8px 12px; border: 1.5px solid currentColor; border-radius: 6px; font: 700 12px/1 var(--font-sans); color: inherit; }
+.tm-cmp:hover, .pl-cmp:hover { background: var(--chip); }
+.pl-cmp { align-self: flex-start; }
+.tm-chips, .pl-tiles { display: flex; flex-wrap: wrap; gap: 6px; }
+.tm-chips span, .pl-tiles span { display: inline-flex; align-items: baseline; gap: 8px; padding: 7px 10px; border-radius: 6px; background: var(--chip); }
+.tm-chips i, .pl-tiles i { font: 700 9px/1 var(--font-sans); font-style: normal; letter-spacing: 0.08em; text-transform: uppercase; opacity: 0.85; }
+.tm-chips b, .pl-tiles b { font: 800 13px/1 var(--font-mono); font-variant-numeric: tabular-nums; }
+
+.tm-stats { margin-bottom: 12px; padding: 14px 16px 6px; }
+.tm-sg { display: grid; grid-template-columns: repeat(auto-fill, minmax(92px, 1fr)); gap: 0 12px; }
+.tm-c { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: baseline; gap: 2px 6px; padding: 9px 0; border-top: 1px solid var(--border-muted); }
+.tm-c .k { grid-column: 1 / -1; font: 700 10px/1.2 var(--font-sans); letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); }
+.tm-c b { font: 700 20px/1 var(--font-mono); font-variant-numeric: tabular-nums; color: var(--text-main); }
+.tm-c .rk { font: 800 11px/1 var(--font-mono); }
+
+.tm-sched { display: grid; grid-template-columns: minmax(0, 1fr); }
+.tm-col { min-width: 0; padding: 14px 16px 10px; }
+.tm-col + .tm-col { border-top: 1px solid var(--border-muted); }
+.tm-g { display: grid; grid-template-columns: 84px minmax(0, 1fr) auto; align-items: center; gap: 8px; padding: 8px 6px; border-bottom: 1px solid var(--border-muted); font: 500 12px/1.2 var(--font-mono); color: var(--text-muted); }
+.tm-g:hover { background: var(--bg-card-hover); }
+.tm-d { font-size: 11px; white-space: nowrap; }
+.tm-o { display: flex; align-items: center; gap: 6px; min-width: 0; color: var(--text-main); }
+.tm-o .ha { color: var(--text-faint); font-size: 11px; }
+.tm-o img { flex: none; width: 18px; height: 18px; object-fit: contain; }
+.tm-o b { font: 700 13px/1 var(--font-sans); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tm-r { display: inline-flex; align-items: center; justify-content: flex-end; gap: 0; }
+.tm-sc { min-width: 56px; text-align: right; color: var(--text-main); font-weight: 700; font-variant-numeric: tabular-nums; }
+.tm-up { color: var(--text-muted); white-space: nowrap; }
+.tm-g.next { background: color-mix(in srgb, var(--c) 20%, transparent); box-shadow: inset 3px 0 0 var(--c); }
+.tm-g em { margin-right: 8px; font: 800 9px/1 var(--font-sans); font-style: normal; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-main); }
+.tm-roster { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 8px; }
+.tm-p { display: grid; grid-template-columns: 48px minmax(0, 1fr) auto; align-items: center; gap: 10px; padding: 8px 12px 8px 8px; border: 1px solid var(--border-card); border-radius: 10px; background: var(--bg-card); }
+.tm-hs { width: 48px; height: 48px; border-radius: 999px; overflow: hidden; background: color-mix(in srgb, var(--c) 38%, var(--bg-inset)); }
+.tm-hs img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 12%; }
+.tm-pw { min-width: 0; }
+.tm-pn, .tm-ps { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tm-pn { font: 700 13px/1.25 var(--font-sans); color: var(--text-main); }
+.tm-pn a:hover { text-decoration: underline; }
+.tm-ps { margin-top: 2px; font: 500 10px/1.3 var(--font-mono); color: var(--text-faint); }
+.tm-pp { text-align: right; }
+.tm-pp b { display: block; font: 800 13px/1 var(--font-sans); color: var(--text-main); }
+.tm-pp i { display: block; margin-top: 3px; font: 500 10px/1 var(--font-mono); font-style: normal; color: var(--text-faint); }
+
+.cp-open { max-width: 100%; font: 700 11px/1.3 var(--font-sans); color: var(--text-main); text-align: center; }
+.cp-open:hover { text-decoration: underline; }
+.cp { margin-top: 12px; }
+
+.ld { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; align-items: start; }
+.ld-card { min-width: 0; padding: 14px 16px 8px; }
+.ld-r { position: relative; display: grid; grid-template-columns: 18px 30px minmax(0, 1fr) auto; align-items: center; gap: 10px; padding: 6px 0 9px; border-bottom: 1px solid var(--border-muted); }
+.ld-r:last-child { border-bottom: 0; }
+.ld-r .rk { font: 700 12px/1 var(--font-mono); color: var(--text-faint); text-align: right; }
+.ld-r .hs { width: 30px; height: 30px; border-radius: 999px; overflow: hidden; background: color-mix(in srgb, var(--c) 38%, var(--bg-inset)); }
+.ld-r .hs img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 12%; }
+.ld-r .nm { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.ld-r .nm a { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font: 600 13px/1.2 var(--font-sans); color: var(--text-main); }
+.ld-r .nm a:hover { text-decoration: underline; }
+.ld-r .tc { display: inline-flex; align-items: center; gap: 5px; font: 700 10px/1 var(--font-mono); color: var(--text-muted); }
+.ld-r .tc i { width: 8px; height: 8px; border-radius: 2px; }
+.ld-r .v { text-align: right; }
+.ld-r .v b { display: block; font: 700 16px/1 var(--font-mono); font-variant-numeric: tabular-nums; color: var(--text-main); }
+.ld-r .v small { display: block; margin-top: 3px; font: 500 9px/1 var(--font-mono); color: var(--text-faint); }
+.ld-r .bar { position: absolute; left: 0; bottom: 3px; height: 2px; border-radius: 2px; background: var(--c); opacity: 0.55; }
+.ld-r.top { grid-template-columns: 18px 40px minmax(0, 1fr) auto; padding: 9px 0 12px; }
+.ld-r.top .hs { width: 40px; height: 40px; }
+.ld-r.top .rk { font-size: 15px; font-weight: 800; color: color-mix(in srgb, var(--c) 65%, #fff); }
+.ld-r.top .nm a { font-size: 14px; font-weight: 800; }
+.ld-r.top .v b { font-size: 22px; font-weight: 800; }
+.ld-r.top .bar { height: 3px; opacity: 0.9; }
+
+.pl-top { display: flex; justify-content: space-between; align-items: flex-end; gap: 12px; min-width: 0; }
+.pl-who { min-width: 0; }
+.pl-who h1 { font: 900 clamp(24px, 4.2vw, 40px)/1.02 'Archivo', var(--font-sans); letter-spacing: -0.02em; text-transform: uppercase; overflow-wrap: anywhere; }
+.pl-team { display: inline-block; margin-top: 8px; font: 700 13px/1.2 var(--font-sans); color: inherit; text-decoration: underline; text-underline-offset: 3px; }
+.pl-facts { margin-top: 6px; font: 600 11px/1.4 var(--font-mono); opacity: 0.9; overflow-wrap: anywhere; }
+.pl-shot { flex: none; align-self: flex-end; margin: -6px -8px -16px 0; }
+.pl-shot img { display: block; width: 120px; height: 88px; object-fit: contain; object-position: 50% 100%; }
+.pl-card { margin-bottom: 12px; padding: 14px 16px 12px; min-width: 0; }
+.pl-log { min-width: 0; }
+.pl-log th, .pl-log td { padding: 5px 6px; font-size: 11px; }
+.pl-log td.opp, .pl-log td.res { white-space: nowrap; }
+.pl-log td.opp .tm-sw { margin-right: 6px; }
+.pl-log tbody tr:nth-child(even) td { background: rgba(255, 255, 255, 0.02); }
+.pl-log tbody tr:nth-child(even) td.sticky-col { background: var(--bg-card); }
+.pl-bug { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items: stretch; margin-bottom: 12px; border: 1px solid var(--border-card); border-radius: 12px; overflow: hidden; background: var(--bg-card); }
+.pl-side { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; min-width: 0; padding: 18px 20px; }
+.pl-side.home { align-items: flex-end; text-align: right; }
+.pl-sh { width: 64px; height: 64px; border-radius: 999px; overflow: hidden; background: var(--chip); }
+.pl-sh img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 12%; }
+.pl-sn { max-width: 100%; font: 900 clamp(15px, 2.4vw, 24px)/1.05 'Archivo', var(--font-sans); letter-spacing: -0.01em; text-transform: uppercase; overflow-wrap: anywhere; }
+.pl-st { font: 600 11px/1 var(--font-mono); opacity: 0.9; }
+.pl-sv { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
+.pl-side.home .pl-sv { justify-content: flex-end; }
+.pl-sv span { display: inline-flex; gap: 6px; align-items: baseline; padding: 5px 8px; border-radius: 6px; background: var(--chip); }
+.pl-sv i { font: 700 9px/1 var(--font-sans); font-style: normal; letter-spacing: 0.08em; opacity: 0.85; }
+.pl-sv b { font: 800 12px/1 var(--font-mono); }
+.pl-vs { display: flex; align-items: center; padding: 0 14px; font: 800 12px/1 var(--font-sans); letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-faint); }
+.pl-cmpw .gm-abbr { display: block; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+@media (min-width: 720px) {
+  .ld { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (min-width: 860px) {
+  .tm-sched { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .tm-col + .tm-col { border-top: 0; border-left: 1px solid var(--border-muted); }
+}
+@media (min-width: 1100px) {
+  .ld { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (max-width: 720px) {
+  /* .wrap is width:100% plus padding with no global border-box; on a phone that is 24px too wide. */
+  .wrap { box-sizing: border-box; }
+  .tm-hero, .pl-hero { padding: 14px 14px 12px; }
+  .tm-logo { width: 48px; height: 48px; }
+  .tm-logo img { width: 36px; height: 36px; }
+  .tm-g { grid-template-columns: 78px minmax(0, 1fr) auto; gap: 6px; padding: 8px 2px; }
+  .tm-col { padding: 12px 12px 6px; }
+  .pl-shot img { width: 92px; height: 68px; }
+  .pl-bug { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  .pl-vs { display: none; }
+  .pl-side { padding: 14px 12px; }
+}
 </style>
 </head>
 <body>
@@ -1455,6 +1601,8 @@ import {
   barShares,
   contrastRatio,
   etDate,
+  leagueRank,
+  ordinal,
   parseAthlete,
   parseBoxScore,
   parseGameExtras,
@@ -1469,6 +1617,7 @@ import {
   parseTeamSchedule,
   parseTeams,
   parseTeamStats,
+  pickCompareGame,
   readableOn,
   smallImg,
   teamFill,
@@ -2603,37 +2752,6 @@ const COMPARE_ROWS = [
   { label: 'AST/TO', value: (team) => team.stats.astTo, text: (team) => ratioDecimal(team.stats.astTo) },
 ];
 
-function compareTableHTML(left, right, rowSet = COMPARE_ROWS, caption = 'Team comparison') {
-  const rows = rowSet.map((row) => {
-    const a = row.value(left);
-    const b = row.value(right);
-    let aBetter = false;
-    let bBetter = false;
-    if (a != null && b != null && a !== b) {
-      const aWins = row.lower ? a < b : a > b;
-      aBetter = aWins;
-      bBetter = !aWins;
-    }
-    return '<tr><td class="cmp-val' + (aBetter ? ' better' : '') + '">' + esc(row.text(left)) + '</td>' +
-      '<td class="cmp-lbl">' + esc(row.label) + '</td>' +
-      '<td class="cmp-val right' + (bBetter ? ' better' : '') + '">' + esc(row.text(right)) + '</td></tr>';
-  }).join('');
-
-  return '<section class="card standings-block"><div class="table-wrap"><table class="cmp-table">' +
-    '<caption class="sr-only">' + esc(caption) + '</caption><tbody>' +
-    rows + '</tbody></table></div></section>';
-}
-
-function compareHeadHTML(left, right, flat) {
-  const side = (team, cls) => '<a class="cmp-side' + (cls ? ' ' + cls : '') + '" href="#team/' + esc(team.id) + '">' +
-    (team.logo ? '<img src="' + esc(smallImg(team.logo, 68, 68)) + '" alt="" width="34" height="34" loading="lazy" decoding="async">' : '') +
-    '<span class="cmp-id"><span class="cmp-abbr">' + esc(team.abbr) + '</span>' +
-    '<span class="cmp-name">' + esc(team.name) + '</span>' +
-    '<span class="cmp-rec">' + esc(team.record || '—') + '</span></span></a>';
-  return '<div class="cmp-head' + (flat ? ' flat' : '') + '">' + side(left, '') +
-    '<span class="cmp-vs">vs</span>' + side(right, 'right') + '</div>';
-}
-
 function comparePickerHTML(teams, a, b) {
   const options = (selected) => '<option value="">Select team…</option>' + teams.map((row) =>
     '<option value="' + esc(row.teamId) + '"' + (row.teamId === selected ? ' selected' : '') + '>' +
@@ -2668,14 +2786,63 @@ function recentGames(games, count) {
     .slice(0, count);
 }
 
+/* ── Compare (cp-*) ─────────────────────────────────────────────────────── */
+// Compare never opens empty: with no teams picked it takes the first game on
+// tonight's slate, or the latest game of the most recent day that had one.
+async function defaultCompareGame() {
+  let day = todayET();
+  for (let back = 0; back < 8; back += 1) {
+    const games = await fetchJSON(API + '/scoreboard?dates=' + day).then(parseScoreboard);
+    const pick = pickCompareGame(games, back === 0 ? 'first' : 'last');
+    if (pick) return pick;
+    day = shiftDay(day, -1);
+  }
+  return null;
+}
+
+// The two teams' meetings this season, in the shape the game page's series block reads.
+function cpSeries(left, right) {
+  const rival = new Map(right.schedule.games.map((game) => [game.id, game]));
+  return left.schedule.games.filter((game) => rival.has(game.id))
+    .sort((x, y) => new Date(x.startISO) - new Date(y.startISO))
+    .map((game) => {
+      const home = game.homeAway === 'home';
+      const mine = { abbr: left.abbr, score: game.score };
+      const theirs = { abbr: right.abbr, score: game.oppScore };
+      const [away, hom] = home ? [theirs, mine] : [mine, theirs];
+      return {
+        id: game.id, date: game.startISO, state: game.result ? 'post' : 'pre',
+        away: away.abbr, home: hom.abbr, awayScore: away.score, homeScore: hom.score,
+        winnerAbbr: game.result ? (game.result === 'W' ? left.abbr : right.abbr) : '',
+      };
+    });
+}
+
+function cpLastFive(team) {
+  return recentGames(team.schedule.games, 5).map((game) => ({
+    id: game.id, date: game.startISO, result: game.result, atVs: game.homeAway === 'home' ? 'vs' : '@',
+    opponentAbbr: game.opponent.abbr, score: (game.score == null ? '' : game.score) + (game.oppScore == null ? '' : '-' + game.oppScore),
+  }));
+}
+
+function cpMidHTML(series, game) {
+  const done = series.filter((g) => g.state === 'post');
+  return '<div class="gm-mid"><span class="gm-day">' + (game ? esc(formatDay(etDate(game.startISO) || '')) : 'Season series') + '</span>' +
+    '<span class="gm-st">vs</span>' +
+    (done.length ? '<span class="gm-meta cp-h2h">Head to head this season: ' + done.length + ' played</span>' : '<span class="gm-meta">No meetings played yet</span>') +
+    (game ? '<a class="cp-open" href="#game/' + esc(game.id) + '">' + esc(game.state === 'pre' ? tipOff(game.startISO) || 'Scheduled' : game.statusText || 'Final') + ' · Game details →</a>' : '') +
+    '</div>';
+}
+
 async function showCompare(idA, idB) {
   stopPolling();
   const token = ++requestId;
   app.innerHTML = loadingHTML();
 
   let standings;
+  let colors;
   try {
-    standings = await getStandings();
+    [standings, colors] = await Promise.all([getStandings(), getTeamColors()]);
   } catch (err) {
     if (token === requestId) showError(() => showCompare(idA, idB));
     return;
@@ -2684,8 +2851,22 @@ async function showCompare(idA, idB) {
 
   const teams = allTeams(standings);
   const wanted = (id) => (teams.some((row) => row.teamId === String(id || '')) ? String(id) : '');
-  const a = wanted(idA);
-  const b = wanted(idB);
+  let a = wanted(idA);
+  let b = wanted(idB);
+  let game = null;
+
+  if (!a && !b) {
+    try {
+      game = await defaultCompareGame();
+    } catch (err) {
+      game = null;
+    }
+    if (token !== requestId) return;
+    if (game) {
+      a = wanted(game.away.id);
+      b = wanted(game.home.id);
+    }
+  }
 
   if (!a || !b) {
     app.innerHTML = comparePickerHTML(teams, a, b) + '<div class="state">' +
@@ -2704,30 +2885,23 @@ async function showCompare(idA, idB) {
   }
   if (token !== requestId) return;
 
-  const rivalIds = new Set(right.schedule.games.map((game) => game.id));
-  const headToHead = left.schedule.games
-    .filter((game) => rivalIds.has(game.id))
-    .sort((x, y) => new Date(x.startISO) - new Date(y.startISO));
-  const lastFive = (team) => {
-    const played = recentGames(team.schedule.games, 5);
-    return '<section class="card standings-block"><h2>Last 5 · ' + esc(team.abbr) + '</h2>' +
-      (played.length
-        ? '<div class="sched">' + played.map(scheduleRowHTML).join('') + '</div>'
-        : '<div class="state">No games played yet</div>') +
-      '</section>';
-  };
+  const looks = gmLooks({ away: left, home: right }, colors);
+  const series = cpSeries(left, right);
+  const side = (team) => ({ id: team.id, abbr: team.abbr, name: team.name, record: team.record, score: null });
+  const pre = { lastFive: { [left.abbr]: cpLastFive(left), [right.abbr]: cpLastFive(right) }, seasonSeries: series };
+  const shell = { id: game ? game.id : '', away: left, home: right };
+  // The game that opened the page, only while its two teams are still the pick.
+  const shown = game && game.away.id === a && game.home.id === b ? game : null;
+  const tape = gmTapeHTML(COMPARE_ROWS, left, right, looks, left.abbr + ' vs ' + right.abbr + ' · season comparison', 'season');
+  const rightCol = gmSeriesHTML(pre, shell) + gmLastFiveHTML(shell, pre, looks);
 
   setTitle(left.abbr + ' vs ' + right.abbr + ' · Compare');
 
   app.innerHTML = comparePickerHTML(teams, a, b) +
-    compareHeadHTML(left, right) +
-    compareTableHTML(left, right, COMPARE_ROWS, left.abbr + ' vs ' + right.abbr + ' · season comparison') +
-    lastFive(left) + lastFive(right) +
-    '<section class="card standings-block"><h2>This season · head to head</h2>' +
-    (headToHead.length
-      ? '<div class="sched">' + headToHead.map(scheduleRowHTML).join('') + '</div>'
-      : '<div class="state">No games meet both schedules.</div>') +
-    '</section>';
+    '<div class="gm cp"><div class="gm-bug">' + gmBlockHTML(side(left), looks.away, 'away', { state: 'pre' }) + cpMidHTML(series, shown) +
+    gmBlockHTML(side(right), looks.home, 'home', { state: 'pre' }) + '</div>' +
+    '<div class="gm-cols' + (tape && rightCol ? ' two' : '') + '">' +
+    (tape ? '<div class="gm-col">' + tape + '</div>' : '') + (rightCol ? '<div class="gm-col">' + rightCol + '</div>' : '') + '</div></div>';
 
   wireComparePicker(a, b);
 }
@@ -2758,32 +2932,41 @@ function avatarHTML(src, name) {
     '</span>';
 }
 
-function leaderRowHTML(row) {
-  return '<div class="leader-row">' +
-    '<span class="rank">' + esc(row.rank) + '</span>' +
-    avatarHTML(row.headshot, row.name) +
-    '<span class="who"><a href="#player/' + esc(row.id) + '">' + esc(row.name) + '</a>' +
-    (row.teamAbbr ? '<span class="team"> ' + esc(row.teamAbbr) + '</span>' : '') + '</span>' +
-    '<span class="val">' + esc(oneDecimal(row.value)) +
-    (row.gp == null ? '' : ' <span class="gp">' + esc(row.gp) + ' GP</span>') + '</span></div>';
+function ldRowHTML(row, colors, max) {
+  const look = teamLook(colors, row.teamAbbr, '', '');
+  const top = row.rank <= 3;
+  const shot = row.headshot
+    ? '<img src="' + esc(smallImg(row.headshot, top ? 88 : 64, top ? 64 : 48)) + '" alt="" width="' + (top ? 40 : 30) + '" height="' + (top ? 40 : 30) + '" loading="lazy" decoding="async" onerror="this.remove()">'
+    : '';
+  const width = max > 0 ? Math.max(4, Math.round(row.value / max * 100)) : 0;
+  return '<div class="ld-r' + (top ? ' top' : '') + '" style="--c:' + look.fill + '">' +
+    '<span class="rk">' + esc(row.rank) + '</span>' +
+    '<span class="hs">' + shot + '</span>' +
+    '<span class="nm"><a href="#player/' + esc(row.id) + '">' + esc(row.name) + '</a>' +
+    (row.teamAbbr ? '<span class="tc"><i style="background:' + look.fill + '"></i>' + esc(row.teamAbbr) + '</span>' : '') + '</span>' +
+    '<span class="v"><b>' + esc(oneDecimal(row.value)) + '</b>' + (row.gp == null ? '' : '<small>' + esc(row.gp) + ' GP</small>') + '</span>' +
+    '<i class="bar" style="width:' + width + '%"></i></div>';
 }
 
-function leaderBoardHTML(rows) {
-  if (!rows.length) return '<div class="state">No data for this board yet.</div>';
-  return rows.map(leaderRowHTML).join('');
+function leaderBoardHTML(rows, colors) {
+  if (!rows.length) return '<div class="gm-none">No data for this board yet.</div>';
+  const max = rows[0].value;
+  return rows.map((row) => ldRowHTML(row, colors, max)).join('');
 }
 
 async function showLeaders() {
   stopPolling();
   const token = ++requestId;
+  const colors = await getTeamColors();
+  if (token !== requestId) return;
 
-  app.innerHTML = LEADER_BOARDS.map((board) => {
+  app.innerHTML = '<div class="ld">' + LEADER_BOARDS.map((board) => {
     const cached = leadersCache.get(board.key);
-    return '<section class="card standings-block"><h2>' + esc(board.label) + '</h2>' +
+    return '<section class="card ld-card"><div class="ld-h"><h2>' + esc(board.label) + '</h2><span>Per game</span></div>' +
       '<div class="board-body">' +
-      (cached ? leaderBoardHTML(cached) : '<div class="state"><span class="pulse"></span>Loading…</div>') +
+      (cached ? leaderBoardHTML(cached, colors) : '<div class="state"><span class="pulse"></span>Loading…</div>') +
       '</div></section>';
-  }).join('');
+  }).join('') + '</div>';
 
   setTitle('NBA Leaders');
 
@@ -2795,9 +2978,9 @@ async function showLeaders() {
         '&sort=' + encodeURIComponent(board.category + '.' + board.stat + ':desc');
       const rows = parseLeaders(await fetchJSON(url), board.category, board.stat);
       leadersCache.set(board.key, rows);
-      if (token === requestId && body) body.innerHTML = leaderBoardHTML(rows);
+      if (token === requestId && body) body.innerHTML = leaderBoardHTML(rows, colors);
     } catch (err) {
-      if (token === requestId && body) body.innerHTML = '<div class="state">Couldn\'t load this board.</div>';
+      if (token === requestId && body) body.innerHTML = '<div class="gm-none">Couldn\'t load this board.</div>';
     }
   }));
 }
@@ -2983,19 +3166,19 @@ function averagesHTML(overview) {
     '</tbody></table></div>';
 }
 
-function seasonTableHTML(labels, games) {
+function seasonTableHTML(labels, games, colors) {
   const head = '<th class="sticky-col">Date</th><th>Opp</th><th>Result</th>' +
     labels.map((label) => '<th>' + esc(label) + '</th>').join('');
   const rows = games.map((game) => '<tr><td class="sticky-col">' + esc(formatLogDate(game.date)) + '</td>' +
-    '<td>' + esc((game.atVs ? game.atVs + ' ' : '') + game.opponentAbbr) + '</td>' +
-    '<td>' + esc((game.result ? game.result + ' ' : '') + game.score) + '</td>' +
+    '<td class="opp"><i class="tm-sw" style="background:' + teamLook(colors, game.opponentAbbr, '', '').fill + '"></i>' + esc((game.atVs ? game.atVs + ' ' : '') + game.opponentAbbr) + '</td>' +
+    '<td class="res">' + (game.result ? '<span class="tm-wl ' + esc(game.result) + '">' + esc(game.result) + '</span>' : '') + esc(game.score) + '</td>' +
     labels.map((label) => '<td>' + (game.stats[label] == null ? '—' : esc(game.stats[label])) + '</td>').join('') +
     '</tr>').join('');
-  return '<div class="table-wrap"><table class="log">' +
+  return '<div class="table-wrap"><table class="log pl-log">' +
     '<caption class="sr-only">Game log</caption><thead><tr>' + head + '</tr></thead><tbody>' + rows + '</tbody></table></div>';
 }
 
-function gameLogHTML(log) {
+function gameLogHTML(log, colors) {
   if (!log.seasons.length) return '<div class="state">No games logged this season.</div>';
   const found = log.seasons.findIndex((season) => /regular season/i.test(season.name));
   const active = found >= 0 ? found : 0;
@@ -3003,7 +3186,7 @@ function gameLogHTML(log) {
     '<button class="tab" type="button" role="tab" data-season="' + index + '" aria-selected="' + (index === active) + '">' + esc(season.name) + '</button>').join('');
   const panels = log.seasons.map((season, index) =>
     '<section data-season-panel="' + index + '"' + (index === active ? '' : ' hidden') + '>' +
-    (season.games.length ? seasonTableHTML(log.labels, season.games) : '<div class="state">No games</div>') +
+    (season.games.length ? seasonTableHTML(log.labels, season.games, colors) : '<div class="state">No games</div>') +
     '</section>').join('');
   return '<div class="tabs-row" role="tablist">' + tabs + '</div>' + panels;
 }
@@ -3018,6 +3201,32 @@ function wireSeasonTabs() {
   }));
 }
 
+/* ── Player page (pl-*) ─────────────────────────────────────────────────── */
+const PL_KEY_STATS = ['PTS', 'REB', 'AST', 'STL', 'BLK', 'FG%', '3P%', 'MIN'];
+
+function plHeroHTML(athlete, look, season, id) {
+  const facts = [
+    athlete.jersey ? '#' + athlete.jersey : '',
+    athlete.pos,
+    athlete.height,
+    athlete.weight,
+    athlete.age == null ? '' : athlete.age + ' yrs',
+  ].filter(Boolean).map((fact) => esc(fact)).join(' · ');
+  const chip = contrastRatio(look.fill, '#ffffff') >= contrastRatio(look.fill, '#000000') ? 'rgba(0,0,0,0.24)' : 'rgba(255,255,255,0.4)';
+  const tiles = PL_KEY_STATS.filter((label) => season[label] != null && season[label] !== '')
+    .map((label) => '<span><i>' + esc(label) + '</i><b>' + esc(season[label]) + '</b></span>').join('');
+  const shot = athlete.headshot
+    ? '<img src="' + esc(smallImg(athlete.headshot, 240, 175)) + '" alt="' + esc(athlete.name || '') + '" width="120" height="88" decoding="async" onerror="this.remove()">'
+    : '';
+  return '<div class="pl-hero" style="background:' + look.fill + ';color:' + look.ink + ';--chip:' + chip + '">' +
+    '<div class="pl-top"><div class="pl-who"><h1>' + esc(athlete.name || 'Player') + '</h1>' +
+    (athlete.team.id ? '<a class="pl-team" href="#team/' + esc(athlete.team.id) + '">' + esc(athlete.team.name || athlete.team.abbr) + '</a>' : '') +
+    (facts ? '<div class="pl-facts">' + facts + '</div>' : '') + '</div>' +
+    (shot ? '<span class="pl-shot">' + shot + '</span>' : '') + '</div>' +
+    (tiles ? '<div class="pl-tiles" aria-label="Per game, season">' + tiles + '</div>' : '') +
+    '<a class="pl-cmp" href="#players/' + esc(athlete.id || id) + '">Compare</a></div>';
+}
+
 async function showPlayer(id) {
   stopPolling();
   const token = ++requestId;
@@ -3026,44 +3235,30 @@ async function showPlayer(id) {
   let athlete;
   let overview;
   let log;
+  let colors;
   try {
     const payloads = await Promise.all([
       fetchJSON(WEB + '/athletes/' + encodeURIComponent(id)),
       fetchJSON(WEB + '/athletes/' + encodeURIComponent(id) + '/overview'),
       fetchJSON(WEB + '/athletes/' + encodeURIComponent(id) + '/gamelog'),
+      getTeamColors(),
     ]);
     athlete = parseAthlete(payloads[0]);
     overview = parsePlayerOverview(payloads[1]);
     log = parseGameLog(payloads[2]);
+    colors = payloads[3];
   } catch (err) {
     if (token === requestId) showError(() => showPlayer(id));
     return;
   }
   if (token !== requestId) return;
 
-  const facts = [
-    athlete.jersey ? '#' + athlete.jersey : '',
-    athlete.pos,
-    athlete.height,
-    athlete.weight,
-    athlete.age == null ? '' : athlete.age + ' yrs',
-  ].filter(Boolean).map((fact) => esc(fact)).join(' · ');
-
   setTitle(athlete.name);
+  const look = teamLook(colors, athlete.team.abbr, athlete.team.id, '');
 
-  const head = '<div class="card player-head">' +
-    (athlete.headshot ? '<img src="' + esc(smallImg(athlete.headshot, 128, 128)) + '" alt="' + esc(athlete.name || '') + '" width="64" height="64" loading="lazy" decoding="async">' : '') +
-    '<div class="p-meta"><h1>' + esc(athlete.name || 'Player') + '</h1>' +
-    (facts ? '<div class="p-sub">' + facts + '</div>' : '') +
-    (athlete.team.id
-      ? '<div class="p-sub"><a href="#team/' + esc(athlete.team.id) + '">' + esc(athlete.team.name || athlete.team.abbr) + '</a></div>'
-      : '') +
-    '</div>' +
-    '<a class="cmp-link" href="#players/' + esc(athlete.id || id) + '">Compare</a></div>';
-
-  app.innerHTML = head +
-    '<section class="card standings-block"><h2>Averages</h2>' + averagesHTML(overview) + '</section>' +
-    '<section class="card standings-block"><h2>Game log</h2>' + gameLogHTML(log) + '</section>';
+  app.innerHTML = '<div class="pl">' + plHeroHTML(athlete, look, overview.season, id) +
+    '<section class="card pl-card"><div class="ld-h"><h2>Averages</h2></div>' + averagesHTML(overview) + '</section>' +
+    '<section class="card pl-card"><div class="ld-h"><h2>Game log</h2></div>' + gameLogHTML(log, colors) + '</section></div>';
   wireSeasonTabs();
 }
 
@@ -3094,13 +3289,18 @@ function playerPickerHTML(nameA = '', nameB = '') {
     field('psB', 'psListB', 'Player B', nameB) + '</div>';
 }
 
-function playerCompareHeadHTML(left, right) {
-  const side = (entry, cls) => '<a class="ps-side' + (cls ? ' ' + cls : '') + '" href="#player/' + esc(entry.id) + '">' +
-    avatarHTML(entry.athlete.headshot, entry.athlete.name) +
-    '<span><span class="ps-name">' + esc(entry.athlete.name || 'Player') + '</span>' +
-    '<span class="ps-team">' + esc(entry.athlete.team.abbr || '') + '</span></span></a>';
-  return '<div class="player-cmp-head">' + side(left, '') +
-    '<span class="cmp-vs">vs</span>' + side(right, 'right') + '</div>';
+function plSideHTML(entry, look, which) {
+  const a = entry.athlete;
+  const stats = ['PTS', 'REB', 'AST'].filter((label) => entry.season[label] != null)
+    .map((label) => '<span><i>' + label + '</i><b>' + esc(entry.season[label]) + '</b></span>').join('');
+  const shot = a.headshot
+    ? '<img src="' + esc(smallImg(a.headshot, 168, 122)) + '" alt="" width="64" height="64" decoding="async" onerror="this.remove()">'
+    : '';
+  const chip = contrastRatio(look.fill, '#ffffff') >= contrastRatio(look.fill, '#000000') ? 'rgba(0,0,0,0.24)' : 'rgba(255,255,255,0.4)';
+  return '<a class="pl-side ' + which + '" href="#player/' + esc(entry.id) + '" style="background:' + look.fill + ';color:' + look.ink + ';--chip:' + chip + '">' +
+    '<span class="pl-sh">' + shot + '</span><span class="pl-sn">' + esc(a.name || 'Player') + '</span>' +
+    '<span class="pl-st">' + esc([a.team.abbr, a.pos].filter(Boolean).join(' · ')) + '</span>' +
+    (stats ? '<span class="pl-sv">' + stats + '</span>' : '') + '</a>';
 }
 
 // Same search component as the header, mounted on a picker field.
@@ -3230,8 +3430,9 @@ async function showPlayers(idA, idB) {
 
   let left;
   let right;
+  let colors;
   try {
-    [left, right] = await Promise.all([playerEntry(a), playerEntry(b)]);
+    [left, right, colors] = await Promise.all([playerEntry(a), playerEntry(b), getTeamColors()]);
   } catch (err) {
     if (token === requestId) showError(() => showPlayers(a, b));
     return;
@@ -3240,9 +3441,15 @@ async function showPlayers(idA, idB) {
 
   setTitle(lastName(left.athlete.name) + ' vs ' + lastName(right.athlete.name));
 
+  const team = (entry) => ({ id: entry.athlete.team.id, abbr: entry.athlete.team.abbr, logo: '' });
+  const looks = gmLooks({ away: team(left), home: team(right) }, colors);
+  const named = (entry) => ({ ...entry, abbr: lastName(entry.athlete.name) || 'Player' });
+  const tape = gmTapeHTML(PLAYER_COMPARE_ROWS, named(left), named(right), looks,
+    lastName(left.athlete.name) + ' vs ' + lastName(right.athlete.name) + ' · season averages', 'season averages');
+
   app.innerHTML = playerPickerHTML(left.athlete.name, right.athlete.name) +
-    playerCompareHeadHTML(left, right) +
-    compareTableHTML(left, right, PLAYER_COMPARE_ROWS, 'Player comparison');
+    '<div class="pl pl-cmpw"><div class="pl-bug">' + plSideHTML(left, looks.away, 'away') + '<span class="pl-vs">vs</span>' +
+    plSideHTML(right, looks.home, 'home') + '</div>' + (tape || '<div class="state">No averages to compare.</div>') + '</div>';
   bindPlayerSearch('psA', 'psListA', (id) => go(id, b));
   bindPlayerSearch('psB', 'psListB', (id) => go(a, id));
 }
@@ -3621,41 +3828,81 @@ function renderBoxScore(box, game, pre, colors) {
   app.innerHTML = gmPageHTML(game, { looks, tape, pre, live: box.state === 'in', box: '<h2 class="gm-sh">Box score</h2>' + tables });
 }
 
-/* ── Team page ──────────────────────────────────────────────────────────── */
-function scheduleRowHTML(game) {
-  const opponent = '<span class="ha">' + (game.homeAway === 'home' ? 'vs' : '@') + '</span>' +
-    (game.opponent.logo ? '<img src="' + esc(smallImg(game.opponent.logo, 36, 36)) + '" alt="" width="18" height="18" loading="lazy" decoding="async">' : '') +
-    esc(game.opponent.abbr || game.opponent.name);
+/* ── Team page (tm-*) ───────────────────────────────────────────────────── */
+// One game row: date, opponent with its colour swatch, W/L chip and result (or
+// tip-off for a game still to play). `next` marks the team's next game.
+function tmRowHTML(game, colors, next) {
+  const opp = game.opponent;
+  const fill = teamLook(colors, opp.abbr, opp.id, opp.logo).fill;
   const result = game.result
-    ? '<span class="res ' + (game.result === 'W' ? 'win' : 'loss') + '">' + game.result + ' ' + (game.score == null ? '' : esc(game.score) + (game.oppScore == null ? '' : '-' + esc(game.oppScore))) + '</span>'
-    : '<span class="res upcoming">' + esc(formatWhen(game.startISO)) + '</span>';
-  return '<a class="sched-row" href="#game/' + esc(game.id) + '">' +
-    '<span class="sched-date">' + esc(formatDay(etDate(game.startISO) || '')) + '</span>' +
-    '<span class="sched-opp">' + opponent + '</span>' + result + '</a>';
+    ? '<span class="tm-wl ' + game.result + '">' + game.result + '</span><span class="tm-sc">' +
+      (game.score == null ? '' : esc(game.score) + (game.oppScore == null ? '' : '-' + esc(game.oppScore))) + '</span>'
+    : '<span class="tm-up">' + esc(tipOff(game.startISO) || 'TBD') + '</span>';
+  return '<a class="tm-g' + (next ? ' next' : '') + '" href="#game/' + esc(game.id) + '"' + (next ? ' style="--c:' + fill + '"' : '') + '>' +
+    '<span class="tm-d">' + esc(formatDay(etDate(game.startISO) || '')) + '</span>' +
+    '<span class="tm-o"><i class="tm-sw" style="background:' + fill + '"></i><span class="ha">' + (game.homeAway === 'home' ? 'vs' : '@') + '</span>' +
+    (opp.logo ? '<img src="' + esc(smallImg(opp.logo, 36, 36)) + '" alt="" width="18" height="18" loading="lazy" decoding="async">' : '') +
+    '<b>' + esc(opp.abbr || opp.name) + '</b></span>' +
+    '<span class="tm-r">' + (next ? '<em>Next</em>' : '') + result + '</span></a>';
 }
 
-function rosterRowHTML(player) {
-  return '<div class="roster-row"><span class="jersey">' + esc(player.jersey || '—') + '</span>' +
-    '<span class="name">' + (player.id ? '<a href="#player/' + esc(player.id) + '">' + esc(player.name) + '</a>' : esc(player.name)) + '</span>' +
-    '<span class="pos">' + esc(player.pos || '—') + '</span>' +
-    '<span class="age">' + esc(player.height || '') + (player.age ? ' · ' + esc(player.age) : '') + '</span></div>';
+function tmRosterCardHTML(player, look) {
+  const shot = player.headshot
+    ? '<img src="' + esc(smallImg(player.headshot, 96, 70)) + '" alt="" width="48" height="48" loading="lazy" decoding="async" onerror="this.remove()">'
+    : '';
+  const sub = [player.height, player.age ? player.age + ' yrs' : ''].filter(Boolean).join(' · ');
+  const name = player.id ? '<a href="#player/' + esc(player.id) + '">' + esc(player.name) + '</a>' : esc(player.name);
+  return '<div class="tm-p"><span class="tm-hs" style="--c:' + look.fill + '">' + shot + '</span>' +
+    '<span class="tm-pw"><span class="tm-pn">' + name + '</span><span class="tm-ps">' + esc(sub) + '</span></span>' +
+    '<span class="tm-pp"><b>' + esc(player.pos || '—') + '</b>' + (player.jersey ? '<i>#' + esc(player.jersey) + '</i>' : '') + '</span></div>';
 }
 
-function teamStatsHTML(bundle) {
+function tmHeroHTML(bundle, row, look) {
+  const logo = look.logo || bundle.logo;
+  const chips = [];
+  if (row && row.seed != null) chips.push(['Seed', ordinal(row.seed) + ' ' + row.conf]);
+  if (row && row.streak) chips.push(['Streak', row.streak]);
+  if (row && row.last10) chips.push(['L10', row.last10]);
+  if (row && row.home) chips.push(['Home', row.home]);
+  if (row && row.road) chips.push(['Road', row.road]);
+  const chip = contrastRatio(look.fill, '#ffffff') >= contrastRatio(look.fill, '#000000') ? 'rgba(0,0,0,0.24)' : 'rgba(255,255,255,0.4)';
+  return '<div class="tm-hero" style="background:' + look.fill + ';color:' + look.ink + ';--chip:' + chip + '">' +
+    '<div class="tm-id">' +
+    (logo ? '<span class="tm-logo"><img src="' + esc(smallImg(logo, 112, 112)) + '" alt="" width="52" height="52" decoding="async"></span>' : '') +
+    '<div class="tm-nm"><h1>' + esc(bundle.name || 'Team') + '</h1>' +
+    '<span class="tm-rec">' + esc(bundle.record || '') +
+    (bundle.pct != null ? '<i>' + esc(formatPct(bundle.pct)) + '</i>' : '') + '</span></div>' +
+    '<a class="tm-cmp" href="#compare/' + esc(bundle.id) + '">Compare</a></div>' +
+    (chips.length ? '<div class="tm-chips">' + chips.map(([k, v]) => '<span><i>' + k + '</i><b>' + esc(v) + '</b></span>').join('') + '</div>' : '') + '</div>';
+}
+
+// Season grid. League rank only where every team's number is on hand: the
+// standings rows carry points for and against and win percentage.
+function tmStatsHTML(bundle, rows, look) {
+  const rank = (read, lower) => {
+    const r = leagueRank(rows, bundle.id, read, lower);
+    return r ? ordinal(r.rank) : '';
+  };
   const diff = bundle.ppg == null || bundle.oppPpg == null ? null : bundle.ppg - bundle.oppPpg;
   const cells = [
-    ['PPG', oneDecimal(bundle.ppg)],
-    ['Opp PPG', oneDecimal(bundle.oppPpg)],
-    ['Diff', signedDecimal(diff)],
-    ['FG%', oneDecimal(bundle.stats.fgPct)],
-    ['3P%', oneDecimal(bundle.stats.threePct)],
-    ['REB', oneDecimal(bundle.stats.reb)],
-    ['AST', oneDecimal(bundle.stats.ast)],
-    ['TOV', oneDecimal(bundle.stats.tov)],
-  ];
-  return '<section class="card team-stats"><h2>Season stats</h2><div class="stat-grid">' +
-    cells.map(([label, value]) => '<div class="stat-cell"><span class="stat-lbl">' + esc(label) + '</span>' +
-      '<span class="stat-val' + (label === 'Diff' && diff != null && diff > 0 ? ' diff-pos' : '') + '">' + esc(value) + '</span></div>').join('') +
+    ['PPG', oneDecimal(bundle.ppg), rank((r) => r.ppg)],
+    ['Opp PPG', oneDecimal(bundle.oppPpg), rank((r) => r.oppPpg, true)],
+    ['Diff', signedDecimal(diff), rank(pointDiff)],
+    ['Win %', bundle.pct == null ? '—' : formatPct(bundle.pct), rank((r) => r.pct)],
+    ['FG%', oneDecimal(bundle.stats.fgPct), ''],
+    ['3P%', oneDecimal(bundle.stats.threePct), ''],
+    ['FT%', oneDecimal(bundle.stats.ftPct), ''],
+    ['REB', oneDecimal(bundle.stats.reb), ''],
+    ['AST', oneDecimal(bundle.stats.ast), ''],
+    ['TOV', oneDecimal(bundle.stats.tov), ''],
+    ['STL', oneDecimal(bundle.stats.stl), ''],
+    ['BLK', oneDecimal(bundle.stats.blk), ''],
+  ].filter((cell) => cell[1] !== '—');
+  if (!cells.length) return '';
+  const rk = readableOn(look.fill, PANEL_BG);
+  return '<section class="card tm-stats"><div class="tm-ch"><h2>Season stats</h2><span>Per game · rank of 30</span></div><div class="tm-sg">' +
+    cells.map(([label, value, rankText]) => '<div class="tm-c"><span class="k">' + esc(label) + '</span><b>' + esc(value) + '</b>' +
+      (rankText ? '<span class="rk" style="color:' + rk + '">' + esc(rankText) + '</span>' : '') + '</div>').join('') +
     '</div></section>';
 }
 
@@ -3666,43 +3913,47 @@ async function showTeam(id) {
 
   let bundle;
   let roster;
+  let colors;
+  let standings;
   try {
-    const both = await Promise.all([
+    [bundle, roster, colors, standings] = await Promise.all([
       teamBundle(id),
       fetchJSON(API + '/teams/' + encodeURIComponent(id) + '/roster').then(parseRoster),
+      getTeamColors(),
+      getStandings(),
     ]);
-    bundle = both[0];
-    roster = both[1];
   } catch (err) {
     if (token === requestId) showError(() => showTeam(id));
     return;
   }
   if (token !== requestId) return;
 
-  const schedule = bundle.schedule;
-  const team = schedule.team;
-  setTitle(team.name);
+  const row = standingFor(standings, id);
+  const rows = [...standings.East, ...standings.West];
+  const look = teamLook(colors, bundle.abbr, id, bundle.logo);
+  bundle.pct = row ? row.pct : null;
+  setTitle(bundle.name);
 
-  const head = '<div class="card team-head">' +
-    (team.logo ? '<img src="' + esc(smallImg(team.logo, 104, 104)) + '" alt="" width="52" height="52" loading="lazy" decoding="async">' : '') +
-    '<div class="team-meta"><h1>' + esc(team.name || 'Team') + '</h1>' +
-    (team.record ? '<div class="record">' + esc(team.record) + '</div>' : '') + '</div>' +
-    '<a class="cmp-link" href="#compare/' + esc(id) + '">Compare</a></div>';
-
-  const scheduleList = schedule.games.length
-    ? '<div class="card sched">' + schedule.games.map(scheduleRowHTML).join('') + '</div>'
+  const games = bundle.schedule.games.slice().sort((x, y) => new Date(x.startISO) - new Date(y.startISO));
+  const upcoming = games.filter((game) => game.result === null);
+  const played = games.filter((game) => game.result !== null).reverse();
+  const nextId = upcoming.length ? upcoming[0].id : '';
+  const list = (title, items, empty) => '<div class="tm-col"><div class="tm-ch"><h2>' + title + '</h2><span>' + items.length + ' games</span></div>' +
+    (items.length ? '<div class="tm-gl">' + items.map((game) => tmRowHTML(game, colors, game.id === nextId)).join('') + '</div>' : '<div class="gm-none">' + empty + '</div>') + '</div>';
+  const scheduleList = games.length
+    ? '<div class="card tm-sched">' + list('Upcoming', upcoming, 'No games left.') + list('Results', played, 'No games played yet.') + '</div>'
     : '<div class="state">No games</div>';
   const rosterList = roster.length
-    ? '<div class="card sched">' + roster.map(rosterRowHTML).join('') + '</div>'
+    ? '<div class="tm-roster">' + roster.map((player) => tmRosterCardHTML(player, look)).join('') + '</div>'
     : '<div class="state">No roster</div>';
 
-  app.innerHTML = head + teamStatsHTML(bundle) +
+  app.innerHTML = '<div class="tm">' + tmHeroHTML(bundle, row, look) + tmStatsHTML(bundle, rows, look) +
     '<div class="tabs-row" role="tablist">' +
     '<button class="tab" type="button" role="tab" data-panel="schedule" aria-selected="true">Schedule</button>' +
     '<button class="tab" type="button" role="tab" data-panel="roster" aria-selected="false">Roster</button>' +
     '</div>' +
     '<section data-view="schedule">' + scheduleList + '</section>' +
-    '<section data-view="roster" hidden>' + rosterList + '</section>';
+    '<section data-view="roster" hidden>' + rosterList + '</section></div>';
 
   const tabs = app.querySelectorAll('.tabs-row .tab');
   tabs.forEach((tab) => tab.addEventListener('click', () => {
@@ -3727,7 +3978,7 @@ function router() {
   // The scores view is three columns and needs more room than the other views.
   const onScores = !['standings', 'game', 'team', 'compare', 'leaders', 'players', 'player'].includes(route.view);
   document.body.classList.toggle('sc-wide', onScores);
-  document.body.classList.toggle('gm-wide', route.view === 'game');
+  document.body.classList.toggle('gm-wide', ['game', 'team', 'compare', 'leaders', 'players', 'player'].includes(route.view));
 
   if (route.view === 'standings') showStandings(route.args[0]);
   else if (route.view === 'game' && route.arg) showGame(route.arg);

@@ -3,6 +3,9 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import {
   barShares,
+  leagueRank,
+  ordinal,
+  pickCompareGame,
   etDate,
   parseAthlete,
   parseBoxScore,
@@ -649,4 +652,41 @@ test('barShares gives the better side the full bar and respects lower-is-better'
   assert.deepEqual(barShares(0, 7), { a: 0.15, b: 1 });
   assert.deepEqual(barShares(null, 7), { a: 0, b: 0 });
   assert.equal(barShares(1, 1000).a, 0.08);
+});
+
+test('leagueRank ranks a team on a value, ties share a rank, lower flips order', () => {
+  const rows = [
+    { teamId: '1', ppg: 120 }, { teamId: '2', ppg: 110 }, { teamId: '3', ppg: 110 }, { teamId: '4', ppg: null },
+  ];
+  assert.deepEqual(leagueRank(rows, '1', (r) => r.ppg), { rank: 1, of: 3 });
+  assert.deepEqual(leagueRank(rows, '3', (r) => r.ppg), { rank: 2, of: 3 });
+  assert.deepEqual(leagueRank(rows, '1', (r) => r.ppg, true), { rank: 3, of: 3 });
+  assert.equal(leagueRank(rows, '4', (r) => r.ppg), null);
+  assert.equal(leagueRank(rows, '9', (r) => r.ppg), null);
+  assert.equal(leagueRank({}, '1', (r) => r.ppg), null);
+});
+
+test('ordinal handles teens and suffixes', () => {
+  assert.deepEqual([1, 2, 3, 4, 11, 12, 13, 21, 22].map(ordinal), ['1st', '2nd', '3rd', '4th', '11th', '12th', '13th', '21st', '22nd']);
+  assert.equal(ordinal(NaN), '');
+});
+
+test('pickCompareGame takes the first or last tip-off and skips unusable games', () => {
+  const game = (id, startISO, away = 'a' + id, home = 'h' + id) => ({ id, startISO, away: { id: away }, home: { id: home } });
+  const games = [game('2', '2026-11-02T02:00:00Z'), game('1', '2026-11-01T23:30:00Z'), { id: 'x', startISO: '2026-11-01T20:00:00Z', away: {}, home: {} }];
+  assert.equal(pickCompareGame(games).id, '1');
+  assert.equal(pickCompareGame(games, 'last').id, '2');
+  assert.equal(pickCompareGame([]), null);
+  assert.equal(pickCompareGame(undefined), null);
+});
+
+test('standings rows carry home, road and conference; roster rows carry headshots', () => {
+  const standings = parseStandings(fixture('standings.json'));
+  const row = standings.East[0];
+  assert.equal(row.conf, 'East');
+  assert.equal(standings.West[0].conf, 'West');
+  assert.match(row.home, /^\d+-\d+$/);
+  assert.match(row.road, /^\d+-\d+$/);
+  const roster = parseRoster(fixture('team-20-roster.json'));
+  assert.ok(roster.some((p) => /^https:\/\//.test(p.headshot)));
 });
