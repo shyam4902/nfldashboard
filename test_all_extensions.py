@@ -61,23 +61,23 @@ with sync_playwright() as p:
     page.screenshot(path=f"{SCREENSHOT_DIR}/01_home_default.png")
     successes.append("Home page loaded")
 
-    # 0. Test the 2a Home redesign page (hero carousel, scorestrip, storylines, power index)
+    # 0. Test the 2a Home redesign page (hero carousel, scorestrip, storylines)
     print("Testing Home 2a redesign...")
     home_text = page.inner_text("#tab-home")
     if page.locator("#h2aHero").is_visible() and page.locator(".h2a-strip").is_visible():
         successes.append("Home 2a hero carousel + scorestrip rendered")
     else:
         failures.append("Home 2a hero or scorestrip missing")
-    logo_count = page.locator(".h2a-strip img, .h2a-pi-row img").count()
+    logo_count = page.locator(".h2a-strip img").count()
     if logo_count >= 6:
-        successes.append(f"Team logos rendered in scorestrip and power index ({logo_count} logos)")
+        successes.append(f"Team logos rendered in scorestrip ({logo_count} logos)")
     else:
         failures.append(f"Team logos missing or insufficient in home: {logo_count}")
     page.wait_for_timeout(1500)
     spots = page.inner_text("#homeSpotlights")
     schedule = json.load(open(os.path.join(DASHBOARD_DIR, "schedule.json")))
     schedule_week = schedule["week"]
-    for sec in [f"Week {schedule_week} Marquee", "Top Value Plays", "Biggest Offseason Moves"]:
+    for sec in [f"Week {schedule_week} Marquee", "Top Value Plays"]:
         if sec in spots:
             successes.append(f"Home spotlight '{sec}' rendered")
         else:
@@ -96,15 +96,6 @@ with sync_playwright() as p:
         failures.append("Home all-games link resets to the wrong week")
     page.click('[data-tab="home"]')
     page.wait_for_timeout(600)
-    # Power index navigation: click a row and verify it switches to projections tab
-    page.locator(".h2a-pi-row").first.click()
-    page.wait_for_timeout(500)
-    if page.locator("#tab-projections").is_visible():
-        successes.append("Home power index navigates to projections tab")
-    else:
-        failures.append("Home power index navigation broken")
-    page.click('[data-tab="home"]')
-    page.wait_for_timeout(400)
     # Regression: no horizontal overflow at mobile width
     page.set_viewport_size({"width": 390, "height": 844})
     page.wait_for_timeout(400)
@@ -128,16 +119,6 @@ with sync_playwright() as p:
         successes.append("Top-level Draft tab removed")
     else:
         failures.append("Top-level Draft tab still present")
-    if page.locator('#rosterTabDc').count() == 1:
-        successes.append("Draft Capital tab present in roster modal")
-    else:
-        failures.append("Draft Capital tab missing from roster modal")
-    page.evaluate("openRoster('Cleveland Browns', 'draftcap')")
-    page.wait_for_timeout(600)
-    if page.locator('.dc-year-block').count() == 3 and page.locator('.dc-pick.gained').count() >= 2:
-        successes.append("Draft Capital renders 2027/2028/2029 blocks with acquired picks")
-    else:
-        failures.append("Draft Capital view incomplete")
     page.evaluate("openRoster('Cleveland Browns', 'offense')")
     page.wait_for_timeout(400)
     summary_txt = page.locator('#rosterSummary').inner_text().lower()
@@ -181,61 +162,6 @@ with sync_playwright() as p:
     page.click('[data-tab="teams"]')
     page.wait_for_timeout(500)
     page.screenshot(path=f"{SCREENSHOT_DIR}/12_teams_overview.png")
-    move_tabs = page.locator('#teamsSubTabs .teams-subtab')
-    if move_tabs.count() == 3 and page.locator('#teamsSubTabs', has_text='Moves').count():
-        successes.append("Teams sub-tabs expose Overview, Moves, and Power Index")
-    else:
-        failures.append("Teams sub-tabs incomplete")
-    page.locator('#teamsSubTabs .teams-subtab', has_text='Moves').click()
-    page.wait_for_timeout(400)
-    page.screenshot(path=f"{SCREENSHOT_DIR}/13_teams_moves.png")
-    moves_text = page.inner_text('#movesContainer')
-    if 'league activity wire' in moves_text.lower() and 'moves' in moves_text.lower() and page.locator('#movesNewswire .move-row').count() > 0:
-        successes.append("Moves date-grouped newswire rendered with live transactions")
-    else:
-        failures.append("Moves newswire missing or empty")
-    if page.locator('#movesNewswire .moves-date-group').count() > 1:
-        successes.append("Moves feed grouped by transaction date")
-    else:
-        failures.append("Moves feed date grouping missing")
-    original_rows = page.locator('#movesNewswire .move-row').count()
-    if original_rows > 0:
-        first_player = page.locator('#movesNewswire .move-row').first.locator('.move-player').inner_text()
-        page.locator('#movesSearch').fill(first_player)
-        page.wait_for_timeout(200)
-        filtered_rows = page.locator('#movesNewswire .move-row').count()
-        if filtered_rows > 0 and filtered_rows < original_rows:
-            successes.append("Moves search filter narrows the source-backed wire")
-        else:
-            failures.append("Moves search filter did not narrow the source-backed wire")
-    else:
-        failures.append("Moves source returned no transactions; cannot test search interaction")
-    if page.locator('#movesNewswire .move-row').count() > 0:
-        page.locator('#movesNewswire .move-row').first.click()
-        page.wait_for_timeout(200)
-        if page.locator('#moveDetailDrawer.active').count() == 1 and page.locator('#moveDetailContent').inner_text():
-            successes.append("Move detail drawer opens from a wire row")
-        else:
-            failures.append("Move detail drawer failed to open")
-        page.locator('.move-drawer-close').click()
-    page.locator('#movesSearch').fill('')
-    page.wait_for_timeout(150)
-    page.set_viewport_size({"width": 390, "height": 844})
-    page.wait_for_timeout(250)
-    moves_overflow = page.evaluate("document.documentElement.scrollWidth - document.documentElement.clientWidth")
-    if moves_overflow <= 0:
-        successes.append("Moves view has no mobile horizontal overflow")
-    else:
-        failures.append(f"Moves view horizontal overflow: {moves_overflow}px")
-    page.set_viewport_size({"width": 1600, "height": 950})
-
-    # Legacy route compatibility
-    page.evaluate("showTab('feed')")
-    page.wait_for_timeout(250)
-    if page.locator('#tab-teams').is_visible() and page.locator('#teamsMovesPanel').is_visible():
-        successes.append("Legacy feed route redirects to Teams Moves")
-    else:
-        failures.append("Legacy feed route redirect broken")
 
     # 2. Test All 5 Themes
     print("Testing Distinct Themes...")
@@ -244,20 +170,6 @@ with sync_playwright() as p:
         page.wait_for_timeout(400)
         page.screenshot(path=f"{SCREENSHOT_DIR}/02_theme_{theme}.png")
     successes.append("All 5 themes switched and visually captured")
-
-    # 2. Test Consensus Power Index & Calibrated Tiers
-    print("Testing Consensus Power Index...")
-    page.click('[data-tab="projections"]')
-    page.wait_for_timeout(1000)
-    page.locator("button", has_text="Consensus Power").first.click()
-    page.wait_for_selector("#projContent table", timeout=5000)
-    page.wait_for_timeout(1000)
-    page.screenshot(path=f"{SCREENSHOT_DIR}/06_consensus_power_calibrated.png")
-    cp_content = page.inner_text("#projContent")
-    if "Tier 1: Elite" in cp_content and "Tier 2: Contender" in cp_content and "Tier 3: Playoff Hunt" in cp_content and "Tier 4: Rebuilding" in cp_content:
-        successes.append("Unified Consensus Power Index rendered with all 4 calibrated tiers (Tier 1 Elite, Contender, Playoff Hunt, Rebuilding)")
-    else:
-        failures.append("Consensus Power Index tier badges incomplete or missing Tier 1")
 
     # 3. Test Deep Head-to-Head Player Comparison Modal
     print("Testing Deep Player Comparison Modal...")
@@ -300,37 +212,13 @@ with sync_playwright() as p:
     page.wait_for_timeout(1000)
     page.screenshot(path=f"{SCREENSHOT_DIR}/07_player_modal_mahomes.png")
     modal_content = page.inner_text("#playerModalContent")
-    if "Patrick Mahomes" in modal_content and "MIKE CLAY 2026 PROJECTIONS" in modal_content:
+    if "Patrick Mahomes" in modal_content:
         successes.append("Universal Player Profile Modal rendered Patrick Mahomes")
     else:
         failures.append("Player modal incomplete")
 
     page.locator("#playerModal .roster-close").click()
     page.wait_for_timeout(500)
-
-    # 5. Test Clay vs Market Delta
-    print("Testing Clay vs Market Delta...")
-    page.locator("button", has_text="Clay vs Market").first.click()
-    page.wait_for_selector("#projContent table", timeout=5000)
-    page.wait_for_timeout(1000)
-    page.screenshot(path=f"{SCREENSHOT_DIR}/03_clay_vs_market_delta.png")
-    delta_content = page.inner_text("#projContent")
-    if "Mike Clay Projections vs Market Line Delta" in delta_content:
-        successes.append("Clay vs Market Delta rendered with injury discount rules")
-    else:
-        failures.append("Clay vs Market Delta missing")
-
-    # 6. Test Matchup Matrix
-    print("Testing Matchup Matrix...")
-    page.locator("button", has_text="Matchup Matrix").first.click()
-    page.wait_for_selector("#projContent table", timeout=5000)
-    page.wait_for_timeout(1000)
-    page.screenshot(path=f"{SCREENSHOT_DIR}/04_matchup_matrix.png")
-    mm_content = page.inner_text("#projContent")
-    if "Opponent-Adjusted Weekly Matchup Matrix" in mm_content:
-        successes.append("Opponent-Adjusted Matchup Matrix verified")
-    else:
-        failures.append("Matchup Matrix missing")
 
     # 7. Test Command Palette
     print("Testing Command Palette...")

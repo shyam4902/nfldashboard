@@ -20,6 +20,10 @@ Site map now: [diagrams/site-map-2026-10-30.svg](../../diagrams/site-map-2026-10
    The props/betting terminal (Edge, `edgeplay-analytics`) stays separate; its domain pick is
    **propstoday.app** ($9.99, not bought yet). No props, odds, predictions, news or fantasy on
    Matchup Board, ever. Each NBA view greps for those words as a check.
+   **Revised 2026-11-02:** the line is free vs paid, not betting vs not. What other sites give
+   away free (like most-bet teams by Kalshi/Polymarket volume) can go on Matchup Board; advanced,
+   paywalled-elsewhere data goes to Edge. The NBA word-grep check needs loosening before any market
+   data ships.
 2. **The pitch is "more than scores".** Data you'd use to size up a matchup, in a clean layout
    you'd otherwise pay for or build yourself. ESPN/Sleeper density, no bloat.
 3. **Every league is a sub-page.** `/nfl/`, `/nba/`, later others; `/` is only the picker. This
