@@ -1651,11 +1651,11 @@
       "city": "",
       "kickoff_utc": "2026-11-01T21:25:00Z",
       "tv": "",
-      "winner": null,
+      "winner": "Denver Broncos",
       "away_score": 24,
       "home_score": 28,
       "week": 8,
-      "status": "in_progress"
+      "status": "final"
     },
     {
       "game_id": "2026-11-01-NE-MIA",
@@ -1665,11 +1665,11 @@
       "city": "",
       "kickoff_utc": "2026-11-01T21:25:00Z",
       "tv": "",
-      "winner": null,
+      "winner": "New England Patriots",
       "away_score": 24,
       "home_score": 19,
       "week": 8,
-      "status": "in_progress"
+      "status": "final"
     },
     {
       "game_id": "2026-11-01-PHI-WAS",
@@ -3661,5 +3661,5 @@
       "week": 18
     }
   ],
-  "scores_synced_at": "2026-11-02T00:31:38.185Z"
+  "scores_synced_at": "2026-11-02T00:38:52.521Z"
 }
