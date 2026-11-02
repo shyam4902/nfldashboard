@@ -2,7 +2,7 @@
   "season": 2026,
   "week": 8,
   "total_weeks": 18,
-  "generated": "2026-11-01",
+  "generated": "2026-11-02",
   "source": "nflverse games.csv (matchups, kickoffs, stadiums); Week 1 enriched with TV/city",
   "games": [
     {
@@ -1525,11 +1525,11 @@
       "city": "",
       "kickoff_utc": "2026-11-01T18:00:00Z",
       "tv": "",
-      "winner": null,
+      "winner": "Buffalo Bills",
       "away_score": 10,
-      "home_score": 29,
+      "home_score": 36,
       "week": 8,
-      "status": "in_progress"
+      "status": "final"
     },
     {
       "game_id": "2026-11-01-TEN-CIN",
@@ -1539,11 +1539,11 @@
       "city": "",
       "kickoff_utc": "2026-11-01T18:00:00Z",
       "tv": "",
-      "winner": null,
-      "away_score": 34,
-      "home_score": 29,
+      "winner": "Cincinnati Bengals",
+      "away_score": 36,
+      "home_score": 43,
       "week": 8,
-      "status": "in_progress"
+      "status": "final"
     },
     {
       "game_id": "2026-11-01-ARI-DAL",
@@ -1553,11 +1553,11 @@
       "city": "",
       "kickoff_utc": "2026-11-01T18:00:00Z",
       "tv": "",
-      "winner": null,
-      "away_score": 24,
-      "home_score": 27,
+      "winner": "Arizona Cardinals",
+      "away_score": 33,
+      "home_score": 30,
       "week": 8,
-      "status": "in_progress"
+      "status": "final"
     },
     {
       "game_id": "2026-11-01-MIN-DET",
@@ -1567,11 +1567,11 @@
       "city": "",
       "kickoff_utc": "2026-11-01T18:00:00Z",
       "tv": "",
-      "winner": null,
+      "winner": "Detroit Lions",
       "away_score": 15,
       "home_score": 19,
       "week": 8,
-      "status": "in_progress"
+      "status": "final"
     },
     {
       "game_id": "2026-11-01-IND-JAX",
@@ -1609,11 +1609,11 @@
       "city": "",
       "kickoff_utc": "2026-11-01T18:00:00Z",
       "tv": "",
-      "winner": null,
+      "winner": "Pittsburgh Steelers",
       "away_score": 6,
       "home_score": 27,
       "week": 8,
-      "status": "in_progress"
+      "status": "final"
     },
     {
       "game_id": "2026-11-01-ATL-TB",
@@ -1637,11 +1637,11 @@
       "city": "",
       "kickoff_utc": "2026-11-01T21:05:00Z",
       "tv": "",
-      "winner": null,
-      "away_score": 0,
-      "home_score": 0,
+      "winner": "Los Angeles Rams",
+      "away_score": 9,
+      "home_score": 24,
       "week": 8,
-      "status": "in_progress"
+      "status": "final"
     },
     {
       "game_id": "2026-11-01-KC-DEN",
@@ -1652,9 +1652,10 @@
       "kickoff_utc": "2026-11-01T21:25:00Z",
       "tv": "",
       "winner": null,
-      "away_score": null,
-      "home_score": null,
-      "week": 8
+      "away_score": 24,
+      "home_score": 28,
+      "week": 8,
+      "status": "in_progress"
     },
     {
       "game_id": "2026-11-01-NE-MIA",
@@ -1665,9 +1666,10 @@
       "kickoff_utc": "2026-11-01T21:25:00Z",
       "tv": "",
       "winner": null,
-      "away_score": null,
-      "home_score": null,
-      "week": 8
+      "away_score": 24,
+      "home_score": 19,
+      "week": 8,
+      "status": "in_progress"
     },
     {
       "game_id": "2026-11-01-PHI-WAS",
@@ -3659,5 +3661,5 @@
       "week": 18
     }
   ],
-  "scores_synced_at": "2026-11-01T21:07:06.959Z"
+  "scores_synced_at": "2026-11-02T00:31:38.185Z"
 }
