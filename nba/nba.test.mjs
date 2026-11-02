@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import {
+  barShares,
   etDate,
   parseAthlete,
   parseBoxScore,
@@ -11,6 +12,9 @@ import {
   parsePreGame,
   parseRoster,
   parseCompetitorLeaders,
+  parseGameExtras,
+  parseGameOdds,
+  parsePredictor,
   parseOdds,
   parseScoreboard,
   parseSearch,
@@ -505,4 +509,144 @@ test('readableOn lifts a dark team colour until it reads on the panel', () => {
   assert.notEqual(lifted, '#0e2240');
   assert.ok(contrastRatio(lifted, '#14161a') >= 4.5);
   assert.equal(readableOn(''), '#ffffff');
+});
+
+// ── Game page extras: small inline summary payloads ────────────────────────
+function summaryFixture(state) {
+  const team = (id, abbr) => ({ id, abbreviation: abbr, displayName: abbr + ' Team' });
+  const started = state !== 'pre';
+  const athlete = (id, name, pos) => ({
+    id, displayName: name, shortName: name[0] + '. ' + name.split(' ')[1], jersey: '7',
+    position: { abbreviation: pos }, headshot: { href: 'https://a.espncdn.com/i/headshots/nba/players/full/' + id + '.png' },
+  });
+  const cat = (name, who, value, summary) => ({ name, leaders: [{ displayValue: value, athlete: who, summary }] });
+  const k = state === 'pre'
+    ? ['pointsPerGame', 'reboundsPerGame', 'assistsPerGame']
+    : ['points', 'rebounds', 'assists'];
+  return {
+    header: {
+      id: '9',
+      competitions: [{
+        id: '9',
+        date: '2026-11-03T00:30Z',
+        status: { type: { state, shortDetail: state === 'pre' ? '11/2 - 7:30 PM EST' : 'Final' } },
+        broadcasts: [{ isNational: false, media: { shortName: 'League Pass' } }, { isNational: true, media: { shortName: 'ESPN' } }],
+        competitors: [
+          { homeAway: 'home', team: team('18', 'NY'), ...(started ? { score: '101' } : {}), winner: started, record: [{ type: 'total', summary: '2-4' }, { type: 'home', summary: '1-2' }], linescores: [{ displayValue: '25' }, { displayValue: '30' }] },
+          { homeAway: 'away', team: team('17', 'BKN'), ...(started ? { score: '99' } : {}), winner: false, record: [{ type: 'total', summary: '1-5' }, { type: 'road', summary: '1-2' }], linescores: [{ displayValue: '20' }, { displayValue: '31' }] },
+        ],
+      }],
+    },
+    gameInfo: { venue: { fullName: 'Madison Square Garden' } },
+    pickcenter: [{
+      provider: { name: 'DraftKings' }, details: 'NY -14.5', overUnder: 218.5, spread: -14.5, overOdds: -108, underOdds: -112,
+      awayTeamOdds: { moneyLine: 650, spreadOdds: -106 }, homeTeamOdds: { moneyLine: -980, spreadOdds: -114 },
+      pointSpread: { home: { close: { line: '-14.5', odds: '-114' }, open: { line: '-13.5' } }, away: { close: { line: '+14.5', odds: '-106' }, open: { line: '+13.5' } } },
+      total: { over: { open: { line: 'o222.5' } } },
+    }],
+    predictor: { homeTeam: { id: '18', gameProjection: '86.2' }, awayTeam: { id: '17', gameProjection: '13.8' } },
+    leaders: [
+      { team: team('18', 'NY'), leaders: [cat(k[0], athlete('1', 'Jalen Brunson', 'G'), '25.5', '39.5 FG%'), cat(k[1], athlete('2', 'Karl Towns', 'C'), '13.5'), cat(k[2], athlete('3', 'Tyler Kolek', 'G'), '6.2')] },
+      { team: team('17', 'BKN'), leaders: [cat(k[0], athlete('4', 'Michael Porter', 'F'), '21.2')] },
+    ],
+    injuries: [
+      { team: team('17', 'BKN'), injuries: [{ status: 'Out', athlete: athlete('5', 'Egor Demin', 'G'), details: { type: 'Leg', detail: 'Bruise Not Specified', returnDate: '2026-11-07' } }, { athlete: {} }] },
+      { team: team('18', 'NY'), injuries: [] },
+    ],
+    againstTheSpread: [{ team: team('17', 'BKN'), records: [] }, { team: team('18', 'NY'), records: [] }],
+    boxscore: { teams: [{ team: team('18', 'NY'), statistics: [{ name: 'pointsInPaint', displayValue: '38' }, { name: 'fastBreakPoints', displayValue: '9' }] }] },
+    winprobability: [{ homeWinPercentage: 0.4 }, { homeWinPercentage: 0.75 }],
+  };
+}
+
+test('parseGameExtras reads the sides, odds, BPI and leaders with headshots', () => {
+  const g = parseGameExtras(summaryFixture('pre'));
+  assert.equal(g.state, 'pre');
+  assert.equal(g.away.abbr, 'BKN');
+  assert.equal(g.home.record, '2-4');
+  assert.equal(g.home.homeRecord, '1-2');
+  assert.equal(g.away.roadRecord, '1-2');
+  assert.equal(g.away.score, null);
+  assert.equal(g.venue, 'Madison Square Garden');
+  assert.equal(g.broadcast, 'ESPN');
+  assert.deepEqual(g.predictor, { home: 86.2, away: 13.8 });
+  assert.equal(g.leaders.home.kind, 'season');
+  assert.equal(g.leaders.home.pts.name, 'Jalen Brunson');
+  assert.equal(g.leaders.home.pts.headshot, 'https://a.espncdn.com/i/headshots/nba/players/full/1.png');
+  assert.equal(g.leaders.home.pts.pos, 'G');
+  assert.equal(g.leaders.away.reb, null);
+  assert.equal(g.leaders.away.pts.value, '21.2');
+});
+
+test('parseGameExtras reads started games: scores, game leaders, line score, team counts', () => {
+  const g = parseGameExtras(summaryFixture('post'));
+  assert.equal(g.state, 'post');
+  assert.equal(g.home.score, 101);
+  assert.equal(g.home.winner, true);
+  assert.deepEqual(g.away.linescores, [20, 31]);
+  assert.equal(g.leaders.home.kind, 'game');
+  assert.equal(g.counts.home.paint, 38);
+  assert.equal(g.counts.home.fastBreak, 9);
+  assert.equal(g.counts.home.largestLead, null);
+  assert.equal(g.counts.away, null);
+  assert.deepEqual(g.winProb, { home: 75, away: 25 });
+});
+
+test('parseGameOdds reads spread, total, moneyline and line movement', () => {
+  const odds = parseGameOdds(summaryFixture('pre'));
+  assert.equal(odds.provider, 'DraftKings');
+  assert.equal(odds.details, 'NY -14.5');
+  assert.equal(odds.total, 218.5);
+  assert.equal(odds.totalOpen, 222.5);
+  assert.equal(odds.overOdds, '-108');
+  assert.deepEqual(odds.spread.home, { line: '-14.5', odds: '-114' });
+  assert.deepEqual(odds.spread.away, { line: '+14.5', odds: '-106' });
+  assert.deepEqual(odds.spreadOpen, { away: '+13.5', home: '-13.5' });
+  assert.deepEqual(odds.moneyline, { away: '+650', home: '-980' });
+});
+
+test('parseGameOdds derives the away line from the home spread and drops empty odds', () => {
+  const odds = parseGameOdds({ pickcenter: [{ details: 'BOS -6.5', overUnder: 221.5, spread: 6.5 }] });
+  assert.equal(odds.spread.home.line, '+6.5');
+  assert.equal(odds.spread.away.line, '-6.5');
+  assert.equal(odds.moneyline, null);
+  assert.equal(parseGameOdds({ pickcenter: [], odds: [] }), null);
+  assert.equal(parseGameOdds({}), null);
+});
+
+test('parseGameExtras keeps injuries per side, cleans the detail, and nulls empty ATS', () => {
+  const g = parseGameExtras(summaryFixture('pre'));
+  assert.equal(g.injuries.home.length, 0);
+  assert.equal(g.injuries.away.length, 1);
+  assert.deepEqual(g.injuries.away[0], { name: 'Egor Demin', pos: 'G', status: 'Out', detail: 'Leg Bruise', returnDate: '2026-11-07' });
+  assert.equal(g.ats, null);
+
+  const withAts = summaryFixture('pre');
+  withAts.againstTheSpread[0].records = [{ displayName: 'Overall ATS', summary: '3-2-1' }, { type: 'home', displayValue: '' }];
+  assert.deepEqual(parseGameExtras(withAts).ats.away, [{ label: 'Overall ATS', summary: '3-2-1' }]);
+});
+
+test('parseGameExtras and parsePredictor survive an empty payload', () => {
+  const g = parseGameExtras({});
+  assert.equal(g.away, null);
+  assert.equal(g.odds, null);
+  assert.equal(g.predictor, null);
+  assert.equal(g.leaders, null);
+  assert.equal(g.injuries, null);
+  assert.equal(g.winProb, null);
+  assert.equal(parsePredictor({ predictor: { homeTeam: {} } }), null);
+});
+
+test('barShares gives the better side the full bar and respects lower-is-better', () => {
+  assert.deepEqual(barShares(120, 100), { a: 1, b: 100 / 120 });
+  assert.deepEqual(barShares(100, 120), { a: 100 / 120, b: 1 });
+  // Fewer turnovers is better, so the lower number gets the full bar.
+  assert.deepEqual(barShares(12, 16, true), { a: 1, b: 0.75 });
+  assert.deepEqual(barShares(16, 12, true), { a: 0.75, b: 1 });
+  assert.deepEqual(barShares(7, 7), { a: 1, b: 1 });
+  // Zero or negative values spread linearly with a floor.
+  assert.deepEqual(barShares(5, -3), { a: 1, b: 0.15 });
+  assert.deepEqual(barShares(0, 7), { a: 0.15, b: 1 });
+  assert.deepEqual(barShares(null, 7), { a: 0, b: 0 });
+  assert.equal(barShares(1, 1000).a, 0.08);
 });

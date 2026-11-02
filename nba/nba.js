@@ -586,6 +586,242 @@ export function parsePreGame(json) {
   };
 }
 
+// ── Game page extras ────────────────────────────────────────────────────────
+// Everything the game page shows beyond the box score, read from one summary
+// payload: header sides, odds, BPI, win probability, leaders with headshots,
+// injuries, ATS records, line score and the extra team counts. Any block ESPN
+// leaves empty comes back null or [] so the page can drop it.
+
+function recordOfType(competitor, type) {
+  const hit = arr(competitor?.record).concat(arr(competitor?.records)).find((r) => r?.type === type || r?.name === type);
+  return str(hit?.summary || hit?.displayValue);
+}
+
+function headerSide(competitor) {
+  if (!competitor) return null;
+  const team = teamOf(competitor);
+  return {
+    ...team,
+    record: recordOfType(competitor, 'total') || recordOfType(competitor, 'overall'),
+    homeRecord: recordOfType(competitor, 'home'),
+    roadRecord: recordOfType(competitor, 'road'),
+    score: scoreOf(competitor),
+    winner: competitor.winner === true,
+    linescores: arr(competitor.linescores).map((l) => num(l?.displayValue ?? l?.value)),
+  };
+}
+
+function lineText(value) {
+  const n = num(value);
+  if (n == null) return '';
+  if (n === 0) return 'PK';
+  return n > 0 ? '+' + n : String(n);
+}
+
+function openTotal(block) {
+  return num(str(block?.over?.open?.line || block?.under?.open?.line).replace(/^[a-z]/i, ''));
+}
+
+// Spread, total and moneyline from pickcenter (or odds when pickcenter is
+// empty). `spread` on ESPN is the home team's line, so the away line is its
+// negation; the per-side pointSpread block wins when it is present.
+export function parseGameOdds(json) {
+  const pc = arr(json?.pickcenter)[0] || arr(json?.odds)[0];
+  if (!pc || typeof pc !== 'object') return null;
+  const home = pc.homeTeamOdds || {};
+  const away = pc.awayTeamOdds || {};
+  const spreadNum = num(pc.spread);
+  const homeLine = str(pc.pointSpread?.home?.close?.line) || lineText(spreadNum);
+  const awayLine = str(pc.pointSpread?.away?.close?.line) || (spreadNum == null ? '' : lineText(spreadNum === 0 ? 0 : -spreadNum));
+  const mlHome = signedLine(home.moneyLine ?? pc.moneyline?.home?.close?.odds);
+  const mlAway = signedLine(away.moneyLine ?? pc.moneyline?.away?.close?.odds);
+  const total = num(pc.overUnder);
+  const out = {
+    provider: str(pc.provider?.name),
+    details: str(pc.details).trim(),
+    total,
+    totalOpen: openTotal(pc.total),
+    overOdds: signedLine(pc.overOdds ?? pc.total?.over?.close?.odds),
+    underOdds: signedLine(pc.underOdds ?? pc.total?.under?.close?.odds),
+    spread: {
+      away: { line: awayLine, odds: signedLine(away.spreadOdds ?? pc.pointSpread?.away?.close?.odds) },
+      home: { line: homeLine, odds: signedLine(home.spreadOdds ?? pc.pointSpread?.home?.close?.odds) },
+    },
+    spreadOpen: {
+      away: str(pc.pointSpread?.away?.open?.line),
+      home: str(pc.pointSpread?.home?.open?.line),
+    },
+    moneyline: mlAway || mlHome ? { away: mlAway, home: mlHome } : null,
+  };
+  if (!out.details && total == null && !out.spread.home.line && !out.moneyline) return null;
+  return out;
+}
+
+// ESPN BPI win chance, pre-game only. Values are percentages as strings.
+export function parsePredictor(json) {
+  const p = json?.predictor;
+  const home = num(p?.homeTeam?.gameProjection);
+  const away = num(p?.awayTeam?.gameProjection);
+  if (home == null || away == null) return null;
+  return { home, away };
+}
+
+// Latest in-game win probability (home side, 0-1 in the payload).
+function parseWinProb(json) {
+  const list = arr(json?.winprobability);
+  const last = list[list.length - 1];
+  const home = num(last?.homeWinPercentage);
+  if (home == null) return null;
+  return { home: home * 100, away: (1 - home) * 100 };
+}
+
+// One leader per category with the headshot and position, for the game page.
+function richLeader(block, name) {
+  const category = arr(block?.leaders).find((c) => str(c?.name) === name);
+  const top = arr(category?.leaders)[0];
+  if (!top) return null;
+  const athlete = top.athlete || {};
+  const fullName = str(athlete.displayName || athlete.fullName);
+  const value = str(top.displayValue ?? top.value);
+  if (!fullName || !value) return null;
+  return {
+    id: str(athlete.id),
+    name: fullName,
+    short: shortNameOf(athlete),
+    value,
+    pos: str(athlete.position?.abbreviation),
+    jersey: str(athlete.jersey),
+    headshot: str(athlete.headshot?.href),
+    line: str(top.summary),
+  };
+}
+
+export function parseSummaryLeaders(block, state) {
+  const order = state === 'pre' ? ['season', 'game'] : ['game', 'season'];
+  for (const kind of order) {
+    const keys = LEADER_KEYS[kind];
+    const pts = richLeader(block, keys.pts);
+    const reb = richLeader(block, keys.reb);
+    const ast = richLeader(block, keys.ast);
+    if (pts || reb || ast) return { kind, pts, reb, ast };
+  }
+  return null;
+}
+
+function injuryEntry(entry) {
+  const athlete = entry?.athlete || {};
+  const name = str(athlete.displayName || athlete.fullName);
+  if (!name) return null;
+  const details = entry?.details || {};
+  const what = [str(details.type), str(details.detail)].filter(Boolean).join(' ').replace(/\s*Not Specified/i, '').trim();
+  return {
+    name,
+    pos: str(athlete.position?.abbreviation),
+    status: str(entry?.status || entry?.type?.description),
+    detail: what,
+    returnDate: str(details.returnDate),
+  };
+}
+
+// ATS records have come back empty on every payload checked so far, so the
+// shape is read tolerantly: any record with a summary becomes a labelled line.
+function atsRecords(block) {
+  return arr(block?.records).map((r) => ({
+    label: str(r?.displayName || r?.shortDisplayName || r?.abbreviation || r?.description || r?.type?.text || r?.type),
+    summary: str(r?.summary || r?.displayValue),
+  })).filter((r) => r.summary);
+}
+
+const TEAM_COUNTS = {
+  paint: 'pointsInPaint',
+  fastBreak: 'fastBreakPoints',
+  offTurnovers: 'turnoverPoints',
+  largestLead: 'largestLead',
+  leadChanges: 'leadChanges',
+};
+
+function teamCounts(boxTeam) {
+  const stats = arr(boxTeam?.statistics);
+  const out = {};
+  let any = false;
+  for (const [key, name] of Object.entries(TEAM_COUNTS)) {
+    const hit = stats.find((s) => str(s?.name) === name);
+    out[key] = hit ? num(hit.displayValue ?? hit.value) : null;
+    if (out[key] != null) any = true;
+  }
+  return any ? out : null;
+}
+
+export function parseGameExtras(json) {
+  const competition = arr(json?.header?.competitions)[0] || {};
+  const competitors = arr(competition.competitors);
+  const away = headerSide(competitors.find((c) => c?.homeAway === 'away'));
+  const home = headerSide(competitors.find((c) => c?.homeAway === 'home'));
+  const state = stateOf(competition.status);
+
+  const sideOf = (team) => {
+    const id = str(team?.id);
+    const abbr = str(team?.abbreviation);
+    if (away && ((id && id === away.id) || (!id && abbr === away.abbr))) return 'away';
+    if (home && ((id && id === home.id) || (!id && abbr === home.abbr))) return 'home';
+    return '';
+  };
+  const bySide = (list, pick) => {
+    const out = { away: null, home: null };
+    for (const block of arr(list)) {
+      const side = sideOf(block?.team);
+      if (side) out[side] = pick(block);
+    }
+    return out;
+  };
+
+  const leaders = bySide(json?.leaders, (block) => parseSummaryLeaders(block, state));
+  const injuries = bySide(json?.injuries, (block) => arr(block?.injuries).map(injuryEntry).filter(Boolean));
+  const ats = bySide(json?.againstTheSpread, atsRecords);
+  const counts = bySide(arr(json?.boxscore?.teams), teamCounts);
+
+  const nationals = arr(competition.broadcasts).filter((b) => b?.isNational).map((b) => str(b?.media?.shortName)).filter(Boolean);
+  const locals = arr(competition.broadcasts).map((b) => str(b?.media?.shortName)).filter(Boolean);
+
+  return {
+    id: str(json?.header?.id || competition.id),
+    state,
+    statusText: statusTextOf(competition.status),
+    startISO: str(competition.date),
+    venue: str(json?.gameInfo?.venue?.fullName || json?.gameInfo?.venue?.shortName),
+    broadcast: (nationals.length ? nationals : locals.slice(0, 2)).join(', '),
+    away,
+    home,
+    odds: parseGameOdds(json),
+    predictor: parsePredictor(json),
+    winProb: parseWinProb(json),
+    leaders: leaders.away || leaders.home ? leaders : null,
+    injuries: injuries.away?.length || injuries.home?.length ? { away: injuries.away || [], home: injuries.home || [] } : null,
+    ats: ats.away?.length || ats.home?.length ? { away: ats.away || [], home: ats.home || [] } : null,
+    counts: counts.away || counts.home ? counts : null,
+  };
+}
+
+// Centre-out bar lengths (0 to 1) for one tale-of-the-tape row. The better
+// value gets the full bar; the other gets the ratio of the two when both are
+// positive, or a linear spread (floor 0.15) when a value is zero or negative.
+// `lower` flips which side is better (turnovers, points allowed).
+export function barShares(a, b, lower = false) {
+  if (a == null || b == null || Number.isNaN(a) || Number.isNaN(b)) return { a: 0, b: 0 };
+  if (a === b) return { a: 1, b: 1 };
+  if (a > 0 && b > 0) {
+    const ratio = Math.max(0.08, Math.min(a, b) / Math.max(a, b));
+    const aBetter = lower ? a < b : a > b;
+    return aBetter ? { a: 1, b: ratio } : { a: ratio, b: 1 };
+  }
+  const sa = lower ? -a : a;
+  const sb = lower ? -b : b;
+  const lo = Math.min(sa, sb);
+  const hi = Math.max(sa, sb);
+  const share = (s) => 0.15 + 0.85 * ((s - lo) / (hi - lo));
+  return { a: share(sa), b: share(sb) };
+}
+
 export function parseAthlete(json) {
   const athlete = json?.athlete || {};
   return {

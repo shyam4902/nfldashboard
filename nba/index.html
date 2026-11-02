@@ -128,7 +128,8 @@ tailwind.config = {
   --accent-warning-bg: rgba(217, 164, 65, 0.12);
   --card-shadow: 0 1px 3px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.04);
   /* Chrome accent: white on neutral greys. Gold is only for the brand word and
-     the active tab / segmented-control state (--accent-brand, --tab-active-*). */
+     the active tab / segmented-control state (--accent-brand, --tab-active-*).
+     Tried all-white 2026-11-02; Shyam preferred the gold. */
   --accent-ui: #f2f2f3;
   --accent-ui-hover: #ffffff;
   --accent-ui-ink: #111113;
@@ -175,7 +176,7 @@ img { display: block; }
   font: 700 12px/1 var(--font-sans);
 }
 .skip-link:focus { top: 8px; }
-/* One gold focus ring for every interactive element, keyboard only. */
+/* One focus ring for every interactive element, keyboard only. */
 a:focus-visible, button:focus-visible, select:focus-visible, input:focus-visible {
   outline: 2px solid var(--accent-ui);
   outline-offset: 2px;
@@ -374,14 +375,6 @@ tbody tr:last-child td { border-bottom: 0; }
 .standings tr.cut td { border-bottom: 2px solid var(--accent-ui-subtle); }
 
 /* ── Game / box score ───────────────────────────────────────────────────── */
-.game-head { padding: 12px; margin-bottom: 12px; }
-.gh-status { font: 700 10px/1 var(--font-sans); text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); margin-bottom: 10px; }
-.gh-teams { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.gh-team { display: flex; align-items: center; gap: 8px; min-width: 0; }
-.gh-team img { width: 34px; height: 34px; object-fit: contain; }
-.gh-team .gh-id { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-.gh-team .gh-abbr { font: 800 15px/1 var(--font-sans); }
-.gh-team .gh-score { font: 700 22px/1 var(--font-mono); font-variant-numeric: tabular-nums; }
 .box-block { margin-bottom: 12px; overflow: hidden; }
 .box-block .box-title { display: flex; align-items: center; gap: 8px; padding: 10px 12px 8px; }
 .box-block .box-title img { width: 22px; height: 22px; object-fit: contain; }
@@ -459,8 +452,6 @@ tbody tr:last-child td { border-bottom: 0; }
 @media (max-width: 420px) {
   .roster-row { grid-template-columns: 30px minmax(0, 1fr) auto; }
   .roster-row .age { display: none; }
-  .gh-team img { width: 28px; height: 28px; }
-  .gh-team .gh-score { font-size: 19px; }
 }
 
 /* ── Compare, matchup and player ────────────────────────────────────────── */
@@ -540,9 +531,6 @@ tbody tr:last-child td { border-bottom: 0; }
 .cmp-table td.cmp-val { text-align: right; font: 600 12px/1.2 var(--font-mono); color: var(--text-main); }
 .cmp-table td.cmp-val.right { text-align: left; }
 .cmp-table td.cmp-val.better { color: var(--accent-ui); font-weight: 700; }
-.mu-head { padding: 12px; margin-bottom: 12px; }
-.mu-when { font: 500 11px/1.5 var(--font-mono); color: var(--text-muted); margin-top: 10px; }
-.mu-when b { color: var(--text-main); font-weight: 700; }
 .list-row {
   display: flex;
   align-items: baseline;
@@ -676,11 +664,6 @@ tbody tr:last-child td { border-bottom: 0; }
   padding: 7px 6px;
   max-width: 132px;
 }
-.gh-live { margin-top: 8px; font: 500 10px/1 var(--font-mono); color: var(--text-faint); letter-spacing: 0.04em; }
-.ss-team { font: 700 11px/1.35 var(--font-mono); color: var(--text-muted); white-space: nowrap; }
-.ss-team.winner { color: var(--text-main); font-weight: 700; }
-.ss-team.loser { color: var(--text-faint); font-weight: 500; }
-.sched-row .ss-wrap { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
 @media (max-width: 560px) {
   .nba-header .search-input { display: none; }
   .search-toggle { display: inline-flex; }
@@ -880,8 +863,8 @@ body.sc-wide .wrap { max-width: 1440px; }
 }
 .ins-st.live { color: var(--text-main); }
 .ins-st .dot { width: 6px; height: 6px; border-radius: 999px; background: currentColor; animation: pulse 1.1s ease-in-out infinite; flex-shrink: 0; }
-.ins-odds { min-width: 0; overflow: hidden; text-overflow: ellipsis; font: 500 10px/1 var(--font-mono); color: var(--text-faint); }
-.ins-odds b { font-weight: 700; color: var(--text-muted); }
+.ins-odds { min-width: 0; overflow: hidden; text-overflow: ellipsis; font: 600 12px/1 var(--font-mono); color: var(--text-muted); }
+.ins-odds b { font-weight: 800; color: var(--text-main); }
 .ins-fwrap {
   position: relative;
   border-radius: 8px;
@@ -942,13 +925,8 @@ body.sc-wide .wrap { max-width: 1440px; }
 }
 .ins-logo img { width: 22px; height: 22px; object-fit: contain; }
 .ins-logo-none { background: rgba(255, 255, 255, 0.18); }
-.ins-h { display: none; position: absolute; width: 7px; height: 7px; background: #fff; border: 1.5px solid var(--accent-ui); z-index: 2; }
-.ins-h.h1 { left: -7px; top: -7px; }
-.ins-h.h2 { right: -7px; top: -7px; }
-.ins-h.h3 { left: -7px; bottom: -7px; }
-.ins-h.h4 { right: -7px; bottom: -7px; }
+.ins-frame { cursor: pointer; }
 .ins-frame.sel .ins-fbody { outline: 1.5px solid var(--accent-ui); outline-offset: 3px; }
-.ins-frame.sel .ins-h { display: block; }
 .ins-frame:not(.sel):hover .ins-fbody { outline: 1px solid var(--border-strong); outline-offset: 3px; }
 
 /* Detail drawer. Height animates 0fr to 1fr, so the content is never measured
@@ -972,8 +950,8 @@ body.sc-wide .wrap { max-width: 1440px; }
 .ins-dg .v b { flex: none; font: 700 11px/1.25 var(--font-mono); color: var(--text-main); font-variant-numeric: tabular-nums; }
 .ins-dg .v.rel b { color: var(--text-main); }
 .ins-dg .v:not(.rel):not(.ld) b { color: var(--text-muted); font-weight: 600; }
-.ins-dopen { display: block; margin-top: 10px; padding: 10px 0 11px; border-top: 1px solid var(--border-muted); text-align: center; font: 700 12px/1 var(--font-sans); color: var(--text-main); }
-.ins-dopen:hover { text-decoration: underline; }
+.ins-dopen { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; padding: 9px 12px; border: 1px solid var(--border-strong); border-radius: 8px; font: 700 12px/1 var(--font-sans); color: var(--text-main); }
+.ins-dopen:hover { border-color: var(--text-muted); background: var(--accent-ui-subtle); }
 .ins-dopen:focus-visible { outline: 2px solid var(--accent-ui); outline-offset: -2px; border-radius: 0 0 8px 8px; }
 .ins-frame.no-anim, .ins-frame.no-anim * { transition: none !important; }
 @media (min-width: 721px) {
@@ -1102,6 +1080,8 @@ body.sc-wide .wrap { max-width: 1440px; }
 .ins-score { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); gap: 8px; margin-top: 8px; font: 700 22px/1 var(--font-mono); font-variant-numeric: tabular-nums; }
 .ins-score span:last-child { text-align: right; }
 .ins-meter { display: flex; gap: 2px; height: 6px; margin-top: 10px; border-radius: 1px; overflow: hidden; }
+.ins-meter-cap { display: flex; justify-content: space-between; margin-top: 5px; font: 600 10px/1 var(--font-mono); color: var(--text-faint); }
+.ins-meter-cap i { font-style: normal; letter-spacing: 0.06em; }
 .ins-fill { display: grid; grid-template-columns: 26px minmax(0, 1fr) auto; gap: 8px; align-items: center; padding: 4px 0; font: 500 12px/1.2 var(--font-sans); color: var(--text-main); }
 .ins-fill .sw { width: 26px; height: 26px; border-radius: 3px; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.16); }
 .ins-fill .hex { font: 500 11px/1 var(--font-mono); color: var(--text-muted); }
@@ -1113,15 +1093,15 @@ body.sc-wide .wrap { max-width: 1440px; }
 .ins-kv b.lead { color: var(--text-main); }
 .ins-kv b.sans { font-family: var(--font-sans); font-weight: 600; color: var(--text-main); }
 .ins-kv.ins-kv2 b { color: var(--text-main); }
-.ins-open { display: block; padding: 12px; font: 700 12px/1 var(--font-sans); color: var(--accent-ui); }
-.ins-open:hover { color: var(--accent-ui-hover); }
+.ins-open { display: flex; justify-content: space-between; align-items: center; margin: 12px; padding: 10px 12px; border: 1px solid var(--border-strong); border-radius: 8px; font: 700 12px/1 var(--font-sans); color: var(--text-main); transition: border-color 0.15s ease, background 0.15s ease; }
+.ins-open:hover { border-color: var(--text-muted); background: var(--accent-ui-subtle); }
+.ins-open:focus-visible { outline: 2px solid var(--text-main); outline-offset: 2px; }
 .ins-foot { margin: 0; padding: 0 12px 12px; font: 500 11px/1.45 var(--font-sans); color: var(--text-faint); }
 
 @media (max-width: 720px) {
   .ins-canvas { padding: 14px 12px 18px; }
   .ins-slate { grid-template-columns: minmax(0, 1fr); gap: 18px; }
   .ins-frame.sel .ins-fbody, .ins-frame:not(.sel):hover .ins-fbody { outline: 0; }
-  .ins-frame.sel .ins-h { display: none; }
 }
 
 /* ── Standings: table / map switch and sortable headers (st-*) ────────────── */
@@ -1214,6 +1194,225 @@ body.sc-wide .wrap { max-width: 1440px; }
   .mz-ctrl { width: 100%; }
   .mz-ctrl button { flex: 1 1 0; padding: 8px 4px; font-size: 10.5px; }
 }
+/* ── Game page (gm-*) ─────────────────────────────────────────────────────
+   Scorebug header, tale of the tape, leaders and market blocks. The page keeps
+   its dark chrome; team colours carry the colour. Gold stays on tabs. */
+body.gm-wide .wrap { max-width: 1240px; }
+.gm-bug {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(190px, 250px) minmax(0, 1fr);
+  grid-template-areas: 'away mid home';
+  margin-bottom: 12px;
+  border: 1px solid var(--border-card);
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--bg-card);
+}
+.gm-team {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas: 'id' 'nm' 'rc';
+  align-content: center;
+  row-gap: 6px;
+  min-width: 0;
+  padding: 22px 24px;
+}
+.gm-team.away { grid-area: away; }
+.gm-team.home { grid-area: home; text-align: right; }
+.gm-team.sc.away { grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: 'id sc' 'nm sc' 'rc sc'; column-gap: 14px; }
+.gm-team.sc.home { grid-template-columns: auto minmax(0, 1fr); grid-template-areas: 'sc id' 'sc nm' 'sc rc'; column-gap: 14px; }
+.gm-id { grid-area: id; display: flex; align-items: center; gap: 12px; min-width: 0; }
+.gm-team.home .gm-id { flex-direction: row-reverse; }
+.gm-logo {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 50px;
+  height: 50px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.92);
+}
+.gm-logo img { width: 36px; height: 36px; object-fit: contain; }
+.gm-ab { font: 900 clamp(40px, 5vw, 66px)/0.9 'Archivo', var(--font-sans); letter-spacing: -0.03em; text-transform: uppercase; }
+.gm-nm { grid-area: nm; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font: 700 13px/1.2 var(--font-sans); letter-spacing: 0.06em; text-transform: uppercase; }
+.gm-rec { grid-area: rc; min-width: 0; font: 600 12px/1.2 var(--font-mono); opacity: 0.88; }
+.gm-rec i { margin-left: 8px; font-style: normal; opacity: 0.8; }
+.gm-sc { grid-area: sc; align-self: center; font: 700 clamp(44px, 6vw, 76px)/1 var(--font-mono); font-variant-numeric: tabular-nums; letter-spacing: -0.04em; }
+.gm-team.lost .gm-sc { opacity: 0.6; }
+.gm-team:focus-visible { outline-offset: -3px; }
+.gm-mid {
+  grid-area: mid;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-width: 0;
+  padding: 16px 14px;
+  text-align: center;
+  font: 500 12px/1.3 var(--font-mono);
+  color: var(--text-muted);
+}
+.gm-day { font: 700 10px/1 var(--font-sans); letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-faint); }
+.gm-st { display: inline-flex; align-items: center; justify-content: center; gap: 7px; font: 800 19px/1.15 var(--font-sans); letter-spacing: -0.01em; color: var(--text-main); text-wrap: balance; }
+.gm-st .dot { flex: none; width: 7px; height: 7px; border-radius: 999px; background: currentColor; animation: pulse 1.1s ease-in-out infinite; }
+.gm-meta { max-width: 100%; overflow-wrap: anywhere; }
+.gm-line {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 4px 10px;
+  width: 100%;
+  margin-top: 3px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border-muted);
+  font: 600 12px/1.2 var(--font-mono);
+  color: var(--text-muted);
+}
+.gm-line b { font-weight: 800; color: var(--text-main); }
+.gm-live { margin: -4px 0 12px; font: 500 10px/1 var(--font-mono); letter-spacing: 0.04em; color: var(--text-faint); text-align: center; }
+
+.gm-cols { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; align-items: start; margin-bottom: 12px; }
+.gm-col { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.gm-card { min-width: 0; padding: 14px 16px 16px; }
+.gm-ch { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; margin-bottom: 12px; }
+.gm-ch span { font: 500 10px/1 var(--font-mono); letter-spacing: 0.04em; text-transform: uppercase; color: var(--text-faint); }
+.gm-abbr { font: 900 15px/1 'Archivo', var(--font-sans); letter-spacing: -0.01em; }
+.gm-card h2, .gm-sh { font: 700 12px/1.2 var(--font-sans); letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); }
+.gm-sh { margin: 4px 0 10px; }
+.gm-none { padding: 8px 0; font: 500 11px/1.4 var(--font-sans); color: var(--text-faint); }
+
+/* Tale of the tape. Values on the outside, bars grow from the centre. */
+.gm-th { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items: baseline; gap: 10px; margin-bottom: 8px; }
+.gm-th .b { text-align: right; }
+.gm-tr {
+  display: grid;
+  grid-template-columns: 62px minmax(0, 1fr) 78px minmax(0, 1fr) 62px;
+  align-items: center;
+  column-gap: 8px;
+  padding: 7px 0;
+  border-top: 1px solid var(--border-muted);
+}
+.gm-v { display: flex; flex-direction: column; gap: 2px; font: 700 17px/1.1 var(--font-mono); font-variant-numeric: tabular-nums; color: var(--text-faint); }
+.gm-v.a { align-items: flex-start; text-align: left; }
+.gm-v.b { align-items: flex-end; text-align: right; }
+.gm-v.lead { color: var(--text-main); }
+.gm-v small { font: 500 10px/1.1 var(--font-mono); color: var(--text-faint); }
+.gm-k { text-align: center; font: 700 10px/1.2 var(--font-sans); letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); }
+.gm-bar { display: flex; height: 12px; border-radius: 2px; background: var(--bg-inset); overflow: hidden; }
+.gm-bar.a { justify-content: flex-end; }
+.gm-bar i { display: block; height: 100%; border-radius: 2px; opacity: 0.6; }
+.gm-bar.lead i { opacity: 1; }
+
+/* Leaders */
+.gm-ld { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+.gm-lcol, .gm-icol, .gm-l5c { min-width: 0; }
+.gm-lh { display: flex; align-items: baseline; gap: 8px; min-width: 0; padding-bottom: 7px; border-bottom: 3px solid var(--c); }
+.gm-lh > span:not(.gm-abbr) { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font: 500 11px/1 var(--font-sans); color: var(--text-faint); }
+.gm-lr { display: grid; grid-template-columns: 44px minmax(0, 1fr) auto; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--border-muted); }
+.gm-lr:last-child { border-bottom: 0; }
+.gm-hs { width: 44px; height: 44px; border-radius: 999px; overflow: hidden; background: var(--bg-inset); background: color-mix(in srgb, var(--c) 38%, var(--bg-inset)); }
+.gm-hs img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 12%; }
+.gm-lw { min-width: 0; }
+.gm-ln, .gm-ls { display: block; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.gm-ln { font: 700 13px/1.25 var(--font-sans); color: var(--text-main); }
+.gm-ln a:hover { text-decoration: underline; }
+.gm-ls { margin-top: 2px; font: 500 10px/1.3 var(--font-mono); color: var(--text-faint); }
+.gm-lv { text-align: right; }
+.gm-lv b { display: block; font: 700 22px/1 var(--font-mono); font-variant-numeric: tabular-nums; color: var(--text-main); }
+.gm-lv i { display: block; margin-top: 3px; font: 700 9px/1 var(--font-sans); font-style: normal; letter-spacing: 0.08em; color: var(--text-faint); }
+
+/* Line score */
+.gm-ls-wrap { overflow-x: auto; }
+.gm-lsc { width: 100%; border-collapse: collapse; font: 600 13px/1 var(--font-mono); font-variant-numeric: tabular-nums; }
+.gm-lsc th, .gm-lsc td { padding: 8px 6px; text-align: center; color: var(--text-muted); }
+.gm-lsc thead th { font: 700 10px/1 var(--font-sans); letter-spacing: 0.06em; color: var(--text-faint); }
+.gm-lsc th.tm { display: flex; align-items: center; gap: 8px; text-align: left; font: 800 13px/1 var(--font-sans); color: var(--text-main); }
+.gm-lsc .sw { width: 10px; height: 10px; border-radius: 2px; }
+.gm-lsc .t { color: var(--text-main); font-weight: 800; }
+.gm-lsc tbody tr { border-top: 1px solid var(--border-muted); }
+
+/* Season series and last five */
+.gm-sr { display: grid; grid-template-columns: 86px minmax(0, 1fr) auto; align-items: center; gap: 8px; padding: 9px 0; border-bottom: 1px solid var(--border-muted); font: 500 11px/1.3 var(--font-mono); color: var(--text-muted); }
+.gm-sr:last-child { border-bottom: 0; }
+.gm-sr:hover { color: var(--text-main); }
+.gm-sr.now .d { color: var(--text-main); font-weight: 700; }
+.gm-sr .m { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; }
+.gm-sr .m i { font-style: normal; color: var(--text-faint); }
+.gm-sr .r { font-weight: 700; }
+.gm-sr .r.up { color: var(--text-faint); font-weight: 500; }
+.gm-st2 { font: 700 12px/1.3 var(--font-mono); color: var(--text-muted); white-space: nowrap; }
+.gm-st2.w { color: var(--text-main); }
+.gm-st2.l { color: var(--text-faint); font-weight: 500; }
+.gm-l5 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+.gm-chips { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 4px; margin-top: 10px; }
+.gm-g { display: flex; flex-direction: column; align-items: center; gap: 3px; min-width: 0; padding: 7px 2px 6px; border-top: 2px solid var(--border-strong); border-radius: 4px; background: var(--bg-inset); text-align: center; font: 500 9px/1.2 var(--font-mono); color: var(--text-faint); }
+.gm-g > * { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.gm-g b { font: 800 14px/1 var(--font-sans); }
+.gm-g.W { border-top-color: var(--accent-positive); }
+.gm-g.W b { color: var(--accent-positive); }
+.gm-g.L { border-top-color: var(--accent-negative); }
+.gm-g.L b { color: var(--accent-negative); }
+.gm-g:hover { background: var(--bg-card-hover); }
+.gm-g .dt { opacity: 0.8; }
+
+/* Odds, win chance, injuries, ATS */
+.gm-og { display: grid; grid-template-columns: auto minmax(0, 1fr) minmax(0, 1fr); align-items: center; }
+.gm-og > span { padding: 9px 0; border-top: 1px solid var(--border-muted); }
+.gm-og > .h, .gm-og > .gm-ok:first-child { padding-top: 0; border-top: 0; }
+.gm-ok { padding-right: 14px; font: 700 10px/1.2 var(--font-sans); letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); }
+.gm-ov { text-align: right; }
+.gm-ov b { display: block; font: 700 15px/1.15 var(--font-mono); font-variant-numeric: tabular-nums; color: var(--text-main); }
+.gm-ov b.none { color: var(--text-faint); }
+.gm-ov small { display: block; margin-top: 2px; font: 500 10px/1.2 var(--font-mono); color: var(--text-faint); }
+.gm-ov.h .gm-abbr { font-size: 13px; }
+.gm-ot { display: flex; flex-wrap: wrap; gap: 6px 16px; margin-top: 4px; padding-top: 12px; border-top: 1px solid var(--border-muted); font: 500 12px/1.2 var(--font-mono); color: var(--text-muted); }
+.gm-ot i { font: 700 10px/1 var(--font-sans); font-style: normal; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-faint); }
+.gm-ot b { color: var(--text-main); font-weight: 800; }
+.gm-wp-top { display: flex; justify-content: space-between; align-items: flex-end; gap: 12px; margin-bottom: 10px; }
+.gm-wp { display: flex; flex-direction: column; gap: 6px; }
+.gm-wp.home { align-items: flex-end; }
+.gm-wp b { font: 800 28px/1 var(--font-mono); font-variant-numeric: tabular-nums; letter-spacing: -0.03em; color: var(--text-main); }
+.gm-split { display: flex; gap: 3px; height: 14px; }
+.gm-split i { display: block; min-width: 3px; border-radius: 2px; }
+.gm-icol + .gm-icol { margin-top: 14px; }
+.gm-ir { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 3px 10px; padding: 8px 0; border-bottom: 1px solid var(--border-muted); }
+.gm-in { min-width: 0; font: 600 12px/1.25 var(--font-sans); color: var(--text-main); }
+.gm-in i { margin-left: 6px; font: 500 9px/1 var(--font-mono); font-style: normal; color: var(--text-faint); }
+.gm-sx { padding: 3px 6px; border: 1px solid var(--border-strong); border-radius: 4px; font: 700 9px/1 var(--font-sans); letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-muted); white-space: nowrap; }
+.gm-sx.out { border-color: rgba(232, 135, 124, 0.45); background: var(--accent-negative-bg); color: var(--accent-negative); }
+.gm-idt { grid-column: 1 / -1; font: 500 10px/1.3 var(--font-mono); color: var(--text-faint); }
+.gm-ar { display: flex; justify-content: space-between; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--border-muted); font: 500 11px/1.3 var(--font-sans); color: var(--text-muted); }
+.gm-ar b { font: 700 12px/1.3 var(--font-mono); color: var(--text-main); }
+
+@media (min-width: 960px) {
+  .gm-cols.two { grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); gap: 16px; }
+  .gm-col { gap: 16px; }
+}
+@media (max-width: 720px) {
+  .gm-bug { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); grid-template-areas: 'away home' 'mid mid'; }
+  .gm-team { padding: 14px 12px; row-gap: 5px; }
+  .gm-team.sc.away, .gm-team.sc.home { grid-template-columns: minmax(0, 1fr); column-gap: 0; }
+  .gm-team.sc.away { grid-template-areas: 'id' 'sc' 'nm' 'rc'; }
+  .gm-team.sc.home { grid-template-areas: 'id' 'sc' 'nm' 'rc'; }
+  .gm-id { gap: 8px; }
+  .gm-logo { width: 38px; height: 38px; }
+  .gm-logo img { width: 28px; height: 28px; }
+  .gm-ab { font-size: 36px; }
+  .gm-sc { font-size: 44px; }
+  .gm-nm { font-size: 11px; }
+  .gm-rec { font-size: 11px; }
+  .gm-rec i { display: block; margin: 3px 0 0; }
+  .gm-mid { flex-direction: row; flex-wrap: wrap; justify-content: center; gap: 6px 14px; padding: 12px; border-top: 1px solid var(--border-muted); }
+  .gm-line { width: auto; margin: 0; padding: 0; border-top: 0; }
+  .gm-card { padding: 12px; }
+  .gm-tr { grid-template-columns: 50px minmax(0, 1fr) 52px minmax(0, 1fr) 50px; column-gap: 6px; }
+  .gm-v { font-size: 14px; }
+  .gm-k { font-size: 9px; }
+  .gm-ld, .gm-l5 { grid-template-columns: minmax(0, 1fr); gap: 18px; }
+  .gm-sr { grid-template-columns: 78px minmax(0, 1fr) auto; }
+}
 </style>
 </head>
 <body>
@@ -1253,9 +1452,12 @@ body.sc-wide .wrap { max-width: 1440px; }
 
 <script type="module">
 import {
+  barShares,
+  contrastRatio,
   etDate,
   parseAthlete,
   parseBoxScore,
+  parseGameExtras,
   parseGameLog,
   parseLeaders,
   parsePlayerOverview,
@@ -1270,6 +1472,7 @@ import {
   readableOn,
   smallImg,
   teamFill,
+  textOn,
 } from './nba.js';
 
 const API = 'https://site.api.espn.com/apis/site/v2/sports/basketball/nba';
@@ -1279,6 +1482,11 @@ const POLL_MS = 30000;
 const COLUMNS = ['MIN', 'PTS', 'FG', '3PT', 'FT', 'REB', 'AST', 'TO', 'STL', 'BLK', 'PF', '+/-'];
 
 const app = document.getElementById('app');
+// A headshot that fails to load is dropped; the tinted circle behind it stays.
+app.addEventListener('error', (event) => {
+  const img = event.target;
+  if (img && img.tagName === 'IMG' && img.classList.contains('gm-hsimg')) img.remove();
+}, true);
 let requestId = 0;
 let pollTimer = 0;
 let gameTimer = 0;
@@ -1504,7 +1712,7 @@ function insDetailHTML(game, standings, colors) {
 
   return '<div class="ins-more"><div class="ins-more-in"><div class="ins-dt"><div class="ins-dg">' +
     heads + leadCap + leadLines + mlCap + ml + recCap + road + home + formCap + l10 + strk +
-    '</div><a class="ins-dopen" href="#game/' + esc(game.id) + '">Open game ›</a></div></div></div>';
+    '</div><a class="ins-dopen" href="#game/' + esc(game.id) + '"><span>Game details</span><span aria-hidden="true">→</span></a></div></div></div>';
 }
 
 function gameCardHTML(game, colors, selected, standings) {
@@ -1516,7 +1724,7 @@ function gameCardHTML(game, colors, selected, standings) {
     '<div class="ins-fl"><span class="ins-st' + (live ? ' live' : '') + '">' + (live ? '<i class="dot"></i>' : '') + esc(status) + '</span>' +
     oddsHeadHTML(game) + '</div>' +
     '<div class="ins-fwrap"><div class="ins-fbody">' + insBandHTML(game.away, game, colors) + insBandHTML(game.home, game, colors) + '</div>' +
-    '<i class="ins-h h1"></i><i class="ins-h h2"></i><i class="ins-h h3"></i><i class="ins-h h4"></i>' +
+    
     insDetailHTML(game, standings, colors) + '</div></div>';
 }
 
@@ -1561,7 +1769,8 @@ function insPanelHTML(game, standings, colors) {
     '<div class="t r"><b style="color:' + readableOn(H.look.fill, PANEL_BG) + '">' + esc(game.home.abbr) + '</b><span>' + esc(game.home.name) + '</span></div></div>' +
     (started ? '<div class="ins-score"><span>' + (game.away.score == null ? '' : esc(game.away.score)) + '</span><span></span><span>' + (game.home.score == null ? '' : esc(game.home.score)) + '</span></div>' : '') +
     (pctA != null && pctH != null && pctA + pctH > 0
-      ? '<div class="ins-meter" title="Win percentage"><span style="flex:' + (pctA || 0.01) + ';background:' + A.look.fill + '"></span><span style="flex:' + (pctH || 0.01) + ';background:' + H.look.fill + '"></span></div>'
+      ? '<div class="ins-meter" title="Win percentage"><span style="flex:' + (pctA || 0.01) + ';background:' + A.look.fill + '"></span><span style="flex:' + (pctH || 0.01) + ';background:' + H.look.fill + '"></span></div>' +
+        '<div class="ins-meter-cap"><span>' + esc(pctA.toFixed(3).replace(/^0/, '')) + '</span><i>WIN %</i><span>' + esc(pctH.toFixed(3).replace(/^0/, '')) + '</span></div>'
       : '') + '</div>';
 
   const dA = A.row ? pointDiff(A.row) : null;
@@ -1596,7 +1805,7 @@ function insPanelHTML(game, standings, colors) {
     : '';
 
   return '<div class="ins-ph">Inspector<span>' + esc(status) + '</span></div>' + vs + season + tip + lead +
-    '<a class="ins-open" href="#game/' + esc(game.id) + '">Open game page ›</a>' +
+    '<a class="ins-open" href="#game/' + esc(game.id) + '"><span>Game details</span><span aria-hidden="true">→</span></a>' +
     (season ? '<p class="ins-foot">Records and averages are season to date from the ESPN standings.</p>' : '');
 }
 
@@ -1608,7 +1817,7 @@ function dateBarHTML(date) {
   const isToday = date === todayET();
   return '<div class="card date-bar">' +
     '<a class="nav" href="#scores/' + shiftDay(date, -1) + '" aria-label="Previous day">‹</a>' +
-    '<div class="day"><strong>' + esc(isToday ? 'Today · ' + formatDay(date) : formatDay(date)) + '</strong><span>' + esc(date) + '</span></div>' +
+    '<div class="day"><strong>' + esc(isToday ? 'Today · ' + formatDay(date) : formatDay(date)) + '</strong></div>' +
     '<input type="date" class="date-pick" id="datePick" value="' + esc(isoDayValue(date)) + '" aria-label="Choose a date">' +
     '<a class="nav today" href="#scores"' + (isToday ? ' aria-current="date"' : '') + '>Today</a>' +
     '<a class="nav" href="#scores/' + shiftDay(date, 1) + '" aria-label="Next day">›</a>' +
@@ -3053,7 +3262,7 @@ function playerRowHTML(player) {
     (player.pos ? '<span class="pos">' + esc(player.pos) + '</span>' : '') + '</td>' + cells + '</tr>';
 }
 
-function boxTableHTML(team) {
+function boxTableHTML(team, look) {
   const totals = '<tr class="totals"><td class="player-col">Totals</td>' +
     COLUMNS.map((label) => {
       const value = team.totals[label];
@@ -3069,7 +3278,7 @@ function boxTableHTML(team) {
     ? '<div class="dnp"><b>DNP:</b> ' + team.dnp.map((player) => playerNameHTML(player) + ' (' + esc(player.reason) + ')').join(' · ') + '</div>'
     : '';
 
-  return '<section class="card box-block">' +
+  return '<section class="card box-block"' + (look ? ' style="border-top:3px solid ' + look.fill + '"' : '') + '>' +
     '<div class="box-title">' + (team.logo ? '<img src="' + esc(smallImg(team.logo, 44, 44)) + '" alt="" width="22" height="22" loading="lazy" decoding="async">' : '') + '<h2>' + esc(team.name) + '</h2></div>' +
     '<div class="table-wrap"><table class="box">' +
     '<caption class="sr-only">' + esc(team.name) + ' box score</caption><thead><tr>' +
@@ -3077,88 +3286,264 @@ function boxTableHTML(team) {
     '</tr></thead><tbody>' + team.starters.map(playerRowHTML).join('') + bench + totals + '</tbody></table></div>' + dnp + '</section>';
 }
 
-/* ── Pre-game matchup ───────────────────────────────────────────────────── */
-function seriesTeamHTML(abbr, score, winnerAbbr) {
-  const cls = !winnerAbbr ? '' : abbr === winnerAbbr ? ' winner' : ' loser';
-  return '<span class="ss-team' + cls + '">' + esc(abbr) + ' <b>' + esc(score) + '</b></span>';
-}
-
-function seriesHTML(pre) {
-  if (!pre.seasonSeries.length) return '<div class="state">No games in this series yet.</div>';
-  const rows = pre.seasonSeries.map((game) => {
-    const body = game.state === 'post'
-      ? '<span class="sched-opp ss-wrap">' +
-          seriesTeamHTML(game.away, game.awayScore, game.winnerAbbr) +
-          '<span class="ha">@</span>' +
-          seriesTeamHTML(game.home, game.homeScore, game.winnerAbbr) +
-        '</span>' +
-        '<span class="res">Final</span>'
-      : '<span class="sched-opp">' + esc(game.away + ' @ ' + game.home) + '</span>' +
-        '<span class="res upcoming">Upcoming</span>';
-    return '<a class="sched-row" href="#game/' + esc(game.id) + '">' +
-      '<span class="sched-date">' + esc(formatDay(etDate(game.date) || '')) + '</span>' + body + '</a>';
-  }).join('');
-  return '<div class="sched">' + rows + '</div>';
-}
-
-function lastFiveHTML(pre, abbr) {
-  const games = pre.lastFive[abbr] || [];
-  if (!games.length) return '<div class="state">No recent games.</div>';
-  return '<div class="sched">' + games.map((game) => '<a class="sched-row" href="#game/' + esc(game.id) + '">' +
-    '<span class="sched-date">' + esc(formatDay(etDate(game.date) || '')) + '</span>' +
-    '<span class="sched-opp"><span class="ha">' + esc(game.atVs) + '</span>' + esc(game.opponentAbbr) + '</span>' +
-    '<span class="res ' + (game.result === 'W' ? 'win' : 'loss') + '">' + esc(game.result + ' ' + game.score) + '</span>' +
-    '</a>').join('') + '</div>';
-}
-
-function injuriesHTML(pre, abbr) {
-  const players = pre.injuries[abbr] || [];
-  if (!players.length) return '<div class="state">No injuries reported.</div>';
-  return '<div class="sched">' + players.map((player) => '<div class="list-row">' +
-    '<span class="lr-main">' + esc(player.name) +
-    (player.pos ? ' <span class="lr-sub">' + esc(player.pos) + '</span>' : '') + '</span>' +
-    '<span class="lr-sub">' + esc(player.status) +
-    (player.detail ? ' · ' + esc(player.detail) : '') + '</span></div>').join('') + '</div>';
-}
-
-function leadersHTML(pre, abbr) {
-  const leaders = pre.leaders[abbr] || [];
-  if (!leaders.length) return '<div class="state">No team leaders yet.</div>';
-  return '<div class="sched">' + leaders.map((leader) => '<div class="list-row">' +
-    '<span class="lr-sub">' + esc(leader.category) + '</span>' +
-    '<span class="lr-main">' + esc(leader.name) +
-    ' <span class="lr-sub">' + esc(leader.value) + '</span></span></div>').join('') + '</div>';
-}
-
-async function showPreGame(pre, token) {
-  let away;
-  let home;
-  try {
-    [away, home] = await Promise.all([teamBundle(pre.away.id), teamBundle(pre.home.id)]);
-  } catch (err) {
-    if (token === requestId) showError(() => showGame(pre.id));
-    return;
+/* ── Game page: scorebug, tale of the tape, leaders, market blocks (gm-*) ──
+   One layout for pre-game, live and final. Every block returns '' when its
+   data is missing, so a payload with no BPI or no injuries just drops them. */
+function gmLooks(game, colors) {
+  const away = teamLook(colors, game.away.abbr, game.away.id, game.away.logo);
+  const home = teamLook(colors, game.home.abbr, game.home.id, game.home.logo);
+  // Two near-identical colours (both blue, say) make the bars unreadable, so
+  // the home side moves to its alternate colour when that separates them.
+  if (contrastRatio(away.fill, home.fill) < 1.35) {
+    const entry = (colors && (colors.byAbbr[game.home.abbr] || colors.byId[String(game.home.id)])) || {};
+    if (entry.alt && contrastRatio(away.fill, entry.alt) >= 1.35) {
+      home.fill = entry.alt;
+      home.ink = textOn(entry.alt);
+    }
   }
+  return { away, home };
+}
+
+function gmAbbr(side, look) {
+  return '<span class="gm-abbr" style="color:' + readableOn(look.fill, PANEL_BG) + '">' + esc(side.abbr) + '</span>';
+}
+
+function gmBlockHTML(side, look, which, game) {
+  const started = game.state !== 'pre' && side.score != null;
+  const lost = game.state === 'post' && !side.winner;
+  const split = which === 'home'
+    ? (side.homeRecord ? side.homeRecord + ' home' : '')
+    : (side.roadRecord ? side.roadRecord + ' road' : '');
+  const logo = look.logo
+    ? '<span class="gm-logo"><img src="' + esc(smallImg(look.logo, 72, 72)) + '" alt="" width="36" height="36" decoding="async"></span>'
+    : '';
+  return '<a class="gm-team ' + which + (started ? ' sc' : '') + (lost ? ' lost' : '') + '" href="#team/' + esc(side.id) + '" style="background:' + look.fill + ';color:' + look.ink + '">' +
+    '<span class="gm-id">' + logo + '<span class="gm-ab">' + esc(side.abbr) + '</span></span>' +
+    '<span class="gm-nm">' + esc(side.name) + '</span>' +
+    '<span class="gm-rec">' + esc(side.record) + (split ? '<i>' + esc(split) + '</i>' : '') + '</span>' +
+    (started ? '<span class="gm-sc">' + esc(side.score) + '</span>' : '') + '</a>';
+}
+
+function gmMidHTML(game) {
+  const live = game.state === 'in';
+  const dayKey = etDate(game.startISO);
+  const day = dayKey ? formatDay(dayKey) : '';
+  const status = game.state === 'pre' ? (tipOff(game.startISO) || game.statusText || 'Scheduled') : (game.statusText || 'Final');
+  const odds = game.odds;
+  const line = [];
+  if (odds && odds.details) line.push('<b>' + esc(odds.details) + '</b>');
+  if (odds && odds.total != null) line.push('<span>O/U ' + esc(odds.total) + '</span>');
+  return '<div class="gm-mid">' +
+    (day ? '<span class="gm-day">' + esc(day) + '</span>' : '') +
+    '<span class="gm-st' + (live ? ' live' : '') + '">' + (live ? '<i class="dot"></i>' : '') + esc(status) + '</span>' +
+    (game.venue ? '<span class="gm-meta">' + esc(game.venue) + '</span>' : '') +
+    (game.broadcast ? '<span class="gm-meta">' + esc(game.broadcast) + '</span>' : '') +
+    (line.length ? '<span class="gm-line">' + line.join('') + '</span>' : '') + '</div>';
+}
+
+function gmBugHTML(game, looks) {
+  return '<div class="gm-bug">' + gmBlockHTML(game.away, looks.away, 'away', game) + gmMidHTML(game) + gmBlockHTML(game.home, looks.home, 'home', game) + '</div>';
+}
+
+// Tale of the tape: values on the outside, bars grow from the centre in each
+// team's colour. The better value gets the full bar; `lower` rows (turnovers,
+// points allowed) flip which side is better. Rows with no data are dropped.
+function gmTapeHTML(rows, left, right, looks, title, kind) {
+  let shown = 0;
+  const body = rows.map((row) => {
+    const a = row.value(left);
+    const b = row.value(right);
+    if (a == null && b == null) return '';
+    shown += 1;
+    const share = barShares(a, b, row.lower);
+    const lead = a != null && b != null && a !== b ? ((row.lower ? a < b : a > b) ? 'a' : 'b') : '';
+    const val = (team, side) => {
+      const sub = row.sub ? row.sub(team) : '';
+      return '<b class="gm-v ' + side + (lead === side ? ' lead' : '') + '">' + esc(row.text(team)) + (sub ? '<small>' + esc(sub) + '</small>' : '') + '</b>';
+    };
+    const bar = (side, amount, fill) => '<span class="gm-bar ' + side + (lead === side ? ' lead' : '') + '"><i style="width:' + Math.round(amount * 100) + '%;background:' + fill + '"></i></span>';
+    return '<div class="gm-tr">' + val(left, 'a') + bar('a', share.a, looks.away.fill) +
+      '<span class="gm-k">' + esc(row.label) + '</span>' + bar('b', share.b, looks.home.fill) + val(right, 'b') + '</div>';
+  }).join('');
+  if (!shown) return '';
+  return '<section class="card gm-card gm-tape" aria-label="' + esc(title) + '">' +
+    '<div class="gm-th"><span class="a">' + gmAbbr(left, looks.away) + '</span><h2>Tale of the tape · ' + esc(kind) + '</h2><span class="b">' + gmAbbr(right, looks.home) + '</span></div>' +
+    body + '</section>';
+}
+
+function gmLeadersHTML(game, looks) {
+  const leaders = game.leaders;
+  if (!leaders) return '';
+  const kind = (leaders.away && leaders.away.kind) || (leaders.home && leaders.home.kind);
+  const col = (key) => {
+    const lead = leaders[key];
+    const side = game[key];
+    const look = looks[key];
+    if (!lead) return '';
+    const rows = LEADER_ROWS.filter(([, field]) => lead[field]).map(([label, field]) => {
+      const p = lead[field];
+      const shot = p.headshot
+        ? '<img class="gm-hsimg" src="' + esc(smallImg(p.headshot, 120, 88)) + '" alt="" width="44" height="44" loading="lazy" decoding="async">'
+        : '';
+      const name = p.id ? '<a href="#player/' + esc(p.id) + '">' + esc(p.name) + '</a>' : esc(p.name);
+      const sub = [p.pos, p.jersey ? '#' + p.jersey : '', lead.kind === 'game' ? p.line : ''].filter(Boolean).join(' · ');
+      return '<div class="gm-lr"><span class="gm-hs" style="--c:' + look.fill + '">' + shot + '</span>' +
+        '<span class="gm-lw"><span class="gm-ln">' + name + '</span><span class="gm-ls">' + esc(sub) + '</span></span>' +
+        '<span class="gm-lv"><b>' + esc(p.value) + '</b><i>' + label + '</i></span></div>';
+    }).join('');
+    if (!rows) return '';
+    return '<div class="gm-lcol"><div class="gm-lh" style="--c:' + look.fill + '">' + gmAbbr(side, look) + '<span>' + esc(side.name) + '</span></div>' + rows + '</div>';
+  };
+  const cols = col('away') + col('home');
+  if (!cols) return '';
+  return '<section class="card gm-card"><div class="gm-ch"><h2>Leaders</h2><span>' + esc(leaderCaption(kind, game)) + '</span></div><div class="gm-ld">' + cols + '</div></section>';
+}
+
+function gmLineScoreHTML(game, looks) {
+  if (game.state === 'pre') return '';
+  const n = Math.max(game.away.linescores.length, game.home.linescores.length);
+  if (!n) return '';
+  const label = (i) => (i < 4 ? String(i + 1) : 'OT' + (i > 4 ? i - 3 : ''));
+  const head = '<tr><th></th>' + Array.from({ length: n }, (_, i) => '<th>' + label(i) + '</th>').join('') + '<th class="t">T</th></tr>';
+  const row = (key) => {
+    const side = game[key];
+    return '<tr><th class="tm"><span class="sw" style="background:' + looks[key].fill + '"></span>' + esc(side.abbr) + '</th>' +
+      Array.from({ length: n }, (_, i) => '<td>' + (side.linescores[i] == null ? '—' : esc(side.linescores[i])) + '</td>').join('') +
+      '<td class="t">' + (side.score == null ? '—' : esc(side.score)) + '</td></tr>';
+  };
+  return '<section class="card gm-card"><div class="gm-ch"><h2>Line score</h2></div><div class="gm-ls-wrap"><table class="gm-lsc"><caption class="sr-only">Score by period</caption><thead>' +
+    head + '</thead><tbody>' + row('away') + row('home') + '</tbody></table></div></section>';
+}
+
+function gmSeriesHTML(pre, game) {
+  if (!pre || !pre.seasonSeries.length) return '';
+  const team = (abbr, score, winner) => '<span class="gm-st2' + (!winner ? '' : abbr === winner ? ' w' : ' l') + '">' + esc(abbr) + ' <b>' + esc(score) + '</b></span>';
+  const rows = pre.seasonSeries.map((g) => {
+    const done = g.state === 'post';
+    return '<a class="gm-sr' + (String(g.id) === String(game.id) ? ' now' : '') + '" href="#game/' + esc(g.id) + '">' +
+      '<span class="d">' + esc(formatDay(etDate(g.date) || '')) + '</span>' +
+      (done
+        ? '<span class="m">' + team(g.away, g.awayScore, g.winnerAbbr) + '<i>@</i>' + team(g.home, g.homeScore, g.winnerAbbr) + '</span><span class="r">Final</span>'
+        : '<span class="m"><span class="gm-st2">' + esc(g.away) + '</span><i>@</i><span class="gm-st2">' + esc(g.home) + '</span></span><span class="r up">' + (String(g.id) === String(game.id) ? 'This game' : 'Upcoming') + '</span>') +
+      '</a>';
+  }).join('');
+  return '<section class="card gm-card"><div class="gm-ch"><h2>Season series</h2></div><div class="gm-srs">' + rows + '</div></section>';
+}
+
+function gmLastFiveHTML(game, pre, looks) {
+  if (!pre) return '';
+  const col = (key) => {
+    const side = game[key];
+    const games = pre.lastFive[side.abbr] || [];
+    if (!games.length) return '';
+    const chips = games.map((g) => {
+      const date = formatDay(etDate(g.date) || '').replace(/^\w+,\s*/, '');
+      return '<a class="gm-g ' + (g.result === 'W' ? 'W' : 'L') + '" href="#game/' + esc(g.id) + '" title="' + esc(date) + '">' +
+        '<b>' + esc(g.result || '–') + '</b><span>' + esc(g.atVs + ' ' + g.opponentAbbr) + '</span><span>' + esc(g.score) + '</span><span class="dt">' + esc(date) + '</span></a>';
+    }).join('');
+    return '<div class="gm-l5c"><div class="gm-lh" style="--c:' + looks[key].fill + '">' + gmAbbr(side, looks[key]) + '</div><div class="gm-chips">' + chips + '</div></div>';
+  };
+  const cols = col('away') + col('home');
+  if (!cols) return '';
+  return '<section class="card gm-card"><div class="gm-ch"><h2>Last 5</h2></div><div class="gm-l5">' + cols + '</div></section>';
+}
+
+function gmOddsHTML(game, looks) {
+  const odds = game.odds;
+  if (!odds) return '';
+  const cell = (main, sub) => '<span class="gm-ov">' + (main ? '<b>' + esc(main) + '</b>' : '<b class="none">—</b>') + (sub ? '<small>' + esc(sub) + '</small>' : '') + '</span>';
+  const rows = [];
+  const sp = odds.spread;
+  if (sp.away.line || sp.home.line) {
+    const moved = (key) => (odds.spreadOpen[key] && odds.spreadOpen[key] !== sp[key].line ? 'open ' + odds.spreadOpen[key] : sp[key].odds);
+    rows.push('<span class="gm-ok">Spread</span>' + cell(sp.away.line, moved('away')) + cell(sp.home.line, moved('home')));
+  }
+  if (odds.moneyline) rows.push('<span class="gm-ok">Moneyline</span>' + cell(odds.moneyline.away) + cell(odds.moneyline.home));
+  const total = [];
+  if (odds.total != null) {
+    total.push('<span><i>Total</i> <b>' + esc(odds.total) + '</b></span>');
+    if (odds.totalOpen != null && odds.totalOpen !== odds.total) total.push('<span><i>Opened</i> ' + esc(odds.totalOpen) + '</span>');
+    if (odds.overOdds) total.push('<span><i>Over</i> ' + esc(odds.overOdds) + '</span>');
+    if (odds.underOdds) total.push('<span><i>Under</i> ' + esc(odds.underOdds) + '</span>');
+  }
+  if (!rows.length && !total.length) return '';
+  const head = rows.length
+    ? '<span class="gm-ok"></span><span class="gm-ov h">' + gmAbbr(game.away, looks.away) + '</span><span class="gm-ov h">' + gmAbbr(game.home, looks.home) + '</span>'
+    : '';
+  return '<section class="card gm-card"><div class="gm-ch"><h2>Odds</h2>' + (odds.provider ? '<span>' + esc(odds.provider) + '</span>' : '') + '</div>' +
+    (rows.length ? '<div class="gm-og">' + head + rows.join('') + '</div>' : '') +
+    (total.length ? '<div class="gm-ot">' + total.join('') + '</div>' : '') + '</section>';
+}
+
+// BPI win chance before tip-off, the in-game win probability while live.
+function gmWinChanceHTML(game, looks) {
+  const bpi = game.state === 'pre' ? game.predictor : null;
+  const live = game.state === 'in' ? game.winProb : null;
+  const chance = bpi || live;
+  if (!chance || chance.away + chance.home <= 0) return '';
+  const pct = (value) => (Math.round(value * 10) / 10).toFixed(1) + '%';
+  const top = (key) => '<span class="gm-wp ' + key + '">' + gmAbbr(game[key], looks[key]) + '<b>' + esc(pct(chance[key])) + '</b></span>';
+  return '<section class="card gm-card"><div class="gm-ch"><h2>Win chance</h2><span>' + (bpi ? 'ESPN BPI' : 'Live') + '</span></div>' +
+    '<div class="gm-wp-top">' + top('away') + top('home') + '</div>' +
+    '<div class="gm-split" role="img" aria-label="' + esc(game.away.abbr + ' ' + pct(chance.away) + ', ' + game.home.abbr + ' ' + pct(chance.home)) + '">' +
+    '<i style="flex:' + chance.away + ';background:' + looks.away.fill + '"></i><i style="flex:' + chance.home + ';background:' + looks.home.fill + '"></i></div></section>';
+}
+
+function gmInjuriesHTML(game, looks) {
+  // ESPN's list is the current report, not the report as of a finished game.
+  if (game.state === 'post' || !game.injuries) return '';
+  const col = (key) => {
+    const list = game.injuries[key];
+    const rows = list.length
+      ? list.map((p) => {
+        const back = p.returnDate ? formatDay(p.returnDate.replace(/-/g, '')) : '';
+        const note = [p.detail, back ? 'back ' + back : ''].filter(Boolean).join(' · ');
+        return '<div class="gm-ir"><span class="gm-in">' + esc(p.name) + (p.pos ? '<i>' + esc(p.pos) + '</i>' : '') + '</span>' +
+          '<span class="gm-sx' + (/^out/i.test(p.status) ? ' out' : '') + '">' + esc(p.status || 'Listed') + '</span>' +
+          (note ? '<span class="gm-idt">' + esc(note) + '</span>' : '') + '</div>';
+      }).join('')
+      : '<div class="gm-none">No injuries listed.</div>';
+    return '<div class="gm-icol"><div class="gm-lh" style="--c:' + looks[key].fill + '">' + gmAbbr(game[key], looks[key]) + '<span>' + esc(game[key].name) + '</span></div>' + rows + '</div>';
+  };
+  return '<section class="card gm-card"><div class="gm-ch"><h2>Injuries</h2></div>' + col('away') + col('home') + '</section>';
+}
+
+function gmAtsHTML(game, looks) {
+  if (!game.ats) return '';
+  const col = (key) => {
+    const list = game.ats[key];
+    if (!list.length) return '';
+    return '<div class="gm-icol"><div class="gm-lh" style="--c:' + looks[key].fill + '">' + gmAbbr(game[key], looks[key]) + '</div>' +
+      list.map((r) => '<div class="gm-ar"><span>' + esc(r.label) + '</span><b>' + esc(r.summary) + '</b></div>').join('') + '</div>';
+  };
+  const cols = col('away') + col('home');
+  return cols ? '<section class="card gm-card"><div class="gm-ch"><h2>Against the spread</h2></div>' + cols + '</section>' : '';
+}
+
+function gmPageHTML(game, parts) {
+  const looks = parts.looks;
+  const left = parts.tape + gmLeadersHTML(game, looks) + gmLineScoreHTML(game, looks) + gmSeriesHTML(parts.pre, game) + gmLastFiveHTML(game, parts.pre, looks);
+  const right = gmOddsHTML(game, looks) + gmWinChanceHTML(game, looks) + gmInjuriesHTML(game, looks) + gmAtsHTML(game, looks);
+  return '<div class="gm">' + gmBugHTML(game, looks) +
+    (parts.live ? '<div class="gm-live">Live · updates every 30s</div>' : '') +
+    '<div class="gm-cols' + (left && right ? ' two' : '') + '">' +
+    (left ? '<div class="gm-col">' + left + '</div>' : '') + (right ? '<div class="gm-col">' + right + '</div>' : '') + '</div>' +
+    (parts.box || '') +
+    '<a class="cmp-link" href="#compare/' + esc(game.away.id) + '/' + esc(game.home.id) + '">Full comparison →</a></div>';
+}
+
+async function showPreGame(game, pre, token, colors) {
+  const settled = await Promise.all([game.away.id, game.home.id].map((id) => teamBundle(id).catch(() => null)));
   if (token !== requestId) return;
+  const looks = gmLooks(game, colors);
+  const [away, home] = settled;
 
-  const section = (title, body) => '<section class="card standings-block"><h2>' + esc(title) + '</h2>' + body + '</section>';
+  setTitle(game.away.abbr + ' vs ' + game.home.abbr);
 
-  setTitle(pre.away.abbr + ' vs ' + pre.home.abbr);
-
-  app.innerHTML =
-    '<div class="card mu-head">' + compareHeadHTML(away, home, true) +
-      '<div class="mu-when"><b>' + esc(formatWhen(pre.startISO)) + '</b>' +
-      (pre.venue ? ' · ' + esc(pre.venue) : '') +
-      (pre.broadcast ? ' · ' + esc(pre.broadcast) : '') + '</div></div>' +
-    compareTableHTML(away, home, COMPARE_ROWS, pre.away.abbr + ' at ' + pre.home.abbr + ' · season comparison') +
-    section('Season series', seriesHTML(pre)) +
-    section('Last 5 · ' + pre.away.abbr, lastFiveHTML(pre, pre.away.abbr)) +
-    section('Last 5 · ' + pre.home.abbr, lastFiveHTML(pre, pre.home.abbr)) +
-    section('Injuries · ' + pre.away.abbr, injuriesHTML(pre, pre.away.abbr)) +
-    section('Injuries · ' + pre.home.abbr, injuriesHTML(pre, pre.home.abbr)) +
-    section('Team leaders · ' + pre.away.abbr, leadersHTML(pre, pre.away.abbr)) +
-    section('Team leaders · ' + pre.home.abbr, leadersHTML(pre, pre.home.abbr)) +
-    '<a class="cmp-link" href="#compare/' + esc(pre.away.id) + '/' + esc(pre.home.id) + '">Full comparison →</a>';
+  const tape = away && home
+    ? gmTapeHTML(COMPARE_ROWS, away, home, looks, game.away.abbr + ' at ' + game.home.abbr + ' season comparison', 'season')
+    : '';
+  app.innerHTML = gmPageHTML(game, { looks, tape, pre, live: false, box: '' });
 }
 
 function armGamePoll(id) {
@@ -3174,8 +3559,9 @@ async function showGame(id, isRefresh = false) {
   if (!isRefresh) app.innerHTML = loadingHTML();
 
   let json;
+  let colors;
   try {
-    json = await fetchJSON(API + '/summary?event=' + encodeURIComponent(id));
+    [json, colors] = await Promise.all([fetchJSON(API + '/summary?event=' + encodeURIComponent(id)), getTeamColors()]);
   } catch (err) {
     if (token !== requestId) return;
     if (isRefresh) armGamePoll(id);
@@ -3185,15 +3571,17 @@ async function showGame(id, isRefresh = false) {
   if (token !== requestId) return;
 
   const box = parseBoxScore(json);
-  if (box.teams.length) {
-    renderBoxScore(box, box.state === 'in');
+  const game = parseGameExtras(json);
+  const pre = parsePreGame(json);
+
+  if (game.away && game.home && box.teams.length) {
+    renderBoxScore(box, game, pre, colors);
     if (box.state === 'in') armGamePoll(id);
     return;
   }
 
-  const pre = parsePreGame(json);
-  if (box.state === 'pre' && pre.away && pre.home) {
-    await showPreGame(pre, token);
+  if (game.away && game.home && box.state === 'pre') {
+    await showPreGame(game, pre, token, colors);
     return;
   }
 
@@ -3201,41 +3589,36 @@ async function showGame(id, isRefresh = false) {
 }
 
 // Team comparison from the box-score totals, for live and final games. Made -
-// attempted lines are compared on the percentage the shot line implies.
+// attempted lines are compared on the percentage the shot line implies and
+// shown small under it. The last four rows are team counts from the summary.
 const BOX_ROWS = [
-  { label: 'FG', value: (team) => team.shooting.fg, text: (team) => team.totals.FG || '—' },
-  { label: 'FG%', value: (team) => team.shooting.fg, text: (team) => oneDecimal(team.shooting.fg) },
-  { label: '3PT', value: (team) => team.shooting.three, text: (team) => team.totals['3PT'] || '—' },
-  { label: '3P%', value: (team) => team.shooting.three, text: (team) => oneDecimal(team.shooting.three) },
-  { label: 'FT', value: (team) => team.shooting.ft, text: (team) => team.totals.FT || '—' },
-  { label: 'FT%', value: (team) => team.shooting.ft, text: (team) => oneDecimal(team.shooting.ft) },
+  { label: 'FG%', value: (team) => team.shooting.fg, text: (team) => oneDecimal(team.shooting.fg), sub: (team) => team.totals.FG || '' },
+  { label: '3P%', value: (team) => team.shooting.three, text: (team) => oneDecimal(team.shooting.three), sub: (team) => team.totals['3PT'] || '' },
+  { label: 'FT%', value: (team) => team.shooting.ft, text: (team) => oneDecimal(team.shooting.ft), sub: (team) => team.totals.FT || '' },
   { label: 'REB', value: (team) => team.totals.REB, text: (team) => wholeNumber(team.totals.REB) },
   { label: 'AST', value: (team) => team.totals.AST, text: (team) => wholeNumber(team.totals.AST) },
   { label: 'TOV', value: (team) => team.totals.TO, text: (team) => wholeNumber(team.totals.TO), lower: true },
   { label: 'STL', value: (team) => team.totals.STL, text: (team) => wholeNumber(team.totals.STL) },
   { label: 'BLK', value: (team) => team.totals.BLK, text: (team) => wholeNumber(team.totals.BLK) },
+  { label: 'Paint', value: (team) => team.counts && team.counts.paint, text: (team) => wholeNumber(team.counts && team.counts.paint) },
+  { label: 'Fast break', value: (team) => team.counts && team.counts.fastBreak, text: (team) => wholeNumber(team.counts && team.counts.fastBreak) },
+  { label: 'Pts off TO', value: (team) => team.counts && team.counts.offTurnovers, text: (team) => wholeNumber(team.counts && team.counts.offTurnovers) },
+  { label: 'Max lead', value: (team) => team.counts && team.counts.largestLead, text: (team) => wholeNumber(team.counts && team.counts.largestLead) },
 ];
 
-function boxCompareHTML(box) {
-  const left = box.teams[0];
-  const right = box.teams[1];
-  if (!left || !right) return '';
-  return compareTableHTML(left, right, BOX_ROWS, left.abbr + ' vs ' + right.abbr + ' · game stats');
-}
+function renderBoxScore(box, game, pre, colors) {
+  const looks = gmLooks(game, colors);
+  const awayBox = box.teams.find((team) => team.abbr === game.away.abbr) || box.teams[0];
+  const homeBox = box.teams.find((team) => team.abbr === game.home.abbr) || box.teams[1];
+  const withCounts = (team, key) => ({ ...team, counts: game.counts ? game.counts[key] : null });
 
-function renderBoxScore(box, live) {
-  const teams = box.teams.map((team) => '<div class="gh-team">' +
-    (team.logo ? '<img src="' + esc(smallImg(team.logo, 68, 68)) + '" alt="" width="34" height="34" loading="lazy" decoding="async">' : '') +
-    '<div class="gh-id"><span class="gh-abbr">' + esc(team.abbr) + '</span>' +
-    '<span class="gh-score">' + (team.score == null ? '–' : esc(team.score)) + '</span></div></div>').join('');
+  setTitle(game.away.abbr + ' vs ' + game.home.abbr);
 
-  setTitle(box.teams.map((team) => team.abbr).filter(Boolean).join(' vs '));
-
-  app.innerHTML = '<div class="card game-head"><div class="gh-status">' + esc(box.statusText || 'Game') + '</div>' +
-    '<div class="gh-teams">' + teams + '</div>' +
-    (live ? '<div class="gh-live">Live · updates every 30s</div>' : '') + '</div>' +
-    boxCompareHTML(box) +
-    box.teams.map(boxTableHTML).join('');
+  const tape = awayBox && homeBox
+    ? gmTapeHTML(BOX_ROWS, withCounts(awayBox, 'away'), withCounts(homeBox, 'home'), looks, game.away.abbr + ' vs ' + game.home.abbr + ' game stats', 'this game')
+    : '';
+  const tables = box.teams.map((team) => boxTableHTML(team, team.abbr === game.home.abbr ? looks.home : looks.away)).join('');
+  app.innerHTML = gmPageHTML(game, { looks, tape, pre, live: box.state === 'in', box: '<h2 class="gm-sh">Box score</h2>' + tables });
 }
 
 /* ── Team page ──────────────────────────────────────────────────────────── */
@@ -3344,6 +3727,7 @@ function router() {
   // The scores view is three columns and needs more room than the other views.
   const onScores = !['standings', 'game', 'team', 'compare', 'leaders', 'players', 'player'].includes(route.view);
   document.body.classList.toggle('sc-wide', onScores);
+  document.body.classList.toggle('gm-wide', route.view === 'game');
 
   if (route.view === 'standings') showStandings(route.args[0]);
   else if (route.view === 'game' && route.arg) showGame(route.arg);
