@@ -1679,10 +1679,11 @@
       "city": "",
       "kickoff_utc": "2026-11-02T01:20:00Z",
       "tv": "",
-      "winner": null,
-      "away_score": null,
-      "home_score": null,
-      "week": 8
+      "winner": "Washington Commanders",
+      "away_score": 10,
+      "home_score": 27,
+      "week": 8,
+      "status": "final"
     },
     {
       "game_id": "2026-11-02-CHI-SEA",
@@ -3661,5 +3662,5 @@
       "week": 18
     }
   ],
-  "scores_synced_at": "2026-11-02T00:38:52.521Z"
+  "scores_synced_at": "2026-11-02T05:52:52.234Z"
 }
