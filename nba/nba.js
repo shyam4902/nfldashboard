@@ -81,6 +81,12 @@ function recordOf(competitor) {
   return str(overall?.summary || records[0]?.summary);
 }
 
+// Home and road splits ride along on the same records array.
+function splitRecord(competitor, name, type) {
+  const hit = arr(competitor?.records).find((r) => r?.name === name || r?.type === type);
+  return str(hit?.summary);
+}
+
 function stateOf(status) {
   const state = str(status?.type?.state);
   return state === 'in' || state === 'post' ? state : 'pre';
@@ -116,6 +122,74 @@ function pointsLeader(competitor) {
   return { name, line: str(top.displayValue) + ' PTS' };
 }
 
+// Short "F. Wagner" form. ESPN sends shortName on leaders; when it is missing
+// fall back to first initial plus the rest of the display name.
+function shortNameOf(athlete) {
+  const short = str(athlete?.shortName);
+  if (short) return short;
+  const full = str(athlete?.displayName || athlete?.fullName).trim();
+  const parts = full.split(/\s+/).filter(Boolean);
+  if (parts.length < 2) return full;
+  return parts[0][0] + '. ' + parts.slice(1).join(' ');
+}
+
+// Points, rebounds and assists leader of one competitor. Before tip-off ESPN
+// sends season per-game leaders (pointsPerGame, ...); once the game starts the
+// same slots are the game's own counts (points, rebounds, assists). `kind` says
+// which one it is so the page can label it. Anything missing stays null.
+const LEADER_KEYS = {
+  season: { pts: 'pointsPerGame', reb: 'reboundsPerGame', ast: 'assistsPerGame' },
+  game: { pts: 'points', reb: 'rebounds', ast: 'assists' },
+};
+
+function leaderEntry(competitor, name) {
+  const category = arr(competitor?.leaders).find((c) => str(c?.name) === name);
+  const top = arr(category?.leaders)[0];
+  if (!top) return null;
+  const athlete = top.athlete || {};
+  const fullName = str(athlete.displayName || athlete.fullName);
+  const value = str(top.displayValue ?? top.value);
+  if (!fullName || !value) return null;
+  return { name: fullName, short: shortNameOf(athlete), value };
+}
+
+export function parseCompetitorLeaders(competitor, state) {
+  const order = state === 'pre' ? ['season', 'game'] : ['game', 'season'];
+  for (const kind of order) {
+    const keys = LEADER_KEYS[kind];
+    const pts = leaderEntry(competitor, keys.pts);
+    const reb = leaderEntry(competitor, keys.reb);
+    const ast = leaderEntry(competitor, keys.ast);
+    if (pts || reb || ast) return { kind, pts, reb, ast };
+  }
+  return null;
+}
+
+function signedLine(value) {
+  const n = num(value);
+  if (n == null) return '';
+  if (n === 0) return 'EVEN';
+  return n > 0 ? '+' + n : String(n);
+}
+
+// competitions[0].odds[0]: `details` ("CLE -3.5") and `overUnder` are the
+// spread and total. The moneyline is on homeTeamOdds / awayTeamOdds, or on a
+// moneyline.{home,away}.close.odds block on some payloads.
+export function parseOdds(competition) {
+  const odds = arr(competition?.odds)[0];
+  if (!odds || typeof odds !== 'object') return null;
+  const details = str(odds.details).trim();
+  const total = num(odds.overUnder);
+  const home = signedLine(odds.homeTeamOdds?.moneyLine ?? odds.moneyline?.home?.close?.odds ?? odds.moneyline?.home?.open?.odds);
+  const away = signedLine(odds.awayTeamOdds?.moneyLine ?? odds.moneyline?.away?.close?.odds ?? odds.moneyline?.away?.open?.odds);
+  if (!details && total == null && !home && !away) return null;
+  return {
+    details,
+    total,
+    moneyline: home || away ? { home, away } : null,
+  };
+}
+
 export function parseScoreboard(json) {
   const games = [];
   for (const event of arr(json?.events)) {
@@ -129,6 +203,8 @@ export function parseScoreboard(json) {
         ...teamOf(competitor),
         score: scoreOf(competitor),
         record: recordOf(competitor),
+        homeRecord: splitRecord(competitor, 'Home', 'home'),
+        roadRecord: splitRecord(competitor, 'Road', 'road'),
         winner: competitor.winner === true,
       };
       if (competitor.homeAway === 'home') {
@@ -142,6 +218,9 @@ export function parseScoreboard(json) {
     if (!sides.home || !sides.away) continue;
 
     const status = competition.status || event.status || {};
+    const gameState = stateOf(status);
+    sides.home.leaders = parseCompetitorLeaders(raw.home, gameState);
+    sides.away.leaders = parseCompetitorLeaders(raw.away, gameState);
     const broadcast = arr(competition.broadcasts)
       .flatMap((b) => arr(b?.names).map(str))
       .filter(Boolean)
@@ -149,9 +228,11 @@ export function parseScoreboard(json) {
 
     games.push({
       id: str(event.id ?? competition.id),
-      state: stateOf(status),
+      state: gameState,
       statusText: statusTextOf(status),
+      odds: parseOdds(competition),
       startISO: str(event.date || competition.date),
+      venue: str(competition.venue?.fullName),
       broadcast,
       away: sides.away,
       home: sides.home,
@@ -649,4 +730,94 @@ export function parseRoster(json) {
     if (player.id || player.name) players.push(player);
   }
   return players;
+}
+
+// ── Team colours ────────────────────────────────────────────────────────────
+// The standings payload carries no colours; the teams endpoint does. ESPN sends
+// hex without the "#", so it is normalised here and a malformed value becomes ''.
+function hexOf(value) {
+  const hex = str(value).trim().replace(/^#/, '');
+  return /^[0-9a-fA-F]{6}$/.test(hex) ? '#' + hex.toLowerCase() : '';
+}
+
+// Site API shape: sports[0].leagues[0].teams[].team. Indexed by both
+// abbreviation and id so a scoreboard side, a standings row or a team page can
+// each find its entry.
+export function parseTeams(json) {
+  const league = arr(arr(json?.sports)[0]?.leagues)[0];
+  const byAbbr = {};
+  const byId = {};
+  for (const entry of arr(league?.teams)) {
+    const team = entry?.team;
+    if (!team) continue;
+    const abbr = str(team.abbreviation);
+    const id = str(team.id);
+    if (!abbr && !id) continue;
+    const value = { id, abbr, name: str(team.displayName || team.name), color: hexOf(team.color), alt: hexOf(team.alternateColor), logo: logoOf(team) };
+    if (abbr) byAbbr[abbr] = value;
+    if (id) byId[id] = value;
+  }
+  return { byAbbr, byId };
+}
+
+function channels(hex) {
+  return [1, 3, 5].map((i) => {
+    const c = parseInt(hex.slice(i, i + 2), 16) / 255;
+    return c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
+  });
+}
+
+function luminance(hex) {
+  const [r, g, b] = channels(hex);
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+}
+
+// WCAG contrast ratio between two #rrggbb colours (1 to 21).
+export function contrastRatio(a, b) {
+  const x = luminance(a);
+  const y = luminance(b);
+  return (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05);
+}
+
+const INK_LIGHT = '#ffffff';
+const INK_DARK = '#0b0c0e';
+
+// Text colour that reads on a given fill: white or near-black, whichever has
+// the higher contrast.
+export function textOn(fill) {
+  return contrastRatio(fill, INK_LIGHT) >= contrastRatio(fill, INK_DARK) ? INK_LIGHT : INK_DARK;
+}
+
+// Fill for a team tile on the dark page. A primary that nearly disappears
+// against the page (Nets, Spurs, Clippers...) falls back to the alternate when
+// the alternate stands out more. No colours at all gives a neutral grey.
+export function teamFill(colors, page = '#0b0d10', minContrast = 1.5) {
+  const primary = hexOf(colors?.color);
+  const alt = hexOf(colors?.alt);
+  let fill = primary;
+  let usedAlt = false;
+  if (!primary) {
+    fill = alt || '#2b3037';
+    usedAlt = Boolean(alt);
+  } else if (alt && contrastRatio(primary, page) < minContrast && contrastRatio(alt, page) > contrastRatio(primary, page)) {
+    fill = alt;
+    usedAlt = true;
+  }
+  return { fill, ink: textOn(fill), usedAlt };
+}
+
+// A team colour made legible as text or a stroke on a dark panel: mixed toward
+// white in 10% steps until it reaches the target contrast, so a navy keeps its
+// hue instead of jumping to grey.
+export function readableOn(color, panel = '#14161a', target = 4.5) {
+  const base = hexOf(color);
+  if (!base) return INK_LIGHT;
+  if (contrastRatio(base, panel) >= target) return base;
+  const rgb = [1, 3, 5].map((i) => parseInt(base.slice(i, i + 2), 16));
+  for (let step = 1; step <= 10; step++) {
+    const t = step / 10;
+    const mixed = '#' + rgb.map((c) => Math.round(c + (255 - c) * t).toString(16).padStart(2, '0')).join('');
+    if (contrastRatio(mixed, panel) >= target) return mixed;
+  }
+  return INK_LIGHT;
 }

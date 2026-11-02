@@ -10,13 +10,20 @@ import {
   parsePlayerOverview,
   parsePreGame,
   parseRoster,
+  parseCompetitorLeaders,
+  parseOdds,
   parseScoreboard,
   parseSearch,
   parseStandings,
+  parseTeams,
   parseTeamSchedule,
   parseTeamStats,
   shotPct,
   smallImg,
+  contrastRatio,
+  readableOn,
+  teamFill,
+  textOn,
 } from './nba.js';
 
 function fixture(name) {
@@ -54,6 +61,109 @@ test('parseScoreboard adds a points leader for each side', () => {
     assert.ok(/PTS$/.test(game.leaders.away.line), `${game.id} away line`);
     assert.ok(/PTS$/.test(game.leaders.home.line), `${game.id} home line`);
   }
+});
+
+function leaderCat(name, short, value) {
+  return { name, leaders: [{ displayValue: value, athlete: { displayName: 'Full ' + short, shortName: short } }] };
+}
+
+function inlineEvent(state, leaders, extra = {}) {
+  const side = (homeAway, abbr, id, lead, records) => ({
+    homeAway,
+    team: { id, abbreviation: abbr, displayName: abbr + ' Team' },
+    score: state === 'pre' ? '0' : '50',
+    records,
+    leaders: lead,
+  });
+  return {
+    id: 'g1',
+    date: '2026-11-01T00:00Z',
+    competitions: [{
+      status: { type: { state } },
+      competitors: [
+        side('home', 'ORL', '19', leaders.home, [
+          { name: 'overall', type: 'total', summary: '1-3' },
+          { name: 'Home', type: 'home', summary: '0-2' },
+          { name: 'Road', type: 'road', summary: '1-1' },
+        ]),
+        side('away', 'BOS', '2', leaders.away),
+      ],
+      ...extra,
+    }],
+  };
+}
+
+test('parseScoreboard reads season per-game leaders before tip-off', () => {
+  const home = [leaderCat('pointsPerGame', 'F. Wagner', '19.5'), leaderCat('reboundsPerGame', 'W. Carter Jr.', '9.0'), leaderCat('assistsPerGame', 'F. Wagner', '6.0'), leaderCat('rating', 'F. Wagner', 'x')];
+  const away = [leaderCat('pointsPerGame', 'J. Tatum', '28.0')];
+  const [game] = parseScoreboard({ events: [inlineEvent('pre', { home, away })] });
+
+  assert.equal(game.home.leaders.kind, 'season');
+  assert.deepEqual(game.home.leaders.pts, { name: 'Full F. Wagner', short: 'F. Wagner', value: '19.5' });
+  assert.equal(game.home.leaders.reb.short, 'W. Carter Jr.');
+  assert.equal(game.home.leaders.ast.value, '6.0');
+  // A side with only one category keeps the rest as null instead of inventing them.
+  assert.equal(game.away.leaders.kind, 'season');
+  assert.equal(game.away.leaders.pts.short, 'J. Tatum');
+  assert.equal(game.away.leaders.reb, null);
+  assert.equal(game.away.leaders.ast, null);
+});
+
+test('parseScoreboard reads in-game leaders once the game is live or final', () => {
+  const both = [leaderCat('points', 'T. Maxey', '32'), leaderCat('rebounds', 'L. James', '10'), leaderCat('assists', 'T. Maxey', '6'), leaderCat('pointsPerGame', 'Old', '1.0')];
+  for (const state of ['in', 'post']) {
+    const [game] = parseScoreboard({ events: [inlineEvent(state, { home: both, away: both })] });
+    assert.equal(game.home.leaders.kind, 'game', state);
+    assert.equal(game.home.leaders.pts.value, '32', state);
+    assert.equal(game.home.leaders.reb.short, 'L. James', state);
+  }
+});
+
+test('parseScoreboard derives a short name and omits leaders that are missing', () => {
+  const lead = [{ name: 'points', leaders: [{ displayValue: '20', athlete: { displayName: 'Jaylen Brown' } }] }];
+  const [game] = parseScoreboard({ events: [inlineEvent('in', { home: lead, away: [] })] });
+  assert.equal(game.home.leaders.pts.short, 'J. Brown');
+  assert.equal(game.away.leaders, null);
+  assert.equal(parseCompetitorLeaders({}, 'pre'), null);
+  assert.equal(parseCompetitorLeaders({ leaders: [{ name: 'points', leaders: [{ displayValue: '9' }] }] }, 'in'), null);
+});
+
+test('parseScoreboard reads home and road records', () => {
+  const [game] = parseScoreboard({ events: [inlineEvent('pre', { home: [], away: [] })] });
+  assert.equal(game.home.record, '1-3');
+  assert.equal(game.home.homeRecord, '0-2');
+  assert.equal(game.home.roadRecord, '1-1');
+  assert.equal(game.away.homeRecord, '');
+  assert.equal(game.away.roadRecord, '');
+});
+
+test('parseOdds reads spread, total and moneyline', () => {
+  const odds = parseOdds({
+    odds: [{ details: 'CLE -3.5', overUnder: 215.5, homeTeamOdds: { moneyLine: 130 }, awayTeamOdds: { moneyLine: -150 } }],
+  });
+  assert.deepEqual(odds, { details: 'CLE -3.5', total: 215.5, moneyline: { home: '+130', away: '-150' } });
+
+  const [game] = parseScoreboard({ events: [inlineEvent('pre', { home: [], away: [] }, { odds: [{ details: 'EVEN', overUnder: '221' }] })] });
+  assert.deepEqual(game.odds, { details: 'EVEN', total: 221, moneyline: null });
+});
+
+test('parseOdds is null when the payload has no usable odds', () => {
+  assert.equal(parseOdds({}), null);
+  assert.equal(parseOdds({ odds: [] }), null);
+  assert.equal(parseOdds({ odds: [{ provider: { name: 'x' } }] }), null);
+  const [game] = parseScoreboard({ events: [inlineEvent('pre', { home: [], away: [] })] });
+  assert.equal(game.odds, null);
+  // The real fixtures carry no odds: nothing is invented.
+  for (const g of parseScoreboard(fixture('scoreboard-20261101.json'))) assert.equal(g.odds, null);
+});
+
+test('parseScoreboard fixture leaders are season averages pre-game and game lines when final', () => {
+  const pre = parseScoreboard(fixture('scoreboard-20261101.json'));
+  assert.equal(pre[0].home.leaders.kind, 'season');
+  assert.equal(pre[0].home.leaders.pts.short, 'F. Wagner');
+  const post = parseScoreboard(fixture('scoreboard-20261022.json'));
+  assert.equal(post[0].home.leaders.kind, 'game');
+  assert.equal(post[0].away.leaders.reb.short, 'D. Mitchell');
 });
 
 test('parseStandings reads both conferences by stat name', () => {
@@ -346,4 +456,53 @@ test('the new parsers return empty results for {}', () => {
   });
   assert.deepEqual(parsePlayerOverview({}), { labels: [], season: {}, career: {} });
   assert.deepEqual(parseGameLog({}), { labels: [], seasons: [], games: [] });
+});
+
+const TEAMS_FIXTURE = {
+  sports: [{
+    leagues: [{
+      teams: [
+        { team: { id: '17', abbreviation: 'BKN', displayName: 'Brooklyn Nets', color: '000000', alternateColor: 'ffffff', logos: [{ href: 'https://a.espncdn.com/i/teamlogos/nba/500/bkn.png' }] } },
+        { team: { id: '25', abbreviation: 'OKC', displayName: 'Oklahoma City Thunder', color: '007ac1', alternateColor: 'ef3b24', logo: 'https://a.espncdn.com/i/teamlogos/nba/500/okc.png' } },
+        { team: { id: '9', abbreviation: 'GS', displayName: 'Golden State Warriors', color: 'FDB927', alternateColor: 'zz' } },
+        { team: null },
+        { team: {} },
+      ],
+    }],
+  }],
+};
+
+test('parseTeams indexes colours and logos by abbreviation and id', () => {
+  const teams = parseTeams(TEAMS_FIXTURE);
+  assert.deepEqual(Object.keys(teams.byAbbr).sort(), ['BKN', 'GS', 'OKC']);
+  assert.deepEqual(teams.byAbbr.BKN, {
+    id: '17', abbr: 'BKN', name: 'Brooklyn Nets', color: '#000000', alt: '#ffffff', logo: 'https://a.espncdn.com/i/teamlogos/nba/500/bkn.png',
+  });
+  assert.equal(teams.byId['25'].abbr, 'OKC');
+  assert.equal(teams.byId['25'].logo, 'https://a.espncdn.com/i/teamlogos/nba/500/okc.png');
+  // Upper case is normalised, a malformed alternate becomes empty, no logo is ''.
+  assert.equal(teams.byAbbr.GS.color, '#fdb927');
+  assert.equal(teams.byAbbr.GS.alt, '');
+  assert.equal(teams.byAbbr.GS.logo, '');
+  assert.deepEqual(parseTeams({}), { byAbbr: {}, byId: {} });
+});
+
+test('teamFill swaps a near-black primary for its alternate and picks readable text', () => {
+  const nets = teamFill({ color: '#000000', alt: '#ffffff' });
+  assert.deepEqual(nets, { fill: '#ffffff', ink: '#0b0c0e', usedAlt: true });
+  const thunder = teamFill({ color: '#007ac1', alt: '#ef3b24' });
+  assert.equal(thunder.fill, '#007ac1');
+  assert.equal(thunder.usedAlt, false);
+  assert.equal(textOn('#fdb927'), '#0b0c0e');
+  assert.equal(textOn('#1d428a'), '#ffffff');
+  assert.equal(teamFill({}).fill, '#2b3037');
+  assert.ok(contrastRatio('#000000', '#ffffff') > 20.9);
+});
+
+test('readableOn lifts a dark team colour until it reads on the panel', () => {
+  assert.equal(readableOn('#fdb927'), '#fdb927');
+  const lifted = readableOn('#0e2240');
+  assert.notEqual(lifted, '#0e2240');
+  assert.ok(contrastRatio(lifted, '#14161a') >= 4.5);
+  assert.equal(readableOn(''), '#ffffff');
 });
