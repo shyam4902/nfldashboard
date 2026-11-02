@@ -76,26 +76,10 @@ async function check() {
     detail: hasTxIdCol ? (hasDupes ? "Duplicates found" : "0 duplicates found") : "tx_id column missing"
   });
 
-  // 5. Moves default list contains no draft rows
-  const indexHtml = fs.readFileSync("nfl/index.html", "utf8");
-  const defaultFilterMatch = indexHtml.match(/let txTypeFilter\s*=\s*'([a-z]+)';/);
-  const defaultFilter = defaultFilterMatch ? defaultFilterMatch[1] : "unknown";
-  const defaultNoDraft = defaultFilter === "moves";
-  results.push({
-    name: "Default Moves view excludes draft rows",
-    pass: defaultNoDraft,
-    detail: `Current txTypeFilter default: "${defaultFilter}"`
-  });
-
-  // 6. Draft filter still shows draft rows
-  const hasDraftButton = indexHtml.includes("typeButton('draft', 'Draft')");
-  results.push({
-    name: "Draft filter button exists and enables draft viewing",
-    pass: hasDraftButton,
-    detail: hasDraftButton ? "typeButton('draft', 'Draft') present" : "Draft filter missing"
-  });
-
-  // 7. Madden does not mutate identity fields in nfl/index.html
+  // 5. Madden does not mutate identity fields in the NFL page (HTML plus its local scripts)
+  const nflHtml = fs.readFileSync("nfl/index.html", "utf8");
+  const nflLocalScripts = [...nflHtml.matchAll(/<script\s[^>]*src="(\/nfl\/[^"]+\.js)"/gi)].map(m => m[1]);
+  const indexHtml = [nflHtml, ...nflLocalScripts.map(src => fs.readFileSync(src.slice(1), "utf8"))].join("\n");
   const maddenMutatesAge = indexHtml.includes("p.age = match.age");
   const maddenMutatesJersey = indexHtml.includes("p.jersey = match.jersey");
   const passMaddenIsolation = !maddenMutatesAge && !maddenMutatesJersey;

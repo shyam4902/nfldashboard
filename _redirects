@@ -57,6 +57,8 @@
 /scripts/production-health-check.mjs / 302
 /scripts/team_tendencies.test.js / 302
 /scripts/validate-data.js / 302
+/scripts/check_nfl_split.mjs / 302
+/scripts/build_team_efficiency.py / 302
 /docs/* / 302
 /supabase/* / 302
 /test-fixtures/* / 302

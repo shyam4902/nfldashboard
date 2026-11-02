@@ -11,7 +11,7 @@ The Edge app link uses `https://edgeplay-analytics.pages.dev`, the canonical URL
 ## Local facts
 
 - **Site layout rule (Shyam, 2026-10-30):** the site is Matchup Board at https://matchupboard.com. Every league lives on its own sub-page (`/nfl/`, `/nba/`, later others); `/` is only a sport picker. NFL now lives at `nfl/index.html` and NBA at `nba/index.html`, so never add a league or a league feature at the root.
-- The root `index.html` is only the sport picker; the NFL page is `nfl/index.html`. The site deploys to Cloudflare Pages.
+- The root `index.html` is only the sport picker; the NFL page is `nfl/index.html`. The site deploys to Cloudflare Pages. NFL page code: markup in `nfl/index.html`, styles in `nfl/nfl.css`, scripts in `nfl/js/` (classic scripts, load order matters, startup calls in `boot.js`).
 - **Deploy path (confirmed):** `nfldashboard.pages.dev` is git-connected to
   this GitHub repo (branch `main`) and auto-deploys on `git push origin main`
   (~1-2 min). Pushing is the only step that ships the public site.

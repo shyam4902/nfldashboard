@@ -1,0 +1,24 @@
+// What PACKET-2026-11-02-2 changes, 2026-11-02.
+// Gold = new files, steel = edited existing files. nfl/index.html drops from 7,279 to 380 lines.
+// Single column on purpose: the layout is the reader's map, the edges carry the meaning.
+style new   fill: theme-primary-subtle  border: theme-primary
+style edit  fill: theme-fill  border: theme-secondary
+
+node page "nfl/index.html / 7279 -> 380 lines / markup + script and link tags"  style: edit
+node css  "nfl/nfl.css / 1655 lines / style block, @import first"  below page  style: new
+node tw   "nfl/js/tailwind-config.js / 80 lines / after the Tailwind CDN tag"  below css  style: new
+node core "core.js, home.js, render.js, roster.js / 728 + 456 + 196 + 271"  below tw  style: new
+node mid  "matchup.js, league.js, routing.js / 1422 + 329 + 201"  below core  style: new
+node late "schedule.js, extensions.js / 895 + 645"  below mid  style: new
+node boot "boot.js / 27 lines / loadAllData().then(...) + initTheme()"  below late  style: new
+node chk  "scripts/check_nfl_split.mjs / vm load-order harness + lossless check"  below boot  style: new
+node pg   "check_html_scripts.mjs / props-smoke.mjs / production-health-check.mjs / AGENTS.md + CLAUDE.md"  below chk  style: edit
+
+edge page -> css  "link"
+edge page -> tw  "script src"
+edge page -> core  "script src, in order"
+edge core -> mid
+edge mid -> late
+edge late -> boot  "loads last"
+edge chk -> boot  "proves the order"
+edge pg -> page  "read the new files"

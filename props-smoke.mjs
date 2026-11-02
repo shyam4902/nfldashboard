@@ -24,7 +24,11 @@ import { installFixtures } from './test-fixtures/supabase-fixtures.mjs';
 
 const root = process.cwd();
 await access(join(root, 'nfl', 'index.html'));
-const sourceHtml = await readFile(join(root, 'nfl', 'index.html'), 'utf8');
+const nflHtml = await readFile(join(root, 'nfl', 'index.html'), 'utf8');
+// The NFL page's code lives in nfl/nfl.css and nfl/js/*.js now. Source-text checks read the HTML
+// plus every local script and stylesheet it references.
+const nflLocalAssets = [...nflHtml.matchAll(/<(?:script\s[^>]*src|link\s[^>]*href)="(\/nfl\/[^"]+\.(?:js|css))"/gi)].map(m => m[1]);
+const sourceHtml = [nflHtml, ...(await Promise.all(nflLocalAssets.map(a => readFile(join(root, a), 'utf8'))))].join('\n');
 const walkthrough = await readFile(join(root, 'WALKTHROUGH.md'), 'utf8');
 const hasUnsupportedWalkthroughRanking = /\*\*Top WR:\*\*/.test(walkthrough);
 if (hasUnsupportedWalkthroughRanking) throw new Error('WALKTHROUGH.md contains unsupported global Top WR ranking claim');
