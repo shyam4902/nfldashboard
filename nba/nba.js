@@ -1091,3 +1091,238 @@ export function readableOn(color, panel = '#14161a', target = 4.5) {
   }
   return INK_LIGHT;
 }
+
+// ── Play-by-play helpers (design/polish variants) ──────────────────────────
+// Seconds from tip-off: four 12-minute quarters, then 5-minute overtimes.
+function periodLength(period) {
+  return period <= 4 ? 720 : 300;
+}
+
+export function periodStart(period) {
+  const p = Math.max(1, Math.floor(Number(period) || 1));
+  return p <= 4 ? (p - 1) * 720 : 2880 + (p - 5) * 300;
+}
+
+// "11:41" is 701 seconds left; "45.2" (the last minute) is 45.2.
+function clockLeft(text) {
+  const value = str(text).trim();
+  const match = /^(\d+):(\d+(?:\.\d+)?)$/.exec(value);
+  if (match) return Number(match[1]) * 60 + Number(match[2]);
+  const n = num(value);
+  return n == null ? null : n;
+}
+
+function sidesOf(json) {
+  const competition = arr(json?.header?.competitions)[0] || {};
+  const competitors = arr(competition.competitors);
+  const id = (where) => str(competitors.find((c) => c?.homeAway === where)?.team?.id || competitors.find((c) => c?.homeAway === where)?.id);
+  return { away: id('away'), home: id('home') };
+}
+
+// The score as it moved through the game, read from the play-by-play. Every
+// number comes from the payload: margins, lead changes, ties, the biggest lead
+// and the longest unanswered run for each side, seconds spent ahead, and the
+// win-probability line where ESPN sends one. Returns null with no plays.
+export function parseGameFlow(json) {
+  const sides = sidesOf(json);
+  const plays = arr(json?.plays);
+  const points = [{ t: 0, away: 0, home: 0, period: 1 }];
+  const wpById = new Map(arr(json?.winprobability).map((w) => [str(w?.playId), num(w?.homeWinPercentage)]));
+  const wp = [];
+  let periods = 0;
+  let end = 0;
+
+  for (const play of plays) {
+    const period = num(play?.period?.number);
+    const left = clockLeft(play?.clock?.displayValue);
+    if (period == null || left == null) continue;
+    periods = Math.max(periods, period);
+    const t = periodStart(period) + periodLength(period) - left;
+    end = Math.max(end, t);
+    const home = wpById.get(str(play?.id));
+    if (home != null) wp.push({ t, home: home * 100 });
+    const a = num(play?.awayScore);
+    const h = num(play?.homeScore);
+    if (a == null || h == null) continue;
+    const last = points[points.length - 1];
+    if (a !== last.away || h !== last.home) points.push({ t, away: a, home: h, period });
+  }
+  if (!periods) return null;
+  if (periods >= 4) end = Math.max(end, periodStart(periods) + periodLength(periods));
+
+  let leadChanges = 0;
+  let ties = 0;
+  let leader = 0;
+  const largest = { away: { lead: 0, t: null }, home: { lead: 0, t: null } };
+  const leadTime = { away: 0, home: 0, tied: 0 };
+  const runs = { away: null, home: null };
+  let run = null;
+
+  points.forEach((p, i) => {
+    const margin = p.home - p.away;
+    const now = Math.sign(margin);
+    if (i > 0) {
+      if (now !== 0 && leader !== 0 && now !== leader) leadChanges += 1;
+      if (now === 0 && Math.sign(points[i - 1].home - points[i - 1].away) !== 0) ties += 1;
+      const prev = points[i - 1];
+      const side = p.home > prev.home ? 'home' : p.away > prev.away ? 'away' : '';
+      const gained = side ? p[side] - prev[side] : 0;
+      if (side && run && run.side === side) {
+        run.pts += gained;
+        run.end = p.t;
+      } else if (side) {
+        run = { side, pts: gained, start: prev.t, end: p.t, from: { away: prev.away, home: prev.home } };
+      }
+      if (run && (!runs[run.side] || run.pts > runs[run.side].pts)) runs[run.side] = { ...run, from: { ...run.from } };
+    }
+    if (now !== 0) leader = now;
+    if (margin > largest.home.lead) largest.home = { lead: margin, t: p.t };
+    if (-margin > largest.away.lead) largest.away = { lead: -margin, t: p.t };
+    const next = i + 1 < points.length ? points[i + 1].t : end;
+    const span = Math.max(0, next - p.t);
+    leadTime[now > 0 ? 'home' : now < 0 ? 'away' : 'tied'] += span;
+  });
+
+  return {
+    awayId: sides.away,
+    homeId: sides.home,
+    periods,
+    end,
+    points,
+    wp,
+    leadChanges,
+    ties,
+    largest,
+    runs: {
+      away: runs.away && { pts: runs.away.pts, start: runs.away.start, end: runs.away.end, from: runs.away.from },
+      home: runs.home && { pts: runs.home.pts, start: runs.home.start, end: runs.home.end, from: runs.home.from },
+    },
+    leadTime,
+  };
+}
+
+// Field-goal attempts with a court location, split by side. ESPN puts every
+// shot on one half court: x 0-50 across the baseline, y up the floor from
+// the baseline (a few shots sit just below 0), basket near (25, 0). Free throws
+// and ESPN's sentinel coordinates (about -2.1e8) are dropped. The
+// distance comes from the play text ("26-foot") when ESPN wrote one.
+export function parseShots(json) {
+  const sides = sidesOf(json);
+  const out = { away: [], home: [] };
+  for (const play of arr(json?.plays)) {
+    if (play?.shootingPlay !== true) continue;
+    const pts = num(play?.pointsAttempted);
+    if (pts !== 2 && pts !== 3) continue;
+    const x = num(play?.coordinate?.x);
+    const y = num(play?.coordinate?.y);
+    if (x == null || y == null || x < 0 || x > 50 || y < -5 || y > 47) continue;
+    const team = str(play?.team?.id);
+    const side = team && team === sides.away ? 'away' : team && team === sides.home ? 'home' : '';
+    if (!side) continue;
+    const feet = /(\d+)-foot/.exec(str(play?.text));
+    const dist = feet ? Number(feet[1]) : Math.round(Math.hypot(x - 25, y));
+    const zone = pts === 3 ? 'three' : dist <= 4 ? 'rim' : dist <= 14 ? 'short' : 'mid';
+    out[side].push({
+      x, y, made: play?.scoringPlay === true, three: pts === 3, dist, zone,
+      period: num(play?.period?.number), player: str(arr(play?.participants)[0]?.athlete?.id),
+    });
+  }
+  return out;
+}
+
+// Made / attempted by zone for one side's shots from parseShots.
+export function shotZones(shots) {
+  const zones = { rim: [0, 0], short: [0, 0], mid: [0, 0], three: [0, 0] };
+  for (const s of arr(shots)) {
+    const z = zones[s?.zone];
+    if (!z) continue;
+    z[1] += 1;
+    if (s.made) z[0] += 1;
+  }
+  return Object.fromEntries(Object.entries(zones).map(([k, [made, att]]) => [k, { made, att, pct: att ? (made / att) * 100 : null }]));
+}
+
+// Points by quarter for each side and each scorer, read from the scoring plays.
+// The first participant on a scoring play is the scorer. Names come from the
+// box score. Period totals match the line score when the play-by-play is whole.
+export function parsePeriodScoring(json) {
+  const sides = sidesOf(json);
+  const names = new Map();
+  for (const block of arr(json?.boxscore?.players)) {
+    for (const entry of arr(arr(block?.statistics)[0]?.athletes)) {
+      const athlete = entry?.athlete;
+      if (athlete?.id) names.set(str(athlete.id), { name: str(athlete.displayName || athlete.fullName), short: str(athlete.shortName) || shortNameOf(athlete) });
+    }
+  }
+  const periods = [];
+  const blank = () => ({ pts: 0, players: new Map() });
+  for (const play of arr(json?.plays)) {
+    if (play?.scoringPlay !== true) continue;
+    const period = num(play?.period?.number);
+    const pts = num(play?.scoreValue);
+    if (!period || !pts) continue;
+    const team = str(play?.team?.id);
+    const side = team && team === sides.away ? 'away' : team && team === sides.home ? 'home' : '';
+    if (!side) continue;
+    while (periods.length < period) periods.push({ period: periods.length + 1, away: blank(), home: blank() });
+    const bucket = periods[period - 1][side];
+    bucket.pts += pts;
+    const who = str(arr(play?.participants)[0]?.athlete?.id);
+    if (who) bucket.players.set(who, (bucket.players.get(who) || 0) + pts);
+  }
+  const done = (bucket) => ({
+    pts: bucket.pts,
+    scorers: [...bucket.players.entries()]
+      .map(([id, pts]) => ({ id, name: names.get(id)?.name || '', short: names.get(id)?.short || '', pts }))
+      .sort((a, b) => b.pts - a.pts || a.name.localeCompare(b.name)),
+  });
+  return periods.map((p) => ({ period: p.period, away: done(p.away), home: done(p.home) }));
+}
+
+// League leaderboard with each player's full per-game line from the same
+// payload (games, minutes, shooting splits, rebounds, assists...). Same ranking
+// as parseLeaders; `limit` 0 keeps every athlete in the payload.
+const LINE_STATS = {
+  general: { gp: 'gamesPlayed', min: 'avgMinutes', reb: 'avgRebounds' },
+  offensive: {
+    pts: 'avgPoints', fgPct: 'fieldGoalPct', threePct: 'threePointFieldGoalPct', ftPct: 'freeThrowPct',
+    ast: 'avgAssists', to: 'avgTurnovers', fga: 'avgFieldGoalsAttempted',
+    tpm: 'avgThreePointFieldGoalsMade', tpa: 'avgThreePointFieldGoalsAttempted', fta: 'avgFreeThrowsAttempted',
+  },
+  defensive: { stl: 'avgSteals', blk: 'avgBlocks' },
+};
+
+export function parseLeaderLines(json, category, stat, limit = 10) {
+  const categories = arr(json?.categories);
+  const namesOf = (name) => arr(categories.find((entry) => str(entry?.name) === name)?.names).map(str);
+  const index = namesOf(str(category)).indexOf(str(stat));
+  if (index < 0) return [];
+  const columns = Object.entries(LINE_STATS).flatMap(([cat, map]) => {
+    const names = namesOf(cat);
+    return Object.entries(map).map(([key, name]) => ({ cat, key, at: names.indexOf(name) })).filter((c) => c.at >= 0);
+  });
+  const rows = [];
+  for (const entry of arr(json?.athletes)) {
+    const blocks = new Map(arr(entry?.categories).map((b) => [str(b?.name), arr(b?.totals)]));
+    const value = num((blocks.get(str(category)) || [])[index]);
+    if (value == null) continue;
+    const athlete = entry?.athlete || {};
+    const line = {};
+    for (const c of columns) {
+      const v = num((blocks.get(c.cat) || [])[c.at]);
+      if (v != null) line[c.key] = v;
+    }
+    rows.push({
+      rank: 0,
+      id: str(athlete.id),
+      name: str(athlete.displayName || athlete.fullName),
+      teamAbbr: str(athlete.teamShortName || athlete.team?.abbreviation),
+      headshot: str(athlete?.headshot?.href),
+      pos: str(athlete?.position?.abbreviation),
+      value,
+      line,
+    });
+  }
+  rows.sort((a, b) => b.value - a.value);
+  return (limit ? rows.slice(0, limit) : rows).map((row, i) => ({ ...row, rank: i + 1 }));
+}

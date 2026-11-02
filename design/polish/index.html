@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>NBA polish variants · Matchup Board design</title>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<script src="fixtures/manifest.js"></script>
+<style>
+:root {
+  --bg: #0d0d0f; --card: #161618; --line: #2e2e32; --text: #f2f2f3; --muted: #a3a3aa;
+  --gold: #d9a441; --gold-ink: #17140f;
+  --sans: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--text); font: 400 16px/1.5 var(--sans); }
+a { color: inherit; }
+.wrap { max-width: 1240px; margin: 0 auto; padding: 32px 20px 56px; }
+h1 { margin: 0; font: 800 34px/1.1 var(--sans); letter-spacing: -0.02em; }
+h1 span { color: var(--gold); }
+.lede { max-width: 72ch; margin: 12px 0 0; color: var(--muted); }
+.lede b { color: var(--text); font-weight: 600; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 540px), 1fr)); gap: 20px; margin-top: 28px; }
+.v { display: flex; flex-direction: column; overflow: hidden; border: 1px solid var(--line); border-radius: 14px; background: var(--card); }
+.v img { display: block; width: 100%; height: auto; aspect-ratio: 1440 / 900; object-fit: cover; object-position: top; background: #000; border-bottom: 1px solid var(--line); }
+.v .b { display: grid; gap: 10px; padding: 18px 20px 20px; }
+.v h2 { margin: 0; font: 700 22px/1.2 var(--sans); }
+.v h2 small { margin-left: 8px; font: 500 14px/1 var(--sans); color: var(--muted); }
+.v p { margin: 0; color: var(--muted); }
+.v p.font { font-size: 14px; }
+.v p.font b { color: var(--text); font-weight: 600; }
+.links { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+.links a { padding: 9px 14px; border: 1px solid #4a4a50; border-radius: 8px; font: 600 14px/1 var(--sans); text-decoration: none; }
+.links a:hover { border-color: var(--muted); }
+.links a.go { background: var(--gold); border-color: var(--gold); color: var(--gold-ink); }
+.notes { margin-top: 32px; padding: 18px 20px; border: 1px solid var(--line); border-radius: 14px; color: var(--muted); font-size: 15px; }
+.notes h2 { margin: 0 0 8px; font: 700 17px/1.2 var(--sans); color: var(--text); }
+.notes ul { margin: 0; padding-left: 20px; }
+.notes li + li { margin-top: 6px; }
+code { font: 500 14px/1 ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--text); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>NBA polish <span>variants</span></h1>
+  <p class="lede" id="lede">Four takes on the NBA pages, all on the same frozen ESPN data. Each keeps the dark chrome, gold on active tabs only, team colours on the blocks and the scores-card hover. Pick by opening the same view in two tabs side by side.</p>
+
+  <div class="grid">
+    <article class="v">
+      <img src="shots/v1-scores-desktop.png" alt="V1 scores view at 1440 by 900" loading="lazy">
+      <div class="b">
+        <h2>V1 · Editorial <small>type scale</small></h2>
+        <p>One 1.25 type scale from 12 to 76px with serif numerals, a written recap of the game built from the play-by-play, and a full stat line on every leader.</p>
+        <p class="font"><b>Source Serif 4</b> for headlines and every big number: an optical-size serif with tabular lining figures, so scores and stats read like a sports page and still line up in columns.</p>
+        <div class="links" data-v="v1"></div>
+      </div>
+    </article>
+    <article class="v">
+      <img src="shots/v2-scores-desktop.png" alt="V2 scores view at 1440 by 900" loading="lazy">
+      <div class="b">
+        <h2>V2 · Stat sheet <small>dense broadcast</small></h2>
+        <p>Fills every gap with data: shot charts and zone splits, a quarter sheet with scorers, game flow, injuries, officials and crowd, and a 25-deep leaders table with a scoring-vs-efficiency plot.</p>
+        <p class="font"><b>Barlow Condensed</b> for everything: a narrow face lets numbers run 30-40% larger in the same box, which is the fix for small fonts in big boxes when the box also has to hold more.</p>
+        <div class="links" data-v="v2"></div>
+      </div>
+    </article>
+    <article class="v">
+      <img src="shots/v3-scores-desktop.png" alt="V3 scores view at 1440 by 900" loading="lazy">
+      <div class="b">
+        <h2>V3 · Depth <small>layers and motion</small></h2>
+        <p>Three elevation levels with team-colour light behind the hero, a spotlight card for the selected game, a margin / win-probability toggle, a team-colour podium for leaders, and entrance motion that respects reduced-motion.</p>
+        <p class="font"><b>Space Grotesk</b>: geometric with tabular figures; its wide numerals hold up at 100px in the scorebug and still read at 12px on labels.</p>
+        <div class="links" data-v="v3"></div>
+      </div>
+    </article>
+    <article class="v">
+      <img src="shots/v4-scores-desktop.png" alt="V4 scores view at 1440 by 900" loading="lazy">
+      <div class="b">
+        <h2>V4 · Timeline <small>my own idea</small></h2>
+        <p>Tells the game as four chapters: each quarter's score, scorers, swing and its own slice of the margin chart. Scores lists the night by tip-off, the inspector gets a quarter strip, and leaders become bars drawn from zero.</p>
+        <p class="font"><b>Unbounded</b> for quarter labels, scores and leader values only: a wide display face that makes a 35 or a Q3 an anchor you can find while scrolling. Text and tables stay in Geist.</p>
+        <div class="links" data-v="v4"></div>
+      </div>
+    </article>
+  </div>
+
+  <section class="notes">
+    <h2>About the data</h2>
+    <ul id="notes">
+      <li>Every number comes from saved ESPN responses in <code>fixtures/</code>; <code>shim.js</code> answers the page's requests from them and freezes the clock on that day. Nothing is filled in. A view with no saved file shows the page's normal error state.</li>
+      <li>This set covers one featured game in full (summary with play-by-play, both teams, standings, the points leaders board). The other leaders boards, the second game's summary and Cleveland's schedule were never captured, so those parts say so.</li>
+      <li>To freeze a fuller date from a machine that can reach ESPN: <code>node design/polish/freeze.mjs 20261101</code>, then reload. Screenshots are in <code>shots/</code>.</li>
+    </ul>
+  </section>
+</div>
+<script>
+(function () {
+  var M = window.POLISH || {};
+  var views = [['Scores', '#scores'], ['Game', '#game/' + M.featured], ['Leaders', '#leaders'], ['Compare', '#compare/' + M.away + '/' + M.home]];
+  document.querySelectorAll('.links').forEach(function (box) {
+    var v = box.getAttribute('data-v');
+    box.innerHTML = views.map(function (pair, i) {
+      return '<a' + (i === 0 ? ' class="go"' : '') + ' href="' + v + '/' + pair[1] + '">' + pair[0] + '</a>';
+    }).join('');
+  });
+  if (M.label) {
+    var lede = document.getElementById('lede');
+    lede.innerHTML = 'Four takes on the NBA pages, all on the same frozen ESPN data from <b>' + M.label + '</b>. Each keeps the dark chrome, gold on active tabs only, team colours on the blocks and the scores-card hover. Pick by opening the same view in two tabs side by side.';
+  }
+})();
+</script>
+</body>
+</html>
