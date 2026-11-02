@@ -411,6 +411,18 @@ test('parseLeaders builds the points board', () => {
   assert.deepEqual(values, [...values].sort((a, b) => b - a));
 });
 
+test('parseLeaders reads totals with thousands separators (NFL feed)', () => {
+  const json = {
+    categories: [{ name: 'general', names: ['gamesPlayed'] }, { name: 'passing', names: ['passingYards'] }],
+    athletes: [
+      { athlete: { id: '1', displayName: 'A', teamShortName: 'GB' }, categories: [{ name: 'general', totals: ['8'] }, { name: 'passing', totals: ['2,246'] }] },
+      { athlete: { id: '2', displayName: 'B', teamShortName: 'LAR' }, categories: [{ name: 'general', totals: ['8'] }, { name: 'passing', totals: ['2,146'] }] },
+    ],
+  };
+  const rows = parseLeaders(json, 'passing', 'passingYards');
+  assert.deepEqual(rows.map((row) => [row.name, row.value, row.gp]), [['A', 2246, 8], ['B', 2146, 8]]);
+});
+
 test('parseGameLog splits season types and keeps regular season as games', () => {
   const log = parseGameLog(fixture('athlete-4431678-gamelog.json'));
 

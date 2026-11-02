@@ -48,7 +48,7 @@ function str(value) {
 
 function num(value) {
   if (value == null || value === '') return null;
-  const n = typeof value === 'number' ? value : Number(String(value).trim().replace(/^\+/, ''));
+  const n = typeof value === 'number' ? value : Number(String(value).trim().replace(/^\+/, '').replace(/,/g, ''));
   return Number.isFinite(n) ? n : null;
 }
 

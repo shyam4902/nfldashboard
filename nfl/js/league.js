@@ -66,6 +66,7 @@ function renderLeagueSubTabs(){
   if (!c) return;
   const tabs = [
     ['standings', 'Standings', '🏈'],
+    ['leaders', 'Leaders', '🏆'],
     ['stats', 'Stats', '📈'],
   ];
   c.innerHTML = tabs.map(([key, label, icon]) =>
@@ -75,11 +76,16 @@ function renderLeagueSubTabs(){
 }
 
 async function showLeague(sub){
-  currentLeagueSubTab = ['standings', 'stats'].includes(sub) ? sub : 'standings';
+  currentLeagueSubTab = ['standings', 'leaders', 'stats'].includes(sub) ? sub : 'standings';
   renderLeagueSubTabs();
-  const panels = { standings: 'leagueStandingsPanel', stats: 'leagueStatsPanel' };
+  const panels = { standings: 'leagueStandingsPanel', leaders: 'leagueLeadersPanel', stats: 'leagueStatsPanel' };
   Object.entries(panels).forEach(([key, id]) =>
     document.getElementById(id)?.classList.toggle('hidden', key !== currentLeagueSubTab));
+  if (currentLeagueSubTab === 'leaders') {
+    const stamp = document.getElementById('leagueFreshness');
+    if (stamp) stamp.textContent = 'live from ESPN';
+    return renderLeagueLeaders();
+  }
   await loadLeagueArtifacts();
   const stamp = document.getElementById('leagueFreshness');
   if (stamp) {
@@ -327,3 +333,82 @@ function renderLeagueStats(){
   }
 }
 
+
+// ═══════════════════════════════════════════════════════════
+// LEADERS — season totals live from ESPN (CORS open), same boards as /nba/
+// ═══════════════════════════════════════════════════════════
+// ponytail: parseLeaders and smallImg are borrowed from /nba/nba.js by
+// dynamic import; move them to a shared file if a third league needs them.
+const NFL_LEADERS_API = 'https://site.web.api.espn.com/apis/common/v3/sports/football/nfl/statistics/byathlete';
+const NFL_LEADER_BOARDS = [
+  { label: 'Passing yards', category: 'passing', stat: 'passingYards' },
+  { label: 'Passing TD', category: 'passing', stat: 'passingTouchdowns' },
+  { label: 'Rushing yards', category: 'rushing', stat: 'rushingYards' },
+  { label: 'Rushing TD', category: 'rushing', stat: 'rushingTouchdowns' },
+  { label: 'Receiving yards', category: 'receiving', stat: 'receivingYards' },
+  { label: 'Receptions', category: 'receiving', stat: 'receptions' },
+  // ponytail: ESPN returns 400 when sorting by interceptions, so that board is left out.
+  { label: 'Total TD', category: 'scoring', stat: 'totalTouchdowns' },
+  { label: 'Sacks', category: 'defensive', stat: 'sacks' },
+  { label: 'Tackles', category: 'defensive', stat: 'totalTackles' },
+];
+const nflLeadersCache = new Map();
+let nflLeaderLib = null;
+
+// ESPN says WSH where the team table says WAS; any other mismatch just loses its colour.
+const ESPN_ABBR = { WSH: 'WAS' };
+function nflLeaderColor(abbr){
+  const team = (DATA.teams || []).find(t => t.abbr === (ESPN_ABBR[abbr] || abbr));
+  return (team && team.primary_color) || '#3b4261';
+}
+
+function nflLeaderRow(row, max, lib){
+  const top = row.rank <= 3;
+  const c = nflLeaderColor(row.teamAbbr);
+  const size = top ? 40 : 30;
+  const shot = row.headshot
+    ? `<img src="${homeEsc(lib.smallImg(row.headshot, size * 2, Math.round(size * 1.5)))}" alt="" width="${size}" height="${size}" loading="lazy" decoding="async" onerror="this.remove()">`
+    : '';
+  const width = max > 0 ? Math.max(4, Math.round(row.value / max * 100)) : 0;
+  const value = Number.isInteger(row.value) ? row.value.toLocaleString('en-US') : row.value.toFixed(1);
+  return `<div class="ld-r${top ? ' top' : ''}" style="--c:${c}">` +
+    `<span class="rk">${row.rank}</span><span class="hs">${shot}</span>` +
+    `<span class="nm"><span class="pn">${homeEsc(row.name)}</span>` +
+    (row.teamAbbr ? `<span class="tc"><i style="background:${c}"></i>${homeEsc(row.teamAbbr)}</span>` : '') + `</span>` +
+    `<span class="v"><b>${value}</b>${row.gp == null ? '' : `<small>${row.gp} GP</small>`}</span>` +
+    `<i class="bar" style="width:${width}%"></i></div>`;
+}
+
+function nflLeaderBoard(rows, lib){
+  if (!rows.length) return '<div class="ld-none">No data for this board yet.</div>';
+  return rows.map(row => nflLeaderRow(row, rows[0].value, lib)).join('');
+}
+
+async function renderLeagueLeaders(){
+  const host = document.getElementById('leagueLeaders');
+  if (!host) return;
+  host.innerHTML = NFL_LEADER_BOARDS.map(board =>
+    `<section class="glass rounded-xl ld-card"><div class="ld-h"><h3>${homeEsc(board.label)}</h3><span>Season</span></div>` +
+    `<div class="board-body"><div class="ld-none">Loading…</div></div></section>`).join('');
+  try {
+    nflLeaderLib = nflLeaderLib || await import('/nba/nba.js');
+  } catch (err) {
+    host.innerHTML = leagueMissingPanel('Leaders', 'The leaders code did not load.');
+    return;
+  }
+  const lib = nflLeaderLib;
+  const bodies = host.querySelectorAll('.board-body');
+  await Promise.all(NFL_LEADER_BOARDS.map(async (board, i) => {
+    const key = board.category + '.' + board.stat;
+    try {
+      if (!nflLeadersCache.has(key)) {
+        const res = await fetch(NFL_LEADERS_API + '?limit=50&sort=' + encodeURIComponent(key + ':desc'));
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        nflLeadersCache.set(key, lib.parseLeaders(await res.json(), board.category, board.stat));
+      }
+      bodies[i].innerHTML = nflLeaderBoard(nflLeadersCache.get(key), lib);
+    } catch (err) {
+      bodies[i].innerHTML = '<div class="ld-none">Couldn\'t load this board.</div>';
+    }
+  }));
+}

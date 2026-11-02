@@ -1,3 +1,4 @@
+// One-time proof for the 2026-11-02 split (dee011f). Any later edit to nfl/js makes the lossless check MISMATCH; that is expected.
 // Load-order harness for the nfl/ split (PACKET-2026-11-02-2).
 // Mode A runs the local <script src> files from nfl/index.html in order in one vm context.
 // Mode B runs the original single inline script (from commit 52aa24a) the same way.
