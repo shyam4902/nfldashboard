@@ -1,8 +1,8 @@
 {
   "season": 2026,
-  "week": 8,
+  "week": 9,
   "total_weeks": 18,
-  "generated": "2026-11-02",
+  "generated": "2026-11-03",
   "source": "nflverse games.csv (matchups, kickoffs, stadiums); Week 1 enriched with TV/city",
   "games": [
     {
@@ -1694,9 +1694,10 @@
       "kickoff_utc": "2026-11-03T01:15:00Z",
       "tv": "",
       "winner": null,
-      "away_score": null,
-      "home_score": null,
-      "week": 8
+      "away_score": 0,
+      "home_score": 0,
+      "week": 8,
+      "status": "in_progress"
     },
     {
       "game_id": "2026-11-05-JAX-BAL",
@@ -3662,5 +3663,5 @@
       "week": 18
     }
   ],
-  "scores_synced_at": "2026-11-02T05:52:52.234Z"
+  "scores_synced_at": "2026-11-03T01:30:13.576Z"
 }
