@@ -1608,3 +1608,139 @@ export function nflSlateWeek(schedule, now) {
   }
   return weeks[weeks.length - 1];
 }
+
+// ── Home page cards: NFL market lines, win %, leader captions ─────────────
+
+// One CSV line, split on commas outside double quotes ("" is a literal quote).
+function csvRow(line) {
+  const out = [];
+  let cur = '';
+  let quoted = false;
+  for (let i = 0; i < line.length; i += 1) {
+    const ch = line[i];
+    if (ch === '"') {
+      if (quoted && line[i + 1] === '"') { cur += '"'; i += 1; } else quoted = !quoted;
+    } else if (ch === ',' && !quoted) {
+      out.push(cur.trim());
+      cur = '';
+    } else cur += ch;
+  }
+  out.push(cur.trim());
+  return out;
+}
+
+// nflverse games.csv, the file nfl/js/schedule.js reads its market lines from,
+// as a map keyed `week|AWAY|HOME` in the site's abbreviations (nflverse LA is
+// LAR here). Only `season`'s regular-season rows. `spread` is nflverse's
+// spread_line: points the home team is favoured by, negative when the away
+// team is. Blank cells stay null.
+export function parseNflLines(csv, season) {
+  const rows = str(csv).split(/\r?\n/).filter((line) => line.trim());
+  if (rows.length < 2) return {};
+  const head = csvRow(rows[0]);
+  const at = (name) => head.indexOf(name);
+  const col = {
+    season: at('season'), type: at('game_type'), week: at('week'), away: at('away_team'), home: at('home_team'),
+    spread: at('spread_line'), total: at('total_line'), awayMl: at('away_moneyline'), homeMl: at('home_moneyline'),
+  };
+  if (col.week < 0 || col.away < 0 || col.home < 0) return {};
+  const want = str(season);
+  const map = {};
+  for (let i = 1; i < rows.length; i += 1) {
+    const v = csvRow(rows[i]);
+    if (want && col.season >= 0 && v[col.season] !== want) continue;
+    if (col.type >= 0 && v[col.type] !== 'REG') continue;
+    const week = num(v[col.week]);
+    const away = nflAbbr(v[col.away]);
+    const home = nflAbbr(v[col.home]);
+    if (week == null || !away || !home) continue;
+    const cell = (index) => (index < 0 ? null : num(v[index]));
+    map[`${week}|${away}|${home}`] = {
+      spread: cell(col.spread),
+      total: cell(col.total),
+      awayMl: cell(col.awayMl),
+      homeMl: cell(col.homeMl),
+    };
+  }
+  return map;
+}
+
+// American odds as a probability with the vig still in. Takes -155, "+130"
+// or "EVEN". null for anything that is not a price.
+function mlImplied(ml) {
+  const n = str(ml).trim().toUpperCase() === 'EVEN' ? 100 : num(ml);
+  if (n == null || n === 0) return null;
+  return n < 0 ? -n / (-n + 100) : 100 / (n + 100);
+}
+
+// Home win probability from the two moneylines with the bookmaker's margin
+// removed: the same number as marketWinProb in nfl/js/schedule.js. null when
+// either price is missing, never a made-up 50.
+export function mlWinProb(homeMl, awayMl) {
+  const h = mlImplied(homeMl);
+  const a = mlImplied(awayMl);
+  return h == null || a == null ? null : h / (h + a);
+}
+
+// Spread, total and no-vig win % for one nflWeekGames card. The nflverse row
+// (parseNflLines) comes first, because the NFL page shows those numbers; ESPN's
+// scoreboard odds fill whatever it lacks. null when neither has anything.
+export function nflMarket(game, lines) {
+  if (!game?.away || !game?.home) return null;
+  const awayAbbr = nflAbbr(game.away.abbr);
+  const homeAbbr = nflAbbr(game.home.abbr);
+  const row = (lines && lines[`${num(game.week)}|${awayAbbr}|${homeAbbr}`]) || null;
+  const espn = game.odds || null;
+
+  let spread = '';
+  if (row && row.spread != null) {
+    if (row.spread === 0) spread = 'PK';
+    else spread = row.spread > 0 ? `${homeAbbr} -${row.spread}` : `${awayAbbr} -${-row.spread}`;
+  } else if (espn?.details) spread = espn.details;
+
+  const total = row?.total ?? espn?.total ?? null;
+  let home = row ? mlWinProb(row.homeMl, row.awayMl) : null;
+  if (home == null && espn?.moneyline) home = mlWinProb(espn.moneyline.home, espn.moneyline.away);
+  if (!spread && total == null && home == null) return null;
+  return { spread, total, home, away: home == null ? null : 1 - home };
+}
+
+// 0.623 as "62%", '' for null.
+export function pctText(p) {
+  return p == null || !Number.isFinite(p) ? '' : Math.round(p * 100) + '%';
+}
+
+// ESPN's 500px team logo for an NFL abbreviation, for cards ESPN did not answer.
+export function nflLogo(abbr) {
+  const key = nflAbbr(abbr);
+  if (!key) return '';
+  return `${ESPN_CDN}/i/teamlogos/nfl/500/${key === 'WAS' ? 'wsh' : key.toLowerCase()}.png`;
+}
+
+// "J. Embiid" as "Embiid": cards are narrow, the full short name is the title.
+export function leaderSurname(short) {
+  const value = str(short).trim();
+  return value.replace(/^(?:[A-Z]\.)+\s*/, '') || value;
+}
+
+// Caption over a card's PTS/REB/AST leaders (parseCompetitorLeaders `kind`).
+// Season per-game numbers before tip-off; the game's own counts after, called
+// "Tonight" on the slate being shown and "In this game" on any other day.
+export function leaderCaption(kind, state, startISO, slate) {
+  if (kind === 'season') return 'Season avg';
+  if (state === 'in' || (slate && etDate(startISO) === slate)) return 'Tonight';
+  return 'In this game';
+}
+
+// The game a league tile names: the first live game, else the next one to
+// start (earliest startISO), else null once the slate is all final.
+export function slateNext(games) {
+  const list = arr(games).filter(Boolean);
+  const live = list.find((g) => g.state === 'in');
+  if (live) return live;
+  const time = (g) => {
+    const t = Date.parse(str(g.startISO));
+    return Number.isFinite(t) ? t : Infinity;
+  };
+  return list.filter((g) => g.state === 'pre').sort((a, b) => time(a) - time(b))[0] || null;
+}

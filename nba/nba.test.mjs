@@ -48,6 +48,14 @@ import {
   etKickoff,
   nflWeekCutoff,
   nflSlateWeek,
+  parseNflLines,
+  mlWinProb,
+  nflMarket,
+  pctText,
+  nflLogo,
+  leaderSurname,
+  leaderCaption,
+  slateNext,
 } from './nba.js';
 
 function fixture(name) {
@@ -1002,4 +1010,106 @@ test('nflSlateWeek keeps a week up until Tuesday 6am ET after its last game', ()
   assert.equal(nflSlateWeek(schedule, new Date('2027-02-01T00:00:00Z')), 9, 'after the season: last week');
   assert.equal(nflSlateWeek({ week: 4, games: [] }, new Date()), 4);
   assert.equal(nflSlateWeek(null, new Date()), null);
+});
+
+// Header and rows copied from nflverse games.csv (2026 week 9), plus a 2025
+// row, a playoff row and a row with a quoted, comma-holding stadium name.
+const NFLVERSE_CSV = [
+  'game_id,season,game_type,week,gameday,weekday,gametime,away_team,away_score,home_team,home_score,location,result,total,overtime,old_game_id,gsis,nfl_detail_id,pfr,pff,espn,ftn,away_rest,home_rest,away_moneyline,home_moneyline,spread_line,away_spread_odds,home_spread_odds,total_line,under_odds,over_odds,div_game,roof,surface,temp,wind,away_qb_id,home_qb_id,away_qb_name,home_qb_name,away_coach,home_coach,referee,stadium_id,stadium',
+  '2026_09_JAX_BAL,2026,REG,9,2026-11-05,Thursday,20:15,JAX,,BAL,,Home,,,,,,,,,,,,,-520,390,-10,-105,-115,39.5,-108,-112,0,outdoors,grass,,,,,,,,,,,"M&T Bank Stadium, Baltimore"',
+  '2026_09_LA_WAS,2026,REG,9,2026-11-08,Sunday,13:00,LA,,WAS,,Home,,,,,,,,,,,,,-225,185,-5.5,-110,-110,47.5,-108,-112,0,outdoors,grass,,,,,,,,,,,,',
+  '2026_09_NYJ_KC,2026,REG,9,2026-11-08,Sunday,13:00,NYJ,,KC,,Home,,,,,,,,,,,,,440,-600,10,-112,-108,47.5,-112,-108,0,outdoors,grass,,,,,,,,,,,,',
+  '2026_10_CIN_ATL,2026,REG,10,2026-11-15,Sunday,13:00,CIN,,ATL,,Home,,,,,,,,,,,,,,,0,,,,,,0,dome,turf,,,,,,,,,,,,',
+  '2025_09_JAX_BAL,2025,REG,9,2025-11-05,Thursday,20:15,JAX,,BAL,,Home,,,,,,,,,,,,,100,-120,2,-105,-115,44.5,-108,-112,0,outdoors,grass,,,,,,,,,,,,',
+  '2026_22_KC_BUF,2026,POST,22,2027-01-20,Sunday,15:00,KC,,BUF,,Home,,,,,,,,,,,,,-110,-110,0,-110,-110,48,-110,-110,0,outdoors,grass,,,,,,,,,,,,',
+].join('\n');
+
+test('parseNflLines keys one season of regular-season rows by week and site abbreviations', () => {
+  const lines = parseNflLines(NFLVERSE_CSV, 2026);
+  assert.deepEqual(Object.keys(lines).sort(), ['10|CIN|ATL', '9|JAX|BAL', '9|LAR|WAS', '9|NYJ|KC']);
+  assert.deepEqual(lines['9|JAX|BAL'], { spread: -10, total: 39.5, awayMl: -520, homeMl: 390 });
+  assert.deepEqual(lines['9|LAR|WAS'], { spread: -5.5, total: 47.5, awayMl: -225, homeMl: 185 });
+  // Blank prices stay null; a pick'em spread is a real 0.
+  assert.deepEqual(lines['10|CIN|ATL'], { spread: 0, total: null, awayMl: null, homeMl: null });
+  assert.deepEqual(parseNflLines('', 2026), {});
+  assert.deepEqual(parseNflLines('a,b\n1,2', 2026), {});
+});
+
+test('mlWinProb removes the vig the same way as marketWinProb on the NFL page', () => {
+  // BAL +390 at home, JAX -520: 100/490 and 520/620, normalised.
+  const home = mlWinProb(390, -520);
+  assert.ok(Math.abs(home - (100 / 490) / (100 / 490 + 520 / 620)) < 1e-12);
+  assert.equal(pctText(home), '20%');
+  assert.equal(mlWinProb(-110, -110), 0.5);
+  assert.equal(mlWinProb('EVEN', '+100'), 0.5);
+  assert.equal(pctText(mlWinProb('-600', '+440')), '82%'); // 600/700 vs 100/540
+  assert.equal(mlWinProb(null, -110), null);
+  assert.equal(mlWinProb(0, -110), null);
+  assert.equal(mlWinProb('', ''), null);
+  assert.equal(pctText(null), '');
+});
+
+test('nflMarket prefers the nflverse line and falls back to ESPN odds', () => {
+  const lines = parseNflLines(NFLVERSE_CSV, 2026);
+  const card = (week, away, home, odds = null) => ({ week, odds, away: { abbr: away }, home: { abbr: home } });
+
+  const jaxBal = nflMarket(card(9, 'JAX', 'BAL', { details: 'BAL -2', total: 41, moneyline: { home: '-130', away: '+110' } }), lines);
+  assert.equal(jaxBal.spread, 'JAX -10');
+  assert.equal(jaxBal.total, 39.5);
+  assert.equal(pctText(jaxBal.home), '20%');
+  assert.equal(pctText(jaxBal.away), '80%');
+
+  assert.equal(nflMarket(card(9, 'NYJ', 'KC'), lines).spread, 'KC -10');
+  // ESPN spells Washington WSH and the Rams LA; both still find the row.
+  assert.equal(nflMarket(card(9, 'LA', 'WSH'), lines).spread, 'LAR -5.5');
+
+  // Pick'em with no prices: ESPN fills the total and the win %.
+  const cinAtl = nflMarket(card(10, 'CIN', 'ATL', { details: 'EVEN', total: 49.5, moneyline: { home: 'EVEN', away: 'EVEN' } }), lines);
+  assert.deepEqual(cinAtl, { spread: 'PK', total: 49.5, home: 0.5, away: 0.5 });
+
+  // No nflverse row: ESPN only.
+  const espnOnly = nflMarket(card(11, 'DEN', 'CAR', { details: 'DEN -2.5', total: 44.5, moneyline: null }), lines);
+  assert.deepEqual(espnOnly, { spread: 'DEN -2.5', total: 44.5, home: null, away: null });
+
+  assert.equal(nflMarket(card(11, 'DEN', 'CAR'), lines), null);
+  assert.equal(nflMarket(null, lines), null);
+});
+
+test('nflLogo builds ESPN logo paths, Washington as wsh', () => {
+  assert.equal(nflLogo('BAL'), 'https://a.espncdn.com/i/teamlogos/nfl/500/bal.png');
+  assert.equal(nflLogo('WAS'), 'https://a.espncdn.com/i/teamlogos/nfl/500/wsh.png');
+  assert.equal(nflLogo('WSH'), 'https://a.espncdn.com/i/teamlogos/nfl/500/wsh.png');
+  assert.equal(nflLogo('LA'), 'https://a.espncdn.com/i/teamlogos/nfl/500/lar.png');
+  assert.equal(nflLogo(''), '');
+});
+
+test('leaderSurname and leaderCaption label the score-card leaders', () => {
+  assert.equal(leaderSurname('J. Embiid'), 'Embiid');
+  assert.equal(leaderSurname('S. Gilgeous-Alexander'), 'Gilgeous-Alexander');
+  assert.equal(leaderSurname('Nene'), 'Nene');
+  assert.equal(leaderSurname(''), '');
+
+  // A Thursday 7:30pm ET tip is the Oct 22 slate.
+  const tip = '2026-10-22T23:30:00Z';
+  assert.equal(leaderCaption('season', 'pre', tip, '20261022'), 'Season avg');
+  assert.equal(leaderCaption('game', 'in', tip, '20261023'), 'Tonight');
+  assert.equal(leaderCaption('game', 'post', tip, '20261022'), 'Tonight');
+  assert.equal(leaderCaption('game', 'post', tip, '20261023'), 'In this game');
+
+  // Real fixture: pre-game cards carry season averages.
+  const pre = parseScoreboard(fixture('scoreboard-20261101.json'))[0];
+  assert.equal(pre.state, 'pre');
+  assert.equal(leaderCaption(pre.home.leaders.kind, pre.state, pre.startISO, '20261101'), 'Season avg');
+});
+
+test('slateNext picks the live game, then the next kickoff', () => {
+  const games = [
+    { id: 'a', state: 'post', startISO: '2026-11-08T18:00:00Z' },
+    { id: 'b', state: 'pre', startISO: '2026-11-09T01:20:00Z' },
+    { id: 'c', state: 'pre', startISO: '2026-11-08T21:25:00Z' },
+  ];
+  assert.equal(slateNext(games).id, 'c');
+  assert.equal(slateNext([...games, { id: 'd', state: 'in', startISO: '2026-11-08T18:00:00Z' }]).id, 'd');
+  assert.equal(slateNext([games[0]]), null);
+  assert.equal(slateNext(undefined), null);
 });

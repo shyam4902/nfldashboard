@@ -6,6 +6,14 @@
 - App: `/` two-sport home page (`index.html`), NFL at `nfl/index.html`, NBA at `nba/`; tracked JSON assets at the root and Supabase roster/transaction data
 - Start here: `docs/sessions/2026-10-23-to-30-matchup-board.md` (decisions, what shipped, how it works, open items)
 
+## Home page polish, 2026-11-05 (branch `feature/home-polish`)
+
+- `/` uses the `/nba/` tokens now: type scale `--t0..--t9`, `--s*`, `--r*`, `--e*`, Source Serif 4 for headlines, scores, records and leader values, tabular figures, and the desktop `zoom: 0.9`. Header is the `/nba/` brand and NFL | NBA switch.
+- Game cards are the `/nba/` scores card: two team-colour bands with logo, serif score and record. NBA bands carry the PTS/REB/AST leaders when ESPN's scoreboard has them (season averages before tip, the game's own numbers after). NFL cards add a market panel: spread, total and win % on a bar in the two team colours. Finals keep the closing line and drop the win %.
+- NFL lines come from nflverse `games.csv`, the file `nfl/js/schedule.js` reads, so the numbers match the NFL page. Win % is the no-vig moneyline price (`mlWinProb`, same formula as `marketWinProb`). ESPN's scoreboard odds fill a game nflverse has no row for.
+- Four cards per row at 1440px and 1024px (wrap is 1320px), two at 768px, the swipe strip below 640px. League tiles at the top show the slate count, the live or next game (linked) and links into each league. NBA standings show the top six per conference with GB, L10 and streak. NFL leader names link to `/nfl/#player/<id>`.
+- New pure helpers in `nba/nba.js`: `parseNflLines`, `mlWinProb`, `nflMarket`, `pctText`, `nflLogo`, `leaderSurname`, `leaderCaption`, `slateNext`. `nba/nba.test.mjs` is 65 tests. The home import is `/nba/nba.js?v=20261105g`.
+
 ## NFL team compare + player pages, 2026-11-05 (branch `feature/nfl-compare-player`)
 
 - `#compare` and `#compare/<A>/<B>` (site abbrs, e.g. `BUF/MIA`): two team pickers and a swap button, a team-colour scorebug, an 18-row tale of the tape with league ranks, the season series and each team's last five. With no teams picked it opens on the first kickoff of `schedule.json`'s current week. Every number comes from files the page already loads: `nfl_standings_2026.json` (record, points), `nfl_stats_2026.json` team totals (yards), `team_season_efficiency.json` 2026 rows (EPA, success, yards per play, sack and turnover rates). Rows where neither team has data are dropped. No ESPN call.
