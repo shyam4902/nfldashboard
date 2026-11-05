@@ -6,7 +6,7 @@
 // same way league.js borrows parseLeaders from /nba/nba.js. Missing keys and
 // junk entries produce empty results or nulls, never invented numbers.
 
-import { barShares, smallImg, parseLeaders, contrastRatio, textOn, readableOn, ordinal } from '../nba/nba.js?v=20261106a';
+import { barShares, smallImg, parseLeaders, contrastRatio, textOn, readableOn, ordinal } from '../nba/nba.js?v=20261106b';
 
 export { barShares, smallImg, parseLeaders, contrastRatio, textOn, readableOn, ordinal };
 

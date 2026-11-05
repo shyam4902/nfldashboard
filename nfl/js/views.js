@@ -22,7 +22,7 @@ function nflViewHash(tab){
 }
 
 async function nflLibLoad(){
-  nflLib = nflLib || await import('/nfl/nfl-lib.js?v=20261106a');
+  nflLib = nflLib || await import('/nfl/nfl-lib.js?v=20261106b');
   return nflLib;
 }
 

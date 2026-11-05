@@ -7,7 +7,7 @@
 // node --test nfl/league-lib.test.mjs
 // Missing inputs give empty results or nulls, never invented numbers.
 
-import { isFinalGame, localAbbr } from './nfl-lib.js?v=20261106a';
+import { isFinalGame, localAbbr } from './nfl-lib.js?v=20261106b';
 
 function arr(value) {
   return Array.isArray(value) ? value : [];
