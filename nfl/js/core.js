@@ -194,28 +194,6 @@ function quickTeamPillsHtml(){
   }).join('');
 }
 
-function homeStatCards(){
-  const cards = [
-    { label: '32 Teams', sub: 'rosters & depth charts', icon: '🛡️', color: '#8fa6bf', action: "showTab('teams')" },
-    { label: `${(DATA.players || []).length} Players`, sub: 'full 2026 rosters', icon: '🏈', color: '#7ec0b0', action: "openCommandPalette()" },
-    { label: `${home2aWeekGames().length} Week ${currentScheduleWeek} Games`, sub: 'odds & win probabilities', icon: '📅', color: '#7cc49b', action: `showScheduleWeek(${currentScheduleWeek})` },
-    { label: 'Value Reads', sub: 'props & win totals in Edge Analytics', icon: '💰', color: '#d9a441', action: "window.open('https://edgeplay-analytics.pages.dev/props','_blank')" },
-  ];
-  return cards.map(c => `
-    <div class="studio-tile group" onclick="${c.action}" title="Open ${c.label}">
-      <div class="flex items-center justify-between gap-1 mb-1.5">
-        <span class="text-sm">${c.icon}</span>
-        <span class="studio-kicker group-hover:text-slate-300 transition">Live</span>
-      </div>
-      <div style="font:800 16px 'Archivo',sans-serif;letter-spacing:-.02em;color:#fff" class="group-hover:text-amber-400 transition truncate">${c.label}</div>
-      <div class="text-[10px] text-slate-400 mt-1 leading-tight truncate">${c.sub}</div>
-      <div style="height:2px;border-radius:2px;margin-top:9px;background:${c.color};opacity:.8"></div>
-    </div>`).join('');
-}
-
-// Ticket 03: Today in the NFL front door. Shows the next upcoming games
-// (from schedule.json) and a one-line prop insight (from the props board).
-// When no games are today, it shows the next games on the calendar.
 function todayInNflHtml(){
   const now = new Date();
   const games = (SCHEDULE_DATA && SCHEDULE_DATA.games) ? SCHEDULE_DATA.games : [];
@@ -336,7 +314,7 @@ function homeHeroHtml(){
         <span>League Command Center</span>
       </h1>
       <p class="text-sm text-slate-300 mt-2.5 max-w-4xl leading-relaxed">
-        The complete NFL season command center. Explore the current weekly slate with live odds and model win probabilities, composite power rankings, depth charts, and draft analysis. For deep value and prop analysis, open Edge Analytics.
+        The complete NFL season command center. Explore the current weekly slate with live odds and market win probabilities, standings, depth charts and rosters. For deep value and prop analysis, open Edge Analytics.
       </p>
       <div class="flex items-center gap-3 mt-4 pt-3.5 border-t border-slate-700/40">
         <span class="text-[10px] uppercase font-black text-slate-400 tracking-wider shrink-0 px-2 py-1 rounded bg-slate-800/80 border border-slate-700/70">Teams</span>
@@ -352,7 +330,7 @@ function homeHeroHtml(){
 }
 
 const HOME_FEATURES = [
-  { icon:'📅', title:'Schedule', tab:'schedule', accent:'#3b82f6', stat:() => `Week ${currentScheduleWeek}`, desc:'Every matchup in the selected week with live spreads, totals, moneylines and model win probabilities. Click any game for deep matchup analytics.' },
+  { icon:'📅', title:'Schedule', tab:'schedule', accent:'#3b82f6', stat:() => `Week ${currentScheduleWeek}`, desc:'Every matchup in the selected week with live spreads, totals, moneylines and market win probabilities. Click any game for deep matchup analytics.' },
   { icon:'⚔️', title:'Matchup Lab', tab:'matchup', accent:'#f43f5e', stat:'offense vs defense', desc:"X's and O's formation preview for any matchup. Pick personnel and defensive front, scan efficiency advantages, click a player for their full profile." },
   { icon:'💰', title:'Value Reads', tab:null, extUrl:'https://edgeplay-analytics.pages.dev/props', accent:'#10b981', stat:'Edge Analytics', desc:'Player props, win totals, line movement and model diagnostics live in the Edge Analytics app. Deep value analysis opens in a new tab.' },
   { icon:'🛡️', title:'Teams & Rosters', tab:'teams', accent:'#f59e0b', stat:() => DATA.teams.length + ' teams', desc:'Depth charts, rosters and division navigation for every team, plus head-to-head player comparison.' },
@@ -423,9 +401,7 @@ function homeShowcaseHtml(){
 
 function marqueeGameHtml(g){
   g.market = gameMarketLines(g);
-  const homeStr = computeTeamOverall(g.home_team);
-  const awayStr = computeTeamOverall(g.away_team);
-  const prob = winProb(homeStr, awayStr);
+  const prob = marketWinProb(g.market);
   const aProb = prob === null ? null : 1 - prob;
   const hProb = prob;
   const aPct = aProb === null ? 50 : Math.round(aProb * 100);
@@ -463,7 +439,7 @@ function marqueeGameHtml(g){
         </div>
         <div class="sch-team-odds">
           <span class="sch-team-spread">${homeEsc(aSpreadStr)}</span>
-          <span class="sch-team-prob ${aFav ? '' : 'underdog'}">${aPct}%</span>
+          <span class="sch-team-prob ${aFav ? '' : 'underdog'}">${prob === null ? '—' : aPct + '%'}</span>
         </div>
       </div>
       <div class="sch-team-block">
@@ -473,7 +449,7 @@ function marqueeGameHtml(g){
         </div>
         <div class="sch-team-odds">
           <span class="sch-team-spread">${homeEsc(hSpreadStr)}</span>
-          <span class="sch-team-prob ${aFav ? 'underdog' : ''}">${hPct}%</span>
+          <span class="sch-team-prob ${aFav ? 'underdog' : ''}">${prob === null ? '—' : hPct + '%'}</span>
         </div>
       </div>
       <div class="sch-prob-bar">
@@ -595,99 +571,6 @@ function starsHtml(stars, color = 'text-amber-400') {
   const full = '\u2605'.repeat(stars);
   const empty = '\u2606'.repeat(5 - stars);
   return `<span class="${color} text-[10px] tracking-tight" title="${stars}/5 star rating">${full}${empty}</span>`;
-}
-
-function topConfidencePlaysHtml(){
-  if (!PROPS_BOARD || !PROPS_BOARD.plays || !PROPS_BOARD.plays.length) return null;
-  const evidenceByMarket = new Map();
-  (PROPS_BOARD.market_evidence || []).forEach(e => evidenceByMarket.set(e.market_id, e));
-  const candidates = [];
-  for (const p of PROPS_BOARD.plays) {
-    if (!p.ev_pct || p.ev_pct <= 0) continue;
-    if (!p.edge_pct || p.edge_pct < 2) continue;          // meaningful but not absurd
-    if (p.edge_pct > 25 || p.ev_pct > 150) continue;      // huge "edges" = projection artifact
-    const market = p.market_id || p.market;
-    const evidence = evidenceByMarket.get(market);
-    const trust = discriminationTrust(evidence);
-    if (trust <= 0) continue;                             // model cannot tell players apart here
-    const score = 60 * Math.min(1, p.edge_pct / 12) + 40 * trust;
-    candidates.push({ play: p, score, trust });
-  }
-  candidates.sort((a, b) => b.score - a.score);
-  const top = candidates.slice(0, 5);
-  if (!top.length) return null;
-  const nowMs = Date.parse(PROPS_BOARD.generated_at) || Date.now();
-  let h = '';
-  for (const { play: p, score, trust } of top) {
-    const sideCls = p.side === 'over' ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/40' : 'bg-cyan-500/15 text-cyan-300 border-cyan-500/40';
-    const age = quoteAge(p.recorded_at, nowMs);
-    const stars = trustToStarsUi(trust);
-    h += `<div class="spotlight-row" onclick="window.open('https://edgeplay-analytics.pages.dev/props','_blank')" title="Open Props & Value in Edge Analytics">
-      <span class="text-[10px] font-black px-2 py-0.5 rounded border ${sideCls} shrink-0">${homeEsc(p.side)} ${homeEsc(p.line)}</span>
-      <div class="min-w-0 flex-1">
-        <div class="text-xs font-bold text-white truncate">${homeEsc(p.player)} <span class="text-[10px] text-slate-400 font-normal">· ${homeEsc(propsMarketLabels[p.market] || p.market)}</span> ${starsHtml(stars)}</div>
-        <div class="text-[10px] text-slate-400 truncate">model sees the line ${(p.edge_pct > 0 ? 'generous' : 'tight')} · trust ${score.toFixed(0)}/100</div>
-      </div>
-      <div class="text-right shrink-0">
-        <div class="text-xs font-extrabold ${p.ev_pct > 0 ? 'text-emerald-400' : 'text-slate-300'}">${homeEsc(p.odds || '')}</div>
-        <div class="text-[9px] text-slate-500 uppercase tracking-wider">${homeEsc(p.venue || '')}${age ? ' · ' + homeEsc(age) : ''}</div>
-      </div>
-    </div>`;
-  }
-  return `<div class="studio-card h-full flex flex-col justify-between">
-    <div>
-      <div class="studio-card-hd">
-        <div class="studio-title"><span>🎯</span> Top Model Bets <span class="studio-title-note">tested markets</span></div>
-        <a href="https://edgeplay-analytics.pages.dev/props" target="_blank" rel="noopener" class="studio-link">value board →</a>
-      </div>
-      <div class="flex flex-col gap-1">${h}</div>
-    </div>
-    <div class="studio-foot">
-      <span>Markets the model can read · sorted by trust</span>
-      <span class="text-slate-300">Top ${top.length} of ${candidates.length}</span>
-    </div>
-  </div>`;
-}
-
-function valuePlaysHtml(){
-  const bl = PROPS_BOARD && PROPS_BOARD.best_lines ? PROPS_BOARD.best_lines.slice(0, 4) : [];
-  if (!bl.length) return null;
-  let h = '';
-  bl.forEach(p => {
-    const sides = [];
-    if (p.over && p.over.edge_pct !== undefined) sides.push(['Over', p.over]);
-    if (p.under && p.under.edge_pct !== undefined) sides.push(['Under', p.under]);
-    if (!sides.length) return;
-    sides.sort((a, b) => (b[1].edge_pct || 0) - (a[1].edge_pct || 0));
-    const [side, s] = sides[0];
-    const edge = s.edge_pct || 0;
-    const edgeCls = edge >= 15 ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/50' : 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30';
-    const edgeLabel = edge >= 10 ? 'Generous' : edge >= 5 ? 'Lean' : edge >= 2 ? 'Slight' : 'Fair';
-    h += `<div class="spotlight-row" onclick="window.open('https://edgeplay-analytics.pages.dev/props','_blank')" title="Open Props & Value in Edge Analytics">
-      <span class="text-[10px] font-black px-2 py-0.5 rounded border ${edgeCls} shrink-0">${edgeLabel}</span>
-      <div class="min-w-0 flex-1">
-        <div class="text-xs font-bold text-white truncate">${homeEsc(p.player)}</div>
-        <div class="text-[10px] text-slate-400 truncate">${homeEsc(p.market_label || p.market || '')}</div>
-      </div>
-      <div class="text-right shrink-0">
-        <div class="text-xs font-extrabold text-slate-200">${side} ${homeEsc(s.line)}</div>
-        <div class="text-[9px] text-slate-500 uppercase tracking-wider">${homeEsc(s.venue || 'Book')}</div>
-      </div>
-    </div>`;
-  });
-  return `<div class="studio-card h-full flex flex-col justify-between">
-    <div>
-      <div class="studio-card-hd">
-        <div class="studio-title"><span>💎</span> Top Value Plays <span class="studio-title-note">model vs market</span></div>
-        <a href="https://edgeplay-analytics.pages.dev/props" target="_blank" rel="noopener" class="studio-link">value board →</a>
-      </div>
-      <div class="flex flex-col gap-1">${h}</div>
-    </div>
-    <div class="studio-foot">
-      <span>Model vs market consensus</span>
-      <span class="text-slate-300">Value Prop Reads</span>
-    </div>
-  </div>`;
 }
 
 const NFL_ABBR_ESPN_MAP = {

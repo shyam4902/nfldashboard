@@ -101,9 +101,7 @@ function home2aFeaturedSlide(feat){
   if (!feat) return `<div class="h2a-slide-pad" style="display:flex;align-items:center;justify-content:center;min-height:200px"><span style="font:500 13px var(--font-sans);color:#8f9299">Featured matchup loads with the schedule…</span></div>`;
   feat.market = gameMarketLines(feat);
   const m = feat.market;
-  const homeStr = computeTeamOverall(feat.home_team);
-  const awayStr = computeTeamOverall(feat.away_team);
-  const prob = winProb(homeStr, awayStr);
+  const prob = marketWinProb(m);
   const hPct = prob === null ? 50 : Math.round(prob * 100);
   const aPct = 100 - hPct;
   const aColor = DATA.teamColors[feat.away_team] || '#b23a35';
@@ -145,8 +143,8 @@ function home2aFeaturedSlide(feat){
           </div>
           <div style="font:500 13px var(--font-sans);color:#c8ccd2;margin-top:4px">${homeEsc(feat.away_team)}</div>
           <div style="display:flex;align-items:baseline;gap:8px;margin-top:14px">
-            <span class="h2a-mono" style="font:900 40px/1 var(--font-mono);color:#fff">${aPct}<span style="font-size:19px">%</span></span>
-            <span style="font:500 11px var(--font-sans);color:#9aa0a8">model win<br>probability</span>
+            <span class="h2a-mono" style="font:900 40px/1 var(--font-mono);color:#fff">${prob === null ? '—' : aPct + '<span style="font-size:19px">%</span>'}</span>
+            <span style="font:500 11px var(--font-sans);color:#9aa0a8">market win<br>probability</span>
           </div>
           <div class="h2a-mono" style="font:600 12px var(--font-mono);color:#dbd9d4;margin-top:10px;border:1px solid ${aColor}66;border-radius:5px;padding:5px 9px;display:inline-block">${homeEsc(aSpread)} &nbsp;·&nbsp; ML ${homeEsc(aMl)}</div>
         </div>
@@ -165,8 +163,8 @@ function home2aFeaturedSlide(feat){
           </div>
           <div style="font:500 13px var(--font-sans);color:#c8ccd2;margin-top:4px">${homeEsc(feat.home_team)}</div>
           <div style="display:flex;align-items:baseline;gap:8px;margin-top:14px;justify-content:flex-end">
-            <span style="font:500 11px var(--font-sans);color:#9aa0a8">model win<br>probability</span>
-            <span class="h2a-mono" style="font:900 40px/1 var(--font-mono);color:${hColor}">${hPct}<span style="font-size:19px">%</span></span>
+            <span style="font:500 11px var(--font-sans);color:#9aa0a8">market win<br>probability</span>
+            <span class="h2a-mono" style="font:900 40px/1 var(--font-mono);color:${hColor}">${prob === null ? '—' : hPct + '<span style="font-size:19px">%</span>'}</span>
           </div>
           <div class="h2a-mono" style="font:600 12px var(--font-mono);color:#dbd9d4;margin-top:10px;border:1px solid ${hColor}66;border-radius:5px;padding:5px 9px;display:inline-block">${homeEsc(hSpread)} &nbsp;·&nbsp; ML ${homeEsc(hMl)}</div>
         </div>
@@ -182,7 +180,7 @@ function home2aFeaturedSlide(feat){
         <span class="h2a-btn-ghost" onclick="openCompare('${homeEsc(feat.away_team)}','${homeEsc(feat.home_team)}')">Compare rosters</span>
         <button type="button" class="h2a-btn-ghost" data-away="${homeEsc(feat.away_team)}" data-home="${homeEsc(feat.home_team)}" onclick="openNflCompareTeams(this.dataset.away, this.dataset.home, event)">Compare teams</button>
       </div>
-      <span class="h2a-mono" style="font:500 10px var(--font-mono);color:#8fa6bf">LOG5 SIM · COMPOSITE POWER + HOME EDGE</span>
+      <span class="h2a-mono" style="font:500 10px var(--font-mono);color:#8fa6bf">WIN % FROM THE MONEYLINES · NO-VIG</span>
     </div>
   </div>`;
 }
@@ -193,9 +191,7 @@ function home2aScorestrip(games){
   const cells = strip.map(g => {
     g.market = gameMarketLines(g);
     const m = g.market;
-    const homeStr = computeTeamOverall(g.home_team);
-    const awayStr = computeTeamOverall(g.away_team);
-    const prob = winProb(homeStr, awayStr);
+    const prob = marketWinProb(m);
     const hPct = prob === null ? 50 : Math.round(prob * 100);
     const aPct = 100 - hPct;
     const aColor = DATA.teamColors[g.away_team] || '#64748b';
@@ -216,10 +212,10 @@ function home2aScorestrip(games){
     const awayWon = hasScore && g.away_score > g.home_score;
     const aRight = done && hasScore
       ? `<span class="h2a-mono" style="font:700 12px var(--font-mono);color:${awayWon ? '#fff' : '#868a91'}">${g.away_score}</span>`
-      : `<span class="h2a-mono" style="font:600 11px var(--font-mono);color:${homeFav ? '#868a91' : '#7cc49b'}">${homeFav ? homeEsc(aSpread) : aPct + '%'}</span>`;
+      : `<span class="h2a-mono" style="font:600 11px var(--font-mono);color:${homeFav ? '#868a91' : '#7cc49b'}">${homeFav ? homeEsc(aSpread) : (prob === null ? '' : aPct + '%')}</span>`;
     const hRight = done && hasScore
       ? `<span class="h2a-mono" style="font:700 12px var(--font-mono);color:${awayWon ? '#868a91' : '#fff'}">${g.home_score}</span>`
-      : `<span class="h2a-mono" style="font:700 11px var(--font-mono);color:${homeFav ? '#7cc49b' : '#868a91'}">${homeFav ? hPct + '%' : ''}</span>`;
+      : `<span class="h2a-mono" style="font:700 11px var(--font-mono);color:${homeFav ? '#7cc49b' : '#868a91'}">${homeFav && prob !== null ? hPct + '%' : ''}</span>`;
     return `<div class="h2a-game" onclick="openMatchup('${homeEsc(g.game_id)}')">
       <div class="h2a-game-time" style="${done && hasScore ? 'color:#d9a441;font-weight:800' : ''}">${label}</div>
       <div class="h2a-team-row"><span class="h2a-team-name"><img src="${getNflTeamLogo(g.away_team)}" alt="" style="width:16px;height:16px;object-fit:contain;flex:none;filter:drop-shadow(0 1px 2px rgba(0,0,0,.5))" loading="lazy"><span style="font:700 12px var(--font-sans);color:${(done && hasScore) ? (awayWon ? '#fff' : '#868a91') : (homeFav ? '#c9ccd1' : '#fff')}">${homeEsc(aAbbr)}</span></span>${aRight}</div>
@@ -234,7 +230,7 @@ function home2aScorestrip(games){
     <div class="h2a-strip-games"><div class="h2a-strip-inner">${cells}
       <div class="h2a-game" style="flex:0 0 126px;display:flex;flex-direction:column;justify-content:center;gap:4px;border-right:0" onclick="showScheduleWeek(${currentScheduleWeek})">
         <div style="font:700 11px var(--font-sans);color:#d9a441">All ${games.length} games →</div>
-        <div style="font:400 10px var(--font-sans);color:#868a91">Model win % + live lines</div>
+        <div style="font:400 10px var(--font-sans);color:#868a91">Market win % + live lines</div>
       </div>
     </div></div>
   </div>`;
@@ -369,7 +365,7 @@ function homeRedesign2aHtml(){
             </div>
             <div class="h2a-mono" style="font:800 9px var(--font-mono);letter-spacing:.14em;color:#69BE28;margin-top:10px">SCHEDULE</div>
             <div style="font:700 16px/1.3 var(--font-sans);color:#fff;margin-top:6px;text-wrap:pretty">The full Week ${currentScheduleWeek} slate, with results and upcoming matchups</div>
-            <div style="font:400 11px/1.6 var(--font-sans);color:#a2a5ab;margin-top:6px">Composite power ratings, log5 and a home-field edge, priced against live nflverse lines.</div>
+            <div style="font:400 11px/1.6 var(--font-sans);color:#a2a5ab;margin-top:6px">Win percentages come from the live nflverse moneylines with the bookmaker margin removed.</div>
           </div>
         </div>
       </div>
@@ -415,33 +411,18 @@ async function renderHome(){
   initHomeCarousel();
   if (front) front.innerHTML = '';
   if (show) show.innerHTML = '';
-  if (stats) {
-    stats.innerHTML = `
-    <div class="studio-card">
-      <div class="studio-card-hd">
-        <div class="studio-title"><span>⚡</span> League Overview <span class="studio-title-note">quick stats</span></div>
-        <span class="studio-kicker">Live sync · 2026</span>
-      </div>
-      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5">
-        ${homeStatCards()}
-      </div>
-    </div>`;
-  }
-  spots.innerHTML = '<div class="text-xs text-slate-500 p-4">Loading highlights\u2026</div>';
-  // Spotlights fill in as their data arrives (all cached for their tabs too)
-  await Promise.all([
-    loadPropsBoard().catch(() => null),
-    loadSchedule().catch(() => null),
-  ]);
-  if (stats) stats.querySelector('.grid').innerHTML = homeStatCards();
+  // Owner, 2026-11-05: home keeps the featured matchup and the week's key
+  // matchups. Top Model Bets, Top Value Plays and the League Overview counters
+  // are gone (Edge carries the betting reads).
+  if (stats) stats.innerHTML = '';
+  spots.innerHTML = '<div class="text-xs text-slate-500 p-4">Loading key matchups\u2026</div>';
+  await loadSchedule().catch(() => null);
   // Re-render the 2a hero now that schedule data is in (featured matchup and
   // scorestrip read live data).
   hero.innerHTML = homeRedesign2aHtml();
   initHomeCarousel();
   const fill = () => {
-    const cards = [topConfidencePlaysHtml(), marqueeHtml(), valuePlaysHtml()].filter(Boolean);
-    if (!cards.length) return '<div class="text-xs text-slate-500">Highlights unavailable right now.</div>';
-    return `<div class="grid grid-cols-1 lg:grid-cols-2 gap-5">${cards.join('')}</div>`;
+    return marqueeHtml() || '<div class="text-xs text-slate-500">Key matchups unavailable right now.</div>';
   };
   spots.innerHTML = fill();
   // Game lines arrive after first paint; refresh the hero (spreads/ML) and spotlights once.

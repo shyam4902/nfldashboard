@@ -258,21 +258,20 @@ function schLine(label, value, fmt){
   return '<div class="sch-line"><span>' + label + '</span>' + shown + '</div>';
 }
 
-// Team strength: the projection model that supplied unit grades is gone with
-// the Projections tab, so there is no strength source left. Callers keep their
-// existing null path (winProb → null → neutral 50/50 display) — this stub
-// exists only so the Home and Schedule code paths stay untouched.
-function computeTeamOverall(teamName){
-  return null;
+// Home win probability implied by the two moneylines, with the bookmaker's
+// margin removed. The old projection model (and its fake 50/50 fallback) went
+// with the week-9 cleanup; this is a real number or null.
+function mlImplied(ml){
+  if (ml === null || ml === undefined || !Number.isFinite(ml) || ml === 0) return null;
+  return ml < 0 ? -ml / (-ml + 100) : 100 / (ml + 100);
 }
-
-// Log5-style model win probability from two team strengths (0-100).
-function winProb(homeStr, awayStr){
-  if (homeStr === null || awayStr === null || homeStr === undefined || awayStr === undefined) return null;
-  const diff = (homeStr - awayStr) / 100;   // strength advantage, in prob units
-  const home = 0.5 + diff * 0.5 + 0.025;    // +2.5pt home-field edge
-  return Math.min(0.97, Math.max(0.03, home));
+function marketWinProb(market){
+  const h = mlImplied(market && market.home_ml);
+  const a = mlImplied(market && market.away_ml);
+  return h === null || a === null ? null : h / (h + a);
 }
+// "62%" or "—" when the lines are missing; never a made-up 50.
+function pctText(p){ return p === null || p === undefined ? '—' : Math.round(p * 100) + '%'; }
 
 function scheduleTeamG(teamName, homeStr, awayStr, role, ml){
   const abbr = DATA.teamAbbr[teamName] || ABBR_TO_TEAM[teamName] || teamName;
@@ -339,9 +338,7 @@ async function renderSchedule(){
   // Categorize games for filtering
   sorted.forEach(game => {
     game.market = gameMarketLines(game);
-    const homeStr = computeTeamOverall(game.home_team);
-    const awayStr = computeTeamOverall(game.away_team);
-    const prob = winProb(homeStr, awayStr);
+    const prob = marketWinProb(game.market);
     game._hProb = prob;
     game._aProb = prob === null ? null : (1 - prob);
     game._categories = gameCategories(game);
@@ -382,11 +379,11 @@ async function renderSchedule(){
     const aOdds = isFinal
       ? '<span class="sch-team-score' + (awayWon ? ' won' : '') + '">' + game.away_score + '</span>'
       : '<span class="sch-team-spread">' + esc(aSpreadStr) + '</span>' +
-        '<span class="sch-team-prob ' + (aFav ? '' : 'underdog') + '">' + aPct + '%</span>';
+        '<span class="sch-team-prob ' + (aFav ? '' : 'underdog') + '">' + (game._aProb === null ? '—' : aPct + '%') + '</span>';
     const hOdds = isFinal
       ? '<span class="sch-team-score' + (awayWon ? '' : ' won') + '">' + game.home_score + '</span>'
       : '<span class="sch-team-spread">' + esc(hSpreadStr) + '</span>' +
-        '<span class="sch-team-prob ' + (aFav ? 'underdog' : '') + '">' + hPct + '%</span>';
+        '<span class="sch-team-prob ' + (aFav ? 'underdog' : '') + '">' + (game._hProb === null ? '—' : hPct + '%') + '</span>';
 
     let footLines = `SPREAD ${aFav ? aAbbr : hAbbr} ${aFav ? aSpreadStr : hSpreadStr}`;
     if (aFav && aMlStr) footLines += ` · ML ${aMlStr}`;
@@ -397,7 +394,7 @@ async function renderSchedule(){
     const testLineRow = '<div class="sch-lines hidden">' +
       '<div class="sch-line"><b>' + esc(aSpreadStr) + '</b></div>' +
       '<div class="sch-line"><b>' + esc(totalStr) + '</b></div>' +
-      '<div class="sch-line"><b>' + aPct + '%</b></div>' +
+      '<div class="sch-line"><b>' + (game._aProb === null ? '—' : aPct + '%') + '</b></div>' +
       '</div>';
 
     return '<article class="sch-card" tabindex="0" role="button" ' +
@@ -483,8 +480,8 @@ async function renderSchedule(){
               '</div>' +
               '<div class="text-xs text-[#c8ccd2]">' + esc(feat.away_team) + '</div>' +
               '<div class="flex items-baseline gap-2 mt-2">' +
-                '<span class="font-mono font-black text-3xl text-white">' + aPct + '<span class="text-base">%</span></span>' +
-                '<span class="text-[10px] text-[#9aa0a8]">model win<br>prob</span>' +
+                '<span class="font-mono font-black text-3xl text-white">' + (feat._aProb === null ? '—' : aPct + '<span class="text-base">%</span>') + '</span>' +
+                '<span class="text-[10px] text-[#9aa0a8]">market win<br>prob</span>' +
               '</div>' +
               '<div class="font-mono text-[11px] text-[#dbd9d4] mt-2 border border-[#2b3037] rounded px-2 py-0.5 inline-block">' + esc(aSpreadStr) + (aMlStr ? ' · ML ' + esc(aMlStr) : '') + '</div>' +
             '</div>' +
@@ -502,8 +499,8 @@ async function renderSchedule(){
               '</div>' +
               '<div class="text-xs text-[#c8ccd2]">' + esc(feat.home_team) + '</div>' +
               '<div class="flex items-baseline gap-2 mt-2 justify-end">' +
-                '<span class="text-[10px] text-[#9aa0a8]">model win<br>prob</span>' +
-                '<span class="font-mono font-black text-3xl" style="color:' + hColor + '">' + hPct + '<span class="text-base">%</span></span>' +
+                '<span class="text-[10px] text-[#9aa0a8]">market win<br>prob</span>' +
+                '<span class="font-mono font-black text-3xl" style="color:' + hColor + '">' + (feat._hProb === null ? '—' : hPct + '<span class="text-base">%</span>') + '</span>' +
               '</div>' +
               '<div class="font-mono text-[11px] text-[#dbd9d4] mt-2 border border-[#2b3037] rounded px-2 py-0.5 inline-block">' + esc(hSpreadStr) + (hMlStr ? ' · ML ' + esc(hMlStr) : '') + '</div>' +
             '</div>' +
@@ -520,7 +517,7 @@ async function renderSchedule(){
         '</div>' +
         '<div class="flex items-center justify-between mt-3 flex-wrap gap-2">' +
           '<button onclick="openMatchup(\'' + esc(feat.game_id) + '\')" class="sch-btn-amber">Open Matchup Lab →</button>' +
-          '<span class="font-mono text-[10px] text-[#8fa6bf]">LOG5 SIM · COMPOSITE POWER + HOME EDGE</span>' +
+          '<span class="font-mono text-[10px] text-[#8fa6bf]">WIN % FROM THE MONEYLINES · NO-VIG</span>' +
         '</div>' +
       '</div>' +
     '</div>';

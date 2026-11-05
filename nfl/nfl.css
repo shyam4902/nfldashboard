@@ -1,8 +1,17 @@
-@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800;900&family=Geist+Mono:wght@400;500;600;700&family=Archivo:wght@600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800;900&family=Geist+Mono:wght@400;500;600;700&family=Archivo:wght@600;700;800;900&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700;8..60,800&display=swap');
 
 :root {
   --font-sans: 'Geist', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-mono: 'Geist Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  --font-serif: 'Source Serif 4', Georgia, 'Times New Roman', serif;
+  /* Shared with /nba/: type scale (ratio 1.25), spacing, radii, elevation. */
+  --t0: 12px; --t1: 14px; --t2: 16px; --t3: 20px; --t4: 25px;
+  --t5: 31px; --t6: 39px; --t7: 49px; --t8: 61px; --t9: 76px;
+  --s1: 4px; --s2: 8px; --s3: 12px; --s4: 16px; --s5: 20px; --s6: 24px; --s7: 32px;
+  --r1: 6px; --r2: 10px; --r3: 14px; --r4: 18px;
+  --e1: 0 1px 0 rgba(255, 255, 255, 0.05) inset, 0 1px 2px rgba(0, 0, 0, 0.5);
+  --e2: 0 1px 0 rgba(255, 255, 255, 0.07) inset, 0 8px 24px -8px rgba(0, 0, 0, 0.7), 0 2px 6px rgba(0, 0, 0, 0.4);
+  --e3: 0 1px 0 rgba(255, 255, 255, 0.09) inset, 0 30px 60px -20px rgba(0, 0, 0, 0.85), 0 8px 18px -6px rgba(0, 0, 0, 0.55);
 
   /* Default Theme: NFL26 Pregame Studio — warm charcoal + a single gold accent.
      These surfaces match the home hero (.h2a-*) and schedule studio (.sch-*). */
@@ -139,6 +148,8 @@ body.theme-analyst {
 }
 
 * { box-sizing: border-box; }
+/* Same as /nba/: desktop draws at 90% (owner's pick); phones stay full size. */
+@media (min-width: 1024px) { html { zoom: 0.9; } }
 html, body {
   font-family: var(--font-sans);
   background-color: var(--bg-body) !important;
