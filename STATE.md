@@ -6,6 +6,12 @@
 - App: `/` two-sport home page (`index.html`), NFL at `nfl/index.html`, NBA at `nba/`; tracked JSON assets at the root and Supabase roster/transaction data
 - Start here: `docs/sessions/2026-10-23-to-30-matchup-board.md` (decisions, what shipped, how it works, open items)
 
+## NBA rest chips, 2026-11-05 (branch `feature/nba-rest`)
+
+- Each NBA team in a game gets a rest chip: `B2B`, `3 in 4`, `B2B · 3 in 4` or `N days rest`. It shows in the scores card's hover drawer (a Rest row, first), under each team in the inspector, and next to the record on the game page header. B2B and 3 in 4 use the negative tone; nothing is gold.
+- Pure helper `restInfo(schedule, gameDate)` in `nba/nba.js`. Days are ET calendar days (`etDate`), so a 10:30pm ET tip and a 7pm ET tip the next night are a back-to-back even on the same UTC day, and the Nov 1 DST change doesn't shift the count. It returns null when the schedule has no game on that ET date (e.g. a playoff game against a regular-season list) or no earlier game, and skips postponed or cancelled dates (`parseTeamSchedule` games now carry `postponed`). `nba/nba.test.mjs` is 70 tests.
+- Schedules come from ESPN `/teams/<id>/schedule`, fetched only when a card, the inspector or the game header showing that team scrolls into view (IntersectionObserver), then kept for the browser session in memory and sessionStorage (dates only). `teamData()` seeds the same cache. A failed schedule leaves its chip out and is retried after 5 minutes. The nba page import is `./nba.js?v=20261105r`.
+
 ## Home page polish, 2026-11-05 (branch `feature/home-polish`)
 
 - `/` uses the `/nba/` tokens now: type scale `--t0..--t9`, `--s*`, `--r*`, `--e*`, Source Serif 4 for headlines, scores, records and leader values, tabular figures, and the desktop `zoom: 0.9`. Header is the `/nba/` brand and NFL | NBA switch.

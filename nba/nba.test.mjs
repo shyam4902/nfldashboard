@@ -56,6 +56,7 @@ import {
   leaderSurname,
   leaderCaption,
   slateNext,
+  restInfo,
 } from './nba.js';
 
 function fixture(name) {
@@ -1112,4 +1113,85 @@ test('slateNext picks the live game, then the next kickoff', () => {
   assert.equal(slateNext([...games, { id: 'd', state: 'in', startISO: '2026-11-08T18:00:00Z' }]).id, 'd');
   assert.equal(slateNext([games[0]]), null);
   assert.equal(slateNext(undefined), null);
+});
+
+// Rest. Inline schedules: only startISO (and postponed) matter.
+const sched = (...isos) => ({ games: isos.map((startISO, i) => ({ id: String(i), startISO })) });
+
+test('restInfo counts ET days, not UTC days', () => {
+  // 10:30pm ET Mon (Tue 02:30Z) then 7pm ET Tue (Tue 23:00Z): same UTC day, a back-to-back.
+  const s = sched('2026-11-10T03:30:00Z', '2026-11-10T23:00:00Z');
+  const info = restInfo(s, '2026-11-10T23:00:00Z');
+  assert.equal(info.daysSince, 1);
+  assert.equal(info.restDays, 0);
+  assert.equal(info.b2b, true);
+  assert.equal(info.label, 'B2B');
+
+  // 11pm ET Monday is 04:00Z Tuesday: still Monday in New York.
+  assert.equal(etDate('2026-11-10T04:00:00Z'), '20261109');
+
+  // 1am UTC on the 12th is the evening of the 11th in New York: one day off, not two.
+  const gap = restInfo(sched('2026-11-10T00:00:00Z', '2026-11-12T01:00:00Z'), '2026-11-12T01:00:00Z');
+  assert.equal(gap.daysSince, 2);
+  assert.equal(gap.label, '1 day rest');
+});
+
+test('restInfo is not thrown by the DST change (Nov 1 2026)', () => {
+  // Sat Oct 31 7pm EDT (23:00Z) then Sun Nov 1 7pm EST (Mon 00:00Z): back-to-back.
+  const info = restInfo(sched('2026-10-31T23:00:00Z', '2026-11-02T00:00:00Z'), '2026-11-02T00:00:00Z');
+  assert.equal(info.daysSince, 1);
+  assert.equal(info.b2b, true);
+});
+
+test('restInfo flags three in four nights and plain rest', () => {
+  const s = sched('2026-11-03T00:00:00Z', '2026-11-05T00:00:00Z', '2026-11-06T00:00:00Z', '2026-11-10T00:00:00Z');
+  // Nov 2, Nov 4, Nov 5 ET: third in four nights and a back-to-back.
+  const third = restInfo(s, '2026-11-06T00:00:00Z');
+  assert.equal(third.threeInFour, true);
+  assert.equal(third.b2b, true);
+  assert.equal(third.label, 'B2B · 3 in 4');
+  // Nov 4 ET: one day off after Nov 2, only two games in four nights.
+  const second = restInfo(s, '20261104');
+  assert.equal(second.threeInFour, false);
+  assert.equal(second.label, '1 day rest');
+  // Nov 9 ET after Nov 5: three days off.
+  assert.equal(restInfo(s, '2026-11-10T00:00:00Z').label, '3 days rest');
+
+  // Nov 1, Nov 2, Nov 4 ET: third in four nights after a day off, so no B2B.
+  const spread = sched('2026-11-02T00:00:00Z', '2026-11-03T00:00:00Z', '2026-11-05T00:00:00Z');
+  const s4 = restInfo(spread, '2026-11-05T00:00:00Z');
+  assert.equal(s4.b2b, false);
+  assert.equal(s4.threeInFour, true);
+  assert.equal(s4.label, '3 in 4');
+});
+
+test('restInfo returns null rather than guess', () => {
+  const s = sched('2026-11-03T00:00:00Z', '2026-11-05T00:00:00Z');
+  // First game on the schedule: nothing to count from.
+  assert.equal(restInfo(s, '2026-11-03T00:00:00Z'), null);
+  // A date the schedule has no game on (a playoff game against a regular-season list).
+  assert.equal(restInfo(s, '2026-11-07T00:00:00Z'), null);
+  assert.equal(restInfo(s, 'not a date'), null);
+  assert.equal(restInfo(undefined, '2026-11-05T00:00:00Z'), null);
+  assert.equal(restInfo({ games: [] }, '2026-11-05T00:00:00Z'), null);
+  // A postponed date was never played, so the previous game is the one before it.
+  const moved = { games: [
+    { startISO: '2026-11-01T23:00:00Z' },
+    { startISO: '2026-11-04T00:00:00Z', postponed: true },
+    { startISO: '2026-11-05T00:00:00Z' },
+  ] };
+  assert.equal(restInfo(moved, '2026-11-05T00:00:00Z').label, '2 days rest');
+});
+
+test('restInfo on the 76ers schedule fixture', () => {
+  const schedule = parseTeamSchedule(fixture('team-20-schedule.json'));
+  // Oct 22, 24 and 25 ET: back-to-back and third game in four nights.
+  assert.equal(restInfo(schedule, '2026-10-25T23:30Z').label, 'B2B · 3 in 4');
+  // Oct 25 then Oct 28 ET.
+  assert.equal(restInfo(schedule, '2026-10-28T23:00Z').label, '2 days rest');
+  // Oct 20 then Oct 22 ET.
+  assert.equal(restInfo(schedule, '20261022').label, '1 day rest');
+  // Season opener: no earlier game in the list.
+  assert.equal(restInfo(schedule, '20261020'), null);
+  assert.equal(schedule.games.some((game) => game.postponed), false);
 });
