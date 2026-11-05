@@ -3,13 +3,15 @@
 # CSP origin allowlist was derived from a full live walkthrough of every tab,
 # modal, and the matchup preview (2026-09-08):
 #   script-src:  self (inline + dynamic import of scripts/load_team_tendencies.js),
-#                cdn.tailwindcss.com (Tailwind play CDN), cdn.jsdelivr.net (supabase-js)
+#                cdn.tailwindcss.com (Tailwind play CDN), cdn.jsdelivr.net (supabase-js),
+#                static.cloudflareinsights.com (Web Analytics beacon Pages injects)
 #   style-src:   self, unsafe-inline (inline styles/attrs), fonts.googleapis.com
 #   font-src:    self, fonts.gstatic.com
 #   img-src:     self, data: (inline SVGs), a.espncdn.com (team logos)
 #   connect-src: self, supabase.co REST (rosters/transactions), raw.githubusercontent.com
 #                (nflverse games.csv market lines), site.api.espn.com and
-#                site.web.api.espn.com (NBA page and picker game count)
+#                site.web.api.espn.com (NBA page and picker game count),
+#                cloudflareinsights.com (where the Web Analytics beacon posts)
 # No eval/new Function is used by the app or the CDNs above, so unsafe-eval is
 # deliberately absent. If a future feature adds a new external origin, add it
 # here — a blocked request shows up as a console CSP violation, not a crash.
@@ -18,7 +20,7 @@
   X-Frame-Options: DENY
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin
-  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://a.espncdn.com; connect-src 'self' https://nedyoydylpbjvihaoexy.supabase.co https://raw.githubusercontent.com https://site.api.espn.com https://site.web.api.espn.com; object-src 'none'; base-uri 'self'; form-action 'none'; frame-ancestors 'none'
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://cdn.jsdelivr.net https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://a.espncdn.com; connect-src 'self' https://nedyoydylpbjvihaoexy.supabase.co https://raw.githubusercontent.com https://site.api.espn.com https://site.web.api.espn.com https://cloudflareinsights.com; object-src 'none'; base-uri 'self'; form-action 'none'; frame-ancestors 'none'
 # Page code must revalidate on every load (ETag keeps it cheap). Cloudflare's
 # default 4h max-age served a new nba/index.html with a stale nba.js on
 # 2026-11-05 and broke the page. Bump the ?v= on imports when shipping.
