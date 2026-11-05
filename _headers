@@ -19,3 +19,10 @@
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin
   Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://a.espncdn.com; connect-src 'self' https://nedyoydylpbjvihaoexy.supabase.co https://raw.githubusercontent.com https://site.api.espn.com https://site.web.api.espn.com; object-src 'none'; base-uri 'self'; form-action 'none'; frame-ancestors 'none'
+# Page code must revalidate on every load (ETag keeps it cheap). Cloudflare's
+# default 4h max-age served a new nba/index.html with a stale nba.js on
+# 2026-11-05 and broke the page. Bump the ?v= on imports when shipping.
+/nba/*
+  Cache-Control: no-cache
+/nfl/*
+  Cache-Control: no-cache

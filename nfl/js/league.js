@@ -394,7 +394,7 @@ async function renderLeagueLeaders(){
     `<section class="glass rounded-xl ld-card"><div class="ld-h"><h3>${homeEsc(board.label)}</h3><span>Season</span></div>` +
     `<div class="board-body"><div class="ld-none">Loading…</div></div></section>`).join('');
   try {
-    nflLeaderLib = nflLeaderLib || await import('/nba/nba.js');
+    nflLeaderLib = nflLeaderLib || await import('/nba/nba.js?v=20261105');
   } catch (err) {
     host.innerHTML = leagueMissingPanel('Leaders', 'The leaders code did not load.');
     return;
