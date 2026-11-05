@@ -1091,3 +1091,272 @@ export function readableOn(color, panel = '#14161a', target = 4.5) {
   }
   return INK_LIGHT;
 }
+
+// ── Home page (/) helpers ───────────────────────────────────────────────────
+// The two-sport home page reads the same feeds as the league pages. NFL cards
+// join three sources: schedule.json (the week's slate, same-origin), the NFL
+// standings artifact (abbreviation and record for all 32 teams) and the ESPN
+// football scoreboard (live state, scores, spread and total). Full team names
+// are the join key: schedule.json and ESPN's displayName spell them the same.
+
+const NFL_ALIAS = { WSH: 'WAS', LA: 'LAR' };
+
+function nflAbbr(value) {
+  const abbr = str(value).toUpperCase();
+  return NFL_ALIAS[abbr] || abbr;
+}
+
+function wlt(wins, losses, ties) {
+  if (wins == null || losses == null) return '';
+  return ties ? `${wins}-${losses}-${ties}` : `${wins}-${losses}`;
+}
+
+// One lookup for every NFL team: abbreviation, record and colour, keyed by
+// full name and by abbreviation. `standings` is nfl_standings_2026.json;
+// `colorRows` are nfl_teams rows ({ name, abbr, primary_color }). Either may be
+// missing, so a team can come back without a record or without a colour.
+export function nflTeamIndex(standings, colorRows) {
+  const byName = {};
+  const byAbbr = {};
+  const put = (name, abbr, fields) => {
+    const key = nflAbbr(abbr);
+    const existing = (key && byAbbr[key]) || (name && byName[name.toLowerCase()]) || { name: '', abbr: '', record: '', color: '' };
+    Object.assign(existing, fields);
+    if (name && !existing.name) existing.name = name;
+    if (key && !existing.abbr) existing.abbr = key;
+    if (existing.abbr) byAbbr[existing.abbr] = existing;
+    if (existing.name) byName[existing.name.toLowerCase()] = existing;
+  };
+  for (const row of arr(standings?.teams)) {
+    if (!row) continue;
+    put(str(row.team), row.abbr, {
+      record: wlt(num(row.wins), num(row.losses), num(row.ties)),
+      conference: str(row.conference),
+      division: str(row.division),
+    });
+  }
+  for (const row of arr(colorRows)) {
+    if (!row) continue;
+    put(str(row.name), row.abbr, { color: hexOf(row.primary_color) });
+  }
+  return { byName, byAbbr };
+}
+
+// Index entry for a full name or an abbreviation (ESPN's WSH and nflverse's LA
+// included). Unknown teams give null.
+export function nflTeam(index, key) {
+  if (!index) return null;
+  const value = str(key);
+  return index.byName[value.toLowerCase()] || index.byAbbr[nflAbbr(value)] || null;
+}
+
+function nflSide(name, score, index) {
+  const team = nflTeam(index, name);
+  return {
+    name,
+    abbr: team?.abbr || '',
+    record: team?.record || '',
+    color: team?.color || '',
+    score: num(score),
+    winner: false,
+  };
+}
+
+// The week's NFL games, in kickoff order. Each schedule.json game is one card;
+// a matching ESPN scoreboard game (parseScoreboard output) supplies live state,
+// scores, ESPN's fresher record and the spread/total. Without ESPN the card
+// still shows the matchup, kickoff and any synced final score.
+export function nflWeekGames(schedule, espnGames, index, week) {
+  const wk = num(week ?? schedule?.week);
+  const espn = new Map();
+  for (const game of arr(espnGames)) {
+    if (!game?.away?.name || !game?.home?.name) continue;
+    espn.set(`${game.away.name}@${game.home.name}`.toLowerCase(), game);
+  }
+
+  const games = [];
+  for (const raw of arr(schedule?.games)) {
+    if (!raw || num(raw.week) !== wk) continue;
+    const awayName = str(raw.away_team);
+    const homeName = str(raw.home_team);
+    if (!awayName || !homeName) continue;
+
+    const away = nflSide(awayName, raw.away_score, index);
+    const home = nflSide(homeName, raw.home_score, index);
+    // nflverse ids end in AWAY-HOME ("2026-11-05-JAX-BAL"); used when the
+    // team index is missing.
+    const idTeams = /-([A-Z]{2,3})-([A-Z]{2,3})$/.exec(str(raw.game_id));
+    if (idTeams) {
+      if (!away.abbr) away.abbr = nflAbbr(idTeams[1]);
+      if (!home.abbr) home.abbr = nflAbbr(idTeams[2]);
+    }
+    const final = str(raw.status) === 'final' || (away.score != null && home.score != null && Boolean(raw.winner));
+    const game = {
+      id: str(raw.game_id),
+      week: wk,
+      startISO: str(raw.kickoff_utc),
+      venue: str(raw.venue),
+      tv: str(raw.tv),
+      state: final ? 'post' : 'pre',
+      statusText: final ? 'Final' : '',
+      odds: null,
+      away,
+      home,
+    };
+    if (final) {
+      away.winner = str(raw.winner) === awayName;
+      home.winner = str(raw.winner) === homeName;
+    }
+
+    const live = espn.get(`${awayName}@${homeName}`.toLowerCase());
+    if (live) {
+      game.state = live.state;
+      game.statusText = live.statusText || game.statusText;
+      game.odds = live.odds || null;
+      if (!game.tv && live.broadcast) game.tv = live.broadcast;
+      for (const which of ['away', 'home']) {
+        const side = game[which];
+        const from = live[which];
+        if (from.record) side.record = from.record;
+        if (live.state !== 'pre' && from.score != null) side.score = from.score;
+        if (live.state === 'post') side.winner = from.winner;
+        if (!side.abbr && from.abbr) side.abbr = nflAbbr(from.abbr);
+      }
+    }
+    games.push(game);
+  }
+
+  const timeOf = (iso) => {
+    const t = Date.parse(iso);
+    return Number.isFinite(t) ? t : Infinity;
+  };
+  return games.sort((a, b) => timeOf(a.startISO) - timeOf(b.startISO) || a.id.localeCompare(b.id));
+}
+
+// Leader of each NFL division plus the runner-up and its games back. The
+// standings artifact already orders each division (win percentage, then point
+// differential), so the first row is the leader. AFC first, then NFC.
+export function nflDivisionLeaders(standings) {
+  const out = [];
+  for (const division of arr(standings?.divisions)) {
+    const teams = arr(division?.teams).filter((team) => team && team.abbr);
+    if (!teams.length) continue;
+    const row = (team) => ({
+      abbr: nflAbbr(team.abbr),
+      name: str(team.team),
+      record: wlt(num(team.wins), num(team.losses), num(team.ties)),
+      differential: num(team.differential),
+    });
+    const lead = teams[0];
+    const second = teams[1];
+    let gb = null;
+    if (second) {
+      const value = ((num(lead.wins) ?? 0) - (num(second.wins) ?? 0) + (num(second.losses) ?? 0) - (num(lead.losses) ?? 0)) / 2;
+      gb = Number.isFinite(value) ? value : null;
+    }
+    out.push({
+      conference: str(division.conference || lead.conference),
+      division: str(division.division || lead.division),
+      leader: row(lead),
+      next: second ? { ...row(second), gb } : null,
+    });
+  }
+  const confOrder = (c) => (c === 'AFC' ? 0 : c === 'NFC' ? 1 : 2);
+  return out.sort((a, b) => confOrder(a.conference) - confOrder(b.conference) || a.division.localeCompare(b.division));
+}
+
+// "BAL -3.5" and "O/U 47.5" from parseOdds output; empty when there is none.
+export function oddsBits(odds) {
+  if (!odds) return [];
+  const bits = [];
+  if (odds.details) bits.push(odds.details);
+  if (odds.total != null) bits.push('O/U ' + odds.total);
+  return bits;
+}
+
+// Counts for a slate header: how many games, how many final, how many live.
+export function slateCounts(games) {
+  const list = arr(games);
+  return {
+    total: list.length,
+    final: list.filter((g) => g?.state === 'post').length,
+    live: list.filter((g) => g?.state === 'in').length,
+  };
+}
+
+// Kickoff or tip-off as "Thu 8:15 PM ET". An unparseable time gives ''.
+export function etKickoff(iso) {
+  const d = new Date(iso);
+  if (!iso || Number.isNaN(d.getTime())) return '';
+  return d.toLocaleString('en-US', {
+    timeZone: 'America/New_York', weekday: 'short', hour: 'numeric', minute: '2-digit',
+  }).replace(',', '') + ' ET';
+}
+
+function shiftYmd(yyyymmdd, days) {
+  const m = /^(\d{4})(\d{2})(\d{2})$/.exec(str(yyyymmdd));
+  if (!m) return null;
+  const d = new Date(Date.UTC(Number(m[1]), Number(m[2]) - 1, Number(m[3]) + days, 12));
+  return `${d.getUTCFullYear()}${String(d.getUTCMonth() + 1).padStart(2, '0')}${String(d.getUTCDate()).padStart(2, '0')}`;
+}
+
+// The NBA day the home page shows. It is the Eastern date of (now - 3h), so
+// the slate flips at midnight Pacific, not midnight Eastern. Past that point
+// it stays on yesterday while any of yesterday's games is still live
+// (`yesterdayLive`), so a late West Coast game never drops off the page.
+export function slateDay(now, yesterdayLive = false) {
+  const d = now instanceof Date ? now : new Date(now);
+  if (Number.isNaN(d.getTime())) return null;
+  const today = etDate(d);
+  const shifted = etDate(new Date(d.getTime() - 3 * 3600000));
+  if (shifted !== today) return shifted;
+  return yesterdayLive ? shiftYmd(today, -1) : today;
+}
+
+function etParts(date) {
+  const parts = {};
+  for (const part of new Intl.DateTimeFormat('en-US', {
+    timeZone: 'America/New_York', year: 'numeric', month: 'numeric', day: 'numeric',
+    hour: 'numeric', hourCycle: 'h23', weekday: 'short',
+  }).formatToParts(date)) parts[part.type] = part.value;
+  return parts;
+}
+
+const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+// 6am Eastern on the first Tuesday after `iso`, as epoch ms. DST-safe: try
+// 10:00 UTC (6am EDT) and step to 11:00 UTC when that lands at 5am EST.
+export function nflWeekCutoff(iso) {
+  const start = new Date(iso);
+  if (!iso || Number.isNaN(start.getTime())) return null;
+  const p = etParts(start);
+  let days = (2 - WEEKDAYS.indexOf(p.weekday) + 7) % 7;
+  if (days === 0) days = 7;
+  let t = Date.UTC(Number(p.year), Number(p.month) - 1, Number(p.day) + days, 10);
+  if (Number(etParts(new Date(t)).hour) !== 6) t += 3600000;
+  return t;
+}
+
+// The NFL week the home page shows: the earliest week whose last game was not
+// yet followed by a Tuesday 6am ET, so Monday night stays up until Tuesday
+// morning. Falls back to schedule.week when kickoffs are missing, and to the
+// last week once the season is over.
+export function nflSlateWeek(schedule, now) {
+  const fallback = num(schedule?.week);
+  const nowMs = (now instanceof Date ? now : new Date(now)).getTime();
+  if (!Number.isFinite(nowMs)) return fallback;
+  const last = new Map();
+  for (const game of arr(schedule?.games)) {
+    const week = num(game?.week);
+    const t = Date.parse(str(game?.kickoff_utc));
+    if (week == null || !Number.isFinite(t)) continue;
+    if (!last.has(week) || t > last.get(week)) last.set(week, t);
+  }
+  if (!last.size) return fallback;
+  const weeks = [...last.keys()].sort((a, b) => a - b);
+  for (const week of weeks) {
+    const cutoff = nflWeekCutoff(new Date(last.get(week)).toISOString());
+    if (cutoff != null && nowMs < cutoff) return week;
+  }
+  return weeks[weeks.length - 1];
+}

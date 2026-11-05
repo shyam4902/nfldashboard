@@ -4,7 +4,7 @@ import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 import { fileURLToPath } from 'node:url';
 
-// '/' is the sport picker, NFL lives at nfl/index.html, NBA at nba/index.html.
+// '/' is the two-sport home page, NFL lives at nfl/index.html, NBA at nba/index.html.
 const pages = ['index.html', 'nfl/index.html', 'nba/index.html'];
 
 const tempDir = await mkdtemp(join(tmpdir(), 'nfldashboard-html-check-'));

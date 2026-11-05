@@ -31,6 +31,16 @@ import {
   readableOn,
   teamFill,
   textOn,
+  nflTeamIndex,
+  nflTeam,
+  nflWeekGames,
+  nflDivisionLeaders,
+  oddsBits,
+  slateCounts,
+  etKickoff,
+  slateDay,
+  nflWeekCutoff,
+  nflSlateWeek,
 } from './nba.js';
 
 function fixture(name) {
@@ -701,4 +711,167 @@ test('standings rows carry home, road and conference; roster rows carry headshot
   assert.match(row.road, /^\d+-\d+$/);
   const roster = parseRoster(fixture('team-20-roster.json'));
   assert.ok(roster.some((p) => /^https:\/\//.test(p.headshot)));
+});
+
+// ── Home page helpers ───────────────────────────────────────────────────────
+const HOME_STANDINGS = {
+  divisions: [
+    { conference: 'NFC', division: 'NFC East', teams: [
+      { team: 'New York Giants', abbr: 'NYG', wins: 4, losses: 2, ties: 1, differential: 20 },
+      { team: 'Washington Commanders', abbr: 'WAS', wins: 2, losses: 4, ties: 1, differential: -30 },
+    ] },
+    { conference: 'AFC', division: 'AFC South', teams: [
+      { team: 'Jacksonville Jaguars', abbr: 'JAX', wins: 5, losses: 2, ties: 0, differential: 41 },
+      { team: 'Houston Texans', abbr: 'HOU', wins: 2, losses: 5, ties: 0, differential: -12 },
+    ] },
+    { conference: 'AFC', division: 'AFC North', teams: [
+      { team: 'Baltimore Ravens', abbr: 'BAL', wins: 4, losses: 4, ties: 0, differential: 5 },
+    ] },
+  ],
+  teams: [
+    { team: 'New York Giants', abbr: 'NYG', wins: 4, losses: 2, ties: 1, conference: 'NFC', division: 'NFC East' },
+    { team: 'Washington Commanders', abbr: 'WAS', wins: 2, losses: 4, ties: 1, conference: 'NFC', division: 'NFC East' },
+    { team: 'Jacksonville Jaguars', abbr: 'JAX', wins: 5, losses: 2, ties: 0, conference: 'AFC', division: 'AFC South' },
+    { team: 'Baltimore Ravens', abbr: 'BAL', wins: 4, losses: 4, ties: 0, conference: 'AFC', division: 'AFC North' },
+    { team: 'Los Angeles Rams', abbr: 'LAR', wins: 4, losses: 4, ties: 0, conference: 'NFC', division: 'NFC West' },
+  ],
+};
+const HOME_COLORS = [
+  { name: 'Jacksonville Jaguars', abbr: 'JAX', primary_color: '#006778' },
+  { name: 'Washington Commanders', abbr: 'WAS', primary_color: '#5A1414' },
+  { name: 'Broken Colour', abbr: 'BRK', primary_color: 'teal' },
+];
+
+test('nflTeamIndex joins standings records with colours by name and abbreviation', () => {
+  const index = nflTeamIndex(HOME_STANDINGS, HOME_COLORS);
+  assert.deepEqual(
+    { ...nflTeam(index, 'Jacksonville Jaguars') },
+    { name: 'Jacksonville Jaguars', abbr: 'JAX', record: '5-2', color: '#006778', conference: 'AFC', division: 'AFC South' },
+  );
+  assert.equal(nflTeam(index, 'WSH').record, '2-4-1');
+  assert.equal(nflTeam(index, 'WSH').color, '#5a1414');
+  assert.equal(nflTeam(index, 'LA').abbr, 'LAR');
+  assert.equal(nflTeam(index, 'BRK').color, '');
+  assert.equal(nflTeam(index, 'Nobody FC'), null);
+  assert.equal(nflTeam(null, 'JAX'), null);
+  assert.deepEqual(nflTeamIndex(null, null), { byName: {}, byAbbr: {} });
+});
+
+test('nflWeekGames keeps the schedule slate and overlays ESPN live state and odds', () => {
+  const schedule = {
+    week: 9,
+    games: [
+      { game_id: '2026-11-08-LA-WAS', week: 9, away_team: 'Los Angeles Rams', home_team: 'Washington Commanders', kickoff_utc: '2026-11-08T18:00:00Z', tv: '', venue: 'Northwest Stadium' },
+      { game_id: '2026-11-05-JAX-BAL', week: 9, away_team: 'Jacksonville Jaguars', home_team: 'Baltimore Ravens', kickoff_utc: '2026-11-06T01:15:00Z', tv: 'Prime Video' },
+      { game_id: '2026-11-01-X-Y', week: 8, away_team: 'Jacksonville Jaguars', home_team: 'Houston Texans', kickoff_utc: '2026-11-01T18:00:00Z', status: 'final', winner: 'Houston Texans', away_score: 10, home_score: 20 },
+      { game_id: 'junk', week: 9 },
+    ],
+  };
+  const espn = [{
+    state: 'in',
+    statusText: 'Q3 4:12',
+    odds: { details: 'BAL -3.5', total: 47.5, moneyline: null },
+    broadcast: 'Prime Video',
+    away: { name: 'Jacksonville Jaguars', abbr: 'JAX', score: 17, record: '6-2', winner: false },
+    home: { name: 'Baltimore Ravens', abbr: 'BAL', score: 10, record: '4-4', winner: false },
+  }];
+  const index = nflTeamIndex(HOME_STANDINGS, HOME_COLORS);
+  const games = nflWeekGames(schedule, espn, index);
+
+  assert.deepEqual(games.map((g) => g.id), ['2026-11-05-JAX-BAL', '2026-11-08-LA-WAS']);
+  const [live, pre] = games;
+  assert.equal(live.state, 'in');
+  assert.equal(live.statusText, 'Q3 4:12');
+  assert.deepEqual(live.odds, { details: 'BAL -3.5', total: 47.5, moneyline: null });
+  assert.equal(live.away.score, 17);
+  assert.equal(live.away.record, '6-2', 'ESPN record wins over the standings artifact');
+  assert.equal(live.away.color, '#006778');
+
+  assert.equal(pre.state, 'pre');
+  assert.equal(pre.odds, null);
+  assert.equal(pre.away.abbr, 'LAR');
+  assert.equal(pre.away.record, '4-4');
+  assert.equal(pre.home.score, null);
+});
+
+test('nflWeekGames reads synced finals without ESPN and honours an explicit week', () => {
+  const schedule = {
+    week: 9,
+    games: [{ game_id: 'g8', week: 8, away_team: 'Jacksonville Jaguars', home_team: 'Houston Texans', kickoff_utc: '2026-11-01T18:00:00Z', status: 'final', winner: 'Houston Texans', away_score: 10, home_score: 20 }],
+  };
+  const [game] = nflWeekGames(schedule, null, null, 8);
+  assert.equal(game.state, 'post');
+  assert.equal(game.statusText, 'Final');
+  assert.equal(game.home.winner, true);
+  assert.equal(game.away.winner, false);
+  assert.equal(game.away.abbr, '', 'no index and no id abbreviations means none is invented');
+  const [fromId] = nflWeekGames({ week: 9, games: [{ game_id: '2026-11-08-LA-WAS', week: 9, away_team: 'Los Angeles Rams', home_team: 'Washington Commanders' }] }, [], null);
+  assert.deepEqual([fromId.away.abbr, fromId.home.abbr], ['LAR', 'WAS']);
+  assert.deepEqual(nflWeekGames(null, null, null), []);
+});
+
+test('nflDivisionLeaders takes each division leader, runner-up games back, AFC first', () => {
+  const rows = nflDivisionLeaders(HOME_STANDINGS);
+  assert.deepEqual(rows.map((r) => r.division), ['AFC North', 'AFC South', 'NFC East']);
+  assert.deepEqual(rows[1].leader, { abbr: 'JAX', name: 'Jacksonville Jaguars', record: '5-2', differential: 41 });
+  assert.equal(rows[1].next.gb, 3);
+  assert.equal(rows[2].leader.record, '4-2-1');
+  assert.equal(rows[2].next.gb, 2);
+  assert.equal(rows[0].next, null);
+  assert.deepEqual(nflDivisionLeaders({}), []);
+});
+
+test('oddsBits and slateCounts summarise a card and a slate', () => {
+  assert.deepEqual(oddsBits({ details: 'BAL -3.5', total: 47.5 }), ['BAL -3.5', 'O/U 47.5']);
+  assert.deepEqual(oddsBits({ details: '', total: null }), []);
+  assert.deepEqual(oddsBits(null), []);
+  assert.deepEqual(slateCounts([{ state: 'post' }, { state: 'in' }, { state: 'pre' }, null]), { total: 4, final: 1, live: 1 });
+  assert.deepEqual(slateCounts(undefined), { total: 0, final: 0, live: 0 });
+});
+
+test('etKickoff formats in Eastern time and rejects junk', () => {
+  assert.equal(etKickoff('2026-11-06T01:15:00Z'), 'Thu 8:15 PM ET');
+  assert.equal(etKickoff('2026-11-08T18:00:00Z'), 'Sun 1:00 PM ET');
+  assert.equal(etKickoff('not a date'), '');
+  assert.equal(etKickoff(''), '');
+});
+
+test('slateDay flips at midnight Pacific and holds yesterday while it is live', () => {
+  // 11:30pm ET Nov 4: still Nov 4.
+  assert.equal(slateDay(new Date('2026-11-05T04:30:00Z')), '20261104');
+  // 1:30am ET Nov 5 (10:30pm PT Nov 4): still Nov 4, live or not.
+  assert.equal(slateDay(new Date('2026-11-05T06:30:00Z')), '20261104');
+  assert.equal(slateDay(new Date('2026-11-05T06:30:00Z'), true), '20261104');
+  // 3:30am ET Nov 5: Nov 5, unless a Nov 4 game is still going.
+  assert.equal(slateDay(new Date('2026-11-05T08:30:00Z')), '20261105');
+  assert.equal(slateDay(new Date('2026-11-05T08:30:00Z'), true), '20261104');
+  // Month boundary on the held day.
+  assert.equal(slateDay(new Date('2026-12-01T09:00:00Z'), true), '20261130');
+  assert.equal(slateDay('junk'), null);
+});
+
+test('nflWeekCutoff is 6am ET the Tuesday after, across DST', () => {
+  // Monday night game, EST: Tue Nov 10 06:00 EST = 11:00 UTC.
+  assert.equal(new Date(nflWeekCutoff('2026-11-10T01:15:00Z')).toISOString(), '2026-11-10T11:00:00.000Z');
+  // Sunday game in EDT: Tue Sep 15 06:00 EDT = 10:00 UTC.
+  assert.equal(new Date(nflWeekCutoff('2026-09-13T17:00:00Z')).toISOString(), '2026-09-15T10:00:00.000Z');
+  assert.equal(nflWeekCutoff(''), null);
+});
+
+test('nflSlateWeek keeps a week up until Tuesday 6am ET after its last game', () => {
+  const schedule = {
+    week: 9,
+    games: [
+      { week: 8, kickoff_utc: '2026-11-01T18:00:00Z' },
+      { week: 8, kickoff_utc: '2026-11-03T01:15:00Z' }, // Mon Nov 2, 8:15pm ET
+      { week: 9, kickoff_utc: '2026-11-06T01:15:00Z' },
+      { week: 9, kickoff_utc: '2026-11-10T01:15:00Z' },
+    ],
+  };
+  assert.equal(nflSlateWeek(schedule, new Date('2026-11-03T04:00:00Z')), 8, 'Monday night, game just ended');
+  assert.equal(nflSlateWeek(schedule, new Date('2026-11-03T10:59:00Z')), 8, '5:59am ET Tuesday');
+  assert.equal(nflSlateWeek(schedule, new Date('2026-11-03T11:00:00Z')), 9, '6am ET Tuesday');
+  assert.equal(nflSlateWeek(schedule, new Date('2027-02-01T00:00:00Z')), 9, 'after the season: last week');
+  assert.equal(nflSlateWeek({ week: 4, games: [] }, new Date()), 4);
+  assert.equal(nflSlateWeek(null, new Date()), null);
 });

@@ -4,72 +4,53 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Matchup Board · NFL and NBA scores, matchups and stats</title>
-<meta name="description" content="Matchup Board: pick a league. NFL and NBA scores, matchups and stats in one clean layout.">
+<meta name="description" content="Matchup Board: tonight's NBA games and this week's NFL slate with live scores, spreads, standings and stat leaders, plus a full page for each league.">
 <script>
   // Old NFL deep links (#matchup/..., #schedule, ...) belong to /nfl/ now.
   if (location.hash && location.hash.length > 1) {
     location.replace('/nfl/' + location.hash);
   }
 </script>
-<script src="https://cdn.tailwindcss.com"></script>
-<script>
-/* ── NFL26 pregame-studio palette ──────────────────────────────────────────
-   Same palette as the league pages, so the picker and the sub-pages match.
-   Guarded: the CDN above can fail (offline, blocked), and an unguarded
-   assignment to `tailwind` would throw and abort the rest of the page. */
-window.tailwind = window.tailwind || {};
-tailwind.config = {
-  theme: {
-    extend: {
-      colors: {
-        slate: {
-          50: '#f4f2ef', 100: '#e9e7e3', 200: '#dbd9d4', 300: '#c9ccd1',
-          400: '#8f9299', 500: '#868a91', 600: '#3d434c', 700: '#2b3037',
-          800: '#16191f', 900: '#101215', 950: '#08090b',
-        },
-        amber: {
-          50: '#faf3e4', 100: '#f5e7c4', 200: '#eed9a2', 300: '#eecb86',
-          400: '#d9a441', 500: '#d9a441', 600: '#c08f34', 700: '#a3782a',
-          800: '#7f5d20', 900: '#5c4317', 950: '#33260d',
-        },
-        yellow: {
-          300: '#eecb86', 400: '#d9a441', 500: '#d9a441', 600: '#c08f34',
-        },
-        emerald: {
-          50: '#eef7f2', 100: '#d7ecdf', 200: '#b9dec9', 300: '#a3d9b8',
-          400: '#7cc49b', 500: '#63b487', 600: '#4e9a70', 700: '#3e7c5a',
-          800: '#316148', 900: '#254735', 950: '#12281c',
-        },
-        green: {
-          300: '#a3d9b8', 400: '#7cc49b', 500: '#63b487', 600: '#4e9a70',
-        },
-      },
-    },
-  },
-};
-</script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800;900&family=Geist+Mono:wght@400;500;600;700&family=Archivo:wght@600;700;800;900&display=swap');
 
+/* Token block copied from nba/index.html so / and the league pages match. */
 :root {
   --font-sans: 'Geist', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-mono: 'Geist Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-  --bg-body: #0b0d10;
-  --bg-card: #14161a;
-  --bg-card-hover: #1a1d22;
-  --bg-elevated: #16191f;
-  --bg-inset: #111317;
-  --bg-header: rgba(11, 13, 16, 0.92);
-  --border-card: #2b3037;
-  --border-muted: #262a31;
-  --border-strong: #474d57;
-  --text-main: #e9e7e3;
-  --text-muted: #8f9299;
-  --text-faint: #868a91;
-  --accent-brand: #d9a441;
-  --accent-brand-hover: #e6b556;
-  --accent-brand-subtle: rgba(217, 164, 65, 0.12);
+
+  /* Default Theme: NFL26 Pregame Studio — warm charcoal + a single gold accent.
+     These surfaces match the home hero (.h2a-*) and schedule studio (.sch-*). */
+  --bg-body: #0d0d0f;
+  --bg-card: #161618;
+  --bg-card-hover: #1e1e21;
+  --bg-elevated: #1b1b1e;
+  --bg-inset: #111113;
+  --bg-header: rgba(22, 22, 24, 0.94);
+  --border-card: #2e2e32;
+  --border-muted: #28282c;
+  --border-strong: #4a4a50;
+  --text-main: #f2f2f3;
+  --text-muted: #a3a3aa;
+  --text-faint: #8c8c93;
+  --accent-steel: #8fa6bf;
+  --accent-positive: #7cc49b;
+  --accent-positive-bg: rgba(124, 196, 155, 0.12);
+  --accent-negative: #e8877c;
+  --accent-negative-bg: rgba(232, 135, 124, 0.12);
+  --accent-warning: #d9a441;
+  --accent-warning-bg: rgba(217, 164, 65, 0.12);
   --card-shadow: 0 1px 3px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  /* Chrome accent: white on neutral greys. Gold is only for the brand word and
+     the active tab / segmented-control state (--accent-brand, --tab-active-*).
+     Tried all-white 2026-11-02; Shyam preferred the gold. */
+  --accent-ui: #f2f2f3;
+  --accent-ui-hover: #ffffff;
+  --accent-ui-ink: #111113;
+  --accent-ui-subtle: rgba(255, 255, 255, 0.08);
+  --accent-brand: #d9a441;
+  --tab-active-bg: #d9a441;
+  --tab-active-text: #17140f;
 }
 
 * { box-sizing: border-box; }
@@ -80,75 +61,175 @@ body {
   overflow-x: hidden;
   background: var(--bg-body);
   color: var(--text-main);
-  font-family: var(--font-sans);
+  font: 400 16px/1.45 var(--font-sans);
   -webkit-font-smoothing: antialiased;
 }
 a { color: inherit; text-decoration: none; }
+img { display: block; }
+a:focus-visible, button:focus-visible { outline: 2px solid var(--accent-brand); outline-offset: 2px; border-radius: 6px; }
+.wrap { width: 100%; max-width: 1180px; margin: 0 auto; padding: 0 16px; }
 
-.picker-header {
+/* ── Header ─────────────────────────────────────────────────────────────── */
+.top {
+  position: sticky; top: 0; z-index: 10;
   border-bottom: 1px solid var(--border-card);
   background: var(--bg-header);
   backdrop-filter: blur(14px);
 }
-.picker-header .bar {
-  max-width: 900px;
-  margin: 0 auto;
-  padding: 14px 16px;
-  display: flex;
-  align-items: center;
-  min-height: 56px;
-}
-.wordmark { font: 800 22px/1 'Archivo', sans-serif; letter-spacing: -0.02em; }
+.top .wrap { display: flex; align-items: center; gap: 12px; min-height: 60px; }
+.wordmark { font: 800 24px/1 'Archivo', sans-serif; letter-spacing: -0.02em; white-space: nowrap; }
 .wordmark .gold { color: var(--accent-brand); }
 .wordmark .white { color: var(--text-main); margin-left: 5px; }
-
-main.picker {
-  max-width: 900px;
-  margin: 0 auto;
-  padding: 24px 16px 56px;
-}
-.picker h1 {
-  margin: 0 0 16px;
-  font: 800 15px/1.3 var(--font-sans);
-  letter-spacing: 0.02em;
+.top nav { margin-left: auto; display: flex; gap: 6px; }
+.top nav a {
+  padding: 9px 15px; border-radius: 999px;
+  border: 1px solid var(--border-card);
+  font: 700 15px/1 var(--font-sans);
   color: var(--text-muted);
-  text-transform: uppercase;
+  transition: color .15s, border-color .15s, background-color .15s;
 }
-.cards {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 14px;
+.top nav a:hover { color: var(--tab-active-text); background: var(--tab-active-bg); border-color: var(--tab-active-bg); }
+
+/* ── Sections ───────────────────────────────────────────────────────────── */
+main { padding: 22px 0 64px; }
+.sec { margin-top: 36px; }
+.sec:first-child { margin-top: 0; }
+.sec > h2 {
+  margin: 0 0 14px;
+  font: 800 28px/1.1 'Archivo', sans-serif;
+  letter-spacing: -0.02em;
 }
-@media (min-width: 640px) {
-  .cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-}
-.pick-card {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  padding: 22px 20px;
-  min-height: 148px;
+.duo { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; }
+@media (min-width: 920px) { .duo { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+.blk {
+  min-width: 0;
   background: var(--bg-card);
   border: 1px solid var(--border-card);
   border-radius: 14px;
   box-shadow: var(--card-shadow);
-  transition: border-color 0.15s, background-color 0.15s, transform 0.15s;
+  padding: 16px;
 }
-.pick-card:hover { border-color: var(--border-strong); background: var(--bg-card-hover); transform: translateY(-2px); }
-.pick-card:focus-visible { outline: 2px solid var(--accent-brand); outline-offset: 2px; }
-.pick-league {
-  font: 800 30px/1 'Archivo', sans-serif;
-  letter-spacing: -0.02em;
-  color: var(--text-main);
-}
-.pick-desc { font: 500 13px/1.4 var(--font-sans); color: var(--text-muted); }
-.pick-live {
-  margin-top: auto;
-  font: 500 11px/1.4 var(--font-mono);
+.sec > .blk + .blk { margin-top: 16px; }
+.bh { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; margin-bottom: 14px; }
+.bh h3 { margin: 0; font: 800 21px/1.15 'Archivo', sans-serif; letter-spacing: -0.01em; }
+.bh .meta { font: 500 15px/1.3 var(--font-sans); color: var(--text-muted); }
+.bh .more {
+  margin-left: auto;
+  font: 700 15px/1.2 var(--font-sans);
   color: var(--accent-brand);
+  white-space: nowrap;
 }
-.pick-live[hidden] { display: none; }
-.foot { margin-top: 22px; font: 500 10px/1.5 var(--font-mono); color: var(--text-faint); }
+.bh .more:hover { text-decoration: underline; text-underline-offset: 3px; }
+
+.state { padding: 18px 4px; font: 500 16px/1.4 var(--font-sans); color: var(--text-muted); display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.pulse { width: 9px; height: 9px; border-radius: 50%; background: var(--text-faint); animation: pulse 1.1s ease-in-out infinite; }
+@keyframes pulse { 50% { opacity: .25; } }
+.retry {
+  padding: 8px 14px; border-radius: 8px;
+  border: 1px solid var(--accent-brand); background: transparent;
+  color: var(--accent-brand); font: 700 15px/1 var(--font-sans); cursor: pointer;
+}
+.retry:hover { background: var(--tab-active-bg); color: var(--tab-active-text); }
+
+/* ── League doors ───────────────────────────────────────────────────────── */
+.door {
+  display: flex; flex-direction: column; gap: 10px;
+  min-width: 0;
+  padding: 20px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-card);
+  border-radius: 14px;
+  box-shadow: var(--card-shadow);
+  transition: border-color .15s, background-color .15s;
+}
+.door:hover { border-color: var(--border-strong); background: var(--bg-card-hover); }
+.door-h { display: flex; align-items: baseline; gap: 12px; }
+.door-h b { font: 900 40px/1 'Archivo', sans-serif; letter-spacing: -0.03em; }
+.door-h .go { margin-left: auto; font: 700 16px/1 var(--font-sans); color: var(--accent-brand); white-space: nowrap; }
+.door-live { font: 600 18px/1.35 var(--font-sans); color: var(--text-main); min-height: 1.35em; }
+.door-live .dim { color: var(--text-muted); font-weight: 500; }
+.door-links { display: flex; flex-wrap: wrap; gap: 6px 14px; font: 500 15px/1.3 var(--font-sans); color: var(--text-muted); }
+
+/* ── Game cards ─────────────────────────────────────────────────────────── */
+.games { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 270px), 1fr)); gap: 12px; }
+.gc {
+  display: flex; flex-direction: column; gap: 8px;
+  min-width: 0;
+  padding: 12px 14px 13px;
+  background: var(--bg-inset);
+  border: 1px solid var(--border-muted);
+  border-radius: 12px;
+  transition: border-color .15s, background-color .15s;
+}
+.gc:hover { border-color: var(--border-strong); background: var(--bg-elevated); }
+.gc.in { border-color: rgba(232, 135, 124, 0.45); }
+.gc-top { display: flex; align-items: center; gap: 8px; font: 600 14px/1.2 var(--font-sans); color: var(--text-muted); min-width: 0; }
+.gc-top .st { color: var(--text-main); white-space: nowrap; }
+.gc-top .tv { margin-left: auto; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text-faint); font-weight: 500; }
+.live { display: inline-flex; align-items: center; gap: 6px; color: var(--accent-negative); font: 800 12px/1 var(--font-sans); letter-spacing: .06em; }
+.live::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: var(--accent-negative); animation: pulse 1.1s ease-in-out infinite; }
+.gt { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.chip {
+  flex: none;
+  display: inline-grid; place-items: center;
+  width: 48px; height: 34px; border-radius: 8px;
+  font: 800 15px/1 var(--font-sans); letter-spacing: .02em;
+}
+.gt .nm { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.gt .nm b { font: 700 17px/1.2 var(--font-sans); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.gt .nm small { font: 500 14px/1.25 var(--font-mono); color: var(--text-muted); }
+.gt .sc { font: 800 27px/1 var(--font-mono); font-variant-numeric: tabular-nums; }
+.gt.lost .nm b, .gt.lost .sc { color: var(--text-faint); }
+.gc-odds { display: flex; flex-wrap: wrap; gap: 4px 14px; padding-top: 8px; border-top: 1px solid var(--border-muted); font: 600 14px/1.2 var(--font-mono); color: var(--text-muted); }
+.gc-odds b { color: var(--text-main); font-weight: 700; }
+
+/* ── Standings ──────────────────────────────────────────────────────────── */
+.conf + .conf { margin-top: 16px; }
+.conf h4, .ld h4 { margin: 0 0 6px; font: 800 13px/1.2 var(--font-sans); letter-spacing: .08em; text-transform: uppercase; color: var(--text-muted); }
+.sr {
+  display: grid; grid-template-columns: 24px 48px minmax(0, 1fr) auto auto; align-items: center; gap: 10px;
+  padding: 8px 4px; border-radius: 8px;
+}
+.sr:hover { background: var(--bg-card-hover); }
+.sr + .sr { border-top: 1px solid var(--border-muted); }
+.sr .sd { font: 700 15px/1 var(--font-mono); color: var(--text-muted); text-align: right; }
+.sr .tn { min-width: 0; font: 700 17px/1.2 var(--font-sans); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sr .tn small { display: block; font: 500 13px/1.3 var(--font-sans); color: var(--text-muted); overflow: hidden; text-overflow: ellipsis; }
+.sr .rec { font: 700 18px/1 var(--font-mono); font-variant-numeric: tabular-nums; }
+.sr .ex { font: 500 14px/1 var(--font-mono); color: var(--text-muted); min-width: 44px; text-align: right; }
+.sr.div { grid-template-columns: 48px minmax(0, 1fr) auto auto; }
+.sr.nba { grid-template-columns: 24px 48px minmax(0, 1fr) auto; }
+@media (max-width: 479px) {
+  .sr.div { grid-template-columns: 48px minmax(0, 1fr) auto; }
+  .sr.div .ex { display: none; }
+}
+.divs { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px 18px; }
+.divs .conf + .conf { margin-top: 0; }
+@media (min-width: 620px) and (max-width: 919px) { .divs { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+/* ── Leaders ────────────────────────────────────────────────────────────── */
+.lds { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 210px), 1fr)); gap: 16px 20px; }
+.ld { min-width: 0; }
+.lr { display: grid; grid-template-columns: 48px minmax(0, 1fr) auto; align-items: center; gap: 10px; padding: 7px 0; border-radius: 8px; }
+.lr + .lr { border-top: 1px solid var(--border-muted); }
+a.lr:hover .who b { text-decoration: underline; text-underline-offset: 3px; }
+.hs {
+  position: relative; width: 48px; height: 48px; border-radius: 50%; overflow: hidden;
+  background: var(--bg-elevated); box-shadow: inset 0 0 0 3px var(--c, #3d434c);
+  display: grid; place-items: center;
+  font: 800 14px/1 var(--font-sans); color: var(--text-muted);
+}
+.hs img { position: absolute; inset: 3px; width: calc(100% - 6px); height: calc(100% - 6px); object-fit: cover; border-radius: 50%; }
+.lr .who { min-width: 0; }
+.lr .who b { display: block; font: 700 16px/1.2 var(--font-sans); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.lr .who small { display: flex; align-items: center; gap: 6px; margin-top: 2px; font: 600 13px/1.2 var(--font-sans); color: var(--text-muted); }
+.lr .who small i { width: 10px; height: 10px; border-radius: 3px; background: var(--c, #3d434c); }
+.lr .v { font: 800 22px/1 var(--font-mono); font-variant-numeric: tabular-nums; text-align: right; }
+.lr .v small { display: block; margin-top: 3px; font: 500 12px/1 var(--font-mono); color: var(--text-faint); }
+.none { padding: 10px 0; font: 500 15px/1.4 var(--font-sans); color: var(--text-muted); }
+
+.foot { margin-top: 36px; font: 500 13px/1.6 var(--font-sans); color: var(--text-faint); }
 </style>
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="canonical" href="https://matchupboard.com/">
@@ -163,86 +244,442 @@ main.picker {
 </head>
 <body>
 
-<header class="picker-header">
-  <div class="bar">
-    <span class="wordmark"><span class="gold">Matchup</span><span class="white">Board</span></span>
+<header class="top">
+  <div class="wrap">
+    <a class="wordmark" href="/" aria-label="Matchup Board home"><span class="gold">Matchup</span><span class="white">Board</span></a>
+    <nav aria-label="Leagues">
+      <a href="/nfl/">NFL</a>
+      <a href="/nba/">NBA</a>
+    </nav>
   </div>
 </header>
 
-<main class="picker">
-  <h1>Pick a league</h1>
-  <div class="cards">
-    <a class="pick-card" href="/nfl/">
-      <span class="pick-league">NFL</span>
-      <span class="pick-desc">Scores, schedules, matchups and team stats.</span>
-      <span class="pick-live" id="nflLive" hidden></span>
-    </a>
-    <a class="pick-card" href="/nba/">
-      <span class="pick-league">NBA</span>
-      <span class="pick-desc">Scores, standings, matchups and player stats.</span>
-      <span class="pick-live" id="nbaLive" hidden></span>
-    </a>
-  </div>
-  <p class="foot">Scores and stats only. No props, odds or predictions.</p>
+<main class="wrap">
+  <section class="sec" aria-label="Leagues">
+    <div class="duo">
+      <a class="door" href="/nfl/">
+        <span class="door-h"><b>NFL</b><span class="go">Open NFL →</span></span>
+        <span class="door-live" id="nflLive"><span class="dim">Loading this week…</span></span>
+        <span class="door-links">Schedule, matchups, standings, leaders and rosters</span>
+      </a>
+      <a class="door" href="/nba/">
+        <span class="door-h"><b>NBA</b><span class="go">Open NBA →</span></span>
+        <span class="door-live" id="nbaLive"><span class="dim">Loading tonight…</span></span>
+        <span class="door-links">Scores, box scores, standings, leaders and player compare</span>
+      </a>
+    </div>
+  </section>
+
+  <section class="sec" aria-labelledby="hGames">
+    <h2 id="hGames">Tonight and this week</h2>
+    <div class="blk" id="nbaGames">
+      <div class="bh"><h3 data-title>NBA tonight</h3><span class="meta" data-meta></span><a class="more" data-more href="/nba/#scores">All scores →</a></div>
+      <div data-body></div>
+    </div>
+    <div class="blk" id="nflGames">
+      <div class="bh"><h3 data-title>NFL this week</h3><span class="meta" data-meta></span><a class="more" href="/nfl/#schedule">Full schedule →</a></div>
+      <div data-body></div>
+    </div>
+  </section>
+
+  <section class="sec" aria-labelledby="hStand">
+    <h2 id="hStand">Standings</h2>
+    <div class="duo">
+      <div class="blk" id="nbaStand">
+        <div class="bh"><h3>NBA top five</h3><a class="more" href="/nba/#standings">Full standings →</a></div>
+        <div data-body></div>
+      </div>
+      <div class="blk" id="nflStand">
+        <div class="bh"><h3>NFL division leaders</h3><span class="meta" data-meta></span><a class="more" href="/nfl/#league">Full standings →</a></div>
+        <div data-body></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" aria-labelledby="hLead">
+    <h2 id="hLead">Leaders</h2>
+    <div class="blk" id="nbaLead">
+      <div class="bh"><h3>NBA per game</h3><a class="more" href="/nba/#leaders">All leaders →</a></div>
+      <div data-body></div>
+    </div>
+    <div class="blk" id="nflLead">
+      <div class="bh"><h3>NFL season totals</h3><a class="more" href="/nfl/#league">All leaders →</a></div>
+      <div data-body></div>
+    </div>
+  </section>
+
+  <p class="foot">Scores, records, spreads and leaders come from ESPN. The NFL slate and standings come from the same files the NFL page reads. Live games refresh every 30 seconds.</p>
 </main>
 
-<script>
-(function () {
-  'use strict';
+<script type="module">
+import {
+  etDate,
+  etKickoff,
+  nflDivisionLeaders,
+  nflSlateWeek,
+  nflTeam,
+  nflTeamIndex,
+  nflWeekGames,
+  oddsBits,
+  parseLeaders,
+  parseScoreboard,
+  parseStandings,
+  parseTeams,
+  slateCounts,
+  slateDay,
+  smallImg,
+  teamFill,
+} from '/nba/nba.js';
 
-  function etDate(date) {
-    var parts = new Intl.DateTimeFormat('en-CA', {
-      timeZone: 'America/New_York', year: 'numeric', month: '2-digit', day: '2-digit',
-    }).formatToParts(date).reduce(function (acc, part) {
-      acc[part.type] = part.value;
-      return acc;
-    }, {});
-    return parts.year + parts.month + parts.day;
+const NBA_API = 'https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard';
+const NBA_STANDINGS_API = 'https://site.api.espn.com/apis/v2/sports/basketball/nba/standings';
+const NBA_LEADERS_API = 'https://site.web.api.espn.com/apis/common/v3/sports/basketball/nba/statistics/byathlete';
+const NFL_API = 'https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard';
+const NFL_LEADERS_API = 'https://site.web.api.espn.com/apis/common/v3/sports/football/nfl/statistics/byathlete';
+// Same table and publishable key the NFL page reads team colours with (nfl/js/core.js).
+const NFL_TEAMS_API = 'https://nedyoydylpbjvihaoexy.supabase.co/rest/v1/nfl_teams?select=name,abbr,primary_color';
+const SUPABASE_KEY = 'sb_publishable_cQOHCiQh2kZQQUn5sEEfIA_t9NScNZz';
+const PAGE_BG = '#0d0d0f';
+const POLL_MS = 30000;
+
+const NBA_BOARDS = [
+  { label: 'Points', category: 'offensive', stat: 'avgPoints' },
+  { label: 'Rebounds', category: 'general', stat: 'avgRebounds' },
+  { label: 'Assists', category: 'offensive', stat: 'avgAssists' },
+  { label: 'Steals', category: 'defensive', stat: 'avgSteals' },
+  { label: 'Blocks', category: 'defensive', stat: 'avgBlocks' },
+];
+const NFL_BOARDS = [
+  { label: 'Passing yards', category: 'passing', stat: 'passingYards' },
+  { label: 'Rushing yards', category: 'rushing', stat: 'rushingYards' },
+  { label: 'Receiving yards', category: 'receiving', stat: 'receivingYards' },
+];
+
+const ESCAPES = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
+const esc = (value) => String(value == null ? '' : value).replace(/[&<>"']/g, (ch) => ESCAPES[ch]);
+
+async function fetchJSON(url, init) {
+  const res = await fetch(url, { cache: 'no-store', ...init });
+  if (!res.ok) throw new Error('HTTP ' + res.status);
+  return res.json();
+}
+
+// The NFL page reads /data/shared/ first and the root copy second; same here.
+async function fetchFirst(urls) {
+  let last = null;
+  for (const url of urls) {
+    try { return await fetchJSON(url); } catch (err) { last = err; }
   }
+  throw last || new Error('not found');
+}
 
-  function setLine(id, text) {
-    var el = document.getElementById(id);
-    if (!el || !text) return;
-    el.textContent = text;
-    el.hidden = false;
+// A failed fetch is not cached, so a Retry asks again.
+function once(load) {
+  let promise = null;
+  return () => (promise ||= load().catch((err) => { promise = null; throw err; }));
+}
+
+/* ── Shared data, started once and in parallel ─────────────────────────── */
+const nbaColors = fetchJSON('/nba/teams.json').then(parseTeams).catch(() => ({ byAbbr: {}, byId: {} }));
+const getSchedule = once(() => fetchFirst(['/data/shared/schedule.json', '/schedule.json']));
+const getStandings = once(() => fetchFirst(['/data/shared/nfl_standings_2026.json', '/nfl_standings_2026.json']));
+const nflColors = fetchJSON(NFL_TEAMS_API, { headers: { apikey: SUPABASE_KEY } }).catch(() => []);
+const nflIndex = () => Promise.all([getStandings().catch(() => null), nflColors])
+  .then(([standings, colors]) => nflTeamIndex(standings, colors));
+
+/* ── Section plumbing: each block loads, fails and retries on its own ──── */
+function block(id) {
+  const root = document.getElementById(id);
+  return { root, body: root.querySelector('[data-body]'), meta: root.querySelector('[data-meta]') };
+}
+
+function loadingHTML() {
+  return '<div class="state"><span class="pulse"></span>Loading…</div>';
+}
+
+function run(id, load, failText) {
+  const b = block(id);
+  const go = async () => {
+    b.root.setAttribute('aria-busy', 'true');
+    b.body.innerHTML = loadingHTML();
+    try {
+      await load(b);
+    } catch (err) {
+      b.body.innerHTML = '<div class="state"><span>' + esc(failText) + '</span><button class="retry" type="button">Retry</button></div>';
+      b.body.querySelector('.retry').addEventListener('click', go);
+    } finally {
+      b.root.removeAttribute('aria-busy');
+    }
+  };
+  go();
+}
+
+// Re-fetch a slate every 30 seconds while a game is live and the tab is visible.
+function poller(refresh) {
+  let timer = 0;
+  return (live) => {
+    clearTimeout(timer);
+    if (!live) return;
+    timer = setTimeout(async function tick() {
+      if (document.hidden) { timer = setTimeout(tick, POLL_MS); return; }
+      try { await refresh(); } catch (err) { timer = setTimeout(tick, POLL_MS); }
+    }, POLL_MS);
+  };
+}
+
+/* ── Shared markup ─────────────────────────────────────────────────────── */
+function chipHTML(look, abbr, label) {
+  if (!abbr) return '<span class="chip" style="background:#2b3037" aria-hidden="true"></span>';
+  return '<span class="chip" style="background:' + look.fill + ';color:' + look.ink + '" title="' + esc(label || abbr) + '">' + esc(abbr) + '</span>';
+}
+
+function nbaLook(colors, abbr, id) {
+  const entry = (colors && (colors.byAbbr[abbr] || colors.byId[String(id)])) || {};
+  return teamFill(entry, PAGE_BG);
+}
+
+function nflLook(team) {
+  return teamFill({ color: team?.color || '' }, PAGE_BG);
+}
+
+function sideHTML(side, look, state) {
+  const lost = state === 'post' && !side.winner && side.score != null;
+  const score = state !== 'pre' && side.score != null ? '<b class="sc">' + esc(side.score) + '</b>' : '';
+  return '<div class="gt' + (lost ? ' lost' : '') + '">' + chipHTML(look, side.abbr, side.name) +
+    '<span class="nm"><b>' + esc(side.name) + '</b>' + (side.record ? '<small>' + esc(side.record) + '</small>' : '') + '</span>' +
+    score + '</div>';
+}
+
+function statusHTML(game) {
+  if (game.state === 'in') return '<span class="live">LIVE</span><span class="st">' + esc(game.statusText) + '</span>';
+  if (game.state === 'post') return '<span class="st">' + esc(game.statusText || 'Final') + '</span>';
+  return '<span class="st">' + esc(etKickoff(game.startISO) || game.statusText) + '</span>';
+}
+
+function cardHTML(game, href, looks, tv) {
+  const bits = oddsBits(game.odds);
+  const odds = bits.length
+    ? '<div class="gc-odds">' + bits.map((bit, i) => '<span>' + (i === 0 && game.odds.details ? 'Spread ' : '') + '<b>' + esc(bit) + '</b></span>').join('') + '</div>'
+    : '';
+  return '<a class="gc' + (game.state === 'in' ? ' in' : '') + '" href="' + esc(href) + '">' +
+    '<div class="gc-top">' + statusHTML(game) + (tv ? '<span class="tv">' + esc(tv) + '</span>' : '') + '</div>' +
+    sideHTML(game.away, looks.away, game.state) +
+    sideHTML(game.home, looks.home, game.state) +
+    odds + '</a>';
+}
+
+function setDoor(id, html) {
+  const el = document.getElementById(id);
+  if (el) el.innerHTML = html;
+}
+
+function slateLine(counts) {
+  const parts = [];
+  if (counts.live) parts.push(counts.live + ' live');
+  if (counts.final) parts.push(counts.final + ' final');
+  const left = counts.total - counts.live - counts.final;
+  if (left) parts.push(left + ' to play');
+  return parts.join(' · ');
+}
+
+function dayLabel(yyyymmdd) {
+  const d = new Date(yyyymmdd.slice(0, 4) + '-' + yyyymmdd.slice(4, 6) + '-' + yyyymmdd.slice(6, 8) + 'T12:00:00Z');
+  return d.toLocaleDateString('en-US', { timeZone: 'UTC', weekday: 'short', month: 'short', day: 'numeric' });
+}
+
+/* ── 1. NBA tonight ────────────────────────────────────────────────────── */
+// The slate flips at midnight Pacific (slateDay). Between 3am and 6am ET it
+// also checks yesterday's board and stays there while a game is still live.
+async function nbaBoard(now) {
+  const today = etDate(now);
+  let day = slateDay(now, false);
+  if (day === today && etDate(new Date(now.getTime() - 6 * 3600000)) !== today) {
+    const yesterday = slateDay(now, true);
+    try {
+      const games = parseScoreboard(await fetchJSON(NBA_API + '?dates=' + yesterday));
+      if (games.some((game) => game.state === 'in')) return { day: yesterday, today, games };
+    } catch (err) { /* fall through to today's board */ }
   }
+  return { day, today, games: parseScoreboard(await fetchJSON(NBA_API + '?dates=' + day)) };
+}
 
-  function loadNFL() {
-    return fetch('/schedule.json', { cache: 'no-store' })
-      .then(function (res) {
-        if (!res.ok) throw new Error('http ' + res.status);
-        return res.json();
-      })
-      .then(function (schedule) {
-        if (!schedule || schedule.week == null) return;
-        var games = Array.isArray(schedule.games)
-          ? schedule.games.filter(function (game) { return game && game.week === schedule.week; })
-          : [];
-        var finals = games.filter(function (game) { return game && game.status === 'final'; }).length;
-        setLine('nflLive', games.length
-          ? 'Week ' + schedule.week + ' · ' + finals + ' of ' + games.length + ' games final'
-          : 'Week ' + schedule.week);
-      })
-      .catch(function () { /* card still shows and links */ });
+const nbaPoll = poller(() => renderNbaGames(block('nbaGames')));
+
+async function renderNbaGames(b) {
+  const now = new Date();
+  const [{ day, today, games }, colors] = await Promise.all([nbaBoard(now), nbaColors]);
+  // "Tonight" is the default slate (it runs to midnight Pacific); a slate held
+  // over for a live game past that point is named by its date.
+  const tonight = day === slateDay(now, false);
+  const when = tonight ? 'tonight' : dayLabel(day);
+  b.root.querySelector('[data-title]').textContent = tonight ? 'NBA tonight' : 'NBA · ' + when;
+  // /nba/#scores opens on the Eastern date, so any other day is linked by date.
+  b.root.querySelector('[data-more]').setAttribute('href', day === today ? '/nba/#scores' : '/nba/#scores/' + day);
+  const counts = slateCounts(games);
+  b.meta.textContent = games.length ? slateLine(counts) : '';
+  setDoor('nbaLive', games.length
+    ? esc((games.length === 1 ? '1 game ' : games.length + ' games ') + when) + ' <span class="dim">· ' + esc(slateLine(counts)) + '</span>'
+    : '<span class="dim">No games ' + esc(when) + '</span>');
+  if (!games.length) {
+    b.body.innerHTML = '<div class="none">No NBA games ' + esc(when) + '.</div>';
+    nbaPoll(false);
+    return;
   }
+  b.body.innerHTML = '<div class="games">' + games.map((game) => cardHTML(game, '/nba/#game/' + game.id, {
+    away: nbaLook(colors, game.away.abbr, game.away.id),
+    home: nbaLook(colors, game.home.abbr, game.home.id),
+  }, game.broadcast)).join('') + '</div>';
+  nbaPoll(counts.live > 0);
+}
 
-  function loadNBA() {
-    var day = etDate(new Date());
-    return fetch('https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard?dates=' + day, { cache: 'no-store' })
-      .then(function (res) {
-        if (!res.ok) throw new Error('http ' + res.status);
-        return res.json();
-      })
-      .then(function (board) {
-        var games = Array.isArray(board && board.events) ? board.events.length : 0;
-        setLine('nbaLive', games === 1 ? '1 game today' : games + ' games today');
-      })
-      .catch(function () { /* card still shows and links */ });
+/* ── 1. NFL this week ──────────────────────────────────────────────────── */
+const nflPoll = poller(() => renderNflGames(block('nflGames'), true));
+
+async function renderNflGames(b, refresh) {
+  const [schedule, index] = await Promise.all([getSchedule(), nflIndex()]);
+  // A week stays up until 6am ET the Tuesday after its last game.
+  const week = nflSlateWeek(schedule, new Date());
+  if (week == null) {
+    b.body.innerHTML = '<div class="none">The NFL schedule has no current week.</div>';
+    setDoor('nflLive', '<span class="dim">No current week in the schedule</span>');
+    return;
   }
+  b.root.querySelector('[data-title]').textContent = 'NFL week ' + week;
+  const paint = (espnGames, espnDown) => {
+    const games = nflWeekGames(schedule, espnGames, index, week);
+    const counts = slateCounts(games);
+    const line = games.length ? slateLine(counts) : '';
+    b.meta.textContent = espnDown ? (line ? line + ' · ' : '') + 'live scores unavailable' : line;
+    setDoor('nflLive', 'Week ' + esc(week) + (games.length ? ' <span class="dim">· ' + esc(counts.total) + ' games · ' + esc(line) + '</span>' : ''));
+    b.body.innerHTML = games.length
+      ? '<div class="games">' + games.map((game) => cardHTML(game, '/nfl/#matchup/' + game.id, {
+        away: nflLook(game.away),
+        home: nflLook(game.home),
+      }, game.tv)).join('') + '</div>'
+      : '<div class="none">No games listed for week ' + esc(week) + '.</div>';
+    return counts;
+  };
+  // The slate paints from schedule.json at once; ESPN adds live state, fresher
+  // records and the spread/total when it answers.
+  if (!refresh) paint([], false);
+  let espnGames = [];
+  let espnDown = false;
+  try {
+    const season = schedule.season || new Date().getFullYear();
+    espnGames = parseScoreboard(await fetchJSON(NFL_API + '?seasontype=2&week=' + encodeURIComponent(week) + '&dates=' + encodeURIComponent(season)));
+  } catch (err) {
+    espnDown = true;
+  }
+  const counts = paint(espnGames, espnDown);
+  nflPoll(counts.live > 0);
+}
 
-  loadNFL();
-  loadNBA();
-})();
+/* ── 2. NBA standings ──────────────────────────────────────────────────── */
+async function renderNbaStandings(b) {
+  const [json, colors] = await Promise.all([fetchJSON(NBA_STANDINGS_API), nbaColors]);
+  const conferences = parseStandings(json);
+  const html = ['East', 'West'].map((key) => {
+    const rows = conferences[key].slice(0, 5);
+    if (!rows.length) return '';
+    return '<div class="conf"><h4>' + key + '</h4>' + rows.map((row, i) => {
+      const look = nbaLook(colors, row.abbr, row.teamId);
+      const gb = row.gb && row.gb !== '0' && row.gb !== '-' ? row.gb + ' GB' : '';
+      const sub = [gb, row.streak ? 'Streak ' + row.streak : '', row.last10 ? 'L10 ' + row.last10 : ''].filter(Boolean).join(' · ');
+      return '<a class="sr nba" href="/nba/#team/' + esc(row.teamId) + '">' +
+        '<span class="sd">' + esc(row.seed ?? i + 1) + '</span>' + chipHTML(look, row.abbr, row.name) +
+        '<span class="tn">' + esc(row.name) + (sub ? '<small>' + esc(sub) + '</small>' : '') + '</span>' +
+        '<span class="rec">' + esc(row.wins ?? '') + '-' + esc(row.losses ?? '') + '</span></a>';
+    }).join('') + '</div>';
+  }).join('');
+  b.body.innerHTML = html || '<div class="none">ESPN returned no NBA standings yet.</div>';
+}
+
+/* ── 2. NFL division leaders ───────────────────────────────────────────── */
+async function renderNflStandings(b) {
+  const [standings, index] = await Promise.all([getStandings(), nflIndex()]);
+  const rows = nflDivisionLeaders(standings);
+  b.meta.textContent = standings && standings.through_week != null ? 'Through week ' + standings.through_week : '';
+  if (!rows.length) {
+    b.body.innerHTML = '<div class="none">No NFL standings yet.</div>';
+    return;
+  }
+  const conf = (name) => {
+    const list = rows.filter((row) => row.conference === name);
+    if (!list.length) return '';
+    return '<div class="conf"><h4>' + esc(name) + '</h4>' + list.map((row) => {
+      const diff = row.leader.differential;
+      const next = row.next
+        ? row.next.abbr + ' ' + row.next.record + (row.next.gb ? ', ' + row.next.gb + ' back' : ', level')
+        : '';
+      return '<a class="sr div" href="/nfl/#league" title="Point differential ' + esc(diff ?? '') + '">' +
+        chipHTML(nflLook(nflTeam(index, row.leader.abbr)), row.leader.abbr, row.leader.name) +
+        '<span class="tn">' + esc(row.leader.name) + '<small>' + esc(row.division) + (next ? ' · ' + esc(next) : '') + '</small></span>' +
+        '<span class="rec">' + esc(row.leader.record) + '</span>' +
+        '<span class="ex">' + (diff == null ? '' : esc((diff > 0 ? '+' : '') + diff)) + '</span></a>';
+    }).join('') + '</div>';
+  };
+  b.body.innerHTML = '<div class="divs">' + conf('AFC') + conf('NFC') + '</div>';
+}
+
+/* ── 3. Leaders ────────────────────────────────────────────────────────── */
+function initials(name) {
+  return String(name || '').split(/\s+/).filter(Boolean).slice(0, 2).map((part) => part.charAt(0).toUpperCase()).join('');
+}
+
+function leaderRowsHTML(rows, colorOf, format, href) {
+  if (!rows.length) return '<div class="none">No numbers for this stat yet.</div>';
+  return rows.slice(0, 3).map((row) => {
+    const c = colorOf(row.teamAbbr);
+    const shot = row.headshot ? '<img src="' + esc(smallImg(row.headshot, 96, 96)) + '" alt="" width="42" height="42" loading="lazy" decoding="async" onerror="this.remove()">' : '';
+    const inner = '<span class="hs" aria-hidden="true">' + esc(initials(row.name)) + shot + '</span>' +
+      '<span class="who"><b>' + esc(row.name) + '</b>' + (row.teamAbbr ? '<small><i></i>' + esc(row.teamAbbr) + '</small>' : '') + '</span>' +
+      '<span class="v">' + esc(format(row.value)) + (row.gp == null ? '' : '<small>' + esc(row.gp) + ' GP</small>') + '</span>';
+    const link = href(row);
+    return link
+      ? '<a class="lr" href="' + esc(link) + '" style="--c:' + c + '">' + inner + '</a>'
+      : '<div class="lr" style="--c:' + c + '">' + inner + '</div>';
+  }).join('');
+}
+
+function leaderBoards(b, boards, fetchBoard, colorOf, format, href) {
+  b.body.innerHTML = '<div class="lds">' + boards.map((board) =>
+    '<div class="ld"><h4>' + esc(board.label) + '</h4><div data-board>' + loadingHTML() + '</div></div>').join('') + '</div>';
+  const hosts = b.body.querySelectorAll('[data-board]');
+  return Promise.all(boards.map(async (board, i) => {
+    try {
+      const [json, color] = await Promise.all([fetchBoard(board), colorOf()]);
+      hosts[i].innerHTML = leaderRowsHTML(parseLeaders(json, board.category, board.stat), color, format, href);
+    } catch (err) {
+      hosts[i].innerHTML = '<div class="none">Couldn\'t load this stat.</div>';
+    }
+  }));
+}
+
+function renderNbaLeaders(b) {
+  return leaderBoards(b, NBA_BOARDS,
+    (board) => fetchJSON(NBA_LEADERS_API + '?limit=10&category=' + encodeURIComponent(board.category) +
+      '&sort=' + encodeURIComponent(board.category + '.' + board.stat + ':desc')),
+    async () => { const colors = await nbaColors; return (abbr) => nbaLook(colors, abbr, '').fill; },
+    (value) => value.toFixed(1),
+    (row) => (row.id ? '/nba/#player/' + row.id : ''));
+}
+
+function renderNflLeaders(b) {
+  const index = nflIndex();
+  return leaderBoards(b, NFL_BOARDS,
+    (board) => fetchJSON(NFL_LEADERS_API + '?limit=10&sort=' + encodeURIComponent(board.category + '.' + board.stat + ':desc')),
+    async () => { const idx = await index; return (abbr) => nflLook(nflTeam(idx, abbr)).fill; },
+    (value) => (Number.isInteger(value) ? value.toLocaleString('en-US') : value.toFixed(1)),
+    () => '');
+}
+
+/* ── Go: every section fetches at once and paints when its data lands ─── */
+run('nbaGames', renderNbaGames, 'Couldn\'t reach ESPN for NBA games.');
+run('nflGames', (b) => renderNflGames(b, false), 'Couldn\'t load the NFL schedule.');
+run('nbaStand', renderNbaStandings, 'Couldn\'t reach ESPN for NBA standings.');
+run('nflStand', renderNflStandings, 'Couldn\'t load NFL standings.');
+run('nbaLead', renderNbaLeaders, 'Couldn\'t load NBA leaders.');
+run('nflLead', renderNflLeaders, 'Couldn\'t load NFL leaders.');
 </script>
 </body>
 </html>
