@@ -23,6 +23,8 @@ import {
   parseShots,
   periodStart,
   shotZones,
+  slateDay,
+  boxLeader,
   parsePredictor,
   parseOdds,
   parseScoreboard,
@@ -789,4 +791,43 @@ test('parseLeaderLines ranks like parseLeaders and carries each full line', () =
   assert.equal(parseLeaderLines(json, 'offensive', 'avgPoints', 0).length, json.athletes.length);
   assert.deepEqual(parseLeaderLines(json, 'offensive', 'nope'), []);
   assert.deepEqual(parseLeaderLines({}, 'offensive', 'avgPoints'), []);
+});
+
+test('slateDay: the slate turns over at midnight Pacific, not midnight Eastern', () => {
+  // 00:30 ET on Nov 5 is 21:30 PT on Nov 4: still the Nov 4 slate.
+  assert.equal(slateDay(new Date('2026-11-05T05:30:00Z')), '20261104');
+  // 02:59 ET is still Nov 4; 03:00 ET (midnight Pacific) is Nov 5.
+  assert.equal(slateDay(new Date('2026-11-05T07:59:00Z')), '20261104');
+  assert.equal(slateDay(new Date('2026-11-05T08:00:00Z')), '20261105');
+  // Afternoon ET is plainly that day.
+  assert.equal(slateDay('2026-11-05T19:00:00Z'), '20261105');
+});
+
+test('slateDay: holds on yesterday while one of its games is still live', () => {
+  // 03:30 ET Nov 5, a Nov 4 game in double overtime.
+  assert.equal(slateDay(new Date('2026-11-05T08:30:00Z'), true), '20261104');
+  assert.equal(slateDay(new Date('2026-11-05T08:30:00Z'), false), '20261105');
+  // Across a month boundary and the DST change (Nov 1 2026, 2am EDT -> EST).
+  assert.equal(slateDay(new Date('2026-12-01T09:00:00Z'), true), '20261130');
+  assert.equal(slateDay(new Date('2026-11-01T06:30:00Z')), '20261031');
+  assert.equal(slateDay('not a date'), null);
+});
+
+test('boxLeader: the top steals and blocks on each side, from the box score', () => {
+  const box = parseBoxScore(fixture('summary-401909093.json'));
+  for (const team of box.teams) {
+    const players = [...team.starters, ...team.bench];
+    for (const key of ['STL', 'BLK']) {
+      const top = Math.max(...players.map((p) => Number(p.stats[key]) || 0));
+      const lead = boxLeader(team, key);
+      if (top > 0) {
+        assert.equal(lead.value, top);
+        assert.equal(players.find((p) => p.id === lead.id).stats[key], top);
+      } else {
+        assert.equal(lead, null);
+      }
+    }
+  }
+  assert.equal(boxLeader({ starters: [{ id: '1', name: 'A', stats: { STL: 0 } }], bench: [] }, 'STL'), null);
+  assert.deepEqual(boxLeader({ starters: [{ id: '1', name: 'A', pos: 'G', stats: { STL: 2 } }], bench: [{ id: '2', name: 'B', stats: { STL: 2 } }] }, 'STL'), { id: '1', name: 'A', pos: 'G', value: 2 });
 });

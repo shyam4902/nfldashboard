@@ -113,6 +113,33 @@ export function etDate(dateOrIso) {
   return `${parts.year}${parts.month}${parts.day}`;
 }
 
+// The player with the most of one box-score count (STL, BLK, ...) on a team,
+// from parseBoxScore's starters and bench. Ties go to the earlier row (starters
+// first, in ESPN's order). null when nobody has one: a "leader" on 0 says nothing.
+export function boxLeader(team, key) {
+  let best = null;
+  for (const p of [...arr(team?.starters), ...arr(team?.bench)]) {
+    const value = num(p?.stats?.[key]);
+    if (value == null || value <= 0) continue;
+    if (!best || value > best.value) best = { id: str(p.id), name: str(p.name), pos: str(p.pos), value };
+  }
+  return best;
+}
+
+// The scores page's default slate, as "YYYYMMDD". The day turns over at
+// midnight Pacific (3am ET), not midnight Eastern, so a West Coast game is still
+// "tonight" after it passes midnight in New York. yesterdayLive is true when a
+// game on the day before that slate is still in progress (state 'in'); the page
+// then stays on that day until it ends.
+export function slateDay(now, yesterdayLive = false) {
+  const at = now instanceof Date ? now.getTime() : new Date(now).getTime();
+  if (Number.isNaN(at)) return null;
+  const base = etDate(new Date(at - 3 * 3600 * 1000));
+  if (!yesterdayLive) return base;
+  const d = new Date(Date.UTC(+base.slice(0, 4), +base.slice(4, 6) - 1, +base.slice(6, 8) - 1, 12));
+  return etDate(d);
+}
+
 function pointsLeader(competitor) {
   const points = arr(competitor?.leaders).find((category) => str(category?.name) === 'points');
   const top = arr(points?.leaders)[0];
