@@ -11,7 +11,6 @@ function getTeamLosses(team) {
 // ═══════════════════════════════════════════════════════════
 // RENDER FUNCTIONS
 // ═══════════════════════════════════════════════════════════
-function getPickRound(p){if(p<=32)return 1;if(p<=64)return 2;if(p<=100)return 3;if(p<=135)return 4;if(p<=172)return 5;if(p<=215)return 6;return 7;}
 function formatCap(v){const a=Math.abs(v);if(a>=1e6)return(v<0?'-':'')+'$'+(a/1e6).toFixed(1)+'M';return(v<0?'-':'')+'$'+(a/1e3).toFixed(0)+'K';}
 function getStatusColor(s){
   const m={"All-In":"text-green-400","Competing":"text-blue-400","Building":"text-cyan-400","Reloading":"text-teal-400",
@@ -19,13 +18,6 @@ function getStatusColor(s){
     "Cap Crunch":"text-red-400","Cap Hell":"text-red-500","Dynasty Tax":"text-red-600"};
   return m[s]||"text-slate-400";
 }
-function ratingClass(r){if(r>=90)return'rating-elite';if(r>=80)return'rating-star';if(r>=70)return'rating-solid';return'rating-dev';}
-
-function scrollToDiv(divName){
-  const el=document.getElementById('div-'+divName.replace(/ /g,'-').toLowerCase());
-  if(el)el.scrollIntoView({behavior:'smooth',block:'start'});
-}
-
 let compareModeActive=false;
 let compareSelections=[];
 
@@ -46,19 +38,6 @@ function toggleCompareMode(){
       if(lbl){lbl.textContent='Compare Teams';lbl.classList.remove('text-amber-400');}
       if(sub){sub.textContent='Compare any two teams or explore matchups';sub.classList.remove('text-amber-300/80');}
     }
-  }
-}
-
-function selectForCompare(team){
-  const abbr=DATA.teamAbbr[team];
-  const tile=document.getElementById('tile-'+abbr);
-  if(compareSelections.includes(team)){
-    compareSelections=compareSelections.filter(t=>t!==team);
-    if(tile)tile.classList.remove('cmp-sel');
-  } else if(compareSelections.length<2){
-    compareSelections.push(team);
-    if(tile)tile.classList.add('cmp-sel');
-    if(compareSelections.length===2)openCompare(compareSelections[0],compareSelections[1]);
   }
 }
 

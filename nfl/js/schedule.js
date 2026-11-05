@@ -252,12 +252,6 @@ function gameMarketLines(game){
   return (a && h) ? (line[key] || null) : null;
 }
 
-function schLine(label, value, fmt){
-  const esc2 = (s) => String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-  const shown = (value === null || value === undefined) ? '<span class="muted">—</span>' : '<b>' + esc2(fmt ? fmt(value) : value) + '</b>';
-  return '<div class="sch-line"><span>' + label + '</span>' + shown + '</div>';
-}
-
 // Home win probability implied by the two moneylines, with the bookmaker's
 // margin removed. The old projection model (and its fake 50/50 fallback) went
 // with the week-9 cleanup; this is a real number or null.
@@ -272,16 +266,6 @@ function marketWinProb(market){
 }
 // "62%" or "—" when the lines are missing; never a made-up 50.
 function pctText(p){ return p === null || p === undefined ? '—' : Math.round(p * 100) + '%'; }
-
-function scheduleTeamG(teamName, homeStr, awayStr, role, ml){
-  const abbr = DATA.teamAbbr[teamName] || ABBR_TO_TEAM[teamName] || teamName;
-  const color = DATA.teamColors[teamName] || '#3b82f6';
-  const esc = (s) => String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-  const mlShown = (ml === null || ml === undefined) ? null : (ml > 0 ? '+' + ml : String(ml));
-  return '<div class="sch-team"><div class="sch-abbr" style="background:' + color + '33;color:' + color + ';border:1px solid ' + color + '">' + esc(abbr) + '</div>' +
-    '<div class="sch-info"><span class="sch-name">' + esc(teamName) + '</span><small>' + role + '</small></div>' +
-    '<div class="sch-prob">' + (mlShown === null ? '<span class="muted">—</span>' : esc(mlShown)) + '</div></div>';
-}
 
 // Featured-matchup carousel on the Schedule page. Same rotation as the home
 // hero: 7s auto-advance, pause on hover, dots + arrows.
@@ -756,13 +740,6 @@ const propsMarketLabels = {
   total_tds: 'Total TDs', fantasy_points: 'Fantasy Pts',
 };
 
-function statChip(label, value, colorClass) {
-  return `<div class="glass rounded-lg px-3 py-2 min-w-[110px]">
-    <div class="text-[10px] uppercase tracking-wider text-slate-500 font-bold">${label}</div>
-    <div class="text-lg font-black ${colorClass}">${value}</div>
-  </div>`;
-}
-
 // Human-readable age for a quote timestamp: null-safe, never invents a time.
 // "just now" < 5m, then minutes/hours/days; beyond 7d it stops counting.
 function quoteAge(recordedAt, nowMs) {
@@ -788,9 +765,6 @@ function venueAgeBadge(venue, recordedAt, nowMs) {
   return `<span class="text-[9px] font-bold px-1 py-0.5 rounded border ${color}" title="${venue} quotes last read ${age}">${age}</span>`;
 }
 
-// 2024 historical-form badge for a play (Feature 1/3): season-total verdict,
-// per-game over rate and streak. Renders nothing when data is absent —
-// rookies and untracked markets get no invented numbers.
 // Plain-English value label from raw edge/EV numbers.
 // edge_pct = how far the model thinks the line is off (in percentage points).
 // ev_pct    = expected value as a percentage (positive = the bet pays back more than it costs).
@@ -805,28 +779,9 @@ function valueLabelHtml(edgePct, evPct) {
   return '<span class="text-slate-500">No edge</span>';
 }
 
-function insightsBadge(ins) {
-  if (!ins) return '<span class="text-slate-600">—</span>';
-  const verdict = ins.season_line_would_have === 'over'
-    ? '<span class="text-emerald-400 font-bold">beat</span>'
-    : ins.season_line_would_have === 'under'
-      ? '<span class="text-rose-400 font-bold">missed</span>'
-      : 'pushed';
-  const streak = ins.streak && ins.streak.count > 1
-    ? ` · <span class="text-amber-300">${ins.streak.type}×${ins.streak.count}</span>`
-    : '';
-  return `<span class="text-[10px] text-slate-300" title="2024: totalled ${ins.season_total_2024} across ${ins.games_2024} games; weekly over rate at per-game equivalent (${ins.per_game_equivalent}) was ${ins.weekly_over_rate}%">${ins.season_total_2024} in ${ins.games_2024} — would have ${verdict} · ${ins.weekly_over_rate}% over${streak}</span>`;
-}
-
-
 // Feature 4: full odds comparison per prop — every venue quoting the same
 // player+market+side, side by side, with the best line highlighted and each
 // quote's own age. Data source: the plays array (one row per venue quote).
-function evidenceByMarketGet(marketId) {
-  if (!PROPS_BOARD || !PROPS_BOARD.market_evidence) return null;
-  return PROPS_BOARD.market_evidence.find(e => e.market_id === marketId) || null;
-}
-
 function toggleOddsCompare(key, rowIndex) {
   const row = document.getElementById(`oddsCompareRow-${rowIndex}`);
   const body = document.getElementById(`oddsCompareBody-${rowIndex}`);

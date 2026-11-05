@@ -96,14 +96,6 @@ function filterDashboard(q){
   }
 }
 
-function toggleDropdown(el){
-  el.classList.toggle('open');
-  const content=el.nextElementSibling;
-  content.classList.toggle('open');
-}
-
-function saveNote(abbr,value){localStorage.setItem(`note-${abbr}`,value);}
-
 // ESC to close modal
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeRoster();});
 
