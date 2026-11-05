@@ -6,6 +6,16 @@
 - App: `/` two-sport home page (`index.html`), NFL at `nfl/index.html`, NBA at `nba/`; tracked JSON assets at the root and Supabase roster/transaction data
 - Start here: `docs/sessions/2026-10-23-to-30-matchup-board.md` (decisions, what shipped, how it works, open items)
 
+## NFL team compare + player pages, 2026-11-05 (branch `feature/nfl-compare-player`)
+
+- `#compare` and `#compare/<A>/<B>` (site abbrs, e.g. `BUF/MIA`): two team pickers and a swap button, a team-colour scorebug, an 18-row tale of the tape with league ranks, the season series and each team's last five. With no teams picked it opens on the first kickoff of `schedule.json`'s current week. Every number comes from files the page already loads: `nfl_standings_2026.json` (record, points), `nfl_stats_2026.json` team totals (yards), `team_season_efficiency.json` 2026 rows (EPA, success, yards per play, sack and turnover rates). Rows where neither team has data are dropped. No ESPN call.
+- `#player/<espnId>`: headshot hero tinted with the team's `primary_color` from `nfl_teams`, position-picked season tiles, season totals by stat group (the player's own group first), season and career rows, and a game log with W/L chips and a tab per season type. It reads ESPN common/v3 `athletes/<id>`, `/overview` and `/gamelog` in the browser. If one of them fails, its block is left out and the page says which one didn't load.
+- Player search (ESPN common/v3 search, NFL results only, 250 ms debounce, arrow keys / Enter / Escape) on the player page and above League > Leaders.
+- Links: League > Leaders names go to `#player/<id>`. Roster rows have a Stats button. Rosters carry no ESPN id, so the click searches ESPN by name and accepts a same-name result on the same team, or the only same-name result. Anything less certain shows the search results instead of guessing. Schedule cards, home week cards, the home "today" tiles and the featured matchup have a Compare button.
+- Header: below 1200px it is two lines (brand, search and utility buttons, then NFL | NBA and the section tabs). Before this, at 375px the buttons covered the brand, and from 640px to 1100px the section tabs were squeezed to nothing.
+- Code: `nfl/js/views.js` (classic script, globals for inline handlers), pure helpers in the ES module `nfl/nfl-lib.js` with `node --test nfl/nfl-lib.test.mjs` (16 tests, inline fixtures). Styles are scoped under `.nv` in `nfl/nfl.css`, so the rest of the page keeps its theme.
+- Not verified from the build container: ESPN CORS for the athlete, overview, gamelog and search endpoints, because the container's network policy blocks ESPN. Check them before merging (commands in the PR notes). `props-smoke.mjs` also fails on `main` today, on `button[data-tab="projections"]`, a tab that no longer exists.
+
 ## Matchup Board rebrand + NBA matchups, 2026-10-30
 
 - Both pages are branded **Matchup Board** now, with one `NFL | NBA` switch in the header. The old NBA nav link on the NFL page is gone, so there is one way to switch sports.

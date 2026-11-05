@@ -84,6 +84,7 @@ async function showLeague(sub){
   if (currentLeagueSubTab === 'leaders') {
     const stamp = document.getElementById('leagueFreshness');
     if (stamp) stamp.textContent = 'live from ESPN';
+    if (typeof renderNflSearchInto === 'function') renderNflSearchInto('leagueLeadersSearch', 'nvLeadersSearch');
     return renderLeagueLeaders();
   }
   await loadLeagueArtifacts();
@@ -373,7 +374,9 @@ function nflLeaderRow(row, max, lib){
   const value = Number.isInteger(row.value) ? row.value.toLocaleString('en-US') : row.value.toFixed(1);
   return `<div class="ld-r${top ? ' top' : ''}" style="--c:${c}">` +
     `<span class="rk">${row.rank}</span><span class="hs">${shot}</span>` +
-    `<span class="nm"><span class="pn">${homeEsc(row.name)}</span>` +
+    `<span class="nm">` + (row.id
+      ? `<a class="pn" href="#player/${homeEsc(row.id)}">${homeEsc(row.name)}</a>`
+      : `<span class="pn">${homeEsc(row.name)}</span>`) +
     (row.teamAbbr ? `<span class="tc"><i style="background:${c}"></i>${homeEsc(row.teamAbbr)}</span>` : '') + `</span>` +
     `<span class="v"><b>${value}</b>${row.gp == null ? '' : `<small>${row.gp} GP</small>`}</span>` +
     `<i class="bar" style="width:${width}%"></i></div>`;

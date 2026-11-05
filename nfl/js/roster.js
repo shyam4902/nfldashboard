@@ -230,6 +230,7 @@ function renderRosterBody(team,side){
         <span class="cp-age">${p.age||''}</span>
         ${badge}
         <span class="rating-badge ${tier}" title="Player rating: ${ovrDisplay}">${ovrDisplay}</span>
+        <button type="button" class="cp-stats" data-name="${homeEsc(p.name || '')}" data-team="${homeEsc(team || '')}" onclick="openNflPlayerFromEl(this, event)" title="Season stats and game log from ESPN" aria-label="${homeEsc(p.name || '')}: season stats and game log">Stats</button>
       </div>`;
     });
     h+=`</div></div>`;

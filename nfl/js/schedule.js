@@ -430,7 +430,11 @@ async function renderSchedule(){
           return '<div class="sch-prob-bar"><div style="width:' + aShare + '%;background:' + aColor + '"></div><div style="width:' + (100 - aShare) + '%;background:' + hColor + '"></div></div>';
         })() +
         testLineRow +
-        '<div class="sch-foot"><span>' + esc(isFinal ? ((awayWon ? aAbbr : hAbbr) + ' won ' + Math.max(game.away_score, game.home_score) + '-' + Math.min(game.away_score, game.home_score)) : footLines) + '</span><span class="sch-cta">View matchup →</span></div>' +
+        '<div class="sch-foot"><span>' + esc(isFinal ? ((awayWon ? aAbbr : hAbbr) + ' won ' + Math.max(game.away_score, game.home_score) + '-' + Math.min(game.away_score, game.home_score)) : footLines) + '</span><span class="sch-foot-r">' +
+          '<button type="button" class="sch-cmp" data-away="' + homeEsc(game.away_team) + '" data-home="' + homeEsc(game.home_team) + '" ' +
+          'onclick="openNflCompareTeams(this.dataset.away, this.dataset.home, event)" onkeydown="event.stopPropagation()" ' +
+          'title="Compare ' + homeEsc(game.away_team) + ' and ' + homeEsc(game.home_team) + '">Compare</button>' +
+          '<span class="sch-cta">View matchup →</span></span></div>' +
       '</div>' +
       '</article>';
   };
