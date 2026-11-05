@@ -157,6 +157,10 @@ tailwind.config = {
 }
 
 html { -webkit-text-size-adjust: 100%; }
+/* Owner, 2026-11-05: the page reads best at 90% browser zoom on desktop. zoom is
+   the same thing in CSS (layout gets 11% more room, everything draws 10% smaller).
+   Phones stay at full size. */
+@media (min-width: 1024px) { html { zoom: 0.9; } }
 body {
   margin: 0;
   overflow-x: hidden;
@@ -721,7 +725,7 @@ body.sc-wide .wrap { max-width: 1480px; }
 
 .ins-canvas {
   min-width: 0;
-  padding: 26px 26px 30px;
+  padding: 20px 20px 24px;
   background-color: var(--bg-inset);
   background-image: radial-gradient(#2a2e35 1px, transparent 1px);
   background-size: 16px 16px;
@@ -729,7 +733,7 @@ body.sc-wide .wrap { max-width: 1480px; }
   border: 1px solid var(--border-card);
   border-radius: 10px;
 }
-.ins-slate { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 30px 24px; align-items: start; }
+.ins-slate { display: grid; grid-template-columns: repeat(auto-fill, minmax(232px, 1fr)); gap: 20px 14px; align-items: start; }
 .ins-frame {
   position: relative;
   z-index: 1;
@@ -774,8 +778,8 @@ body.sc-wide .wrap { max-width: 1480px; }
 .ins-band {
   position: relative;
   display: grid;
-  gap: 12px;
-  padding: 16px 18px 14px;
+  gap: 9px;
+  padding: 12px 14px 11px;
   overflow: hidden;
   transition: filter 0.25s ease-out;
 }
@@ -788,35 +792,35 @@ body.sc-wide .wrap { max-width: 1480px; }
   transform: translateX(-100%);
   transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
 }
-.ins-bh { display: grid; grid-template-columns: auto auto minmax(0, 1fr) auto; align-items: center; gap: 12px; }
-.ins-band .ab { font: 700 var(--t5)/1 var(--font-serif); letter-spacing: -0.01em; }
+.ins-bh { display: grid; grid-template-columns: auto auto minmax(0, 1fr) auto; align-items: center; gap: 9px; }
+.ins-band .ab { font: 700 var(--t4)/1 var(--font-serif); letter-spacing: -0.01em; }
 .ins-band .rc { min-width: 0; font: 600 var(--t1)/1 var(--font-sans); opacity: 1; }
-.ins-band .sc { font: 800 var(--t7)/0.9 var(--font-serif); letter-spacing: -0.02em; }
+.ins-band .sc { font: 800 var(--t6)/0.9 var(--font-serif); letter-spacing: -0.02em; }
 .ins-band.lost { filter: saturate(0.35) brightness(0.62); }
 .ins-ld {
   position: relative;
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 4px 14px;
-  padding-top: 10px;
+  gap: 3px 8px;
+  padding-top: 8px;
   border-top: 1px solid rgba(255, 255, 255, 0.2);
   border-top: 1px solid color-mix(in srgb, currentColor 24%, transparent);
 }
 .ins-ld .cap { grid-column: 1 / -1; font: 700 var(--t0)/1 var(--font-sans); letter-spacing: 0.08em; text-transform: uppercase; opacity: 1; }
 .ins-ld .c { min-width: 0; display: grid; grid-template-columns: auto minmax(0, 1fr); column-gap: 5px; align-items: baseline; }
 .ins-ld .lk { font: 700 var(--t0)/1 var(--font-sans); letter-spacing: 0.06em; opacity: 1; }
-.ins-ld .c b { font: 700 var(--t4)/1 var(--font-serif); }
-.ins-ld .nm { grid-column: 1 / -1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font: 600 var(--t1)/1.3 var(--font-sans); opacity: 1; }
+.ins-ld .c b { font: 700 var(--t3)/1 var(--font-serif); }
+.ins-ld .nm { grid-column: 1 / -1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font: 600 var(--t0)/1.3 var(--font-sans); letter-spacing: -0.01em; opacity: 1; }
 .ins-logo {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
+  width: 32px;
+  height: 32px;
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.92);
 }
-.ins-logo img { width: 30px; height: 30px; object-fit: contain; }
+.ins-logo img { width: 24px; height: 24px; object-fit: contain; }
 .ins-logo-none { background: rgba(255, 255, 255, 0.18); }
 .ins-frame { cursor: pointer; }
 .ins-frame.sel .ins-fbody { outline: 1.5px solid var(--accent-ui); outline-offset: 3px; }
@@ -1877,9 +1881,11 @@ function insBandHTML(side, game, colors) {
     : '<span class="ins-logo ins-logo-none"></span>';
   const score = state === 'pre' || side.score == null ? '' : esc(side.score);
   const lead = side.leaders;
+  // Cards are three to a row, so leaders show the surname; the full "J. Embiid" is the hover title.
+  const surname = (short) => String(short || '').replace(/^(?:[A-Z]\.)+\s*/, '');
   const cells = lead
     ? LEADER_ROWS.filter(([, key]) => lead[key]).map(([label, key]) =>
-      '<span class="c"><span class="lk">' + label + '</span><b>' + esc(lead[key].value) + '</b><span class="nm">' + esc(lead[key].short) + '</span></span>').join('')
+      '<span class="c"><span class="lk">' + label + '</span><b>' + esc(lead[key].value) + '</b><span class="nm" title="' + esc(lead[key].short) + '">' + esc(surname(lead[key].short)) + '</span></span>').join('')
     : '';
   return '<div class="ins-band' + (lost ? ' lost' : '') + '" style="background:' + look.fill + ';color:' + look.ink + '">' +
     '<div class="ins-bh">' + logo + '<span class="ab">' + esc(side.abbr) + '</span>' +
@@ -1918,7 +1924,7 @@ function insDetailHTML(game, standings, colors) {
 
   const leadLines = LEADER_ROWS.map(([label, key]) => {
     const one = (t) => (t.side.leaders && t.side.leaders[key]
-      ? cell('<span>' + esc(t.side.leaders[key].name) + '</span><b>' + esc(t.side.leaders[key].value) + '</b>', 'ld')
+      ? cell('<span title="' + esc(t.side.leaders[key].name) + '">' + esc(String(t.side.leaders[key].name || '').split(' ').slice(1).join(' ') || t.side.leaders[key].name) + '</span><b>' + esc(t.side.leaders[key].value) + '</b>', 'ld')
       : '');
     return rowHTML(label, one(A), one(H));
   }).join('');
