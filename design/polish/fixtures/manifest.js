@@ -1,26 +1,35 @@
-// Written by design/polish/freeze.mjs (or by hand for the first set). Loaded
-// by the variant pages before shim.js. Every file listed here is a raw ESPN
-// response saved as-is; nothing is edited or made up.
+// Written by design/polish/freeze.mjs. Loaded by the variant pages before
+// shim.js. Every file listed is a raw ESPN response saved as-is.
 window.POLISH = {
-  date: '20261022',
-  // 23:59 ET on the frozen date, so "today" on the page is that day.
-  now: '2026-10-23T03:59:00Z',
-  featured: '401909093',
-  away: '5',
-  home: '20',
-  label: 'Thu, Oct 22, 2026',
-  note: 'Copied from nba/fixtures (captured from ESPN on Oct 22-23). Only the points leaders board, one summary and Cleveland\'s statistics (no schedule) were captured; run design/polish/freeze.mjs on a machine that can reach ESPN for a full set.',
-  files: [
-    'scoreboard-20261022.json',
-    'summary-401909093.json',
-    'standings.json',
-    'leaders-points.json',
-    'team-20-statistics.json',
-    'team-20-schedule.json',
-    'team-20-roster.json',
-    'team-5-statistics.json',
-    'athlete-4431678.json',
-    'athlete-4431678-overview.json',
-    'athlete-4431678-gamelog.json',
-  ],
+  "date": "20261022",
+  "now": "2026-10-23T03:59:00Z",
+  "featured": "401909093",
+  "away": "5",
+  "home": "20",
+  "label": "Thu, Oct 22, 2026",
+  "note": "Written by design/polish/freeze.mjs on 2026-11-05.",
+  "files": [
+    "scoreboard-20261022.json",
+    "summary-401909093.json",
+    "summary-401909094.json",
+    "standings.json",
+    "leaders-points.json",
+    "leaders-rebounds.json",
+    "leaders-assists.json",
+    "leaders-steals.json",
+    "leaders-blocks.json",
+    "leaders-threes.json",
+    "team-5-statistics.json",
+    "team-5-schedule.json",
+    "team-5-roster.json",
+    "team-20-statistics.json",
+    "team-20-schedule.json",
+    "team-20-roster.json",
+    "athlete-4431678.json",
+    "athlete-4431678-overview.json",
+    "athlete-4431678-gamelog.json",
+    "athlete-3908809.json",
+    "athlete-3908809-overview.json",
+    "athlete-3908809-gamelog.json"
+  ]
 };
