@@ -17,6 +17,12 @@ import {
   parseCompetitorLeaders,
   parseGameExtras,
   parseGameOdds,
+  parseGameFlow,
+  parseLeaderLines,
+  parsePeriodScoring,
+  parseShots,
+  periodStart,
+  shotZones,
   parsePredictor,
   parseOdds,
   parseScoreboard,
@@ -701,4 +707,86 @@ test('standings rows carry home, road and conference; roster rows carry headshot
   assert.match(row.road, /^\d+-\d+$/);
   const roster = parseRoster(fixture('team-20-roster.json'));
   assert.ok(roster.some((p) => /^https:\/\//.test(p.headshot)));
+});
+
+test('parseGameFlow rebuilds the CLE at PHI comeback from the play-by-play', () => {
+  const json = fixture('summary-401909093.json');
+  const flow = parseGameFlow(json);
+  assert.equal(flow.awayId, '5');
+  assert.equal(flow.homeId, '20');
+  assert.equal(flow.periods, 4);
+  assert.equal(flow.end, 2880);
+  assert.deepEqual(flow.points[0], { t: 0, away: 0, home: 0, period: 1 });
+  const last = flow.points[flow.points.length - 1];
+  assert.equal(last.away, 106);
+  assert.equal(last.home, 114);
+  // ESPN's own team counts for this game: one lead change, CLE up 29, PHI up 9.
+  const espn = (abbr, name) => Number(json.boxscore.teams.find((t) => t.team.abbreviation === abbr).statistics.find((s) => s.name === name).displayValue);
+  assert.equal(flow.leadChanges, espn('CLE', 'leadChanges'));
+  assert.equal(flow.largest.away.lead, espn('CLE', 'largestLead'));
+  assert.equal(flow.largest.home.lead, espn('PHI', 'largestLead'));
+  assert.equal(Math.round(flow.leadTime.away / flow.end * 100), espn('CLE', 'leadPercentage'));
+  assert.equal(Math.round(flow.leadTime.home / flow.end * 100), espn('PHI', 'leadPercentage'));
+  assert.equal(flow.leadTime.away + flow.leadTime.home + flow.leadTime.tied, flow.end);
+  assert.equal(flow.ties, 3);
+  assert.deepEqual(flow.runs.home, { pts: 16, start: 1368, end: 1518, from: { away: 69, home: 40 } });
+  assert.equal(flow.runs.away.pts, 12);
+  assert.equal(flow.wp.length, json.winprobability.length);
+  assert.ok(flow.wp.every((w) => w.home >= 0 && w.home <= 100));
+  assert.equal(parseGameFlow({}), null);
+  assert.equal(periodStart(1), 0);
+  assert.equal(periodStart(4), 2160);
+  assert.equal(periodStart(5), 2880);
+  assert.equal(periodStart(6), 3180);
+});
+
+test('parseShots places every field-goal attempt and matches the box score', () => {
+  const json = fixture('summary-401909093.json');
+  const shots = parseShots(json);
+  const box = parseBoxScore(json);
+  for (const [side, abbr] of [['away', 'CLE'], ['home', 'PHI']]) {
+    const totals = box.teams.find((t) => t.abbr === abbr).totals;
+    const [fgm, fga] = totals.FG.split('-').map(Number);
+    const [tpm, tpa] = totals['3PT'].split('-').map(Number);
+    assert.equal(shots[side].length, fga);
+    assert.equal(shots[side].filter((s) => s.made).length, fgm);
+    assert.equal(shots[side].filter((s) => s.three).length, tpa);
+    assert.equal(shots[side].filter((s) => s.three && s.made).length, tpm);
+    const zones = shotZones(shots[side]);
+    assert.equal(Object.values(zones).reduce((n, z) => n + z.att, 0), fga);
+    assert.equal(zones.three.att, tpa);
+  }
+  assert.deepEqual(parseShots({}), { away: [], home: [] });
+  assert.equal(shotZones([]).rim.pct, null);
+});
+
+test('parsePeriodScoring splits points by quarter and scorer, matching the box score', () => {
+  const json = fixture('summary-401909093.json');
+  const periods = parsePeriodScoring(json);
+  assert.deepEqual(periods.map((p) => [p.away.pts, p.home.pts]), [[35, 18], [34, 27], [21, 37], [16, 32]]);
+  assert.deepEqual(periods[0].away.scorers[0], { id: '3908809', name: 'Donovan Mitchell', short: 'D. Mitchell', pts: 12 });
+  const box = parseBoxScore(json);
+  const totals = new Map();
+  periods.forEach((p) => ['away', 'home'].forEach((side) => p[side].scorers.forEach((s) => totals.set(s.id, (totals.get(s.id) || 0) + s.pts))));
+  for (const team of box.teams) {
+    for (const player of [...team.starters, ...team.bench]) {
+      assert.equal(totals.get(player.id) || 0, Number(player.stats.PTS), player.name);
+    }
+  }
+  assert.deepEqual(parsePeriodScoring({}), []);
+});
+
+test('parseLeaderLines ranks like parseLeaders and carries each full line', () => {
+  const json = fixture('leaders-points.json');
+  const rows = parseLeaderLines(json, 'offensive', 'avgPoints');
+  const plain = parseLeaders(json, 'offensive', 'avgPoints');
+  assert.deepEqual(rows.map((r) => [r.id, r.rank, r.value]), plain.map((r) => [r.id, r.rank, r.value]));
+  assert.equal(rows[0].name, 'Luka Doncic');
+  assert.deepEqual(
+    { gp: rows[0].line.gp, min: rows[0].line.min, fgPct: rows[0].line.fgPct, threePct: rows[0].line.threePct, ast: rows[0].line.ast, reb: rows[0].line.reb },
+    { gp: 4, min: 35.5, fgPct: 48.4, threePct: 39.6, ast: 8.3, reb: 6.8 },
+  );
+  assert.equal(parseLeaderLines(json, 'offensive', 'avgPoints', 0).length, json.athletes.length);
+  assert.deepEqual(parseLeaderLines(json, 'offensive', 'nope'), []);
+  assert.deepEqual(parseLeaderLines({}, 'offensive', 'avgPoints'), []);
 });
