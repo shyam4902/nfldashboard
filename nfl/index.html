@@ -12,6 +12,7 @@
 <link rel="stylesheet" href="/nfl/matchup.css?v=20261105d">
 <link rel="stylesheet" href="/nfl/nfl.css?v=20261105c">
 <link rel="stylesheet" href="/nfl/teams.css?v=20261105e">
+<link rel="stylesheet" href="/nfl/league.css?v=20261105f">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="canonical" href="https://matchupboard.com/nfl/">
 <meta property="og:title" content="Matchup Board · NFL scores, matchups and stats">
@@ -317,19 +318,19 @@
     <div id="leagueSubTabs" class="teams-subtabs mb-4"></div>
 
     <div id="leagueStandingsPanel">
-      <div id="leagueStandingsMeta" class="text-[11px] text-slate-400 mb-3"></div>
-      <div id="leagueStandings" class="space-y-5"></div>
+      <div id="leagueStandingsMeta" class="mb-3"></div>
+      <div id="leagueStandings"></div>
     </div>
 
     <div id="leagueLeadersPanel" class="hidden">
       <div id="leagueLeadersSearch" class="mb-3"></div>
-      <div id="leagueLeaders" class="ld"></div>
+      <div id="leagueLeaders"></div>
     </div>
 
     <div id="leagueStatsPanel" class="hidden">
-      <div id="leagueStatsControls" class="flex flex-wrap items-end gap-3 mb-3"></div>
-      <div id="leagueStatsMeta" class="text-[11px] text-slate-400 mb-3"></div>
-      <div id="leagueStatsTable" class="glass rounded-xl p-3 overflow-x-auto"></div>
+      <div id="leagueStatsControls" class="mb-3"></div>
+      <div id="leagueStatsMeta" class="mb-3"></div>
+      <div id="leagueStatsTable"></div>
       <div id="leagueTeamTotals" class="mt-6"></div>
     </div>
   </div>
@@ -366,6 +367,9 @@
 <script src="/nfl/js/league.js?v=20261105c"></script>
 <script src="/nfl/js/views.js?v=20261105e"></script>
 <script src="/nfl/js/routing.js?v=20261105e"></script>
+<script src="/nfl/js/league.js?v=20261105f"></script>
+<script src="/nfl/js/views.js?v=20261105c"></script>
+<script src="/nfl/js/routing.js?v=20261105c"></script>
 <script src="/nfl/js/schedule.js?v=20261105c"></script>
 <script src="/nfl/js/extensions.js?v=20261105c"></script>
 <script src="/nfl/js/boot.js?v=20261105c"></script>

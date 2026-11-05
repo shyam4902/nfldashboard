@@ -1,0 +1,277 @@
+/* League tab (/nfl/#league): standings, leaders and stats in the /nba/
+   grammar. Everything is scoped to #tab-league and prefixed lg-. Team colour
+   arrives per row as --c (already lifted to read on the dark card); gold
+   (--tab-active-bg / --accent-brand) is for controls and active states only.
+   Code: nfl/js/league.js. */
+
+#tab-league [hidden] { display: none !important; }
+#tab-league .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+
+#tab-league .lg-card {
+  min-width: 0;
+  background: var(--bg-card);
+  border: 1px solid var(--border-card);
+  border-radius: var(--r2);
+  box-shadow: var(--card-shadow);
+}
+#tab-league .lg-note { margin: 10px 0 0; font: 500 11px/1.5 var(--font-sans); color: var(--text-faint); }
+#tab-league .lg-faint { color: var(--text-faint); }
+#tab-league .lg-missing { display: flex; flex-direction: column; gap: 4px; padding: 18px 20px; font: 500 12px/1.5 var(--font-sans); color: var(--text-muted); }
+#tab-league .lg-missing b { color: var(--text-main); font-weight: 700; }
+#leagueStandingsMeta, #leagueStatsMeta { font: 500 11px/1.5 var(--font-sans); color: var(--text-muted); }
+#leagueStandingsMeta b, #leagueStatsMeta b { color: var(--text-main); font-weight: 600; }
+
+/* ── Controls ───────────────────────────────────────────────────────────── */
+#tab-league .lg-bar { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 12px; }
+#tab-league .lg-seg { display: inline-flex; flex-wrap: wrap; gap: 2px; max-width: 100%; padding: 3px; background: var(--bg-inset); border: 1px solid var(--border-muted); border-radius: 8px; }
+#tab-league .lg-seg button {
+  font: 700 var(--t0)/1 var(--font-sans);
+  color: var(--text-muted);
+  background: none;
+  border: 0;
+  border-radius: 6px;
+  padding: 8px 14px;
+  cursor: pointer;
+}
+#tab-league .lg-seg button:hover { color: var(--text-main); }
+#tab-league .lg-seg button[aria-pressed='true'] { background: var(--tab-active-bg); color: var(--tab-active-text); }
+#tab-league .lg-seg button:focus-visible,
+#tab-league .lg-sort:focus-visible,
+#tab-league .lg-tn:focus-visible,
+#tab-league .lg-tile:focus-visible { outline: 2px solid var(--accent-brand); outline-offset: 2px; border-radius: 4px; }
+#tab-league .lg-pick { display: inline-flex; align-items: center; gap: 8px; font: 700 10px/1 var(--font-sans); letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-faint); }
+#tab-league .lg-pick select {
+  font: 600 12px/1 var(--font-sans);
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--text-main);
+  background: var(--bg-inset);
+  border: 1px solid var(--border-muted);
+  border-radius: 8px;
+  padding: 8px 10px;
+  max-width: 46vw;
+}
+#tab-league .lg-pick select:focus-visible { outline: 2px solid var(--accent-brand); outline-offset: 1px; }
+#leagueStatsControls { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; }
+
+/* ── Shared table pieces ────────────────────────────────────────────────── */
+#tab-league .lg-sort {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 0;
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+#tab-league .lg-sort:hover { color: var(--text-main); }
+#tab-league .lg-arrow { font-size: 7px; opacity: 0; transition: opacity 0.12s; }
+#tab-league .lg-sort:hover .lg-arrow { opacity: 0.45; }
+#tab-league th.sorted { color: var(--text-main); box-shadow: inset 0 -2px 0 var(--accent-brand); }
+#tab-league th.sorted .lg-arrow { opacity: 1; }
+#tab-league td.sorted { background: rgba(255, 255, 255, 0.04); }
+#tab-league .lg-row { transition: background 0.15s ease; }
+#tab-league .lg-row:hover td { background: color-mix(in srgb, var(--c) 13%, var(--bg-card)); }
+#tab-league .sw { display: inline-block; flex-shrink: 0; width: 3px; height: 18px; border-radius: 2px; background: var(--c); }
+
+/* ── Standings ──────────────────────────────────────────────────────────── */
+#leagueStandings { display: block; }
+#tab-league .lg-conf + .lg-conf { margin-top: 22px; }
+#tab-league .lg-conf-h { margin: 0 0 10px; font: 700 var(--t4)/1 var(--font-serif); letter-spacing: -0.01em; color: var(--text-main); }
+#tab-league .lg-div-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; }
+@media (min-width: 1100px) { #tab-league .lg-div-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+#tab-league .lg-st-block { overflow: hidden; margin-bottom: 12px; }
+#tab-league .lg-div-grid .lg-st-block { margin-bottom: 0; }
+#tab-league .lg-st-h { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 6px 10px; padding: 12px 14px 4px; }
+#tab-league .lg-st-h h3 { font: 700 var(--t2)/1.2 var(--font-serif); color: var(--text-main); }
+#tab-league .lg-key { display: inline-flex; align-items: center; gap: 6px; font: 500 10px/1 var(--font-mono); color: var(--text-faint); white-space: nowrap; }
+#tab-league .lg-key i { width: 14px; border-top: 1px dashed var(--border-strong); }
+#tab-league .lg-key i.wc { border-top-style: dotted; margin-left: 6px; }
+#tab-league .lg-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+#tab-league .lg-st { width: 100%; min-width: 560px; border-collapse: collapse; }
+#tab-league .lg-st th, #tab-league .lg-st td { padding: 7px 8px; text-align: right; white-space: nowrap; }
+#tab-league .lg-st thead th { font: 700 10px/1 var(--font-sans); letter-spacing: 0.05em; text-transform: uppercase; color: var(--text-faint); border-bottom: 1px solid var(--border-muted); }
+#tab-league .lg-st tbody td { font: 500 12px/1.3 var(--font-mono); font-variant-numeric: tabular-nums; color: var(--text-main); border-bottom: 1px solid var(--border-muted); }
+#tab-league .lg-st tbody tr:last-child td { border-bottom: 0; }
+#tab-league .lg-st .rk { width: 30px; color: var(--text-faint); font-weight: 700; }
+#tab-league .lg-st th.team, #tab-league .lg-st td.team { text-align: left; }
+#tab-league .lg-st td.team { position: sticky; left: 0; z-index: 1; background: var(--bg-card); }
+#tab-league .lg-tc { display: flex; align-items: center; gap: 7px; min-width: 0; }
+#tab-league .lg-tc img { display: block; flex-shrink: 0; width: 20px; height: 20px; object-fit: contain; }
+#tab-league .lg-tn { padding: 0; font: 600 13px/1.3 var(--font-sans); color: var(--text-main); background: none; border: 0; cursor: pointer; }
+#tab-league .lg-tn:hover { text-decoration: underline; text-decoration-color: var(--c); text-underline-offset: 3px; }
+#tab-league .lg-tn .ab { display: none; }
+#tab-league .lg-tag { margin-left: 7px; padding: 2px 5px; font: 700 9px/1 var(--font-sans); letter-spacing: 0.04em; text-transform: uppercase; color: var(--text-muted); border: 1px solid var(--border-muted); border-radius: 4px; }
+#tab-league .lg-st tr.cut td { border-bottom: 1px dashed var(--border-strong); }
+#tab-league .lg-st tr.cut.wc td { border-bottom-style: dotted; }
+@media (max-width: 560px) {
+  #tab-league .lg-tn .full { display: none; }
+  #tab-league .lg-tn .ab { display: inline; font-family: var(--font-mono); font-weight: 700; }
+  #tab-league .lg-st { min-width: 470px; }
+  #tab-league .lg-st th, #tab-league .lg-st td { padding: 7px 6px; }
+  #tab-league .lg-tag { display: none; }
+}
+
+/* ── Standings map (treemap) ────────────────────────────────────────────── */
+#tab-league .lg-map-card { padding: 12px; }
+#tab-league .lg-map-card .lg-bar { margin-bottom: 0; }
+#tab-league .lg-map-card .lg-note { margin: 10px 0; color: var(--text-muted); }
+#tab-league .lg-map { position: relative; width: 100%; overflow: hidden; border-radius: 8px; background: var(--bg-body); }
+#tab-league .lg-mlab { position: absolute; z-index: 2; white-space: nowrap; pointer-events: none; font: 700 11px/1 var(--font-sans); letter-spacing: 0.02em; color: var(--text-muted); }
+#tab-league .lg-mlab.conf { color: var(--text-main); letter-spacing: 0.08em; font-size: 10px; }
+#tab-league .lg-tile {
+  position: absolute;
+  display: block;
+  padding: 2px;
+  background: none;
+  border: 0;
+  text-align: left;
+  cursor: pointer;
+  transition: left 0.5s cubic-bezier(0.16, 1, 0.3, 1), top 0.5s cubic-bezier(0.16, 1, 0.3, 1), width 0.5s cubic-bezier(0.16, 1, 0.3, 1), height 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+#tab-league .lg-tin {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 100%;
+  height: 100%;
+  padding: 8px 9px;
+  border-radius: 6px;
+  overflow: hidden;
+  box-sizing: border-box;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+#tab-league .lg-tile:hover .lg-tin { filter: brightness(1.1); }
+#tab-league .lg-ttop { display: flex; flex-direction: column; align-items: flex-start; gap: 5px; min-width: 0; min-height: 0; }
+#tab-league .lg-tlogo { padding: 3px; box-sizing: border-box; border-radius: 999px; background: rgba(255, 255, 255, 0.92); object-fit: contain; flex-shrink: 0; }
+#tab-league .lg-tile .ab { font: 800 20px/1 var(--font-sans); letter-spacing: -0.04em; white-space: nowrap; }
+#tab-league .lg-tbot { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+#tab-league .lg-tile .v { max-width: 100%; overflow: hidden; font: 700 14px/1.1 var(--font-mono); white-space: nowrap; }
+#tab-league .lg-tile .rc { max-width: 100%; overflow: hidden; font: 600 11px/1.15 var(--font-mono); white-space: nowrap; opacity: 0.92; }
+#tab-league .lg-tile .x { max-width: 100%; overflow: hidden; font: 500 10px/1.15 var(--font-mono); white-space: nowrap; opacity: 0.82; }
+@media (prefers-reduced-motion: reduce) { #tab-league .lg-tile { transition: none; } }
+@media (max-width: 480px) {
+  #tab-league .lg-map-card { padding: 10px; }
+  #tab-league .lg-map-card .lg-seg { width: 100%; }
+  #tab-league .lg-map-card .lg-seg button { flex: 1 1 0; padding: 8px 4px; }
+}
+
+/* ── Stats tables ───────────────────────────────────────────────────────── */
+/* The box scrolls both ways, so the header sticks to its top and the name
+   column to its left while the page itself never scrolls sideways. */
+#leagueStatsTable { padding: 0; background: none; border: 0; overflow: visible; }
+#tab-league .lg-tbox {
+  max-height: min(72vh, 680px);
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
+  background: var(--bg-card);
+  border: 1px solid var(--border-card);
+  border-radius: var(--r2);
+  box-shadow: var(--card-shadow);
+}
+#tab-league .lg-tbl { width: 100%; min-width: 600px; border-collapse: separate; border-spacing: 0; }
+#tab-league .lg-totals { min-width: 820px; }
+#tab-league .lg-tbl th, #tab-league .lg-tbl td { padding: 6px 9px; text-align: right; white-space: nowrap; border-bottom: 1px solid var(--border-muted); }
+#tab-league .lg-tbl thead th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  padding-top: 10px;
+  font: 700 10px/1 var(--font-sans);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  background: var(--bg-elevated);
+  border-bottom: 1px solid var(--border-strong);
+}
+#tab-league .lg-tbl tbody td { font: 500 12px/1.25 var(--font-mono); font-variant-numeric: tabular-nums; color: var(--text-main); background: var(--bg-card); }
+#tab-league .lg-tbl tbody tr:last-child td { border-bottom: 0; }
+#tab-league .lg-tbl tbody td.sorted { background: color-mix(in srgb, #ffffff 4%, var(--bg-card)); }
+#tab-league .lg-tbl .l { text-align: left; }
+#tab-league .lg-tbl .rk { width: 28px; color: var(--text-faint); font-weight: 700; }
+#tab-league .lg-tbl .pl { position: sticky; left: 0; z-index: 1; box-shadow: 1px 0 0 var(--border-muted); }
+#tab-league .lg-tbl tbody td.pl { font: 600 12.5px/1.25 var(--font-sans); }
+#tab-league .lg-tbl thead th.pl { z-index: 3; }
+#tab-league .lg-tbl td.pl .sw { height: 14px; margin-right: 8px; vertical-align: -2px; }
+#tab-league .lg-tbl td.pl img { display: inline-block; width: 18px; height: 18px; margin-right: 6px; object-fit: contain; vertical-align: -4px; }
+#tab-league .lg-tbl td.pl .ab { font: 700 11px/1 var(--font-mono); color: var(--text-muted); margin-right: 6px; }
+#tab-league .lg-tbl td.tm { font-weight: 700; color: var(--text-muted); }
+#tab-league .lg-tbl td.big { font-weight: 700; }
+#tab-league .lg-empty { padding: 16px; text-align: center !important; font: 500 12px/1.4 var(--font-sans) !important; color: var(--text-muted) !important; }
+#tab-league .lg-sec-h { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; margin-bottom: 10px; }
+#tab-league .lg-sec-h h3 { font: 700 var(--t3)/1.2 var(--font-serif); color: var(--text-main); }
+#tab-league .lg-sec-h span { font: 500 11px/1.4 var(--font-sans); color: var(--text-faint); }
+@media (max-width: 560px) {
+  #tab-league .lg-totals td.pl .full { display: none; }
+  #tab-league .lg-tbl th, #tab-league .lg-tbl td { padding: 6px 7px; }
+  #tab-league .lg-tbl .pl { max-width: 150px; overflow: hidden; text-overflow: ellipsis; }
+}
+
+/* ── Leaders: editorial boards ──────────────────────────────────────────── */
+#leagueLeaders { display: block; }
+#tab-league .lg-ld-boards { display: grid; gap: 20px; }
+#tab-league .lg-ld-board { padding: 22px 24px 12px; }
+#tab-league .lg-ld-bh { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 6px 16px; }
+#tab-league .lg-ld-bh h3 { font: 700 var(--t5)/1.05 var(--font-serif); letter-spacing: -0.015em; color: var(--text-main); }
+#tab-league .lg-ld-bh span { font: 500 var(--t0)/1.2 var(--font-sans); color: var(--text-muted); }
+#tab-league .lg-ld-lede { margin: 8px 0 14px; max-width: 70ch; font: 400 var(--t2)/1.45 var(--font-serif); color: var(--text-muted); }
+#tab-league .lg-ld-lede b { color: var(--text-main); font-weight: 600; }
+#tab-league .lg-ld-none { padding: 14px 0; font: 500 12px/1.4 var(--font-sans); color: var(--text-muted); }
+#tab-league .lg-ld-r {
+  display: grid;
+  grid-template-columns: 38px 40px minmax(0, 1fr) 92px minmax(0, 470px);
+  align-items: center;
+  gap: 14px;
+  padding: 9px 0;
+  border-top: 1px solid var(--border-muted);
+}
+#tab-league .lg-ld-r.hd { padding: 0 0 8px; border-top: 0; }
+#tab-league .lg-ld-r .rk { font: 700 var(--t3)/1 var(--font-serif); color: var(--text-faint); text-align: right; }
+#tab-league .lg-ld-r .hs { width: 40px; height: 40px; border-radius: 999px; overflow: hidden; background: color-mix(in srgb, var(--c) 40%, var(--bg-inset)); }
+#tab-league .lg-ld-r .hs img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 12%; }
+#tab-league .lg-ld-r .nm { min-width: 0; }
+#tab-league .lg-ld-r .nm > a, #tab-league .lg-ld-r .nm > b { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font: 600 var(--t1)/1.2 var(--font-sans); color: var(--text-main); }
+#tab-league .lg-ld-r .nm > a:hover { text-decoration: underline; text-decoration-color: var(--c); text-underline-offset: 3px; }
+#tab-league .lg-ld-r .nm > span { display: inline-flex; align-items: center; gap: 6px; margin-top: 4px; font: 600 11px/1 var(--font-sans); color: var(--text-muted); }
+#tab-league .lg-ld-r .nm > span i { width: 10px; height: 10px; border-radius: 2px; }
+#tab-league .lg-ld-r .val { text-align: right; font: 700 var(--t4)/1 var(--font-serif); font-variant-numeric: tabular-nums; color: var(--text-main); }
+#tab-league .lg-ld-line { display: grid; grid-template-columns: repeat(var(--n, 6), minmax(0, 1fr)); gap: 6px; }
+#tab-league .lg-ld-line span { text-align: right; font: 500 var(--t1)/1 var(--font-serif); font-variant-numeric: tabular-nums; color: var(--text-muted); }
+#tab-league .lg-ld-r.hd span, #tab-league .lg-ld-r.hd .val { font: 700 10px/1 var(--font-sans); letter-spacing: 0.06em; color: var(--text-faint); }
+/* Top three: bigger portrait, rank in the team colour, the value at full size. */
+#tab-league .lg-ld-r.top { grid-template-columns: 38px 56px minmax(0, 1fr) 92px minmax(0, 470px); padding: 13px 0; }
+#tab-league .lg-ld-r.top .hs { width: 56px; height: 56px; box-shadow: 0 0 0 2px var(--c); }
+#tab-league .lg-ld-r.top .rk { font-size: var(--t5); color: var(--c); }
+#tab-league .lg-ld-r.top .nm > a, #tab-league .lg-ld-r.top .nm > b { font-size: var(--t2); font-weight: 700; }
+#tab-league .lg-ld-r.top .val { font-size: var(--t6); font-weight: 800; }
+@media (max-width: 1000px) {
+  #tab-league .lg-ld-r, #tab-league .lg-ld-r.top { grid-template-columns: 32px 40px minmax(0, 1fr) 80px; row-gap: 8px; }
+  #tab-league .lg-ld-r.top { grid-template-columns: 32px 56px minmax(0, 1fr) 80px; }
+  #tab-league .lg-ld-line { grid-column: 3 / -1; }
+  #tab-league .lg-ld-r.hd { display: none; }
+  #tab-league .lg-ld-line span::before { content: attr(data-k) ' '; font: 700 10px/1 var(--font-sans); letter-spacing: 0.04em; color: var(--text-faint); }
+}
+@media (max-width: 560px) {
+  #tab-league .lg-ld-board { padding: 16px 12px 6px; }
+  #tab-league .lg-ld-bh h3 { font-size: var(--t4); }
+  #tab-league .lg-ld-r, #tab-league .lg-ld-r.top { grid-template-columns: 24px 36px minmax(0, 1fr) 62px; gap: 10px; }
+  #tab-league .lg-ld-r.top { grid-template-columns: 24px 44px minmax(0, 1fr) 62px; }
+  #tab-league .lg-ld-r .hs { width: 36px; height: 36px; }
+  #tab-league .lg-ld-r.top .hs { width: 44px; height: 44px; }
+  #tab-league .lg-ld-r .rk { font-size: var(--t2); }
+  #tab-league .lg-ld-r.top .rk { font-size: var(--t3); }
+  #tab-league .lg-ld-r .val { font-size: var(--t3); }
+  #tab-league .lg-ld-r.top .val { font-size: var(--t4); }
+  #tab-league .lg-ld-line { grid-column: 1 / -1; grid-template-columns: repeat(4, minmax(0, 1fr)); row-gap: 8px; }
+  #tab-league .lg-ld-line span { text-align: left; font-size: 13px; }
+}
+
+/* Tones last, at table-cell specificity, so they win over the base cell colour. */
+#tab-league tbody td.up { color: var(--accent-positive); font-weight: 700; }
+#tab-league tbody td.down { color: var(--accent-negative); }
+#tab-league tbody td.dim { color: var(--text-muted); }

@@ -30,6 +30,16 @@
 - Code: `nfl/js/roster.js`, styles in `nfl/teams.css`, new pure helpers in `nfl/nfl-lib.js` (`recordText`, `teamSchedule`, `teamSplits`, `teamStatCells`, `parseEspnRoster`, `attachEspnIds`, `sortRoster`). `node --test nfl/nfl-lib.test.mjs` runs 24 tests.
 - Not verified from the build container: ESPN CORS for `site.api.espn.com/.../teams/<abbr>/roster` and how many real roster names match, because the container blocks ESPN and Supabase. `test_all_extensions.py` and `checkpoint5_rehearsal.py` still look for `.team-tile` and `#rosterSummary`, which are gone now.
 
+## NFL League tab in the /nba/ grammar, 2026-11-05 (branch `feature/nfl-league`)
+
+- Standings: Division | Conference and Table | Map toggles (kept in localStorage `mb.nfl.standings.scope` / `.view`). Each row has a team-colour stripe, logo, team-tint hover, green/red DIFF and STRK, L5, and sorts by any column. Division view draws a line under the division leader. Conference view seeds each conference: the four division leaders take 1-4, then 5-7 are the wild-card places, with dashed and dotted lines. Seeds rank by win %, then point differential, then points scored. NFL tiebreakers are not applied, and the page says so.
+- L5 and STRK come from `schedule.json` finals that kicked off before the standings artifact's `generated_at`. If that W-L-T disagrees with the standings row, the team shows a dash instead of a streak. All 32 teams matched on 2026-11-05.
+- Map: squarified treemap (conference > division > team), sized by wins, point differential or points scored. On phones, divisions sit two to a row. Tiles open the team roster.
+- Leaders: the /nba/ Boards look. Serif values, top 3 larger with a team-colour ring, a lede sentence, and each player's season line from the same ESPN byathlete payload (GP, CMP/ATT/CMP%/Y/A/RTG for passing, and so on). Columns ESPN does not send are dropped. A group picker (All, Passing, Rushing, Receiving, Scoring, Defense) filters the boards.
+- Stats: dense tables in a scroll box with a sticky header and sticky name column, team swatches, and sortable columns, for both the player table and team totals.
+- Code: `nfl/js/league.js`, pure helpers in `nfl/league-lib.js` (`node --test nfl/league-lib.test.mjs`, 12 tests), styles in `nfl/league.css` (all `lg-*`, scoped to `#tab-league`).
+- Not verified from the build container: the live ESPN byathlete stat names for the season lines (ESPN is blocked here; the layout was checked against a stub), and logos and fonts (CDNs blocked).
+
 ## NFL team compare + player pages, 2026-11-05 (branch `feature/nfl-compare-player`)
 
 - `#compare` and `#compare/<A>/<B>` (site abbrs, e.g. `BUF/MIA`): two team pickers and a swap button, a team-colour scorebug, an 18-row tale of the tape with league ranks, the season series and each team's last five. With no teams picked it opens on the first kickoff of `schedule.json`'s current week. Every number comes from files the page already loads: `nfl_standings_2026.json` (record, points), `nfl_stats_2026.json` team totals (yards), `team_season_efficiency.json` 2026 rows (EPA, success, yards per play, sack and turnover rates). Rows where neither team has data are dropped. No ESPN call.
