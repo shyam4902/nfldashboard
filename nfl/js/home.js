@@ -177,9 +177,10 @@ function home2aFeaturedSlide(feat){
       <div style="width:${aPct}%;height:100%;background:${aColor}"></div><div style="width:${hPct}%;height:100%;background:${hColor}"></div>
     </div>
     <div style="display:flex;align-items:center;justify-content:space-between;margin-top:14px;flex-wrap:wrap;gap:10px">
-      <div style="display:flex;gap:10px">
+      <div style="display:flex;flex-wrap:wrap;gap:10px">
         <span class="h2a-btn-amber" onclick="openMatchup('${homeEsc(feat.game_id)}')">View matchup →</span>
         <span class="h2a-btn-ghost" onclick="openCompare('${homeEsc(feat.away_team)}','${homeEsc(feat.home_team)}')">Compare rosters</span>
+        <button type="button" class="h2a-btn-ghost" data-away="${homeEsc(feat.away_team)}" data-home="${homeEsc(feat.home_team)}" onclick="openNflCompareTeams(this.dataset.away, this.dataset.home, event)">Compare teams</button>
       </div>
       <span class="h2a-mono" style="font:500 10px var(--font-mono);color:#8fa6bf">LOG5 SIM · COMPOSITE POWER + HOME EDGE</span>
     </div>

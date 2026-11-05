@@ -295,7 +295,10 @@ function todayInNflHtml(){
         <span class="text-[10px] font-black w-7 h-5 rounded flex items-center justify-center shrink-0" style="background:${colorH}33;color:${colorH};border:1px solid ${colorH}">${homeEsc(hAbbr)}</span>
         <span class="text-xs font-bold text-white truncate">${homeEsc(g.home_team)}</span>
       </div>
-      <div class="text-[10px] text-slate-500 mt-1">${homeEsc(g.venue || '')}</div>
+      <div class="flex items-center justify-between gap-2 mt-1 min-w-0">
+        <span class="text-[10px] text-slate-500 truncate">${homeEsc(g.venue || '')}</span>
+        <button type="button" class="sch-cmp shrink-0" data-away="${homeEsc(g.away_team)}" data-home="${homeEsc(g.home_team)}" onclick="openNflCompareTeams(this.dataset.away, this.dataset.home, event)" title="Compare ${homeEsc(g.away_team)} and ${homeEsc(g.home_team)}">Compare</button>
+      </div>
     </div>`;
   }).join('');
 
@@ -479,7 +482,10 @@ function marqueeGameHtml(g){
       </div>
       <div class="sch-foot">
         <span>${homeEsc(footLines)}</span>
-        <span class="sch-cta">View matchup →</span>
+        <span class="sch-foot-r">
+          <button type="button" class="sch-cmp" data-away="${homeEsc(g.away_team)}" data-home="${homeEsc(g.home_team)}" onclick="openNflCompareTeams(this.dataset.away, this.dataset.home, event)" onkeydown="event.stopPropagation()" title="Compare ${homeEsc(g.away_team)} and ${homeEsc(g.home_team)}">Compare</button>
+          <span class="sch-cta">View matchup →</span>
+        </span>
       </div>
     </div>
   </article>`;
