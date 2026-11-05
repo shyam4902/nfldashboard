@@ -974,6 +974,32 @@ body.sc-wide .wrap { max-width: 1480px; }
 .ins-vs .t b { font: 700 var(--t6)/1 var(--font-serif); letter-spacing: -0.01em; }
 .ins-vs .t span { font: 500 var(--t0)/1.25 var(--font-sans); color: var(--text-muted); }
 .ins-vs .at { font: 500 var(--t0)/1 var(--font-sans); color: var(--text-faint); }
+.ins-vs .t .rest { align-self: flex-start; margin-top: 3px; }
+.ins-vs .t.r .rest { align-self: flex-end; }
+
+/* Rest chips (B2B, 3 in 4, N days rest). Gold is for controls, so these are
+   neutral; a back-to-back or third game in four nights takes the negative tone. */
+.rest {
+  display: inline-block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding: 3px 7px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--r1);
+  font: 700 var(--t0)/1.1 var(--font-sans);
+  letter-spacing: 0.02em;
+  color: var(--text-muted);
+}
+.rest[hidden], .rs-row[hidden] { display: none !important; }
+.rest.tired { color: var(--accent-negative); border-color: rgba(232, 135, 124, 0.45); background: var(--accent-negative-bg); }
+.ins-vs .t span.rest { font: 700 var(--t0)/1.1 var(--font-sans); color: var(--text-muted); }
+.ins-vs .t span.rest.tired { color: var(--accent-negative); }
+.rs-row { display: contents; }
+.ins-dg .v span.rest { flex: 0 1 auto; white-space: normal; text-overflow: clip; }
+.gm-rec .rest { margin-left: 8px; vertical-align: 1px; color: inherit; border-color: currentColor; background: rgba(0, 0, 0, 0.22); }
+.gm-rec .rest.tired { font-weight: 800; }
 .ins-score { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); gap: 8px; margin-top: 10px; font: 800 var(--t7)/1 var(--font-serif); }
 .ins-score span:last-child { text-align: right; }
 .ins-meter { display: flex; gap: 2px; height: 8px; margin-top: 10px; border-radius: 1px; overflow: hidden; }
@@ -1309,6 +1335,8 @@ body.gm-wide .wrap { max-width: 1300px; }
   .gm-nm { font-size: var(--t0); }
   .gm-rec { font-size: var(--t0); }
   .gm-rec i { display: block; margin: 3px 0 0; }
+  .gm-rec .rest { display: table; margin: 5px 0 0; }
+  .gm-team.home .gm-rec .rest { margin-left: auto; }
   .gm-mid { flex-direction: row; flex-wrap: wrap; justify-content: center; gap: 6px 14px; padding: 12px; border-top: 1px solid var(--border-muted); }
   .gm-line { width: auto; margin: 0; padding: 0; border-top: 0; }
   .gm-card { padding: 16px 14px; }
@@ -1674,11 +1702,12 @@ import {
   periodStart,
   pickCompareGame,
   readableOn,
+  restInfo,
   slateDay,
   smallImg,
   teamFill,
   textOn,
-} from './nba.js?v=20261105';
+} from './nba.js?v=20261105r';
 
 const API = 'https://site.api.espn.com/apis/site/v2/sports/basketball/nba';
 const STANDINGS_API = 'https://site.api.espn.com/apis/v2/sports/basketball/nba/standings';
@@ -1733,6 +1762,7 @@ function stopPolling() {
   }
   pickerClosers.forEach((close) => close());
   pickerClosers = [];
+  if (restObserver) restObserver.disconnect();
 }
 
 function loadingHTML() {
@@ -1921,6 +1951,10 @@ function insDetailHTML(game, standings, colors) {
 
   const heads = '<span class="hd"></span>' + sides.map((t) =>
     '<span class="hd" style="box-shadow:inset 0 -2px 0 ' + t.look.fill + '">' + esc(t.side.abbr) + '</span>').join('');
+  // Filled by watchRest once the frame is on screen; stays hidden without a schedule.
+  const day = etDate(game.startISO);
+  const rest = '<span class="rs-row" hidden><span class="k">Rest</span>' +
+    sides.map((t) => '<span class="v">' + restChipHTML(t.side.id, day) + '</span>').join('') + '</span>';
 
   const leadLines = LEADER_ROWS.map(([label, key]) => {
     const one = (t) => (t.side.leaders && t.side.leaders[key]
@@ -1941,14 +1975,14 @@ function insDetailHTML(game, standings, colors) {
   const mlCap = ml ? '<span class="dc">Moneyline</span>' : '';
 
   return '<div class="ins-more"><div class="ins-more-in"><div class="ins-dt"><div class="ins-dg">' +
-    heads + leadCap + leadLines + mlCap + ml + recCap + road + home + formCap + l10 + strk +
+    heads + rest + leadCap + leadLines + mlCap + ml + recCap + road + home + formCap + l10 + strk +
     '</div><a class="ins-dopen" href="#game/' + esc(game.id) + '"><span>Game details</span><span aria-hidden="true">→</span></a></div></div></div>';
 }
 
 function gameCardHTML(game, colors, selected, standings) {
   const live = game.state === 'in';
   const status = game.state === 'pre' ? tipOff(game.startISO) || 'Scheduled' : (game.statusText || 'Final');
-  return '<div class="ins-frame' + (selected ? ' sel' : '') + '" role="group" tabindex="0" data-game="' + esc(game.id) + '"' +
+  return '<div class="ins-frame' + (selected ? ' sel' : '') + '" role="group" tabindex="0" data-rest-scope data-game="' + esc(game.id) + '"' +
     (selected ? ' aria-current="true"' : '') +
     ' aria-label="' + esc(game.away.name + ' at ' + game.home.name) + '">' +
     '<div class="ins-fl"><span class="ins-st' + (live ? ' live' : '') + '">' + (live ? '<i class="dot"></i>' : '') + esc(status) + '</span>' +
@@ -1994,9 +2028,9 @@ function insPanelHTML(game, standings, colors) {
   const pctH = H.row && H.row.pct != null ? H.row.pct : null;
 
   const vs = '<div class="ins-ib"><div class="ins-vs">' +
-    '<div class="t"><b style="color:' + readableOn(A.look.fill, PANEL_BG) + '">' + esc(game.away.abbr) + '</b><span>' + esc(game.away.name) + '</span></div>' +
+    '<div class="t"><b style="color:' + readableOn(A.look.fill, PANEL_BG) + '">' + esc(game.away.abbr) + '</b><span>' + esc(game.away.name) + '</span>' + restChipHTML(game.away.id, etDate(game.startISO)) + '</div>' +
     '<span class="at">at</span>' +
-    '<div class="t r"><b style="color:' + readableOn(H.look.fill, PANEL_BG) + '">' + esc(game.home.abbr) + '</b><span>' + esc(game.home.name) + '</span></div></div>' +
+    '<div class="t r"><b style="color:' + readableOn(H.look.fill, PANEL_BG) + '">' + esc(game.home.abbr) + '</b><span>' + esc(game.home.name) + '</span>' + restChipHTML(game.home.id, etDate(game.startISO)) + '</div></div>' +
     (started ? '<div class="ins-score"><span>' + (game.away.score == null ? '' : esc(game.away.score)) + '</span><span></span><span>' + (game.home.score == null ? '' : esc(game.home.score)) + '</span></div>' : '') +
     (pctA != null && pctH != null && pctA + pctH > 0
       ? '<div class="ins-meter" title="Win percentage"><span style="flex:' + (pctA || 0.01) + ';background:' + A.look.fill + '"></span><span style="flex:' + (pctH || 0.01) + ';background:' + H.look.fill + '"></span></div>' +
@@ -2088,7 +2122,10 @@ function selectGame(id) {
     else frame.removeAttribute('aria-current');
   });
   const panel = document.getElementById('insPanel');
-  if (panel) panel.innerHTML = insPanelHTML(game, scState.standings, scState.colors);
+  if (panel) {
+    panel.innerHTML = insPanelHTML(game, scState.standings, scState.colors);
+    watchRest(panel);
+  }
   fillInspectorStory(game);
   const active = new Set([game.away.id, game.home.id]);
   app.querySelectorAll('.ins-lr').forEach((row) => row.classList.toggle('on', active.has(row.getAttribute('data-team'))));
@@ -2197,7 +2234,7 @@ async function showScores(dateArg, isRefresh = false) {
       '<aside class="ins-rail" aria-label="Standings by conference">' + insRailHTML(standings, colors, selectedGame) + '</aside>' +
       '<section class="ins-canvas" aria-label="Games"><div class="ins-slate" id="insSlate">' +
       sorted.map((game) => gameCardHTML(game, colors, game.id === scSelected, standings)).join('') + '</div>' + insNightHTML(sorted, colors) + '</section>' +
-      '<aside class="ins-panel" id="insPanel" aria-label="Game inspector">' + insPanelHTML(selectedGame, standings, colors) + '</aside></div>'
+      '<aside class="ins-panel" id="insPanel" data-rest-scope aria-label="Game inspector">' + insPanelHTML(selectedGame, standings, colors) + '</aside></div>'
     : '<div class="state">No games</div>');
   if (isRefresh) window.scrollTo(0, scrollY);
   // Put a pinned or focused frame back without replaying its animation.
@@ -2214,6 +2251,7 @@ async function showScores(dateArg, isRefresh = false) {
   }
   wireDatePicker();
   wireInspector();
+  watchRest(app);
   fillInspectorStory(selectedGame);
 
   scheduleScoresPoll(date, games);
@@ -2741,7 +2779,130 @@ async function teamData(id) {
   ]);
   const value = { stats: parseTeamStats(statsJson), schedule: parseTeamSchedule(scheduleJson) };
   teamCache.set(key, { at: Date.now(), value });
+  if (value.schedule.games.length) keepRestSchedule(key, value.schedule);
   return value;
+}
+
+/* ── Rest ───────────────────────────────────────────────────────────────── */
+/* Days since each team's previous game, from ESPN's team schedule. A schedule
+   is fetched only when a card, the inspector or the game header showing that
+   team scrolls into view, then kept for the browser session (memory plus
+   sessionStorage, dates only). No schedule, no chip. */
+const REST_RETRY = 5 * 60 * 1000;
+const restSchedules = new Map(); // team id -> { games } | null (failed, with .at)
+const restPending = new Map(); // team id -> Promise
+let restObserver = null;
+
+function restStoreKey(id) {
+  return 'mb-nba-rest-' + id;
+}
+
+function keepRestSchedule(id, schedule) {
+  const games = schedule.games.map((game) => ({ startISO: game.startISO, postponed: Boolean(game.postponed) }));
+  restSchedules.set(String(id), { games });
+  try {
+    sessionStorage.setItem(restStoreKey(id), JSON.stringify(games));
+  } catch (err) {
+    // Private mode or a full store: the in-memory copy still serves this page.
+  }
+}
+
+function cachedRestSchedule(id) {
+  const key = String(id);
+  const hit = restSchedules.get(key);
+  if (hit && hit.games) return hit;
+  if (hit && Date.now() - hit.at < REST_RETRY) return null;
+  try {
+    const raw = sessionStorage.getItem(restStoreKey(key));
+    const games = raw ? JSON.parse(raw) : null;
+    if (Array.isArray(games) && games.length) {
+      restSchedules.set(key, { games });
+      return restSchedules.get(key);
+    }
+  } catch (err) {
+    // Unreadable entry: fetch again.
+  }
+  return undefined;
+}
+
+function restSchedule(id) {
+  const key = String(id);
+  const hit = cachedRestSchedule(key);
+  if (hit !== undefined) return Promise.resolve(hit);
+  if (!restPending.has(key)) {
+    restPending.set(key, fetchJSON(API + '/teams/' + encodeURIComponent(key) + '/schedule')
+      .then((json) => {
+        const schedule = parseTeamSchedule(json);
+        if (!schedule.games.length) throw new Error('empty schedule');
+        keepRestSchedule(key, schedule);
+        return restSchedules.get(key);
+      })
+      .catch(() => {
+        restSchedules.set(key, { games: null, at: Date.now() });
+        return null;
+      })
+      .finally(() => restPending.delete(key)));
+  }
+  return restPending.get(key);
+}
+
+function restChipHTML(teamId, day) {
+  if (!teamId || !day) return '';
+  return '<span class="rest" data-rest-team="' + esc(teamId) + '" data-rest-day="' + esc(day) + '" hidden></span>';
+}
+
+function paintRestChip(chip, schedule) {
+  const info = schedule ? restInfo(schedule, chip.getAttribute('data-rest-day')) : null;
+  if (!info) return;
+  // Break "B2B · 3 in 4" only after the dot, so a narrow drawer cell wraps it whole.
+  chip.textContent = info.label.replace(/ in /g, '\u00a0in\u00a0').replace(/^B2B ·/, 'B2B\u00a0·');
+  chip.title = info.b2b && info.threeInFour ? 'Second night of a back-to-back, third game in four nights'
+    : info.b2b ? 'Second night of a back-to-back'
+      : info.threeInFour ? 'Third game in four nights'
+        : info.daysSince + ' days since the last game';
+  chip.classList.toggle('tired', info.b2b || info.threeInFour);
+  chip.hidden = false;
+  const row = chip.closest('.rs-row');
+  if (row) row.hidden = false;
+}
+
+// Paints what the cache already has right away (so a live refresh never
+// flickers), and returns true when every chip in the scope is settled.
+function paintRestFromCache(scope) {
+  let settled = true;
+  scope.querySelectorAll('[data-rest-team]').forEach((chip) => {
+    const hit = cachedRestSchedule(chip.getAttribute('data-rest-team'));
+    if (hit === undefined) settled = false;
+    else paintRestChip(chip, hit);
+  });
+  return settled;
+}
+
+function fillRest(scope) {
+  scope.querySelectorAll('[data-rest-team]').forEach((chip) => {
+    restSchedule(chip.getAttribute('data-rest-team')).then((schedule) => {
+      if (chip.isConnected) paintRestChip(chip, schedule);
+    });
+  });
+}
+
+function watchRest(root) {
+  if (!root) return;
+  const scopes = root.matches && root.matches('[data-rest-scope]') ? [root] : [...root.querySelectorAll('[data-rest-scope]')];
+  if (!restObserver && 'IntersectionObserver' in window) {
+    restObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        restObserver.unobserve(entry.target);
+        fillRest(entry.target);
+      });
+    }, { rootMargin: '120px 0px' });
+  }
+  scopes.forEach((scope) => {
+    if (paintRestFromCache(scope)) return;
+    if (restObserver) restObserver.observe(scope);
+    else fillRest(scope);
+  });
 }
 
 async function teamBundle(id) {
@@ -3773,7 +3934,7 @@ function gmBlockHTML(side, look, which, game) {
   return '<a class="gm-team ' + which + (started ? ' sc' : '') + (lost ? ' lost' : '') + '" href="#team/' + esc(side.id) + '" style="background:' + look.fill + ';color:' + look.ink + '">' +
     '<span class="gm-id">' + logo + '<span class="gm-ab">' + esc(side.abbr) + '</span></span>' +
     '<span class="gm-nm">' + esc(side.name) + '</span>' +
-    '<span class="gm-rec">' + esc(side.record) + (split ? '<i>' + esc(split) + '</i>' : '') + '</span>' +
+    '<span class="gm-rec">' + esc(side.record) + (split ? '<i>' + esc(split) + '</i>' : '') + restChipHTML(side.id, etDate(game.startISO)) + '</span>' +
     (started ? '<span class="gm-sc">' + esc(side.score) + '</span>' : '') + '</a>';
 }
 
@@ -3795,7 +3956,7 @@ function gmMidHTML(game) {
 }
 
 function gmBugHTML(game, looks) {
-  return '<div class="gm-bug">' + gmBlockHTML(game.away, looks.away, 'away', game) + gmMidHTML(game) + gmBlockHTML(game.home, looks.home, 'home', game) + '</div>';
+  return '<div class="gm-bug" data-rest-scope>' + gmBlockHTML(game.away, looks.away, 'away', game) + gmMidHTML(game) + gmBlockHTML(game.home, looks.home, 'home', game) + '</div>';
 }
 
 // Tale of the tape: values on the outside, bars grow from the centre in each
@@ -4022,6 +4183,7 @@ async function showPreGame(game, pre, token, colors) {
     ? gmTapeHTML(COMPARE_ROWS, away, home, looks, game.away.abbr + ' at ' + game.home.abbr + ' season comparison', 'season')
     : '';
   app.innerHTML = gmPageHTML(game, { looks, tape, pre, live: false, box: '' });
+  watchRest(app);
 }
 
 function armGamePoll(id) {
@@ -4098,6 +4260,7 @@ function renderBoxScore(box, game, pre, colors, json, refresh) {
     : '';
   const tables = box.teams.map((team) => boxTableHTML(team, team.abbr === game.home.abbr ? looks.home : looks.away)).join('');
   app.innerHTML = gmPageHTML(game, { looks, tape, pre, live: box.state === 'in', box: '<h2 class="gm-sh">Box score</h2>' + tables, json, refresh });
+  watchRest(app);
   wireGameChart();
 }
 

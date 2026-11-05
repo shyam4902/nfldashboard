@@ -446,10 +446,61 @@ export function parseTeamSchedule(json) {
       result: state === 'post' ? (mine.winner === true ? 'W' : 'L') : null,
       score: scoreOf(mine),
       oppScore: scoreOf(other),
+      // A postponed or cancelled date was never played, so restInfo skips it.
+      postponed: /POSTPONED|CANCEL/.test(str(status?.type?.name)),
     });
   }
 
   return { team, games };
+}
+
+// Day number of an ET calendar date (YYYYMMDD). Counting from the date string,
+// not from timestamps, keeps the DST change out of the arithmetic.
+function etDayNumber(yyyymmdd) {
+  const m = /^(\d{4})(\d{2})(\d{2})$/.exec(String(yyyymmdd || ''));
+  return m ? Math.round(Date.UTC(+m[1], +m[2] - 1, +m[3]) / 86400000) : null;
+}
+
+// Rest going into one game, from that team's parseTeamSchedule output (or its
+// games array). gameDate is the game's start (ISO or Date) or its ET YYYYMMDD.
+// Days are ET calendar days, the way the league counts them: a 10:30pm ET tip
+// and a 7pm ET tip the next evening are a back-to-back even though both start
+// on the same UTC day. Returns null unless the schedule has a game on that ET
+// date and an earlier one to count from, so nothing is guessed:
+//   daysSince  calendar days since the previous game (1 = back-to-back)
+//   restDays   days off in between (daysSince - 1)
+//   b2b        second night of a back-to-back
+//   threeInFour third game in four nights (this one included)
+//   label      'B2B', '3 in 4', 'B2B · 3 in 4', '1 day rest', 'N days rest'
+export function restInfo(schedule, gameDate) {
+  const games = Array.isArray(schedule) ? schedule : arr(schedule?.games);
+  const target = /^\d{8}$/.test(String(gameDate)) ? String(gameDate) : etDate(gameDate);
+  const day = etDayNumber(target);
+  if (day == null) return null;
+
+  const days = new Set();
+  for (const game of games) {
+    if (!game || game.postponed) continue;
+    const n = etDayNumber(etDate(game.startISO));
+    if (n != null) days.add(n);
+  }
+  if (!days.has(day)) return null;
+
+  let prev = null;
+  for (const n of days) if (n < day && (prev == null || n > prev)) prev = n;
+  if (prev == null) return null;
+
+  const daysSince = day - prev;
+  const b2b = daysSince === 1;
+  let recent = 0;
+  for (let n = day - 3; n < day; n++) if (days.has(n)) recent++;
+  const threeInFour = recent >= 2;
+  const restDays = daysSince - 1;
+  const label = b2b && threeInFour ? 'B2B · 3 in 4'
+    : b2b ? 'B2B'
+      : threeInFour ? '3 in 4'
+        : restDays + (restDays === 1 ? ' day rest' : ' days rest');
+  return { daysSince, restDays, b2b, threeInFour, label };
 }
 
 function flatStats(categories) {
