@@ -287,23 +287,6 @@ html, body {
 .hdr-select:focus { outline: none; border-color: var(--accent-brand); }
 .hdr-select option { background: var(--bg-card); color: var(--text-main); }
 
-/* Matchup Lab */
-.formation-field { position: relative; background: linear-gradient(180deg, rgba(26, 29, 34,0.7), rgba(16, 18, 21,0.9)); border: 1px solid rgba(61, 67, 76,0.4); border-radius: 14px; overflow: hidden; }
-.formation-field::before { content: ""; position: absolute; inset: 12px; border: 1px solid rgba(143, 146, 153,0.18); border-radius: 10px; pointer-events: none; }
-.formation-field::after { content: ""; position: absolute; inset: 12px; background: repeating-linear-gradient(90deg, transparent 0 76px, rgba(143, 146, 153,0.09) 76px 77px); pointer-events: none; }
-.formation-midline { position: absolute; left: 50%; top: 12px; bottom: 12px; width: 1px; background: rgba(143, 146, 153,0.18); pointer-events: none; }
-.formation-player { display: flex; flex-direction: column; align-items: center; gap: 3px; cursor: pointer; transition: transform 0.15s; z-index: 1; position: relative; }
-.formation-player:hover { transform: translateY(-2px); }
-.formation-player .fp-circle { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 800; letter-spacing: 0.02em; position: relative; }
-.formation-player .fp-circle.fp-x { background: rgba(244,63,94,0.16); border: 1.5px solid rgba(244,63,94,0.55); color: #fda4af; }
-.formation-player .fp-circle.fp-o { background: rgba(143,166,191,0.16); border: 1.5px solid rgba(143,166,191,0.6); color: #a8bfd8; }
-.formation-player .fp-rating { position: absolute; top: -7px; right: -7px; font-size: 9px; font-weight: 800; padding: 1px 5px; border-radius: 99px; }
-.formation-player .fp-name { font-size: 10px; font-weight: 600; color: #dbd9d4; text-align: center; line-height: 1.15; max-width: 84px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.formation-player .fp-slot { font-size: 8.5px; color: #868a91; font-weight: 700; letter-spacing: 0.08em; }
-.formation-lockup { display: flex; flex-direction: column; gap: 16px; min-height: 420px; }
-.formation-row { display: flex; justify-content: center; gap: 22px; }
-.formation-row.row-lb { gap: 30px; }
-.formation-row.row-skill { gap: 26px; }
 .unit-match-row { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 7px 0; }
 .unit-match-row .um-label { font-size: 10px; font-weight: 800; letter-spacing: 0.08em; color: #8f9299; text-align: center; grid-column: 1 / -1; }
 .unit-bar { height: 8px; border-radius: 99px; background: rgba(61, 67, 76,0.35); overflow: hidden; }
@@ -353,10 +336,7 @@ html, body {
 .rating-unrated { background: transparent; border: 1px dashed rgba(148,163,184,0.5); color: #94a3b8; font-weight: 600; }
 /* Madden ratings demoted: hidden on all main pages, kept only in the Matchup Lab */
 .rating-badge { display: none; }
-.formation-player .rating-badge { display: flex; }
 
-/* Roster formation layout */
-.formation-row { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }
 .roster-tab { padding: 6px 16px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; border: 1px solid transparent; transition: all 0.15s; text-transform: uppercase; letter-spacing: 0.5px; }
 .roster-tab.active-off { background: rgba(59,130,246,0.2); border-color: #3b82f6; color: #60a5fa; }
 .roster-tab.active-def { background: rgba(239,68,68,0.2); border-color: #ef4444; color: #f87171; }
@@ -1640,27 +1620,6 @@ body.theme-analyst .roster-summary .rs-value {
   box-shadow: 0 4px 14px rgba(217, 164, 65, 0.3) !important;
   border-color: #d9a441 !important;
 }
-.matchup-table-cell {
-  padding: 10px 14px;
-  border-bottom: 1px solid rgba(43, 48, 55, 0.4);
-}
-.matchup-table-row:hover {
-  background-color: rgba(43, 48, 55, 0.25);
-}
-.matchup-insight-card {
-  transition: transform 0.2s, box-shadow 0.2s;
-  border-radius: 14px;
-  overflow: hidden;
-  border: 1px solid rgba(61, 67, 76, 0.4);
-  background: rgba(16, 18, 21, 0.8);
-}
-.matchup-insight-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.45);
-}
-.adv-badge-5 {
-  box-shadow: 0 0 12px rgba(245, 158, 11, 0.4);
-}
   /* Sport switch in the header brand: tab-btn look, aria-current state (showTab sweeps .active). */
   .hdr-sport { display: flex; align-items: center; gap: 2px; }
   .hdr-sport a[aria-current='page'] { background: var(--tab-active-bg); color: var(--tab-active-text); }
@@ -1888,8 +1847,8 @@ body.theme-analyst .roster-summary .rs-value {
 }
 
 /* ── Matchup view, 2026-11-05: same grammar as /nba/ and #compare. ─────────────
-   The seven sub-tabs keep their markup and numbers; this layer only restyles
-   their Tailwind containers and accents inside #tab-matchup. */
+   Controls, scorebug, sub-tab pills and sidebar. The seven sub-tab panels
+   have their own file, nfl/matchup.css. */
 #tab-matchup.grid-lines { background: none; border: 0; padding: 0; }
 #tab-matchup #matchupControls { background: var(--bg-card); border-color: var(--border-card); border-radius: var(--r3); box-shadow: var(--e1); }
 #tab-matchup select { background: var(--bg-inset) !important; border-color: var(--border-card) !important; color: var(--text-main) !important; border-radius: var(--r1); }
@@ -1904,18 +1863,9 @@ body.theme-analyst .roster-summary .rs-value {
 #matchupSubTabs .matchup-subtab-pill:hover { color: var(--text-main); }
 #matchupSubTabs .matchup-subtab-pill.active { background: var(--tab-active-bg); color: var(--tab-active-text); font-weight: 700; }
 
-/* Cards and insets inside the sub-tabs */
-#tab-matchup .bg-surface-card { background: var(--bg-card) !important; border-color: var(--border-card) !important; border-radius: var(--r3) !important; box-shadow: var(--e1); }
-#tab-matchup [class*="bg-slate-800"], #tab-matchup .bg-slate-900 { background: var(--bg-inset) !important; }
+/* Controls strip buttons (the sub-tab panels are styled in nfl/matchup.css) */
+#matchupControls [class*="bg-slate-800"] { background: var(--bg-inset) !important; }
 #tab-matchup .border-subtle { border-color: var(--border-muted) !important; }
-#tab-matchup .text-sky-400, #tab-matchup .text-sky-300, #tab-matchup .text-indigo-400 { color: var(--text-main) !important; }
-#tab-matchup .text-cyber-lime { color: var(--accent-positive) !important; }
-#tab-matchup .text-amber-400 { color: var(--accent-warning) !important; }
-#tab-matchup .bg-sky-500, #tab-matchup .bg-sky-400 { background: var(--text-main) !important; }
-#tab-matchup .border-sky-500 { border-color: var(--border-strong) !important; }
-#matchupMainContent h2, #matchupMainContent h3 { font-family: var(--font-serif); letter-spacing: -0.01em; }
-#matchupMainContent .font-mono { font-family: var(--font-sans); font-variant-numeric: tabular-nums; }
-#matchupMainContent p { line-height: 1.55; }
 
 /* Sidebar: market grid and a compact tale of the tape */
 .mu-side { display: flex; flex-direction: column; gap: 12px; }

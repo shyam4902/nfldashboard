@@ -167,63 +167,57 @@ function pickStarter(team, posCands, used) {
   return best;
 }
 
-function formationPlayerHtml(p, isOffense, slot) {
+// One starter on the Formation Lab field. The disc carries the slot (LT, WR,
+// CB) in the team's colour, filled for the offense and outlined for the
+// defense; the name and "position · Madden OVR" sit under it. An empty slot
+// means the roster snapshot has no player for it.
+function formationPlayerHtml(p, isOffense, slot, look) {
+  const side = isOffense ? 'fp-o' : 'fp-x';
+  const tint = look ? ` style="--c:${look.fill};--ci:${isOffense ? look.on : look.ink}"` : '';
   if (!p) {
-    return `<div class="formation-player"><div class="fp-circle ${isOffense ? 'fp-o' : 'fp-x'}" style="opacity:.35">?</div><div class="fp-slot">${slot}</div></div>`;
+    return `<div class="formation-player empty" title="No ${attrEsc(slot)} in the roster snapshot"><span class="fp-circle ${side}">${attrEsc(slot)}</span><span class="fp-name">—</span><span class="fp-meta">no player</span></div>`;
   }
-  const tier = (Number(p.ovr) || 0) >= 90 ? 'rating-elite' : (Number(p.ovr) || 0) >= 80 ? 'rating-star' : (Number(p.ovr) || 0) >= 70 ? 'rating-solid' : 'rating-dev';
   const escName = attrEsc(p.name);
   const escTeam = attrEsc(teamNameOf(p));
+  const pos = String(p.pos || '');
+  const ovr = p.ovr || '—';
+  const meta = (pos && pos !== slot ? attrEsc(pos) + ' · ' : '') + attrEsc(ovr);
   const openPlayer = `openPlayerModal('${escName.replace(/'/g, "\\'")}','${escTeam.replace(/'/g, "\\'")}')`;
-  return `<div class="formation-player" tabindex="0" role="button" aria-label="${escName} · ${p.pos} · OVR ${p.ovr || '—'}" onclick="${openPlayer}" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();${openPlayer}}" title="${escName} · ${p.pos} · OVR ${p.ovr || '—'}">
-    <div class="fp-circle ${isOffense ? 'fp-o' : 'fp-x'}">${p.pos}<span class="fp-rating rating-badge ${tier}">${p.ovr || '—'}</span></div>
-    <div class="fp-name">${escName}</div>
-    <div class="fp-slot">${slot || p.pos}</div>
+  return `<div class="formation-player" tabindex="0" role="button" aria-label="${escName} · ${attrEsc(pos)} · OVR ${attrEsc(ovr)}" onclick="${openPlayer}" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();${openPlayer}}" title="${escName} · ${attrEsc(pos)} · OVR ${attrEsc(ovr)}">
+    <span class="fp-circle ${side}"${tint}>${attrEsc(slot || pos)}</span>
+    <span class="fp-name">${escName}</span>
+    <span class="fp-meta">${meta}</span>
   </div>`;
 }
 
-function formationFieldHtml(team, slots, isOffense) {
+function formationFieldHtml(team, look, isOffense) {
   const used = {};
   const rows = [];
+  const row = (picks) => rows.push(`<div class="mu-fr" style="--n:${picks.length}">${picks.join('')}</div>`);
   if (isOffense) {
     const skill = MATCHUP_OFFENSE[MATCHUP_STATE.personnel] || MATCHUP_OFFENSE['12'];
     const skillPicks = skill.map(s => pickStarter(team, s.pos, used));
     const olPicks = MATCHUP_OL_SLOTS.map(s => pickStarter(team, s.pos, used));
     const qb = pickStarter(team, ['QB'], used);
     const rb = pickStarter(team, ['RB'], used);
-    rows.push({ cls: 'row-skill', picks: skillPicks.map((p, i) => formationPlayerHtml(p, true, skill[i].slot)) });
-    rows.push({ cls: '', picks: olPicks.map((p, i) => formationPlayerHtml(p, true, MATCHUP_OL_SLOTS[i].slot)) });
-    rows.push({ cls: '', picks: [formationPlayerHtml(qb, true, 'QB'), formationPlayerHtml(rb, true, 'RB')] });
+    row(skillPicks.map((p, i) => formationPlayerHtml(p, true, skill[i].slot, look)));
+    row(olPicks.map((p, i) => formationPlayerHtml(p, true, MATCHUP_OL_SLOTS[i].slot, look)));
+    row([formationPlayerHtml(qb, true, 'QB', look), formationPlayerHtml(rb, true, 'RB', look)]);
   } else {
     const def = MATCHUP_DEFENSE[MATCHUP_STATE.front] || MATCHUP_DEFENSE['43'];
     const defPicks = def.map(s => pickStarter(team, s.pos, used));
     const back = [], lbs = [], dls = [];
     defPicks.forEach((p, i) => {
       const slot = def[i].slot;
-      if (slot === 'CB' || slot === 'S') back.push(formationPlayerHtml(p, false, slot));
-      else if (slot === 'LB') lbs.push(formationPlayerHtml(p, false, slot));
-      else dls.push(formationPlayerHtml(p, false, slot));
+      if (slot === 'CB' || slot === 'S') back.push(formationPlayerHtml(p, false, slot, look));
+      else if (slot === 'LB') lbs.push(formationPlayerHtml(p, false, slot, look));
+      else dls.push(formationPlayerHtml(p, false, slot, look));
     });
-    rows.push({ cls: 'row-skill', picks: back });
-    rows.push({ cls: 'row-lb', picks: lbs });
-    rows.push({ cls: '', picks: dls });
+    row(back);
+    row(lbs);
+    row(dls);
   }
-  return `<div class="formation-lockup">` + rows.map(r => `<div class="formation-row ${r.cls}">${r.picks.join('')}</div>`).join('') + `</div>`;
-}
-
-// Real measured efficiency ranks for the Matchup Center, from the
-// nflverse team_season_efficiency dataset (2026 season to date). Every rank is
-// 1-32 across the league for a real metric; nothing here is invented.
-// Defense ranks invert the metric so 1 = best (e.g. lowest EPA/play).
-function computeTeamNextGenRanks(teamName) {
-  const rank = (side, metric) => efficiencyRank(teamName, side, metric, measuredEpaSeason());
-  const offense = {};
-  const defense = {};
-  for (const s of [...PASSING_SPLITS, ...RUSHING_SPLITS, ...TRENCH_SPLITS]) {
-    offense[s.id] = rank('off', s.id) || null;
-    defense[s.id] = rank('def', s.id) || null;
-  }
-  return { offense, defense };
+  return `<div class="mu-frs ${isOffense ? 'off' : 'def'}">${rows.join('')}</div>`;
 }
 
 function computeAdvantage(offRank, defRank, offTeam, defTeam) {
@@ -247,18 +241,125 @@ function computeAdvantage(offRank, defRank, offTeam, defTeam) {
   return { team, stars, text: `${stars} Star`, type: isOffenseAdv ? 'offense' : 'defense', delta: absDelta };
 }
 
-function renderAdvantageBadge(adv, offTeam, defTeam) {
+// ── Shared pieces for the seven sub-tabs ──────────────────────────────────
+// The /nba/ game-page grammar (styles in nfl/matchup.css): values on the
+// outside, bars that grow from the centre in each team's colour, league ranks
+// as small grey ordinals, and a quiet chip in the leading team's colour for
+// the edge. Gold stays on controls.
+
+// Team name, abbreviation and colours for both pickers. `fill` paints bars,
+// discs and chips, `on` is text on that fill, `ink` is the team colour lifted
+// until it reads on the dark card.
+function muLooks(tA, tB) {
+  const find = name => (typeof nflTeamByName === 'function' ? nflTeamByName(name) : null);
+  const teamA = find(tA);
+  const teamB = find(tB);
+  const lib = typeof nflLib !== 'undefined' && nflLib ? nflLib : null;
+  let looks;
+  if (lib && teamA && teamB) {
+    looks = lib.separateLooks(lib.teamLook(teamA), lib.teamLook(teamB));
+  } else {
+    const plain = name => ({ fill: (DATA.teamColors && DATA.teamColors[name]) || '#3b4261', ink: '#ffffff' });
+    looks = [plain(tA), plain(tB)];
+  }
+  const side = (name, team, look) => ({
+    name,
+    abbr: (team && team.abbr) || DATA.teamAbbr[name] || name,
+    fill: look.fill,
+    on: look.ink,
+    ink: lib ? lib.readableOn(look.fill, '#14161a') : 'var(--text-main)',
+  });
+  const a = side(tA, teamA, looks[0]);
+  const b = side(tB, teamB, looks[1]);
+  return { a, b, [tB]: b, [tA]: a };
+}
+
+function muOrd(rank) {
+  if (rank == null) return '';
+  return typeof nflLib !== 'undefined' && nflLib ? nflLib.ordinal(rank) : rank + getOrdinal(rank);
+}
+
+function muAbbr(t) {
+  return `<span class="mu-ab" style="color:${t.ink}">${attrEsc(t.abbr)}</span>`;
+}
+
+// How many teams carry this metric in the measured season (the rank's "of").
+function muRankCount(side, metric) {
+  const season = measuredEpaSeason();
+  const n = (EFFICIENCY_DATA || []).filter(r => r.season === season && r.side === side &&
+    r[metric] != null && Number.isFinite(Number(r[metric]))).length;
+  return n || 32;
+}
+
+// Bar length from a league rank: 1st fills the half, last keeps a sliver.
+function muRankShare(rank, count) {
+  if (rank == null || !count) return 0;
+  return Math.max(0.08, (count - rank + 1) / count);
+}
+
+function muVal(side, text, rank, lead) {
+  return `<b class="mu-v ${side}${lead ? ' lead' : ''}">${attrEsc(text)}${rank != null ? `<small>${muOrd(rank)}</small>` : ''}</b>`;
+}
+
+function muBar(side, share, fill, lead) {
+  return `<span class="mu-bar ${side}${lead ? ' lead' : ''}"><i style="width:${Math.round(share * 100)}%;background:${fill}"></i></span>`;
+}
+
+// The edge from computeAdvantage as a chip in the leading team's colour:
+// abbreviation plus the star tier (capped at three, as before).
+function renderAdvantageBadge(adv, L) {
   if (!adv || adv.unavailable) {
-    return `<span class="px-2 py-0.5 rounded text-[10px] font-mono text-slate-500 bg-slate-800/60 border border-subtle">—</span>`;
+    return `<span class="mu-edge none" title="Edge unavailable: one of the two ranks is missing">—</span>`;
   }
-  if (adv.stars === 0 || !adv.team) {
-    return `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-800 text-slate-400 border border-subtle">EVEN</span>`;
+  if (adv.stars === 0 || !adv.team || !L[adv.team]) {
+    return `<span class="mu-edge none" title="Same league rank">Even</span>`;
   }
-  const isOff = adv.team === offTeam;
-  const abbr = DATA.teamAbbr[adv.team] || adv.team;
-  const cls = isOff ? 'text-cyber-lime font-bold' : 'text-crimson font-bold';
+  const t = L[adv.team];
   const stars = '★'.repeat(Math.min(3, adv.stars));
-  return `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-800 border border-subtle ${cls}">${attrEsc(abbr)} ADV <span class="text-[9px] opacity-80">${stars}</span></span>`;
+  return `<span class="mu-edge" style="--c:${t.fill};color:${t.ink}" title="${attrEsc(t.abbr)} advantage: ${adv.delta} places apart in the league ranks" aria-label="${attrEsc(t.abbr)} advantage, ${Math.min(3, adv.stars)} of 3 stars">${attrEsc(t.abbr)}<span class="w"> ADV</span> <i>${stars}</i></span>`;
+}
+
+// Offense-vs-defense rows for a list of metrics: values, league ranks and the
+// edge, all from the measured nflverse season.
+function muDuelRows(splits, offTeam, defTeam) {
+  const season = measuredEpaSeason();
+  return splits.map(s => {
+    const offRank = efficiencyRank(offTeam, 'off', s.id, season);
+    const defRank = efficiencyRank(defTeam, 'def', s.id, season);
+    return {
+      id: s.id,
+      label: s.label,
+      tag: s.tag || '',
+      offRank,
+      defRank,
+      offVal: efficiencyValue(offTeam, 'off', s.id, season),
+      defVal: efficiencyValue(defTeam, 'def', s.id, season),
+      adv: computeAdvantage(offRank, defRank, offTeam, defTeam),
+    };
+  });
+}
+
+// One row: offense value and bar on the left, defense on the right. Bars are
+// each unit's league standing (1st = full), so the longer bar is the edge.
+function muDuelRowHtml(r, L, offTeam, defTeam) {
+  const off = L[offTeam];
+  const def = L[defTeam];
+  const lead = r.adv && r.adv.team ? (r.adv.team === offTeam ? 'a' : 'b') : '';
+  return `<div class="mu-tr matchup-table-row">` +
+    muVal('a', formatSplitRate(r.id, r.offVal), r.offRank, lead === 'a') +
+    muBar('a', muRankShare(r.offRank, muRankCount('off', r.id)), off.fill, lead === 'a') +
+    `<span class="mu-k"><span>${r.tag ? `<em>${attrEsc(r.tag)}</em>` : ''}${attrEsc(r.label)}</span>${renderAdvantageBadge(r.adv, L)}</span>` +
+    muBar('b', muRankShare(r.defRank, muRankCount('def', r.id)), def.fill, lead === 'b') +
+    muVal('b', formatSplitRate(r.id, r.defVal), r.defRank, lead === 'b') +
+    `</div>`;
+}
+
+function muDuelHeadHtml(L, offTeam, defTeam, middle) {
+  return `<div class="mu-th"><span class="a">${muAbbr(L[offTeam])} off</span><span class="k">${middle}</span><span class="b">${muAbbr(L[defTeam])} def</span></div>`;
+}
+
+function muDuelTitle(L, offTeam, defTeam) {
+  return `${muAbbr(L[offTeam])} Offense <span class="vs">vs</span> ${muAbbr(L[defTeam])} Defense`;
 }
 
 function getTeamAtAGlance(teamName) {
@@ -514,53 +615,37 @@ function renderMatchupSidebar(game, tA, tB) {
   `;
 }
 
+// At a Glance: both teams on the same four measured rates, tale-of-the-tape
+// rows (bars sized against each other, lower is better on defense).
 function renderAtAGlanceTable(tA, tB) {
   const gA = getTeamAtAGlance(tA);
   const gB = getTeamAtAGlance(tB);
-  const logoA = getNflTeamLogo(tA);
-  const logoB = getNflTeamLogo(tB);
-  const abbrA = DATA.teamAbbr[tA] || tA;
-  const abbrB = DATA.teamAbbr[tB] || tB;
-
-  const cell = (v, r) => v != null ? `${v}${r != null ? ' (#' + r + ')' : ''}` : '—';
+  const L = muLooks(tA, tB);
+  const season = measuredEpaSeason();
+  const lib = typeof nflLib !== 'undefined' && nflLib ? nflLib : null;
+  const epa = v => v != null ? v.toFixed(3) : '—';
+  const pct = v => v != null ? (v * 100).toFixed(0) + '%' : '—';
   const rows = [
-    { label: `Off EPA/play ${measuredEpaSeason()}`, vA: cell(gA.epaOff != null ? gA.epaOff.toFixed(3) : null, gA.epaOffRank), vB: cell(gB.epaOff != null ? gB.epaOff.toFixed(3) : null, gB.epaOffRank) },
-    { label: `Def EPA/play ${measuredEpaSeason()}`, vA: cell(gA.epaDef != null ? gA.epaDef.toFixed(3) : null, gA.epaDefRank), vB: cell(gB.epaDef != null ? gB.epaDef.toFixed(3) : null, gB.epaDefRank) },
-    { label: `Off Success Rate ${measuredEpaSeason()}`, vA: cell(gA.successOff != null ? (gA.successOff * 100).toFixed(0) + '%' : null, gA.successOffRank), vB: cell(gB.successOff != null ? (gB.successOff * 100).toFixed(0) + '%' : null, gB.successOffRank) },
-    { label: `Def Success Rate ${measuredEpaSeason()}`, vA: cell(gA.successDef != null ? (gA.successDef * 100).toFixed(0) + '%' : null, gA.successDefRank), vB: cell(gB.successDef != null ? (gB.successDef * 100).toFixed(0) + '%' : null, gB.successDefRank) },
+    { label: `Off EPA/play ${season}`, a: gA.epaOff, b: gB.epaOff, ra: gA.epaOffRank, rb: gB.epaOffRank, fmt: epa },
+    { label: `Def EPA/play ${season}`, a: gA.epaDef, b: gB.epaDef, ra: gA.epaDefRank, rb: gB.epaDefRank, fmt: epa, lower: true },
+    { label: `Off Success Rate ${season}`, a: gA.successOff, b: gB.successOff, ra: gA.successOffRank, rb: gB.successOffRank, fmt: pct },
+    { label: `Def Success Rate ${season}`, a: gA.successDef, b: gB.successDef, ra: gA.successDefRank, rb: gB.successDefRank, fmt: pct, lower: true },
   ];
-
+  const body = rows.map(r => {
+    const share = lib ? lib.barShares(r.a, r.b, r.lower) : { a: r.a != null ? 1 : 0, b: r.b != null ? 1 : 0 };
+    const lead = r.a != null && r.b != null && r.a !== r.b ? ((r.lower ? r.a < r.b : r.a > r.b) ? 'a' : 'b') : '';
+    return `<div class="mu-tr matchup-table-row">` +
+      muVal('a', r.fmt(r.a), r.ra, lead === 'a') + muBar('a', share.a, L.a.fill, lead === 'a') +
+      `<span class="mu-k"><span>${attrEsc(r.label)}</span></span>` +
+      muBar('b', share.b, L.b.fill, lead === 'b') + muVal('b', r.fmt(r.b), r.rb, lead === 'b') + `</div>`;
+  }).join('');
   return `
-    <div class="bg-surface-card border border-subtle rounded-lg p-4">
-      <div class="flex justify-between items-center mb-3 pb-2 border-b border-subtle">
-        <h2 class="text-sm font-bold text-white flex items-center gap-2 uppercase tracking-wide">
-          <span class="text-sky-400">📋</span> At a Glance Comparison
-        </h2>
-        <span class="text-[10px] font-mono text-slate-400">${measuredEpaSeason()} SEASON TO DATE</span>
-      </div>
-      <table class="w-full text-left border-collapse">
-        <thead>
-          <tr class="border-b border-subtle text-slate-400 text-[10px] font-bold uppercase tracking-wider">
-            <th class="py-2.5 font-normal">${attrEsc(abbrA)}</th>
-            <th class="py-2.5 font-normal text-center">METRIC</th>
-            <th class="py-2.5 font-normal text-right">${attrEsc(abbrB)}</th>
-          </tr>
-        </thead>
-        <tbody class="font-mono text-xs">
-          ${rows.map(r => `
-            <tr class="matchup-table-row border-b border-subtle/50 hover:bg-slate-800/30 transition-colors">
-              <td class="py-2.5 font-bold text-slate-200">${r.vA}</td>
-              <td class="py-2.5 font-sans text-center text-slate-400 font-medium">${r.label}</td>
-              <td class="py-2.5 text-right font-bold text-slate-200">${r.vB}</td>
-            </tr>
-          `).join('')}
-        </tbody>
-      </table>
-      <div class="mt-3 pt-2 border-t border-subtle/50 text-[10px] text-slate-500 font-mono flex justify-between items-center">
-        <span>Sources & Method: ${measuredEpaSeason()} measured EPA (nflverse, season to date)</span>
-        <span class="text-slate-600">Model verified</span>
-      </div>
-    </div>
+    <section class="mu-card" aria-label="At a glance comparison">
+      <div class="mu-ch"><h2>At a Glance Comparison</h2><span class="mu-kick">${season} season to date</span></div>
+      <div class="mu-th"><span class="a">${muAbbr(L.a)}</span><span class="k">Metric</span><span class="b">${muAbbr(L.b)}</span></div>
+      ${body}
+      <div class="mu-note"><span>Sources & Method: ${season} measured EPA (nflverse, season to date)</span><span>Small numbers are league ranks (1st = best).</span><span>Model verified</span></div>
+    </section>
   `;
 }
 
@@ -584,480 +669,172 @@ function formatSplitRate(metric, val) {
   return String(val);
 }
 
+// Passing, Rushing and Defense & Trenches: both offense-vs-defense pairings
+// side by side for one group of measured splits.
 function renderMatchupComparisonsSideBySide(splits, tA, tB, categoryTitle) {
-  const ranksA = computeTeamNextGenRanks(tA);
-  const ranksB = computeTeamNextGenRanks(tB);
-  const abbrA = DATA.teamAbbr[tA] || tA;
-  const abbrB = DATA.teamAbbr[tB] || tB;
-
-  // Left Matchup: Team A Offense vs Team B Defense
-  const leftRows = splits.map(s => {
-    const offRank = ranksA.offense[s.id] != null ? ranksA.offense[s.id] : null;
-    const defRank = ranksB.defense[s.id] != null ? ranksB.defense[s.id] : null;
-    const offVal = efficiencyValue(tA, 'off', s.id, measuredEpaSeason());
-    const defVal = efficiencyValue(tB, 'def', s.id, measuredEpaSeason());
-    const adv = computeAdvantage(offRank, defRank, tA, tB);
-    return {
-      id: s.id,
-      label: s.label,
-      offRank,
-      defRank,
-      offVal,
-      defVal,
-      adv
-    };
-  });
-
-  // Right Matchup: Team B Offense vs Team A Defense
-  const rightRows = splits.map(s => {
-    const offRank = ranksB.offense[s.id] != null ? ranksB.offense[s.id] : null;
-    const defRank = ranksA.defense[s.id] != null ? ranksA.defense[s.id] : null;
-    const offVal = efficiencyValue(tB, 'off', s.id, measuredEpaSeason());
-    const defVal = efficiencyValue(tA, 'def', s.id, measuredEpaSeason());
-    const adv = computeAdvantage(offRank, defRank, tB, tA);
-    return {
-      id: s.id,
-      label: s.label,
-      offRank,
-      defRank,
-      offVal,
-      defVal,
-      adv
-    };
-  });
-
-  const renderTable = (rows, offTeam, defTeam, offAbbr, defAbbr, isLeft) => `
-    <div class="bg-surface-card border border-subtle rounded-lg p-4">
-      <div class="flex justify-between items-center mb-3 pb-2 border-b border-subtle">
-        <h3 class="text-xs font-bold ${isLeft ? 'text-sky-400' : 'text-indigo-400'} uppercase tracking-wide flex items-center gap-1.5">
-          <span>⚔️</span> ${attrEsc(offAbbr)} Offense vs ${attrEsc(defAbbr)} Defense
-        </h3>
-        <span class="text-[10px] font-mono text-slate-400">${measuredEpaSeason()} MEASURED</span>
-      </div>
-      <table class="w-full text-left border-collapse">
-        <thead>
-          <tr class="border-b border-subtle text-slate-400 text-[10px] font-bold uppercase tracking-wider">
-            <th class="py-2 font-normal">${categoryTitle || 'METRIC'}</th>
-            <th class="py-2 font-normal text-right">${attrEsc(offAbbr)} OFF</th>
-            <th class="py-2 font-normal text-right">${attrEsc(defAbbr)} DEF</th>
-            <th class="py-2 font-normal text-right">EDGE</th>
-          </tr>
-        </thead>
-        <tbody class="font-mono text-xs">
-          ${rows.map(r => `
-            <tr class="matchup-table-row border-b border-subtle/50 hover:bg-slate-800/30 transition-colors">
-              <td class="py-2.5 font-sans text-slate-300 truncate pr-2" title="${r.label}">${r.label}</td>
-              <td class="py-2.5 text-right text-slate-200 font-bold">${formatSplitRate(r.id, r.offVal)} <span class="text-[10px] font-normal text-slate-400">(${r.offRank != null ? '#' + r.offRank : '—'})</span></td>
-              <td class="py-2.5 text-right text-slate-200 font-bold">${formatSplitRate(r.id, r.defVal)} <span class="text-[10px] font-normal text-slate-400">(${r.defRank != null ? '#' + r.defRank : '—'})</span></td>
-              <td class="py-2.5 text-right font-sans">${renderAdvantageBadge(r.adv, offTeam, defTeam)}</td>
-            </tr>
-          `).join('')}
-        </tbody>
-      </table>
-      <div class="mt-3 pt-2 border-t border-subtle/50 text-[10px] text-slate-500 font-mono flex justify-between items-center">
-        <span>Source: ${measuredEpaSeason()} nflverse play-by-play (season to date)</span>
-        <span>Ranks: 1–32 NFL</span>
-      </div>
-    </div>
+  const L = muLooks(tA, tB);
+  const season = measuredEpaSeason();
+  const card = (offTeam, defTeam) => `
+    <section class="mu-card">
+      <div class="mu-ch"><h3>${muDuelTitle(L, offTeam, defTeam)}</h3><span class="mu-kick">${season} measured</span></div>
+      ${muDuelHeadHtml(L, offTeam, defTeam, attrEsc(categoryTitle || 'Metric'))}
+      ${muDuelRows(splits, offTeam, defTeam).map(r => muDuelRowHtml(r, L, offTeam, defTeam)).join('')}
+      <div class="mu-note"><span>Source: ${season} nflverse play-by-play (season to date)</span><span>Ranks: 1–32 NFL</span></div>
+    </section>
   `;
-
-  return `
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-      ${renderTable(leftRows, tA, tB, abbrA, abbrB, true)}
-      ${renderTable(rightRows, tB, tA, abbrB, abbrA, false)}
-    </div>
-  `;
+  return `<div class="mu-two">${card(tA, tB)}${card(tB, tA)}</div>`;
 }
 
+// Each offense's biggest rank gaps over the other defense, at most six.
 function renderKeyAdvantagesPanel(tA, tB) {
-  const allSplits = [...PASSING_SPLITS, ...RUSHING_SPLITS, ...TRENCH_SPLITS];
-  const ranksA = computeTeamNextGenRanks(tA);
-  const ranksB = computeTeamNextGenRanks(tB);
-  const abbrA = DATA.teamAbbr[tA] || tA;
-  const abbrB = DATA.teamAbbr[tB] || tB;
+  const seen = {};
+  const allSplits = [...PASSING_SPLITS, ...RUSHING_SPLITS, ...TRENCH_SPLITS].filter(s => !seen[s.id] && (seen[s.id] = 1));
+  const L = muLooks(tA, tB);
+  const season = measuredEpaSeason();
+  const top = (offTeam, defTeam) => muDuelRows(allSplits, offTeam, defTeam)
+    .filter(r => r.adv && !r.adv.unavailable && r.adv.stars > 0 && r.adv.team === offTeam)
+    .sort((a, b) => (b.adv.stars - a.adv.stars) || (b.adv.delta - a.adv.delta))
+    .slice(0, 6);
+  const card = (offTeam, defTeam) => {
+    const rows = top(offTeam, defTeam);
+    return `
+      <section class="mu-card">
+        <div class="mu-ch"><h3>${muAbbr(L[offTeam])} Top Advantages</h3><span class="mu-kick">${season} season to date</span></div>
+        ${!rows.length
+          ? `<p class="mu-empty">No statistical mismatches identified for this unit in ${season} data.</p>`
+          : muDuelHeadHtml(L, offTeam, defTeam, 'Key split') + rows.map(r => muDuelRowHtml(r, L, offTeam, defTeam)).join('')}
+      </section>
+    `;
+  };
+  return `<div class="mu-two">${card(tA, tB)}${card(tB, tA)}</div>`;
+}
 
-  const leftKey = allSplits.map(s => {
-    const offRank = ranksA.offense[s.id] != null ? ranksA.offense[s.id] : null;
-    const defRank = ranksB.defense[s.id] != null ? ranksB.defense[s.id] : null;
-    const offVal = efficiencyValue(tA, 'off', s.id, measuredEpaSeason());
-    const defVal = efficiencyValue(tB, 'def', s.id, measuredEpaSeason());
-    const adv = computeAdvantage(offRank, defRank, tA, tB);
-    return { id: s.id, label: s.label, offRank, defRank, offVal, defVal, adv };
-  }).filter(r => r.adv && !r.adv.unavailable && r.adv.stars > 0 && r.adv.team === tA)
-    .sort((a, b) => (b.adv?.stars || 0) - (a.adv?.stars || 0) || (b.adv?.delta || 0) - (a.adv?.delta || 0)).slice(0, 6);
-
-  const rightKey = allSplits.map(s => {
-    const offRank = ranksB.offense[s.id] != null ? ranksB.offense[s.id] : null;
-    const defRank = ranksA.defense[s.id] != null ? ranksA.defense[s.id] : null;
-    const offVal = efficiencyValue(tB, 'off', s.id, measuredEpaSeason());
-    const defVal = efficiencyValue(tA, 'def', s.id, measuredEpaSeason());
-    const adv = computeAdvantage(offRank, defRank, tB, tA);
-    return { id: s.id, label: s.label, offRank, defRank, offVal, defVal, adv };
-  }).filter(r => r.adv && !r.adv.unavailable && r.adv.stars > 0 && r.adv.team === tB)
-    .sort((a, b) => (b.adv?.stars || 0) - (a.adv?.stars || 0) || (b.adv?.delta || 0) - (a.adv?.delta || 0)).slice(0, 6);
-
-  const renderKeyTable = (rows, offTeam, defTeam, offAbbr, defAbbr, isLeft) => `
-    <div class="bg-surface-card border border-subtle rounded-lg p-4">
-      <div class="flex justify-between items-center mb-3 pb-2 border-b border-subtle">
-        <h3 class="text-xs font-bold ${isLeft ? 'text-sky-400' : 'text-indigo-400'} uppercase tracking-wide flex items-center gap-1.5">
-          <span>🌟</span> ${attrEsc(offAbbr)} Top Advantages
-        </h3>
-        <span class="text-[10px] font-mono text-slate-400">${measuredEpaSeason()} SEASON TO DATE</span>
-      </div>
-      ${!rows.length ? `
-        <div class="py-6 text-center text-xs text-slate-400 font-mono">
-          No statistical mismatches identified for this unit in ${measuredEpaSeason()} data.
-        </div>
-      ` : `
-        <table class="w-full text-left border-collapse">
-          <thead>
-            <tr class="border-b border-subtle text-slate-400 text-[10px] font-bold uppercase tracking-wider">
-              <th class="py-2 font-normal">KEY SPLIT</th>
-              <th class="py-2 font-normal text-right">${attrEsc(offAbbr)} OFF</th>
-              <th class="py-2 font-normal text-right">${attrEsc(defAbbr)} DEF</th>
-              <th class="py-2 font-normal text-right">ADVANTAGE</th>
-            </tr>
-          </thead>
-          <tbody class="font-mono text-xs">
-            ${rows.map(r => `
-              <tr class="matchup-table-row border-b border-subtle/50 hover:bg-slate-800/30 transition-colors">
-                <td class="py-2.5 font-sans text-slate-300 truncate pr-2" title="${r.label}">${r.label}</td>
-                <td class="py-2.5 text-right text-slate-200 font-bold">${formatSplitRate(r.id, r.offVal)} <span class="text-[10px] font-normal text-slate-400">(${r.offRank != null ? '#' + r.offRank : '—'})</span></td>
-                <td class="py-2.5 text-right text-slate-200 font-bold">${formatSplitRate(r.id, r.defVal)} <span class="text-[10px] font-normal text-slate-400">(${r.defRank != null ? '#' + r.defRank : '—'})</span></td>
-                <td class="py-2.5 text-right font-sans">${renderAdvantageBadge(r.adv, offTeam, defTeam)}</td>
-              </tr>
-            `).join('')}
-          </tbody>
-        </table>
-      `}
-    </div>
-  `;
-
+// One insight card. The accent is the colour of the team its title names
+// (the spotlight player's team, or the left side of a battle card).
+function muInsightHtml(card, L, tA) {
+  const team = L[card.title ? card.teamA : card.leftTeam] || L[card.teamName] || L.a;
+  const player = card.playerName
+    ? `<button type="button" class="mu-btn" onclick="openPlayerModal('${attrEsc(card.playerName).replace(/'/g, "\\'")}','${attrEsc(card.teamName || tA).replace(/'/g, "\\'")}')"><span>View ${attrEsc(card.playerName)} profile</span><span aria-hidden="true">→</span></button>`
+    : '';
   return `
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-      ${renderKeyTable(leftKey, tA, tB, abbrA, abbrB, true)}
-      ${renderKeyTable(rightKey, tB, tA, abbrB, abbrA, false)}
-    </div>
+    <article class="mu-in" style="--c:${team.fill}">
+      <div>
+        <div class="mu-in-h"><h4>${attrEsc(card.title || card.leftName || 'Matchup Dynamic')}</h4>${card.subtitle ? `<span>${attrEsc(card.subtitle)}</span>` : ''}</div>
+        <p>${card.text}</p>
+      </div>
+      ${player}
+    </article>
   `;
 }
 
 function renderMatchupInsightsPanel(tA, tB, game) {
   const insights = generateMatchupInsights(tA, tB, game);
-
+  const L = muLooks(tA, tB);
   return `
-    <div class="flex flex-col gap-4">
-      <div class="bg-surface-card border border-subtle rounded-lg p-4">
-        <div class="flex items-center justify-between mb-2">
-          <h2 class="text-sm font-bold text-white flex items-center gap-2 uppercase tracking-wide">
-            <span class="text-amber-400">💡</span> Verified Matchup Insights
-          </h2>
-          <span class="text-[10px] font-mono text-slate-400">SITUATIONAL INTELLIGENCE</span>
-        </div>
-        <p class="text-xs text-slate-400 leading-relaxed">
+    <div class="mu">
+      <section class="mu-card">
+        <div class="mu-ch"><h2>Verified Matchup Insights</h2><span class="mu-kick">Situational intelligence</span></div>
+        <p class="mu-lede">
           Synthesized from ${measuredEpaSeason()} nflverse efficiency and depth charts. Note: Evaluation excludes player-vs-player assignments, injury status, or a player-specific weekly projection.
         </p>
-      </div>
-
+      </section>
       ${!insights.length ? `
-        <div class="bg-surface-card border border-subtle rounded-lg p-6 text-center text-xs text-slate-400">
+        <section class="mu-card"><p class="mu-empty">
           Matchup insights are built from verified roster and efficiency data. None is available for this pairing right now, so nothing is shown rather than inventing a narrative.
-        </div>
-      ` : `
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          ${insights.map((card, idx) => {
-            const accents = ['border-l-sky-500', 'border-l-indigo-500', 'border-l-cyber-lime', 'border-l-amber-500', 'border-l-rose-500'];
-            const accentClass = accents[idx % accents.length];
-
-            return `
-              <div class="bg-surface-card border border-subtle rounded-lg p-4 border-l-4 ${accentClass} flex flex-col justify-between gap-3">
-                <div>
-                  <div class="flex items-center justify-between pb-2 mb-2 border-b border-subtle/50">
-                    <span class="text-xs font-bold text-white tracking-wide">${attrEsc(card.title || card.leftName || 'Matchup Dynamic')}</span>
-                    ${card.subtitle ? `<span class="text-[10px] font-mono text-slate-400">${attrEsc(card.subtitle)}</span>` : ''}
-                  </div>
-                  <p class="text-xs text-slate-300 leading-relaxed">
-                    ${card.text}
-                  </p>
-                </div>
-                ${card.playerName ? `
-                  <div class="pt-2 border-t border-subtle/50">
-                    <button onclick="openPlayerModal('${attrEsc(card.playerName).replace(/'/g, "\\'")}','${attrEsc(card.teamName || tA).replace(/'/g, "\\'")}')" class="w-full py-1.5 px-3 rounded bg-slate-800 hover:bg-slate-700 border border-subtle text-[11px] font-semibold text-sky-400 hover:text-sky-300 transition flex items-center justify-between">
-                      <span>View ${attrEsc(card.playerName)} profile</span>
-                      <span>→</span>
-                    </button>
-                  </div>
-                ` : ''}
-              </div>
-            `;
-          }).join('')}
-        </div>
-      `}
-      <div class="text-[10px] text-slate-500 font-mono flex justify-between items-center px-1">
-        <span>Sources & Method: ${measuredEpaSeason()} measured EPA (nflverse)</span>
-        <span class="text-slate-600">Model verified</span>
-      </div>
+        </p></section>
+      ` : `<div class="mu-ins grid">${insights.map(card => muInsightHtml(card, L, tA)).join('')}</div>`}
+      <div class="mu-note bare"><span>Sources & Method: ${measuredEpaSeason()} measured EPA (nflverse)</span><span>Model verified</span></div>
     </div>
   `;
 }
 
 function renderFormationLabPanel(tA, tB) {
+  const L = muLooks(tA, tB);
+  const front = MATCHUP_STATE.front === 'nickel' ? 'Nickel' : MATCHUP_STATE.front + ' front';
+  const field = (team, isOffense) => `
+    <section class="mu-card">
+      <div class="mu-ch">
+        <h3>${muAbbr(L[team])} <span class="nm">${attrEsc(team)}</span></h3>
+        <span class="mu-kick">${isOffense ? 'Offense · ' + attrEsc(MATCHUP_STATE.personnel) + ' personnel' : 'Defense · ' + attrEsc(front)}</span>
+      </div>
+      <div class="formation-field ${isOffense ? 'off' : 'def'}">${formationFieldHtml(team, L[team], isOffense)}</div>
+    </section>
+  `;
   return `
-    <div class="flex flex-col gap-4">
-      <div class="bg-surface-card border border-subtle rounded-lg p-3.5 flex items-center justify-between flex-wrap gap-3">
-        <div class="flex items-center gap-3">
-          <label class="flex items-center gap-2">
-            <span class="text-[10px] uppercase font-bold text-slate-400 font-mono">Personnel:</span>
-            <select id="matchupPersonnel" onchange="renderMatchupPanels()" class="text-xs px-2.5 py-1.5 rounded border border-subtle bg-slate-900 text-slate-200 font-medium focus:outline-none focus:border-sky-500">
+    <div class="mu">
+      <div class="mu-card mu-ctl">
+        <div class="mu-ctl-sel">
+          <label>
+            <span>Personnel</span>
+            <select id="matchupPersonnel" onchange="MATCHUP_STATE.personnel = this.value; renderMatchupPanels()">
               <option value="12" ${MATCHUP_STATE.personnel === '12' ? 'selected' : ''}>12 · 2 TE</option>
               <option value="11" ${MATCHUP_STATE.personnel === '11' ? 'selected' : ''}>11 · 3 WR</option>
               <option value="10" ${MATCHUP_STATE.personnel === '10' ? 'selected' : ''}>10 · 4 WR</option>
             </select>
           </label>
-          <label class="flex items-center gap-2">
-            <span class="text-[10px] uppercase font-bold text-slate-400 font-mono">Defensive Front:</span>
-            <select id="matchupFront" onchange="renderMatchupPanels()" class="text-xs px-2.5 py-1.5 rounded border border-subtle bg-slate-900 text-slate-200 font-medium focus:outline-none focus:border-sky-500">
+          <label>
+            <span>Defensive Front</span>
+            <select id="matchupFront" onchange="MATCHUP_STATE.front = this.value; renderMatchupPanels()">
               <option value="43" ${MATCHUP_STATE.front === '43' ? 'selected' : ''}>4-3 Base</option>
               <option value="34" ${MATCHUP_STATE.front === '34' ? 'selected' : ''}>3-4 Base</option>
               <option value="nickel" ${MATCHUP_STATE.front === 'nickel' ? 'selected' : ''}>Nickel</option>
             </select>
           </label>
         </div>
-        <div class="text-[11px] text-slate-400 font-mono">
-          Click any starter chip to inspect profile & ratings.
-        </div>
+        <p>Click any starter chip to inspect profile & ratings. The number under each name is the player's Madden overall rating.</p>
       </div>
-
-      <!-- Formation Fields -->
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <div class="bg-surface-card border border-subtle rounded-lg p-4">
-          <div class="flex items-center justify-between mb-3 pb-2 border-b border-subtle">
-            <div class="flex items-center gap-2">
-              <span class="text-xs font-bold text-sky-400 font-mono">${attrEsc(tA)}</span>
-              <span class="text-[10px] text-slate-400 font-mono">· ${attrEsc(MATCHUP_STATE.personnel)} personnel</span>
-            </div>
-            <span class="fp-circle fp-o" style="width:24px;height:24px;font-size:10px">O</span>
-          </div>
-          <div class="formation-field"><div class="formation-midline"></div>${formationFieldHtml(tA, null, true)}</div>
-        </div>
-        <div class="bg-surface-card border border-subtle rounded-lg p-4">
-          <div class="flex items-center justify-between mb-3 pb-2 border-b border-subtle">
-            <div class="flex items-center gap-2">
-              <span class="text-xs font-bold text-indigo-400 font-mono">${attrEsc(tB)}</span>
-              <span class="text-[10px] text-slate-400 font-mono">· ${attrEsc(MATCHUP_STATE.front === 'nickel' ? 'Nickel' : MATCHUP_STATE.front + ' front')}</span>
-            </div>
-            <span class="fp-circle fp-x" style="width:24px;height:24px;font-size:10px">X</span>
-          </div>
-          <div class="formation-field"><div class="formation-midline"></div>${formationFieldHtml(tB, null, false)}</div>
-        </div>
-      </div>
-      <div class="text-[10px] text-slate-500 font-mono leading-relaxed px-1">
-        Illustrative alignments built from the current roster snapshot — representative personnel and fronts, not a verified game-day lineup or confirmed assignments. Roster snapshot data is not a complete weekly injury report.
+      <div class="mu-two">${field(tA, true)}${field(tB, false)}</div>
+      <div class="mu-note bare">
+        <span>Illustrative alignments built from the current roster snapshot — representative personnel and fronts, not a verified game-day lineup or confirmed assignments. Roster snapshot data is not a complete weekly injury report.</span>
       </div>
     </div>
   `;
 }
 
-function formatMetricVal(id, val) {
-  if (val == null) return '—';
-  if (id === 'success_rate' || id === 'turnover_rate' || id === 'sack_rate') {
-    return (val * 100).toFixed(1) + '%';
-  }
-  if (id === 'pass_epa_per_att' || id === 'run_epa_per_att' || id === 'epa_per_play') {
-    return (val >= 0 ? '+' : '') + val.toFixed(3);
-  }
-  if (id === 'yds_per_play') {
-    return val.toFixed(1);
-  }
-  return String(val);
-}
-
-function renderPreviewEdgeBadge(adv, tA, tB) {
-  if (!adv || adv.stars === 0 || !adv.team) {
-    return `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-800 text-slate-400 border border-subtle">EVEN</span>`;
-  }
-  const isA = adv.team === tA;
-  const abbr = DATA.teamAbbr[adv.team] || adv.team;
-  const cls = isA ? 'text-cyber-lime font-bold' : 'text-crimson font-bold';
-  return `<span class="text-[11px] font-bold ${cls}">${attrEsc(abbr)} ADV</span>`;
-}
-
-function renderPreviewOffVsDefMatrix(offTeam, defTeam, ranksOff, ranksDef, isLeft) {
-  const offAbbr = DATA.teamAbbr[offTeam] || offTeam;
-  const defAbbr = DATA.teamAbbr[defTeam] || defTeam;
-
-  const passEpaOff = efficiencyValue(offTeam, 'off', 'pass_epa_per_att', measuredEpaSeason());
-  const passEpaDef = efficiencyValue(defTeam, 'def', 'pass_epa_per_att', measuredEpaSeason());
-  const rankPassOff = ranksOff.offense['pass_epa_per_att'];
-  const rankPassDef = ranksDef.defense['pass_epa_per_att'];
-
-  const runEpaOff = efficiencyValue(offTeam, 'off', 'run_epa_per_att', measuredEpaSeason());
-  const runEpaDef = efficiencyValue(defTeam, 'def', 'run_epa_per_att', measuredEpaSeason());
-  const rankRunOff = ranksOff.offense['run_epa_per_att'];
-  const rankRunDef = ranksDef.defense['run_epa_per_att'];
-
-  const rows = [
-    { id: 'pass_epa_per_att', label: 'Pass EPA per Attempt', tag: 'PASS' },
-    { id: 'run_epa_per_att', label: 'Run EPA per Attempt', tag: 'RUSH' },
-    { id: 'epa_per_play', label: 'Overall EPA per Play', tag: 'TOTAL' },
-    { id: 'success_rate', label: 'Offensive Success Rate', tag: 'TOTAL' },
-    { id: 'yds_per_play', label: 'Yards per Play', tag: 'TOTAL' },
-    { id: 'sack_rate', label: 'Sack Rate (Allowed / Forced)', tag: 'PASS' },
-    { id: 'turnover_rate', label: 'Turnover Rate', tag: 'TOTAL' },
-  ];
-
-  const offColor = isLeft ? 'text-sky-400' : 'text-indigo-400';
-  const defColor = isLeft ? 'text-indigo-400' : 'text-sky-400';
-
+// Pro Preview: one offense against the other defense on seven measured rates.
+function renderPreviewOffVsDefMatrix(offTeam, defTeam, L, isLeft) {
+  const season = measuredEpaSeason();
+  const rows = muDuelRows([
+    { id: 'pass_epa_per_att', label: 'Pass EPA per Attempt', tag: 'Pass' },
+    { id: 'run_epa_per_att', label: 'Run EPA per Attempt', tag: 'Rush' },
+    { id: 'epa_per_play', label: 'Overall EPA per Play', tag: 'Total' },
+    { id: 'success_rate', label: 'Offensive Success Rate', tag: 'Total' },
+    { id: 'yds_per_play', label: 'Yards per Play', tag: 'Total' },
+    { id: 'sack_rate', label: 'Sack Rate (Allowed / Forced)', tag: 'Pass' },
+    { id: 'turnover_rate', label: 'Turnover Rate', tag: 'Total' },
+  ], offTeam, defTeam);
   return `
-    <div class="bg-surface-card border border-subtle rounded-lg p-4">
-      <div class="flex justify-between items-center mb-3 pb-2 border-b border-subtle">
-        <h2 class="text-sm font-bold text-white flex items-center gap-2 uppercase tracking-wide">
-          <span>⚔️</span> <span class="${offColor}">${attrEsc(offAbbr)} Offense</span> <span class="text-slate-500 font-normal">vs</span> <span class="${defColor}">${attrEsc(defAbbr)} Defense</span>
-        </h2>
-        <span class="text-[10px] font-mono text-slate-400 bg-slate-800 px-2 py-0.5 rounded border border-subtle">${measuredEpaSeason()} MEASURED</span>
+    <section class="mu-card">
+      <div class="mu-ch"><h2>${muDuelTitle(L, offTeam, defTeam)}</h2><span class="mu-kick">${season} measured</span></div>
+      ${muDuelHeadHtml(L, offTeam, defTeam, 'Metric')}
+      ${rows.map(r => muDuelRowHtml(r, L, offTeam, defTeam)).join('')}
+      <div class="mu-note">
+        <span>Source: ${season} nflverse play-by-play (season to date, 1–32 league ranks)</span>
+        <button type="button" class="mu-link" onclick="setMatchupSubTab('${isLeft ? 'passing' : 'rushing'}')">${isLeft ? 'Passing splits →' : 'Rushing splits →'}</button>
       </div>
-
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 mb-3">
-        <div class="bg-slate-800/40 p-2.5 border border-subtle rounded flex flex-col gap-1">
-          <div class="flex items-center justify-between">
-            <span class="text-[9px] font-bold uppercase tracking-wider text-sky-400 font-mono">PASS ATTACK (EPA/ATT)</span>
-            <span class="text-[9px] font-mono text-slate-500">${measuredEpaSeason()}</span>
-          </div>
-          <div class="flex items-center justify-between font-mono text-xs">
-            <div class="flex items-center gap-1.5">
-              <span class="text-[10px] text-slate-400">${attrEsc(offAbbr)}:</span>
-              <span class="font-medium ${passEpaOff != null && passEpaOff >= 0 ? 'text-cyber-lime' : 'text-slate-200'}">${passEpaOff != null ? (passEpaOff >= 0 ? '+' : '') + passEpaOff.toFixed(3) : '—'}</span>
-              <span class="text-[10px] text-slate-400 font-normal">(${rankPassOff != null ? '#' + rankPassOff : '—'})</span>
-            </div>
-            <span class="text-slate-600 text-[10px]">vs</span>
-            <div class="flex items-center gap-1.5">
-              <span class="text-[10px] text-slate-400">${attrEsc(defAbbr)} DEF:</span>
-              <span class="font-medium text-slate-200">${passEpaDef != null ? (passEpaDef >= 0 ? '+' : '') + passEpaDef.toFixed(3) : '—'}</span>
-              <span class="text-[10px] text-slate-400 font-normal">(${rankPassDef != null ? '#' + rankPassDef : '—'})</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="bg-slate-800/40 p-2.5 border border-subtle rounded flex flex-col gap-1">
-          <div class="flex items-center justify-between">
-            <span class="text-[9px] font-bold uppercase tracking-wider text-amber-400 font-mono">RUSH ATTACK (EPA/ATT)</span>
-            <span class="text-[9px] font-mono text-slate-500">${measuredEpaSeason()}</span>
-          </div>
-          <div class="flex items-center justify-between font-mono text-xs">
-            <div class="flex items-center gap-1.5">
-              <span class="text-[10px] text-slate-400">${attrEsc(offAbbr)}:</span>
-              <span class="font-medium ${runEpaOff != null && runEpaOff >= 0 ? 'text-cyber-lime' : 'text-slate-200'}">${runEpaOff != null ? (runEpaOff >= 0 ? '+' : '') + runEpaOff.toFixed(3) : '—'}</span>
-              <span class="text-[10px] text-slate-400 font-normal">(${rankRunOff != null ? '#' + rankRunOff : '—'})</span>
-            </div>
-            <span class="text-slate-600 text-[10px]">vs</span>
-            <div class="flex items-center gap-1.5">
-              <span class="text-[10px] text-slate-400">${attrEsc(defAbbr)} DEF:</span>
-              <span class="font-medium text-slate-200">${runEpaDef != null ? (runEpaDef >= 0 ? '+' : '') + runEpaDef.toFixed(3) : '—'}</span>
-              <span class="text-[10px] text-slate-400 font-normal">(${rankRunDef != null ? '#' + rankRunDef : '—'})</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <table class="w-full text-left border-collapse">
-        <thead>
-          <tr class="border-b border-subtle text-slate-400 text-[10px] font-bold uppercase tracking-wider">
-            <th class="py-2 font-normal">METRIC</th>
-            <th class="py-2 font-normal text-right">${attrEsc(offAbbr)} OFF</th>
-            <th class="py-2 font-normal text-right">${attrEsc(defAbbr)} DEF</th>
-            <th class="py-2 font-normal text-right">EDGE</th>
-          </tr>
-        </thead>
-        <tbody class="font-mono text-xs">
-          ${rows.map(r => {
-            const vOff = efficiencyValue(offTeam, 'off', r.id, measuredEpaSeason());
-            const vDef = efficiencyValue(defTeam, 'def', r.id, measuredEpaSeason());
-            const rOff = ranksOff.offense[r.id] ?? efficiencyRank(offTeam, 'off', r.id, measuredEpaSeason());
-            const rDef = ranksDef.defense[r.id] ?? efficiencyRank(defTeam, 'def', r.id, measuredEpaSeason());
-            const adv = computeAdvantage(rOff, rDef, offTeam, defTeam);
-            return `
-              <tr class="matchup-table-row border-b border-subtle/50 hover:bg-slate-800/30 transition-colors">
-                <td class="py-2 text-slate-200 font-sans text-xs flex items-center gap-1.5">
-                  <span class="text-[9px] font-mono px-1 py-0.5 rounded ${r.tag === 'PASS' ? 'bg-sky-950/70 text-sky-400 border border-sky-800/50' : r.tag === 'RUSH' ? 'bg-amber-950/70 text-amber-400 border border-amber-800/50' : 'bg-slate-800 text-slate-400 border border-subtle'}">${r.tag}</span>
-                  <span class="truncate" title="${r.label}">${r.label}</span>
-                </td>
-                <td class="py-2 text-right font-medium text-slate-200">${formatMetricVal(r.id, vOff)} <span class="text-[10px] font-normal text-slate-400">(${rOff != null ? '#' + rOff : '—'})</span></td>
-                <td class="py-2 text-right font-medium text-slate-200">${formatMetricVal(r.id, vDef)} <span class="text-[10px] font-normal text-slate-400">(${rDef != null ? '#' + rDef : '—'})</span></td>
-                <td class="py-2 text-right font-sans">${renderAdvantageBadge(adv, offTeam, defTeam)}</td>
-              </tr>
-            `;
-          }).join('')}
-        </tbody>
-      </table>
-
-      <div class="mt-2.5 pt-2 border-t border-subtle/50 text-[10px] text-slate-500 font-mono flex justify-between items-center">
-        <span>Source: ${measuredEpaSeason()} nflverse play-by-play (season to date, 1–32 league ranks)</span>
-        <button onclick="setMatchupSubTab('${isLeft ? 'passing' : 'rushing'}')" class="text-sky-400 hover:text-sky-300 font-semibold">${isLeft ? 'Passing splits →' : 'Rushing splits →'}</button>
-      </div>
-    </div>
+    </section>
   `;
 }
 
-function renderPreviewInsights(tA, tB, curGame) {
+function renderPreviewInsights(tA, tB, curGame, L) {
   const insights = generateMatchupInsights(tA, tB, curGame);
-  const abbrA = DATA.teamAbbr[tA] || tA;
-  const abbrB = DATA.teamAbbr[tB] || tB;
-
   if (!insights || !insights.length) {
     return `
-      <div class="bg-surface-card border border-subtle rounded-lg p-4 flex-1">
-        <div class="flex justify-between items-center mb-3 pb-2 border-b border-subtle">
-          <h2 class="text-sm font-bold text-white flex items-center gap-2 uppercase tracking-wide">
-            <span class="text-amber-400">💡</span> Matchup Insights
-          </h2>
-          <span class="text-[10px] font-mono text-slate-400">${currentSeason()} ROSTER & ${measuredEpaSeason()} DATA</span>
-        </div>
-        <div class="text-xs text-slate-400 py-4 text-center leading-relaxed font-mono">
-          Matchup insights require verified starter and ${measuredEpaSeason()} efficiency data. None currently available for this pairing.
-        </div>
-      </div>
+      <section class="mu-card">
+        <div class="mu-ch"><h2>Matchup Insights</h2><span class="mu-kick">${currentSeason()} roster & ${measuredEpaSeason()} data</span></div>
+        <p class="mu-empty">Matchup insights require verified starter and ${measuredEpaSeason()} efficiency data. None currently available for this pairing.</p>
+      </section>
     `;
   }
-
-  const previewItems = insights.slice(0, 3);
-  const accents = ['border-l-sky-500', 'border-l-indigo-500', 'border-l-cyber-lime'];
-
   return `
-    <div class="bg-surface-card border border-subtle rounded-lg p-4 flex-1">
-      <div class="flex justify-between items-center mb-3 pb-2 border-b border-subtle">
-        <h2 class="text-sm font-bold text-white flex items-center gap-2 uppercase tracking-wide">
-          <span class="text-amber-400">💡</span> Matchup Insights
-        </h2>
-        <span class="text-[10px] font-mono text-slate-400">${currentSeason()} ROSTER & ${measuredEpaSeason()} EPA</span>
-      </div>
-      <div class="flex flex-col gap-3 text-xs">
-        ${previewItems.map((item, idx) => {
-          const accent = accents[idx % accents.length];
-          return `
-            <div class="bg-slate-800/40 border border-subtle p-3 rounded border-l-4 ${accent} flex flex-col gap-1.5">
-              <div class="flex justify-between items-center">
-                <p class="font-bold text-white text-xs">${attrEsc(item.title || item.leftName || 'Matchup Dynamic')}</p>
-                ${item.subtitle ? `<span class="text-[10px] font-mono text-slate-400">${attrEsc(item.subtitle)}</span>` : ''}
-              </div>
-              <p class="text-slate-300 text-[11px] leading-relaxed">
-                ${item.text}
-              </p>
-              ${item.playerName ? `
-                <div class="pt-1">
-                  <button onclick="openPlayerModal('${attrEsc(item.playerName).replace(/'/g, "\\'")}','${attrEsc(item.teamName || tA).replace(/'/g, "\\'")}')" class="text-[10px] font-semibold text-sky-400 hover:text-sky-300 transition">
-                    View ${attrEsc(item.playerName)} profile →
-                  </button>
-                </div>
-              ` : ''}
-            </div>
-          `;
-        }).join('')}
-      </div>
-      <div class="mt-3 pt-2 border-t border-subtle/50 text-[10px] text-slate-500 leading-normal flex justify-between items-center font-mono">
+    <section class="mu-card">
+      <div class="mu-ch"><h2>Matchup Insights</h2><span class="mu-kick">${currentSeason()} roster & ${measuredEpaSeason()} EPA</span></div>
+      <div class="mu-ins">${insights.slice(0, 3).map(card => muInsightHtml(card, L, tA)).join('')}</div>
+      <div class="mu-note">
         <span>Verified ${currentSeason()} Depth Chart & ${measuredEpaSeason()} EPA</span>
-        <button onclick="setMatchupSubTab('insights')" class="text-sky-400 hover:text-sky-300 font-semibold">More insights →</button>
+        <button type="button" class="mu-link" onclick="setMatchupSubTab('insights')">More insights →</button>
       </div>
-    </div>
+    </section>
   `;
 }
 
@@ -1091,12 +868,7 @@ function renderMatchupPanels() {
   if (sub === 'preview') {
     main.innerHTML = renderPreviewSubtab(tA, tB, curGame);
   } else if (sub === 'overview') {
-    main.innerHTML = `
-      <div class="space-y-4">
-        ${renderAtAGlanceTable(tA, tB)}
-        ${renderKeyAdvantagesPanel(tA, tB)}
-      </div>
-    `;
+    main.innerHTML = `<div class="mu">${renderAtAGlanceTable(tA, tB)}${renderKeyAdvantagesPanel(tA, tB)}</div>`;
   } else if (sub === 'passing') {
     main.innerHTML = renderMatchupComparisonsSideBySide(PASSING_SPLITS, tA, tB, 'Passing Split Metric');
   } else if (sub === 'rushing') {
@@ -1206,8 +978,9 @@ function renderPreviewSubtab(tA, tB, curGame) {
   const viewedOffenseIsA = MATCHUP_STATE.viewedOffense === 'A';
   const viewedOffTeam = viewedOffenseIsA ? tA : tB;
   const viewedDefTeam = viewedOffenseIsA ? tB : tA;
-  const labelA = DATA.teamAbbr[tA] || ABBR_TO_TEAM[tA] || tA;
-  const labelB = DATA.teamAbbr[tB] || ABBR_TO_TEAM[tB] || tB;
+  const L = muLooks(tA, tB);
+  const labelA = L.a.abbr;
+  const labelB = L.b.abbr;
   const offAbbr = DATA.teamAbbr[viewedOffTeam] || ABBR_TO_TEAM[viewedOffTeam] || viewedOffTeam;
   const defAbbr = DATA.teamAbbr[viewedDefTeam] || ABBR_TO_TEAM[viewedDefTeam] || viewedDefTeam;
   const tSeason = tendenciesSeason();
@@ -1223,68 +996,56 @@ function renderPreviewSubtab(tA, tB, curGame) {
     ? `${cSeason} season in progress — these numbers measure the ${tSeason} regular season (last completed), not ${cSeason}.`
     : `Measured in the ${tSeason} regular season.`;
   return `
-    <!-- MATCHUP QUESTION BANNER: viewed offense's play-action tendency vs the opposing defense's exposure, observation season labeled -->
-    <div class="bg-surface-card border border-subtle rounded-lg p-4 space-y-3" role="region" aria-label="Matchup preview question">
-      <div class="flex items-start justify-between gap-3">
-        <div class="space-y-1">
-          <div class="text-[10px] uppercase tracking-widest font-bold text-slate-500 font-mono">${tSeason} Regular Season · One Question</div>
-          <div class="text-base font-bold text-white leading-snug">How will ${attrEsc(viewedOffTeam)}'s play-action passing meet ${attrEsc(viewedDefTeam)}'s defense?</div>
-          <div class="text-xs text-slate-400 leading-relaxed">In the ${tSeason} regular season, ${playActionSentence(viewedOffTeam, viewedDefTeam, offAbbr, defAbbr)}</div>
-          <div class="text-[10px] text-slate-500 font-mono">${attrEsc(seasonNote)}</div>
-          <div class="text-[10px] text-amber-400/80 font-mono">
-            Defensive exposure counts opponent usage, it is not a measure of defensive effectiveness and does not predict a winner.
-          </div>
+    <div class="mu">
+    <!-- The question: the viewed offense's play-action use against the other defense's exposure, observation season labelled -->
+    <section class="mu-card mu-q" role="region" aria-label="Matchup preview question">
+      <div class="mu-q-top">
+        <div class="mu-q-text">
+          <div class="mu-kick">${tSeason} Regular Season · One Question</div>
+          <h2>How will ${attrEsc(viewedOffTeam)}'s play-action passing meet ${attrEsc(viewedDefTeam)}'s defense?</h2>
+          <p>In the ${tSeason} regular season, ${playActionSentence(viewedOffTeam, viewedDefTeam, offAbbr, defAbbr)}</p>
+          <p class="mu-fine">${attrEsc(seasonNote)}</p>
+          <p class="mu-fine mu-caveat">Defensive exposure counts opponent usage, it is not a measure of defensive effectiveness and does not predict a winner.</p>
         </div>
-        <div class="shrink-0 flex gap-1">
-          <button
-            type="button"
-            onclick="swapViewedOffense()"
-            aria-pressed="${viewedOffenseIsA ? 'true' : 'false'}"
-            aria-label="View ${viewedOffenseIsA ? tB : tA} offense${viewedOffenseIsA ? ' instead of ' + tA : ' instead of ' + tB}"
-            class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-semibold border transition ${viewedOffenseIsA ? 'border-rose-500/60 bg-rose-500/10 text-rose-300' : 'border-slate-600 bg-slate-800/60 text-slate-400 hover:text-slate-200'}"
-          >
-            <span>${attrEsc(labelA)} OFF</span>
-            <span class="text-slate-600 text-[10px]">/</span>
-            <span>${attrEsc(labelB)} OFF</span>
-          </button>
-        </div>
+        <button
+          type="button"
+          class="mu-seg"
+          onclick="swapViewedOffense()"
+          aria-pressed="${viewedOffenseIsA ? 'true' : 'false'}"
+          aria-label="View ${viewedOffenseIsA ? tB : tA} offense${viewedOffenseIsA ? ' instead of ' + tA : ' instead of ' + tB}"
+        ><span class="${viewedOffenseIsA ? 'on' : ''}">${attrEsc(labelA)} OFF</span><span class="${viewedOffenseIsA ? '' : 'on'}">${attrEsc(labelB)} OFF</span></button>
       </div>
 
-      <!-- PROMINENT EPA BARS: overall, pass, run for the viewed offense vs opposing defense -->
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1 border-t border-subtle/40">
-        ${epaBarHtml('Overall EPA', epaValue(viewedOffTeam, 'off', 'epa_per_play'), epaValue(viewedDefTeam, 'def', 'epa_per_play'), 'epa_per_play', tA, tB, viewedOffenseIsA)}
-        ${epaBarHtml('Pass EPA', epaValue(viewedOffTeam, 'off', 'pass_epa_per_att'), epaValue(viewedDefTeam, 'def', 'pass_epa_per_att'), 'pass_epa_per_att', tA, tB, viewedOffenseIsA)}
-        ${epaBarHtml('Run EPA', epaValue(viewedOffTeam, 'off', 'run_epa_per_att'), epaValue(viewedDefTeam, 'def', 'run_epa_per_att'), 'run_epa_per_att', tA, tB, viewedOffenseIsA)}
+      <!-- Overall, pass and run EPA: the viewed offense against the other defense -->
+      <div class="mu-epas">
+        ${epaBarHtml('Overall EPA', epaValue(viewedOffTeam, 'off', 'epa_per_play'), epaValue(viewedDefTeam, 'def', 'epa_per_play'), 'epa_per_play', tA, tB, viewedOffenseIsA, L)}
+        ${epaBarHtml('Pass EPA', epaValue(viewedOffTeam, 'off', 'pass_epa_per_att'), epaValue(viewedDefTeam, 'def', 'pass_epa_per_att'), 'pass_epa_per_att', tA, tB, viewedOffenseIsA, L)}
+        ${epaBarHtml('Run EPA', epaValue(viewedOffTeam, 'off', 'run_epa_per_att'), epaValue(viewedDefTeam, 'def', 'run_epa_per_att'), 'run_epa_per_att', tA, tB, viewedOffenseIsA, L)}
       </div>
 
-      <!-- EVIDENCE DISCLOSURE: definition, denominator, eligibility, missing counts, provenance -->
-      <div class="pt-1 border-t border-subtle/40">
+      <!-- Evidence: definition, denominator, eligibility, missing counts, provenance -->
+      <div class="mu-ev">
         ${renderTeamTendenciesDisclosure(offAbbr, 'off', 'play_action')}
-        <div class="mt-2">
-          ${renderTeamTendenciesDisclosure(defAbbr, 'def', 'play_action')}
+        ${renderTeamTendenciesDisclosure(defAbbr, 'def', 'play_action')}
+        <div class="mu-note">
+          <span>Sources &amp; Method: ${tSeason} measured team tendencies (motion, play-action, shotgun) from FTN charting + nflverse play-by-play, plus ${eSeason} EPA.</span>
         </div>
-        <div class="mt-2 text-[10px] text-slate-500 font-mono space-y-1">
-          <div>Sources &amp; Method: ${tSeason} measured team tendencies (motion, play-action, shotgun) from FTN charting + nflverse play-by-play, plus ${eSeason} EPA.</div>
-          <div class="flex justify-between items-center">
-            <span class="text-slate-600">Rosters: ${rosterVersionLabel()}</span>
-            <span class="text-slate-600">Tendencies: ${tendenciesLabel}</span>
-          </div>
+        <div class="mu-note tight">
+          <span>Rosters: ${rosterVersionLabel()}</span>
+          <span>Tendencies: ${tendenciesLabel}</span>
         </div>
+      </div>
+    </section>
+
+    <div class="mu-pv">
+      <div class="mu">
+        ${renderPreviewOffVsDefMatrix(tA, tB, L, true)}
+        ${renderPreviewOffVsDefMatrix(tB, tA, L, false)}
+      </div>
+      <div class="mu">
+        ${renderPreviewInsights(tA, tB, curGame, L)}
       </div>
     </div>
-
-    <!-- EXISTING PRO PREVIEW: draft depth + unit grades, kept below the tendencies question -->
-    <div class="grid grid-cols-1 lg:grid-cols-9 gap-4">
-      <!-- CENTER RAIL: Team A Off vs Team B Def &amp; Team B Off vs Team A Def (lg:col-span-6) -->
-      <div class="lg:col-span-6 flex flex-col gap-4">
-        ${renderPreviewOffVsDefMatrix(tA, tB, computeTeamNextGenRanks(tA), computeTeamNextGenRanks(tB), true)}
-        ${renderPreviewOffVsDefMatrix(tB, tA, computeTeamNextGenRanks(tB), computeTeamNextGenRanks(tA), false)}
-      </div>
-
-      <!-- RIGHT RAIL: Insights (lg:col-span-3) -->
-      <div class="lg:col-span-3 flex flex-col gap-4">
-        ${renderPreviewInsights(tA, tB, curGame)}
-      </div>
     </div>
   `;
 }
@@ -1306,7 +1067,7 @@ function renderTeamTendenciesDisclosure(team, side, metric, rec){
     return window.renderTeamTendenciesDisclosure(team, side, metric, rec);
   }
   // Return a minimal unavailable state when the module hasn't loaded yet.
-  return `<div class="text-[10px] text-slate-400 font-mono">${tendenciesSeason()} tendency loading…</div>`;
+  return `<p class="mu-fine">${tendenciesSeason()} tendency loading…</p>`;
 }
 
 // Normalized overall/pass/run EPA for a team-side, for the prominent matchup bars.
@@ -1321,35 +1082,31 @@ function epaValue(team, side, metric){
   return null;
 }
 
-function epaBarHtml(label, offenseVal, defenseVal, metricKey, tA, tB, offenseIsA){
+// One Pro Preview EPA tile: the viewed offense's value against the other
+// defense's value allowed, with league ranks, and centre-out bars sized by
+// those ranks so the longer bar is the unit with the edge.
+function epaBarHtml(label, offenseVal, defenseVal, metricKey, tA, tB, offenseIsA, L){
   const defTeam = offenseIsA ? tB : tA;
   const offTeam = offenseIsA ? tA : tB;
-  const offRaw = offenseVal;
-  const defRaw = defenseVal;
-  const offDisplay = offRaw == null ? '—' : offRaw.toFixed(2);
-  const defDisplay = defRaw == null ? '—' : defRaw.toFixed(2);
-  const maxAbs = Math.max(
-    Math.abs(offRaw || 0), Math.abs(defRaw || 0), 0.0001
-  );
-  const offPct = maxAbs > 0 ? Math.max(-1, Math.min(1, (offRaw || 0) / maxAbs)) : 0;
-  const defPct = maxAbs > 0 ? Math.max(-1, Math.min(1, (defRaw || 0) / maxAbs)) : 0;
-  const offColor = (offRaw || 0) >= 0 ? 'bg-emerald-500' : 'bg-red-500';
-  const defColor = (defRaw || 0) >= 0 ? 'bg-sky-400' : 'bg-rose-400';
+  L = L || muLooks(tA, tB);
+  const off = L[offTeam];
+  const def = L[defTeam];
+  const season = measuredEpaSeason();
+  const offRank = efficiencyRank(offTeam, 'off', metricKey, season);
+  const defRank = efficiencyRank(defTeam, 'def', metricKey, season);
+  const adv = computeAdvantage(offRank, defRank, offTeam, defTeam);
+  const lead = adv.team ? (adv.team === offTeam ? 'a' : 'b') : '';
+  const offDisplay = offenseVal == null ? '—' : offenseVal.toFixed(2);
+  const defDisplay = defenseVal == null ? '—' : defenseVal.toFixed(2);
+  const side = (cls, t, unit, text, rank) => `<span class="${cls}${lead === cls ? ' lead' : ''}">` +
+    `<i style="color:${t.ink}">${attrEsc(t.abbr)} ${unit}</i><b>${attrEsc(text)}</b>` +
+    (rank != null ? `<small>${muOrd(rank)}</small>` : '') + `</span>`;
   return `
-    <div class="bg-surface-card border border-subtle rounded-lg p-3">
-      <div class="text-[10px] uppercase tracking-wider font-bold text-slate-400 mb-2">${label}</div>
-      <div class="flex justify-between text-xs font-mono mb-1">
-        <span class="${offenseIsA ? 'text-rose-300' : 'text-sky-300'} font-semibold">${attrEsc(offTeam)}</span>
-        <span class="text-slate-500">${offDisplay}</span>
-      </div>
-      <div class="h-2 bg-slate-800 rounded-full overflow-hidden relative">
-        <div class="absolute inset-y-0 left-1/2 w-0.5 bg-slate-600"></div>
-        <div class="h-full rounded-full ${offColor} transition-all" style="width: ${Math.abs(offPct * 50)}%; margin-left: ${offPct >= 0 ? '50%' : '0'}; margin-right: ${offPct < 0 ? '50%' : '0'};"></div>
-      </div>
-      <div class="flex justify-between text-[10px] text-slate-500 font-mono mt-2">
-        <span>vs ${attrEsc(defTeam)} ${label.includes('Overall') ? 'overall' : label.toLowerCase()}</span>
-        <span class="text-slate-600">def: ${defDisplay}</span>
-      </div>
+    <div class="mu-epa">
+      <div class="mu-kick">${label}</div>
+      <div class="mu-epa-n">${side('a', off, 'off', offDisplay, offRank)}${side('b', def, 'def', defDisplay, defRank)}</div>
+      <div class="mu-epa-bars">${muBar('a', muRankShare(offRank, muRankCount('off', metricKey)), off.fill, lead === 'a')}${muBar('b', muRankShare(defRank, muRankCount('def', metricKey)), def.fill, lead === 'b')}</div>
+      <div class="mu-epa-cap">${attrEsc(offTeam)} vs ${attrEsc(defTeam)} ${label.includes('Overall') ? 'overall' : label.toLowerCase()}</div>
     </div>
   `;
 }

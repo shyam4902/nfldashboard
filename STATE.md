@@ -6,6 +6,15 @@
 - App: `/` two-sport home page (`index.html`), NFL at `nfl/index.html`, NBA at `nba/`; tracked JSON assets at the root and Supabase roster/transaction data
 - Start here: `docs/sessions/2026-10-23-to-30-matchup-board.md` (decisions, what shipped, how it works, open items)
 
+## NFL matchup sub-tabs in the shared design, 2026-11-05 (branch `feature/nfl-matchup-tabs`)
+
+- The seven `#matchup` sub-tabs (Pro Preview, At a Glance, Passing Splits, Rushing Data, Defense & Trenches, Matchup Insights, Formation Lab) now use the `/nba/` game-page grammar, like the header and sidebar. Styles live in `nfl/matchup.css` (linked from `nfl/index.html`; every `?v=` there is `20261105d`). The old Tailwind overrides for the panels and the old formation rules are gone from `nfl/nfl.css`.
+- Offense-vs-defense rows: values outside, centre-out bars in team colours (`nflLib.teamLook` / `separateLooks`), league ranks as grey ordinals under each value, and the edge as a quiet chip in the leading team's colour (`SEA ADV ★★`, the same star tiers as before; " ADV" is hidden on phones). Bar length is the unit's league standing, (count - rank + 1) / count, so the longer bar is the side with the edge. At a Glance compares both teams on the same metric, so its bars use `barShares` on the values, like the tale of the tape.
+- Pro Preview: serif headline question, a segmented `NE OFF / SEA OFF` control (gold on the active half), three EPA tiles with big serif numbers, ranks and centre-out bars. The two "Pass attack / Rush attack" mini-cards were dropped because the same four numbers are the first two rows of the table under them. The evidence disclosure from `scripts/load_team_tendencies.js` is restyled from `matchup.css`, so the loader is unchanged.
+- Top Advantages skips duplicate splits (EPA per play and yards per play used to appear up to three times each).
+- Formation Lab keeps the field. Discs show the slot in team colour (offense filled, defense outlined) with the name and "position · Madden OVR" under them. The Personnel and Defensive Front selects now write `MATCHUP_STATE`; before, changing them re-rendered the 12 / 4-3 lineup and reset the select.
+- Class hooks the browser tests use are kept: `.matchup-table-row`, `.formation-field .fp-o/.fp-x`, `.formation-player`, `#matchupMainContent details summary`, `button[onclick*="swapViewedOffense"]`.
+
 ## NFL team compare + player pages, 2026-11-05 (branch `feature/nfl-compare-player`)
 
 - `#compare` and `#compare/<A>/<B>` (site abbrs, e.g. `BUF/MIA`): two team pickers and a swap button, a team-colour scorebug, an 18-row tale of the tape with league ranks, the season series and each team's last five. With no teams picked it opens on the first kickoff of `schedule.json`'s current week. Every number comes from files the page already loads: `nfl_standings_2026.json` (record, points), `nfl_stats_2026.json` team totals (yards), `team_season_efficiency.json` 2026 rows (EPA, success, yards per play, sack and turnover rates). Rows where neither team has data are dropped. No ESPN call.

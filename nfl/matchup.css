@@ -1,0 +1,149 @@
+/* ── Matchup sub-tabs (nfl/js/matchup.js), 2026-11-05 ─────────────────────────
+   Pro Preview, At a Glance, Passing, Rushing, Defense & Trenches, Insights and
+   Formation Lab in the /nba/ game-page grammar, next to the header and sidebar
+   that already use it (.nv / gm-* in nfl.css).
+   - Team colour only on bars, discs, chips, accents and abbreviations. Never
+     green and red for teams; gold (--tab-active-bg) only on controls.
+   - Headlines and big numbers in --font-serif, row numbers in tabular sans.
+   - Nothing that carries data is smaller than --t0.
+   - Every grid track is minmax(0, ...), so a 390px phone never scrolls sideways. */
+
+#matchupMainContent { min-width: 0; }
+.mu { display: flex; flex-direction: column; gap: var(--s4); min-width: 0; }
+.mu-card { min-width: 0; padding: var(--s4) var(--s5) var(--s5); background: var(--bg-card); border: 1px solid var(--border-card); border-radius: var(--r3); box-shadow: var(--e1); }
+.mu-two { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--s4); }
+.mu-pv { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--s4); align-items: start; }
+
+/* Card heads */
+.mu-ch { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 6px 12px; margin-bottom: var(--s3); }
+.mu-ch h2, .mu-ch h3 { min-width: 0; font: 700 var(--t3)/1.2 var(--font-serif); letter-spacing: -0.01em; text-transform: none; color: var(--text-main); }
+.mu-ch .vs { font-weight: 400; color: var(--text-faint); }
+.mu-ch .nm { font-weight: 600; color: var(--text-muted); }
+.mu-ab { font-weight: 800; }
+.mu-kick { font: 600 var(--t0)/1.2 var(--font-sans); letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-faint); }
+.mu-lede { font: 400 var(--t1)/1.55 var(--font-sans); color: var(--text-muted); }
+.mu-fine { font: 500 var(--t0)/1.5 var(--font-sans); color: var(--text-faint); }
+.mu-empty { padding: var(--s4) 0; text-align: center; font: 500 var(--t1)/1.5 var(--font-sans); color: var(--text-muted); }
+.mu-note { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 4px 12px; margin-top: var(--s3); padding-top: var(--s2); border-top: 1px solid var(--border-muted); font: 500 var(--t0)/1.5 var(--font-sans); color: var(--text-faint); }
+.mu-note.bare { margin-top: 0; padding: 0 2px; border-top: 0; }
+.mu-note.tight { margin-top: 2px; padding-top: 0; border-top: 0; }
+.mu-link { flex: none; padding: 0; border: 0; background: none; font: 700 var(--t0)/1.5 var(--font-sans); color: var(--text-main); cursor: pointer; }
+.mu-link:hover { text-decoration: underline; }
+
+/* Rows: values on the outside, bars grow from the centre, label and edge chip in the middle. */
+.mu-th, .mu-tr { display: grid; grid-template-columns: 76px minmax(0, 1fr) minmax(0, 190px) minmax(0, 1fr) 76px; align-items: center; column-gap: var(--s2); }
+.mu-th { padding-bottom: 6px; font: 700 var(--t0)/1.2 var(--font-sans); letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-faint); }
+.mu-th .a { grid-column: 1 / 3; }
+.mu-th .k { grid-column: 3; text-align: center; }
+.mu-th .b { grid-column: 4 / 6; text-align: right; }
+.mu-tr { padding: 9px 0; border-top: 1px solid var(--border-muted); }
+.mu-v { display: flex; flex-direction: column; gap: 3px; min-width: 0; font: 700 var(--t2)/1.1 var(--font-sans); font-variant-numeric: tabular-nums; color: var(--text-muted); }
+.mu-v.a { align-items: flex-start; text-align: left; }
+.mu-v.b { align-items: flex-end; text-align: right; }
+.mu-v.lead { color: var(--text-main); }
+.mu-v small { font: 500 var(--t0)/1 var(--font-sans); color: var(--text-faint); }
+.mu-bar { display: flex; height: 12px; border-radius: 99px; background: var(--bg-inset); overflow: hidden; }
+.mu-bar.a { justify-content: flex-end; }
+.mu-bar i { display: block; height: 100%; border-radius: 99px; opacity: 0.45; }
+.mu-bar.lead i { opacity: 1; }
+.mu-k { display: flex; flex-direction: column; align-items: center; gap: 5px; min-width: 0; text-align: center; font: 600 var(--t0)/1.25 var(--font-sans); color: var(--text-muted); overflow-wrap: break-word; }
+.mu-k em { margin-right: 6px; font-style: normal; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-faint); }
+
+/* Edge chip: the leading team's colour, quiet. */
+.mu-edge { display: inline-flex; align-items: center; gap: 4px; max-width: 100%; padding: 2px 8px; border: 1px solid color-mix(in srgb, var(--c) 60%, transparent); border-radius: 99px; background: color-mix(in srgb, var(--c) 16%, transparent); font: 700 var(--t0)/1.3 var(--font-sans); white-space: nowrap; }
+.mu-edge i { font-style: normal; letter-spacing: 1px; }
+.mu-edge .w { display: contents; }
+.mu-edge.none { --c: var(--border-strong); color: var(--text-faint); }
+
+/* Pro Preview: the question, the three EPA tiles and the evidence. */
+.mu-q-top { display: flex; justify-content: space-between; align-items: flex-start; gap: var(--s4); }
+.mu-q-text { display: flex; flex-direction: column; gap: var(--s2); min-width: 0; }
+.mu-q h2 { font: 700 var(--t4)/1.2 var(--font-serif); letter-spacing: -0.01em; text-transform: none; color: var(--text-main); text-wrap: balance; }
+.mu-q p:not(.mu-fine) { font: 400 var(--t1)/1.55 var(--font-sans); color: var(--text-muted); }
+.mu-caveat { padding-left: var(--s2); border-left: 2px solid var(--border-strong); color: var(--text-muted); }
+.mu-seg { display: inline-flex; flex: none; gap: 2px; padding: 3px; border: 1px solid var(--border-muted); border-radius: 9px; background: var(--bg-inset); cursor: pointer; }
+.mu-seg span { padding: 7px 10px; border-radius: 6px; font: 700 var(--t0)/1 var(--font-sans); color: var(--text-muted); white-space: nowrap; }
+.mu-seg:hover span:not(.on) { color: var(--text-main); }
+.mu-seg span.on { background: var(--tab-active-bg); color: var(--tab-active-text); }
+.mu-epas { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--s3); margin-top: var(--s4); padding-top: var(--s4); border-top: 1px solid var(--border-muted); }
+.mu-epa { min-width: 0; padding: var(--s3) var(--s4); background: var(--bg-inset); border: 1px solid var(--border-muted); border-radius: var(--r2); }
+.mu-epa-n { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s2); margin: var(--s2) 0 var(--s3); }
+.mu-epa-n > span { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.mu-epa-n .b { align-items: flex-end; text-align: right; }
+.mu-epa-n i { font: 700 var(--t0)/1.2 var(--font-sans); font-style: normal; letter-spacing: 0.06em; text-transform: uppercase; }
+.mu-epa-n b { font: 700 var(--t5)/1 var(--font-serif); font-variant-numeric: lining-nums tabular-nums; letter-spacing: -0.01em; color: var(--text-muted); }
+.mu-epa-n .lead b { color: var(--text-main); }
+.mu-epa-n small { font: 500 var(--t0)/1 var(--font-sans); color: var(--text-faint); }
+.mu-epa-bars { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 3px; }
+.mu-epa-cap { margin-top: var(--s2); font: 500 var(--t0)/1.4 var(--font-sans); color: var(--text-faint); }
+/* The evidence disclosure comes from scripts/load_team_tendencies.js with its
+   own utility classes; restyle it here instead of editing the shared loader. */
+.mu-ev { margin-top: var(--s4); padding-top: var(--s3); border-top: 1px solid var(--border-muted); }
+#matchupMainContent .mu-ev details { margin-bottom: var(--s2); padding: var(--s3); background: var(--bg-inset); border: 1px solid var(--border-muted); border-radius: var(--r2); color: var(--text-muted); }
+/* !important beats the global `.font-mono { font-family: ... !important }` in nfl.css. */
+#matchupMainContent .mu-ev details, #matchupMainContent .mu-ev details * { font-family: var(--font-sans) !important; font-size: var(--t0); line-height: 1.5; letter-spacing: 0; }
+#matchupMainContent .mu-ev summary { color: var(--text-main); font-weight: 600; }
+#matchupMainContent .mu-ev details .text-slate-500, #matchupMainContent .mu-ev details .text-slate-600 { color: var(--text-faint); }
+#matchupMainContent .mu-ev details .text-amber-300 { color: var(--text-main); }
+#matchupMainContent .mu-ev details a { color: var(--text-main); text-decoration: underline; }
+#matchupMainContent .mu-ev .border-subtle\/50 { border-color: var(--border-muted); }
+
+/* Insight cards: a 3px accent in the colour of the team the card is about. */
+.mu-ins { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--s3); }
+.mu-in { display: flex; flex-direction: column; justify-content: space-between; gap: var(--s3); min-width: 0; padding: var(--s3) var(--s4); background: var(--bg-inset); border: 1px solid var(--border-muted); border-left: 3px solid var(--c); border-radius: var(--r2); }
+.mu-in-h { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 2px 10px; margin-bottom: var(--s2); }
+.mu-in h4 { min-width: 0; font: 700 var(--t2)/1.2 var(--font-serif); color: var(--text-main); }
+.mu-in-h span { font: 600 var(--t0)/1.3 var(--font-sans); font-variant-numeric: tabular-nums; color: var(--text-faint); }
+.mu-in p { font: 400 var(--t1)/1.55 var(--font-sans); color: var(--text-muted); overflow-wrap: anywhere; }
+.mu-btn { display: flex; justify-content: space-between; align-items: center; gap: var(--s2); width: 100%; padding: 8px 10px; border: 1px solid var(--border-card); border-radius: var(--r1); background: var(--bg-card); font: 700 var(--t0)/1.25 var(--font-sans); color: var(--text-main); text-align: left; cursor: pointer; }
+.mu-btn:hover { border-color: var(--border-strong); background: var(--bg-card-hover); }
+
+/* Formation Lab */
+.mu-ctl { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: var(--s3); padding: var(--s3) var(--s4); }
+.mu-ctl-sel { display: flex; flex-wrap: wrap; gap: var(--s3); min-width: 0; }
+.mu-ctl label { display: flex; align-items: center; gap: var(--s2); min-width: 0; font: 700 var(--t0)/1 var(--font-sans); letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-faint); }
+.mu-ctl select { min-width: 0; padding: 7px 10px; border: 1px solid var(--border-card); border-radius: var(--r1); background: var(--bg-inset); color: var(--text-main); font: 600 var(--t0)/1.2 var(--font-sans); letter-spacing: 0; text-transform: none; }
+.mu-ctl select:focus { outline: none; border-color: var(--accent-brand); }
+.mu-ctl p { min-width: 0; font: 500 var(--t0)/1.5 var(--font-sans); color: var(--text-muted); }
+/* The field: an inset with five-yard lines; offense faces up, defense down. */
+.formation-field { position: relative; padding: var(--s5) var(--s2); border: 1px solid var(--border-muted); border-radius: var(--r2); background-color: var(--bg-inset); background-image: repeating-linear-gradient(180deg, transparent 0 55px, rgba(255, 255, 255, 0.05) 55px 56px); }
+.formation-field.off { border-top: 2px solid rgba(255, 255, 255, 0.28); }
+.formation-field.def { border-bottom: 2px solid rgba(255, 255, 255, 0.28); }
+.mu-frs { display: flex; flex-direction: column; gap: var(--s5); }
+.mu-fr { display: grid; grid-template-columns: repeat(var(--n), minmax(0, 1fr)); gap: 4px; width: 100%; max-width: calc(var(--n) * 108px); margin: 0 auto; }
+.formation-player { display: flex; flex-direction: column; align-items: center; gap: 4px; min-width: 0; padding: 4px 2px; border-radius: var(--r1); text-align: center; cursor: pointer; }
+.formation-player:hover, .formation-player:focus-visible { background: rgba(255, 255, 255, 0.05); }
+.formation-player.empty { cursor: default; }
+.fp-circle { display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 999px; font: 800 var(--t0)/1 var(--font-sans); letter-spacing: 0.02em; }
+.fp-circle.fp-o { background: var(--c, var(--border-strong)); color: var(--ci, var(--text-main)); box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.35); }
+.fp-circle.fp-x { background: var(--bg-card); border: 2px solid var(--c, var(--border-strong)); color: var(--ci, var(--text-main)); }
+.formation-player.empty .fp-circle { background: none; border: 1px dashed var(--border-strong); box-shadow: none; color: var(--text-faint); }
+.fp-name { display: -webkit-box; max-width: 100%; overflow: hidden; -webkit-box-orient: vertical; -webkit-line-clamp: 2; font: 600 var(--t0)/1.2 var(--font-sans); color: var(--text-main); overflow-wrap: anywhere; }
+.fp-meta { max-width: 100%; font: 500 var(--t0)/1.1 var(--font-sans); font-variant-numeric: tabular-nums; color: var(--text-faint); overflow-wrap: anywhere; }
+
+@media (min-width: 720px) {
+  .mu-epas { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .mu-ins.grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (min-width: 1024px) {
+  .mu-two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (min-width: 1280px) {
+  .mu-pv { grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); }
+  .mu-ins.grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (max-width: 720px) {
+  .mu-card { padding: var(--s3); }
+  .mu-q-top { flex-direction: column; }
+  .mu-q h2 { font-size: var(--t3); }
+  .mu-th, .mu-tr { grid-template-columns: 56px minmax(0, 1fr) minmax(0, 100px) minmax(0, 1fr) 56px; column-gap: 5px; }
+  .mu-v { font-size: var(--t1); }
+  .mu-bar { height: 10px; }
+  .mu-k em { display: block; margin: 0 0 2px; }
+  .mu-edge { gap: 3px; padding: 2px 6px; }
+  .mu-edge i { letter-spacing: 0; }
+  .mu-edge .w { display: none; }
+  .mu-epa-n b { font-size: var(--t4); }
+  .formation-field { padding: var(--s4) 2px; }
+  .fp-circle { width: 34px; height: 34px; }
+}
