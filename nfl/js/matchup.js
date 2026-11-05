@@ -20,14 +20,10 @@ Object.assign(MATCHUP_STATE, {
 function setMatchupSubTab(subtab) {
   MATCHUP_STATE.subtab = subtab;
   document.querySelectorAll('.matchup-subtab-pill').forEach(btn => {
-    btn.classList.remove('active', 'bg-sky-500', 'text-slate-950', 'font-bold');
-    btn.classList.add('text-slate-400', 'font-semibold');
+    btn.classList.remove('active');
   });
   const activeBtn = document.getElementById(`subtab-${subtab}`);
-  if (activeBtn) {
-    activeBtn.classList.add('active', 'bg-sky-500', 'text-slate-950', 'font-bold');
-    activeBtn.classList.remove('text-slate-400');
-  }
+  if (activeBtn) activeBtn.classList.add('active');
   renderMatchupPanels();
 }
 
@@ -373,7 +369,37 @@ function generateMatchupInsights(tA, tB, game) {
   return insights;
 }
 
+// Team-colour scorebug shared with #compare (views.js). Falls back to the plain
+// header if nfl-lib has not loaded.
 function renderMatchupHeroBanner(game, tA, tB) {
+  const teamA = typeof nflTeamByName === 'function' ? nflTeamByName(tA) : null;
+  const teamB = typeof nflTeamByName === 'function' ? nflTeamByName(tB) : null;
+  if (typeof nflLib !== 'undefined' && nflLib && teamA && teamB) {
+    const looks = nflLib.separateLooks(nflLib.teamLook(teamA), nflLib.teamLook(teamB));
+    const standings = nflStandingRows();
+    const standingOf = abbr => standings.find(t => t.abbr === abbr) || null;
+    const m = game && game.market;
+    const p = m ? marketWinProb(m) : null;
+    // nflverse spread_line is the home team's expected margin.
+    const favAbbr = m && m.spread != null ? teamAbbrFor(m.spread > 0 ? game.home_team : game.away_team) : '';
+    const spread = m && m.spread != null ? (m.spread === 0 ? 'PK' : favAbbr + ' -' + Math.abs(m.spread)) : '';
+    const homeIsB = !game || game.home_team === teamB.name;
+    const final = game && nflLib.isFinalGame(game);
+    const status = !game ? 'Hypothetical matchup'
+      : final ? 'Final · ' + game.away_score + '-' + game.home_score
+      : (nflKickoff(game.kickoff_utc) || 'Kickoff TBD');
+    const line = [spread, m && m.total != null ? 'O/U ' + m.total : ''].filter(Boolean).join(' · ');
+    const mid = '<div class="gm-mid">' +
+      (game ? '<span class="gm-day">Week ' + attrEsc(game.week) + '</span>' : '') +
+      '<span class="gm-st">' + attrEsc(status) + '</span>' +
+      (game && game.venue ? '<span class="gm-meta">' + attrEsc(game.venue) + '</span>' : '') +
+      (game && game.tv ? '<span class="gm-meta">' + attrEsc(game.tv) + '</span>' : '') +
+      (line ? '<span class="gm-line">' + attrEsc(line) + '</span>' : '') +
+      (p !== null && !final ? '<span class="gm-meta">Market win % · ' + attrEsc(teamA.abbr) + ' ' + pctText(homeIsB ? 1 - p : p) + ' · ' + attrEsc(teamB.abbr) + ' ' + pctText(homeIsB ? p : 1 - p) + '</span>' : '') +
+      '<a class="cp-open" href="#compare/' + attrEsc(teamA.abbr) + '/' + attrEsc(teamB.abbr) + '">Compare teams →</a></div>';
+    return '<div class="nv"><div class="gm-bug mu-bug">' + nflBlockHTML(teamA, standingOf(teamA.abbr), looks[0], 'away') + mid +
+      nflBlockHTML(teamB, standingOf(teamB.abbr), looks[1], 'home') + '</div></div>';
+  }
   const nameA = tA;
   const nameB = tB;
   const venue = game?.venue || 'Venue unavailable';
@@ -396,6 +422,32 @@ function renderMatchupHeroBanner(game, tA, tB) {
 
 function renderMatchupSidebar(game, tA, tB) {
   const m = game?.market;
+  const teamA = typeof nflTeamByName === 'function' ? nflTeamByName(tA) : null;
+  const teamB = typeof nflTeamByName === 'function' ? nflTeamByName(tB) : null;
+  if (typeof nflLib !== 'undefined' && nflLib && teamA && teamB) {
+    const looks = nflLib.separateLooks(nflLib.teamLook(teamA), nflLib.teamLook(teamB));
+    const teams = (DATA.teams || []).map(t => t.abbr);
+    const rows = nflLib.compareRows(teamA.abbr, teamB.abbr, {
+      standings: nflStandingRows(),
+      totals: (LEAGUE_STATS && LEAGUE_STATS.team_totals) || [],
+      efficiency: EFFICIENCY_DATA || [],
+    }, teams);
+    const rankOf = rows.length ? Math.max(...rows.map(r => r.a.of)) : 0;
+    const p = m ? marketWinProb(m) : null;
+    const ml = v => v == null ? '—' : (v > 0 ? '+' + v : String(v));
+    // Columns follow the pickers (A, B); the lines belong to the game's away/home.
+    const flip = game && game.away_team !== teamA.name;
+    const kv = (k, away, home) => '<span class="k">' + k + '</span><b>' + (flip ? home : away) + '</b><b>' + (flip ? away : home) + '</b>';
+    const market = m ? '<section class="card gm-card mu-market"><div class="gm-th"><h2>Market</h2></div><div class="mu-kv">' +
+      '<span class="k"></span><b class="hd">' + attrEsc(teamA.abbr) + '</b><b class="hd">' + attrEsc(teamB.abbr) + '</b>' +
+      kv('Spread', m.spread == null ? '—' : (m.spread === 0 ? 'PK' : (m.spread > 0 ? '+' + m.spread : String(m.spread))),
+        m.spread == null ? '—' : (m.spread === 0 ? 'PK' : (m.spread > 0 ? String(-m.spread) : '+' + Math.abs(m.spread)))) +
+      kv('Moneyline', ml(m.away_ml), ml(m.home_ml)) +
+      kv('Win %', pctText(p === null ? null : 1 - p), pctText(p)) +
+      (m.total == null ? '' : '<span class="k">Total</span><b class="span">' + m.total + '</b>') +
+      '</div><p class="nv-note">nflverse lines. Win % is the moneyline price with the bookmaker margin removed.</p></section>' : '';
+    return '<div class="nv mu-side">' + market + nflTapeHTML(rows, teamA, teamB, looks, rankOf) + '</div>';
+  }
 
   const effSuccA = efficiencyValue(tA, 'off', 'success_rate', measuredEpaSeason());
   const effSuccB = efficiencyValue(tB, 'off', 'success_rate', measuredEpaSeason());
@@ -1356,6 +1408,7 @@ async function renderMatchup() {
   if (typeof loadEfficiency === 'function') {
     try { await loadEfficiency(); } catch (e) {}
   }
+  try { await Promise.all([nflLibLoad(), loadLeagueArtifacts(), loadGameLines()]); } catch (e) {}
 
   // Ensure team selects are populated and kept in sync with MATCHUP_STATE
   const selA = document.getElementById('matchupTeamA');
@@ -1408,6 +1461,8 @@ async function renderMatchup() {
   if (!curGame && MATCHUP_STATE.teamA && MATCHUP_STATE.teamB) {
     curGame = games.find(g => g.away_team === MATCHUP_STATE.teamA && g.home_team === MATCHUP_STATE.teamB) || null;
   }
+
+  if (curGame) curGame.market = gameMarketLines(curGame);
 
   // Render Hero Banner & Sidebar
   const hero = document.getElementById('matchupHeroBanner');

@@ -6,9 +6,9 @@
 <title>Matchup Board · NFL scores, matchups and stats</title>
 <meta name="description" content="Matchup Board: NFL scores, matchups and team stats in one clean layout.">
 <script src="https://cdn.tailwindcss.com"></script>
-<script src="/nfl/js/tailwind-config.js?v=20261105b"></script>
+<script src="/nfl/js/tailwind-config.js?v=20261105c"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<link rel="stylesheet" href="/nfl/nfl.css?v=20261105b">
+<link rel="stylesheet" href="/nfl/nfl.css?v=20261105c">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="canonical" href="https://matchupboard.com/nfl/">
 <meta property="og:title" content="Matchup Board · NFL scores, matchups and stats">
@@ -281,13 +281,13 @@
 
     <!-- SUBTABS NAVIGATION STRIP -->
     <div class="flex gap-2 mb-4 overflow-x-auto pb-1 text-xs" id="matchupSubTabs">
-      <button onclick="setMatchupSubTab('preview')" id="subtab-preview" class="matchup-subtab-pill active bg-sky-500 text-slate-950 font-bold rounded-full px-4 py-1.5 transition whitespace-nowrap">Pro Preview</button>
-      <button onclick="setMatchupSubTab('overview')" id="subtab-overview" class="matchup-subtab-pill text-slate-400 hover:text-white font-semibold px-3 py-1.5 transition whitespace-nowrap">At a Glance</button>
-      <button onclick="setMatchupSubTab('passing')" id="subtab-passing" class="matchup-subtab-pill text-slate-400 hover:text-white font-semibold px-3 py-1.5 transition whitespace-nowrap">Passing Splits</button>
-      <button onclick="setMatchupSubTab('rushing')" id="subtab-rushing" class="matchup-subtab-pill text-slate-400 hover:text-white font-semibold px-3 py-1.5 transition whitespace-nowrap">Rushing Data</button>
-      <button onclick="setMatchupSubTab('trenches')" id="subtab-trenches" class="matchup-subtab-pill text-slate-400 hover:text-white font-semibold px-3 py-1.5 transition whitespace-nowrap">Defense & Trenches</button>
-      <button onclick="setMatchupSubTab('insights')" id="subtab-insights" class="matchup-subtab-pill text-slate-400 hover:text-white font-semibold px-3 py-1.5 transition whitespace-nowrap">Matchup Insights</button>
-      <button onclick="setMatchupSubTab('formation')" id="subtab-formation" class="matchup-subtab-pill text-slate-400 hover:text-white font-semibold px-3 py-1.5 transition whitespace-nowrap">Formation Lab</button>
+      <button onclick="setMatchupSubTab('preview')" id="subtab-preview" class="matchup-subtab-pill active">Pro Preview</button>
+      <button onclick="setMatchupSubTab('overview')" id="subtab-overview" class="matchup-subtab-pill">At a Glance</button>
+      <button onclick="setMatchupSubTab('passing')" id="subtab-passing" class="matchup-subtab-pill">Passing Splits</button>
+      <button onclick="setMatchupSubTab('rushing')" id="subtab-rushing" class="matchup-subtab-pill">Rushing Data</button>
+      <button onclick="setMatchupSubTab('trenches')" id="subtab-trenches" class="matchup-subtab-pill">Defense & Trenches</button>
+      <button onclick="setMatchupSubTab('insights')" id="subtab-insights" class="matchup-subtab-pill">Matchup Insights</button>
+      <button onclick="setMatchupSubTab('formation')" id="subtab-formation" class="matchup-subtab-pill">Formation Lab</button>
     </div>
 
     <!-- 3-COLUMN MODULAR MAIN CONTENT (LEFT RAIL 3 COLS + CENTER/RIGHT 9 COLS) -->
@@ -375,16 +375,16 @@
 <!-- Back to Top Button -->
 <button id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" class="fixed bottom-6 right-6 z-50 w-11 h-11 rounded-full bg-blue-600/80 hover:bg-blue-600 text-white shadow-lg backdrop-blur border border-blue-400/30 flex items-center justify-center transition-all duration-300 opacity-0 translate-y-4 pointer-events-none" style="font-size:18px">&#x2191;</button>
 
-<script src="/nfl/js/core.js?v=20261105b"></script>
-<script src="/nfl/js/home.js?v=20261105b"></script>
-<script src="/nfl/js/render.js?v=20261105b"></script>
-<script src="/nfl/js/roster.js?v=20261105b"></script>
-<script src="/nfl/js/matchup.js?v=20261105b"></script>
-<script src="/nfl/js/league.js?v=20261105b"></script>
-<script src="/nfl/js/views.js?v=20261105b"></script>
-<script src="/nfl/js/routing.js?v=20261105b"></script>
-<script src="/nfl/js/schedule.js?v=20261105b"></script>
-<script src="/nfl/js/extensions.js?v=20261105b"></script>
-<script src="/nfl/js/boot.js?v=20261105b"></script>
+<script src="/nfl/js/core.js?v=20261105c"></script>
+<script src="/nfl/js/home.js?v=20261105c"></script>
+<script src="/nfl/js/render.js?v=20261105c"></script>
+<script src="/nfl/js/roster.js?v=20261105c"></script>
+<script src="/nfl/js/matchup.js?v=20261105c"></script>
+<script src="/nfl/js/league.js?v=20261105c"></script>
+<script src="/nfl/js/views.js?v=20261105c"></script>
+<script src="/nfl/js/routing.js?v=20261105c"></script>
+<script src="/nfl/js/schedule.js?v=20261105c"></script>
+<script src="/nfl/js/extensions.js?v=20261105c"></script>
+<script src="/nfl/js/boot.js?v=20261105c"></script>
 </body>
 </html>

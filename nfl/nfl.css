@@ -1886,3 +1886,48 @@ body.theme-analyst .roster-summary .rs-value {
   .nv .pl-shot img { width: 96px; height: 70px; }
   .nv .nv-search { max-width: none; }
 }
+
+/* ── Matchup view, 2026-11-05: same grammar as /nba/ and #compare. ─────────────
+   The seven sub-tabs keep their markup and numbers; this layer only restyles
+   their Tailwind containers and accents inside #tab-matchup. */
+#tab-matchup.grid-lines { background: none; border: 0; padding: 0; }
+#tab-matchup #matchupControls { background: var(--bg-card); border-color: var(--border-card); border-radius: var(--r3); box-shadow: var(--e1); }
+#tab-matchup select { background: var(--bg-inset) !important; border-color: var(--border-card) !important; color: var(--text-main) !important; border-radius: var(--r1); }
+#tab-matchup .mu-bug { margin-bottom: 0; box-shadow: var(--e2); }
+#tab-matchup .gm-line { font: 700 var(--t1)/1.2 var(--font-sans); color: var(--text-main); }
+#tab-matchup .mu-bug .gm-st { font: 700 var(--t3)/1.15 var(--font-serif); }
+#tab-matchup .mu-bug .cp-open { text-decoration: none; }
+#tab-matchup .mu-bug .cp-open:hover { text-decoration: underline; }
+
+#matchupSubTabs { display: flex; gap: 2px; width: max-content; max-width: 100%; padding: 3px; background: var(--bg-inset); border: 1px solid var(--border-muted); border-radius: 9px; }
+#matchupSubTabs .matchup-subtab-pill { padding: 7px 12px; border-radius: 6px; font: 600 var(--t0)/1 var(--font-sans); color: var(--text-muted); background: none; }
+#matchupSubTabs .matchup-subtab-pill:hover { color: var(--text-main); }
+#matchupSubTabs .matchup-subtab-pill.active { background: var(--tab-active-bg); color: var(--tab-active-text); font-weight: 700; }
+
+/* Cards and insets inside the sub-tabs */
+#tab-matchup .bg-surface-card { background: var(--bg-card) !important; border-color: var(--border-card) !important; border-radius: var(--r3) !important; box-shadow: var(--e1); }
+#tab-matchup [class*="bg-slate-800"], #tab-matchup .bg-slate-900 { background: var(--bg-inset) !important; }
+#tab-matchup .border-subtle { border-color: var(--border-muted) !important; }
+#tab-matchup .text-sky-400, #tab-matchup .text-sky-300, #tab-matchup .text-indigo-400 { color: var(--text-main) !important; }
+#tab-matchup .text-cyber-lime { color: var(--accent-positive) !important; }
+#tab-matchup .text-amber-400 { color: var(--accent-warning) !important; }
+#tab-matchup .bg-sky-500, #tab-matchup .bg-sky-400 { background: var(--text-main) !important; }
+#tab-matchup .border-sky-500 { border-color: var(--border-strong) !important; }
+#matchupMainContent h2, #matchupMainContent h3 { font-family: var(--font-serif); letter-spacing: -0.01em; }
+#matchupMainContent .font-mono { font-family: var(--font-sans); font-variant-numeric: tabular-nums; }
+#matchupMainContent p { line-height: 1.55; }
+
+/* Sidebar: market grid and a compact tale of the tape */
+.mu-side { display: flex; flex-direction: column; gap: 12px; }
+.mu-side .gm-th h2 { font: 700 var(--t2)/1.2 var(--font-serif); }
+.mu-side .gm-tr { grid-template-columns: 50px minmax(0, 1fr) 76px minmax(0, 1fr) 50px; column-gap: 5px; }
+.mu-kv { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; gap: 8px 16px; align-items: baseline; }
+.mu-kv .k { font: 600 var(--t0)/1.2 var(--font-sans); color: var(--text-muted); }
+.mu-kv b { font: 700 var(--t1)/1.2 var(--font-sans); font-variant-numeric: tabular-nums; color: var(--text-main); text-align: right; }
+.mu-kv b.hd { font: 700 var(--t0)/1 var(--font-sans); letter-spacing: 0.06em; color: var(--text-faint); }
+.mu-kv b.span { grid-column: span 2; }
+
+/* Teams and League: the shared card and headline style (layouts unchanged). */
+#tab-teams > div:first-child h2, #tab-league > div:first-child h2, #tab-matchup h1 { font: 700 var(--t5)/1.1 var(--font-serif); letter-spacing: -0.015em; }
+#tab-teams .glass, #tab-league .glass { background: var(--bg-card); border: 1px solid var(--border-card); border-radius: var(--r3); box-shadow: var(--e1); }
+#tab-league .teams-subtab.active, #tab-teams .teams-subtab.active { background: var(--tab-active-bg); color: var(--tab-active-text); border-color: transparent; }
