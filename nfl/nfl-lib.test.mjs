@@ -6,6 +6,7 @@ import {
   localAbbr, normName, parseNflSearch, matchSearchPlayer, parseNflAthlete,
   parseNflOverview, parseNflGameLog, orderGroups, heroStats, isFinalGame,
   pickDefaultGame, lastResults, headToHead, compareRows, teamLook, separateLooks,
+  recordText, teamSchedule, teamSplits, teamStatCells, parseEspnRoster, attachEspnIds, sortRoster,
 } from './nfl-lib.js';
 
 test('localAbbr maps ESPN and nflverse codes to the site team table', () => {
@@ -231,4 +232,117 @@ test('teamLook and separateLooks pick readable fills', () => {
   assert.equal(b2.fill, '#ffb612');
   const c = teamLook({ primary_color: '#C60C30' });
   assert.equal(separateLooks(a, c)[1].fill, '#c60c30');
+});
+
+/* ── Team page ──────────────────────────────────────────────────────────── */
+
+const SEASON = [
+  { game_id: 'g1', week: 1, kickoff_utc: '2026-09-13T17:00:00Z', away_team: 'Kansas City Chiefs', home_team: 'Denver Broncos', away_score: 20, home_score: 17, status: 'final' },
+  { game_id: 'g2', week: 2, kickoff_utc: '2026-09-20T17:00:00Z', away_team: 'Buffalo Bills', home_team: 'Kansas City Chiefs', away_score: 24, home_score: 21, winner: 'Buffalo Bills' },
+  { game_id: 'g4', week: 4, kickoff_utc: '2026-10-04T17:00:00Z', away_team: 'Kansas City Chiefs', home_team: 'Las Vegas Raiders', away_score: 10, home_score: 13, status: 'final' },
+  { game_id: 'g5', week: 5, kickoff_utc: '2026-10-11T17:00:00Z', away_team: 'Los Angeles Chargers', home_team: 'Kansas City Chiefs', away_score: null, home_score: null, status: 'in_progress' },
+  { game_id: 'g6', week: 6, kickoff_utc: '2026-10-18T17:00:00Z', away_team: 'Kansas City Chiefs', home_team: 'Denver Broncos', away_score: null, home_score: null },
+  { game_id: 'x', week: 1, kickoff_utc: '2026-09-13T17:00:00Z', away_team: 'Miami Dolphins', home_team: 'New York Jets', away_score: 3, home_score: 7, status: 'final' },
+];
+
+test('recordText shows ties only when there are some', () => {
+  assert.equal(recordText({ wins: 6, losses: 1, ties: 0 }), '6-1');
+  assert.equal(recordText({ w: 4, l: 3, t: 1 }), '4-3-1');
+  assert.equal(recordText({ wins: null, losses: 2 }), '');
+  assert.equal(recordText(null), '');
+});
+
+test('teamSchedule orders games, fills byes and marks the next game', () => {
+  const { rows, nextId } = teamSchedule(SEASON, 'Kansas City Chiefs', 6);
+  assert.deepEqual(rows.map((r) => (r.bye ? 'bye' + r.week : r.id)), ['g1', 'g2', 'bye3', 'g4', 'g5', 'g6']);
+  assert.equal(nextId, 'g5');
+  const [g1, g2] = rows;
+  assert.deepEqual([g1.atVs, g1.opponent, g1.result, g1.us, g1.them], ['@', 'Denver Broncos', 'W', 20, 17]);
+  assert.deepEqual([g2.atVs, g2.result, g2.us, g2.them], ['vs', 'L', 21, 24]);
+  assert.equal(rows[4].live, true);
+  assert.equal(rows[4].result, '');
+  assert.equal(rows[4].us, null);
+});
+
+test('teamSchedule adds no byes without a week count or games', () => {
+  assert.equal(teamSchedule(SEASON, 'Kansas City Chiefs').rows.length, 5);
+  assert.deepEqual(teamSchedule(SEASON, 'Nobody', 18), { rows: [], nextId: '' });
+  assert.deepEqual(teamSchedule(null, 'Kansas City Chiefs', 18), { rows: [], nextId: '' });
+});
+
+test('teamSplits reads home, road and streak from finals only', () => {
+  assert.deepEqual(teamSplits(SEASON, 'Kansas City Chiefs'), { played: 3, home: '0-1', road: '1-1', streak: 'L2', last5: 'WLL' });
+  assert.deepEqual(teamSplits(SEASON, 'New York Jets'), { played: 1, home: '1-0', road: '', streak: 'W1', last5: 'W' });
+  assert.deepEqual(teamSplits([], 'Kansas City Chiefs'), { played: 0, home: '', road: '', streak: '', last5: '' });
+});
+
+test('teamStatCells ranks a team and drops stats it has no number for', () => {
+  const data = {
+    standings: [
+      { abbr: 'KC', played: 2, points_for: 60, points_against: 40, differential: 20 },
+      { abbr: 'DEN', played: 2, points_for: 40, points_against: 30, differential: 10 },
+      { abbr: 'LV', played: 2, points_for: 30, points_against: 50, differential: -20 },
+    ],
+    totals: [{ abbr: 'KC', games: 2, total_yards: 700, pass_yards: 500, rush_yards: 200, yards_allowed: 600 }],
+    efficiency: [
+      { season: 2026, team: 'KC', side: 'def', epa_per_play: -0.1, sack_rate: 0.08, turnover_rate: 0.02 },
+      { season: 2026, team: 'DEN', side: 'def', epa_per_play: -0.2, sack_rate: 0.09, turnover_rate: 0.01 },
+    ],
+  };
+  const cells = teamStatCells('KC', data, ['KC', 'DEN', 'LV']);
+  const by = Object.fromEntries(cells.map((c) => [c.key, c]));
+  assert.equal(by.ppg.text, '30.0');
+  assert.deepEqual([by.ppg.rank, by.ppg.of], [1, 3]);
+  assert.deepEqual([by.oppPpg.rank, by.oppPpg.text], [2, '20.0']);
+  assert.equal(by.diff.text, '+10.0');
+  assert.deepEqual([by.ypg.rank, by.ypg.of], [1, 1]);
+  assert.deepEqual([by.defEpa.rank, by.defEpa.of], [2, 2]);
+  assert.deepEqual([by.defSack.rank, by.defTo.rank], [2, 1]);
+  assert.equal(by.offEpa, undefined);
+  assert.equal(by.offSr, undefined);
+  assert.deepEqual(teamStatCells('NYJ', data, ['KC']), []);
+});
+
+test('parseEspnRoster flattens both ESPN roster shapes', () => {
+  const grouped = { athletes: [
+    { position: 'offense', items: [{ id: '10', fullName: 'Patrick Mahomes', jersey: '15', position: { abbreviation: 'QB' }, headshot: { href: 'h10' } }] },
+    { position: 'defense', items: [{ id: '11', displayName: 'Chris Jones', jersey: '95', position: { abbreviation: 'DT' } }, { id: '', fullName: 'No Id' }] },
+  ] };
+  assert.deepEqual(parseEspnRoster(grouped), [
+    { id: '10', name: 'Patrick Mahomes', jersey: '15', pos: 'QB', headshot: 'h10' },
+    { id: '11', name: 'Chris Jones', jersey: '95', pos: 'DT', headshot: '' },
+  ]);
+  const flat = { team: { athletes: [{ id: '12', fullName: 'Travis Kelce', jersey: '87', position: { abbreviation: 'TE' } }] } };
+  assert.deepEqual(parseEspnRoster(flat).map((p) => p.id), ['12']);
+  assert.deepEqual(parseEspnRoster({}), []);
+  assert.deepEqual(parseEspnRoster(null), []);
+});
+
+test('attachEspnIds matches by name, uses jersey to split twins, else leaves the id empty', () => {
+  const espn = [
+    { id: '1', name: 'D.J. Moore Jr.', jersey: '2', headshot: 'h1' },
+    { id: '2', name: 'Josh Allen', jersey: '17', headshot: 'h2' },
+    { id: '3', name: 'Josh Allen', jersey: '41', headshot: 'h3' },
+    { id: '4', name: 'Sam Smith', jersey: '10', headshot: '' },
+    { id: '5', name: 'Sam Smith', jersey: '10', headshot: '' },
+  ];
+  const rows = attachEspnIds([
+    { name: 'DJ Moore', num: 2 },
+    { name: 'Josh Allen', num: 41 },
+    { name: 'Josh Allen', num: null },
+    { name: 'Sam Smith', num: 10 },
+    { name: 'Unknown Guy', num: 1 },
+  ], espn);
+  assert.deepEqual(rows.map((r) => r.espnId), ['1', '3', '', '', '']);
+  assert.equal(rows[0].headshot, 'h1');
+  assert.equal(rows[0].num, 2);
+  assert.deepEqual(attachEspnIds([{ name: 'A' }], null).map((r) => r.espnId), ['']);
+});
+
+test('sortRoster orders by position group, then jersey', () => {
+  const rows = sortRoster([
+    { name: 'K1', pos: 'K', num: 7 }, { name: 'WR2', pos: 'WR', num: 88 }, { name: 'QB', pos: 'QB', num: 15 },
+    { name: 'WR1', pos: 'WR', num: 10 }, { name: 'X', pos: 'ATH', num: 1 }, { name: 'CB', pos: 'CB', num: null },
+  ]);
+  assert.deepEqual(rows.map((r) => r.name), ['QB', 'WR1', 'WR2', 'CB', 'K1', 'X']);
 });
