@@ -55,7 +55,7 @@ body.theme-stadium {
   --border-strong: rgba(245, 158, 11, 0.4);
   --text-main: #f8fafc;
   --text-muted: #94a3b8;
-  --text-faint: #64748b;
+  --text-faint: #7c8ca2;
   --accent-brand: #f59e0b;
   --accent-brand-subtle: rgba(245, 158, 11, 0.15);
   --accent-positive: #34d399;
@@ -81,7 +81,7 @@ body.theme-espn {
   --border-strong: rgba(220, 38, 38, 0.45);
   --text-main: #f9fafb;
   --text-muted: #9ca3af;
-  --text-faint: #6b7280;
+  --text-faint: #848b98;
   --accent-brand: #ef4444;
   --accent-brand-subtle: rgba(239, 68, 68, 0.12);
   --accent-positive: #10b981;

@@ -769,7 +769,7 @@ function venueAgeBadge(venue, recordedAt, nowMs) {
 // edge_pct = how far the model thinks the line is off (in percentage points).
 // ev_pct    = expected value as a percentage (positive = the bet pays back more than it costs).
 function valueLabelHtml(edgePct, evPct) {
-  if (!edgePct && !evPct) return '<span class="text-slate-600">—</span>';
+  if (!edgePct && !evPct) return '<span class="text-slate-500">—</span>';
   const e = Number(edgePct) || 0, ev = Number(evPct) || 0;
   if (ev > 0 && e >= 8) return '<span class="text-emerald-400 font-bold">Generous</span><div class="text-[9px] text-slate-500">+' + ev.toFixed(0) + '% return</div>';
   if (ev > 0 && e >= 3) return '<span class="text-emerald-400">Lean over</span><div class="text-[9px] text-slate-500">+' + ev.toFixed(0) + '% return</div>';
@@ -833,7 +833,7 @@ function toggleOddsCompare(key, rowIndex) {
               <td class="py-1 px-2 text-center font-bold ${qi === 0 ? 'text-emerald-400' : 'text-slate-300'}">${homeEsc(q.odds || '—')}</td>
               <td class="py-1 px-2 text-center text-cyan-400">${q.edge_pct != null ? q.edge_pct.toFixed(1)+'pp' : '—'}</td>
               <td class="py-1 px-2 text-center ${q.ev_pct>0?'text-emerald-400':'text-slate-400'}">${q.ev_pct != null ? (q.ev_pct>0?'+':'')+q.ev_pct.toFixed(1)+'%' : '—'}</td>
-              <td class="py-1 px-2 text-center">${venueAgeBadge(q.venue, q.recorded_at, nowMs) || '<span class="text-slate-600">—</span>'}</td>
+              <td class="py-1 px-2 text-center">${venueAgeBadge(q.venue, q.recorded_at, nowMs) || '<span class="text-slate-500">—</span>'}</td>
             </tr>`).join('')}
         </tbody>
       </table>
