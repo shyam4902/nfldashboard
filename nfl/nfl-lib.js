@@ -453,3 +453,176 @@ export function separateLooks(a, b) {
   if (contrastRatio(a.fill, b.alt) < 1.35) return [a, b];
   return [a, { ...b, fill: b.alt, ink: textOn(b.alt) }];
 }
+
+/* ── Team page (#team/<ABBR>) and Teams grid ────────────────────────────── */
+
+// "6-1" or "6-1-1". Ties only show when there is one.
+export function recordText(rec) {
+  if (!rec) return '';
+  const w = num(rec.wins ?? rec.w);
+  const l = num(rec.losses ?? rec.l);
+  const t = num(rec.ties ?? rec.t) || 0;
+  if (w == null || l == null) return '';
+  return w + '-' + l + (t ? '-' + t : '');
+}
+
+function scoreOf(g, home) {
+  return home ? [g.home_score, g.away_score] : [g.away_score, g.home_score];
+}
+
+// One team's season from schedule.json, in kickoff order. Weeks with no game
+// up to `totalWeeks` become bye rows. `nextId` is the first game that is not
+// final, so the page can mark it.
+export function teamSchedule(games, teamName, totalWeeks) {
+  const own = arr(games).filter((g) => g && (g.home_team === teamName || g.away_team === teamName))
+    .slice().sort((a, b) => timeOf(a.kickoff_utc) - timeOf(b.kickoff_utc));
+  const rows = own.map((g) => {
+    const home = g.home_team === teamName;
+    const final = isFinalGame(g);
+    const [us, them] = scoreOf(g, home);
+    return {
+      id: str(g.game_id),
+      week: num(g.week),
+      kickoff: str(g.kickoff_utc),
+      home,
+      atVs: home ? 'vs' : '@',
+      opponent: home ? g.away_team : g.home_team,
+      final,
+      live: !final && g.status === 'in_progress',
+      result: final ? (us > them ? 'W' : us < them ? 'L' : 'T') : '',
+      us: final ? us : null,
+      them: final ? them : null,
+      tv: str(g.tv),
+    };
+  });
+  const weeks = new Set(rows.map((r) => r.week));
+  const total = num(totalWeeks);
+  if (total && rows.length) {
+    for (let w = 1; w <= total; w++) {
+      if (!weeks.has(w)) rows.push({ id: '', week: w, bye: true });
+    }
+    rows.sort((a, b) => (a.week ?? 99) - (b.week ?? 99) || timeOf(a.kickoff) - timeOf(b.kickoff));
+  }
+  const next = rows.find((r) => !r.bye && !r.final);
+  return { rows, nextId: next ? next.id : '' };
+}
+
+// Home and road records, current streak ("W3") and last-five string, from
+// completed finals only. No finals = empty strings, never "0-0".
+export function teamSplits(games, teamName) {
+  const finals = arr(games).filter((g) => isFinalGame(g) && (g.home_team === teamName || g.away_team === teamName))
+    .slice().sort((a, b) => timeOf(a.kickoff_utc) - timeOf(b.kickoff_utc));
+  const home = { w: 0, l: 0, t: 0 };
+  const road = { w: 0, l: 0, t: 0 };
+  const results = finals.map((g) => {
+    const isHome = g.home_team === teamName;
+    const [us, them] = scoreOf(g, isHome);
+    const r = us > them ? 'W' : us < them ? 'L' : 'T';
+    const side = isHome ? home : road;
+    side[r === 'W' ? 'w' : r === 'L' ? 'l' : 't']++;
+    return r;
+  });
+  let streak = '';
+  if (results.length) {
+    const last = results[results.length - 1];
+    let n = 0;
+    for (let i = results.length - 1; i >= 0 && results[i] === last; i--) n++;
+    streak = last + n;
+  }
+  const played = (rec) => rec.w + rec.l + rec.t;
+  return {
+    played: results.length,
+    home: played(home) ? recordText(home) : '',
+    road: played(road) ? recordText(road) : '',
+    streak,
+    last5: results.slice(-5).join(''),
+  };
+}
+
+// The season grid on the team page: one cell per stat with the team's league
+// rank among the teams that have that number. Reuses the compare rows so both
+// views read the same sources the same way. Cells with no value are dropped.
+export const NFL_TEAM_STAT_KEYS = [
+  ['ppg', 'Points / g'], ['oppPpg', 'Allowed / g'], ['diff', 'Margin / g'],
+  ['ypg', 'Yards / g'], ['passYpg', 'Pass yds / g'], ['rushYpg', 'Rush yds / g'],
+  ['ydsAllowed', 'Yds allowed / g'], ['offEpa', 'Off EPA / play'], ['defEpa', 'Def EPA / play'],
+  ['offSr', 'Off success'], ['defSack', 'Sack rate'], ['defTo', 'Takeaway rate'],
+];
+
+export function teamStatCells(abbr, data, allAbbrs) {
+  const season = data.season ?? Math.max(0, ...arr(data.efficiency).map((r) => Number(r?.season) || 0));
+  const everyone = arr(allAbbrs).map((a) => sourcesFor(a, data, season));
+  const mine = sourcesFor(abbr, data, season);
+  const cells = [];
+  for (const [key, label] of NFL_TEAM_STAT_KEYS) {
+    const row = NFL_COMPARE_ROWS.find((r) => r.key === key);
+    if (!row) continue;
+    const value = row.read(mine);
+    if (value == null) continue;
+    const all = everyone.map(row.read).filter((v) => v != null);
+    cells.push({ key, label, value, text: row.text(value), rank: rankAmong(all, value, row.lower), of: all.length });
+  }
+  return cells;
+}
+
+// ESPN site API team roster. `/teams/<id>/roster` groups athletes by unit
+// ({ position, items }); `/teams/<id>?enable=roster` sends team.athletes flat.
+// Both shapes become one flat list.
+export function parseEspnRoster(json) {
+  const raw = arr(json?.athletes).length ? arr(json.athletes) : arr(json?.team?.athletes);
+  const flat = raw.flatMap((entry) => (Array.isArray(entry?.items) ? entry.items : [entry]));
+  const out = [];
+  for (const a of flat) {
+    const id = str(a?.id);
+    const name = str(a?.fullName || a?.displayName);
+    if (!id || !name) continue;
+    out.push({
+      id,
+      name,
+      jersey: str(a.jersey),
+      pos: str(a.position?.abbreviation),
+      headshot: str(a.headshot?.href),
+    });
+  }
+  return out;
+}
+
+// Supabase roster rows carry no ESPN id. Each row is matched to the ESPN team
+// roster by normalised name; when two ESPN players share the name, the jersey
+// number decides, and if that is not unique either the row stays unmatched.
+// Unmatched rows come back with id '' so the page falls back to search.
+export function attachEspnIds(rows, espnPlayers) {
+  const byName = new Map();
+  for (const p of arr(espnPlayers)) {
+    const key = normName(p?.name);
+    if (!key) continue;
+    if (!byName.has(key)) byName.set(key, []);
+    byName.get(key).push(p);
+  }
+  return arr(rows).map((row) => {
+    const same = byName.get(normName(row?.name)) || [];
+    let hit = same.length === 1 ? same[0] : null;
+    if (!hit && same.length > 1 && row?.num != null && row.num !== '') {
+      const byJersey = same.filter((p) => str(p.jersey) === str(row.num));
+      hit = byJersey.length === 1 ? byJersey[0] : null;
+    }
+    return { ...row, espnId: hit ? hit.id : '', headshot: hit ? hit.headshot : '' };
+  });
+}
+
+// Position order for the roster grid, offense to special teams.
+const POSITION_ORDER = ['QB', 'RB', 'HB', 'FB', 'WR', 'TE', 'OT', 'T', 'OL', 'G', 'OG', 'C',
+  'EDGE', 'DE', 'DT', 'NT', 'DL', 'LB', 'OLB', 'ILB', 'MLB', 'CB', 'DB', 'S', 'FS', 'SS', 'K', 'PK', 'P', 'LS'];
+
+export function sortRoster(rows) {
+  const rank = (pos) => {
+    const i = POSITION_ORDER.indexOf(str(pos).toUpperCase());
+    return i < 0 ? POSITION_ORDER.length : i;
+  };
+  const jersey = (row) => {
+    const n = num(row?.num);
+    return n == null ? 1000 : n;
+  };
+  return arr(rows).slice().sort((a, b) => rank(a?.pos) - rank(b?.pos) || jersey(a) - jersey(b) ||
+    str(a?.name).localeCompare(str(b?.name)));
+}

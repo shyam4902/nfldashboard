@@ -7,7 +7,7 @@ function showTab(tab){
     else{el.classList.add('hidden');el.style.animation='';}
   });
   document.querySelectorAll('.tab-btn').forEach(btn=>{btn.classList.remove('active');});
-  const navTab = { matchup: 'schedule', compare: 'teams', player: 'league' }[tab] || tab;
+  const navTab = { matchup: 'schedule', compare: 'teams', team: 'teams', player: 'league' }[tab] || tab;
   const activeTab = document.querySelector(`[data-tab="${navTab}"]`);
   if (activeTab) {
     activeTab.classList.add('active');
@@ -35,7 +35,7 @@ function showTab(tab){
 // ═══════════════════════════════════════════════════════════
 // URL HASH ROUTING - shareable tabs, working back button
 // ═══════════════════════════════════════════════════════════
-const ROUTABLE_TABS = ['home', 'schedule', 'teams', 'league', 'matchup', 'compare', 'player'];
+const ROUTABLE_TABS = ['home', 'schedule', 'teams', 'team', 'league', 'matchup', 'compare', 'player'];
 let suppressHashRoute = false;
 
 // Mirror the current tab into the address bar. Matchup carries its game id
@@ -55,6 +55,7 @@ async function applyHash() {
   const [tab, arg, arg2] = (location.hash || '').replace(/^#/, '').split('/');
   if (tab === 'compare') return showNflCompare(arg, arg2);
   if (tab === 'player') return showNflPlayer(arg);
+  if (tab === 'team') return showNflTeam(arg, arg2);
   if (tab === 'matchup' && arg) {
     await loadSchedule();                // deep link needs the game list first
     if (openMatchup(arg)) return;        // openMatchup calls showTab itself
@@ -68,35 +69,30 @@ window.addEventListener('hashchange', () => {
 
 function filterDashboard(q){
   q = (q || '').toLowerCase().trim();
-  // Filter team tiles in #teamsContainer
+  // Filter the Teams grid rows (nfl/js/roster.js); a division card with no
+  // matching team hides, and so does a conference with no visible card.
   let teamVisible = 0;
-  document.querySelectorAll('#teamsContainer .team-tile').forEach(el => {
-    const txt = el.textContent.toLowerCase();
-    const show = (!q || txt.includes(q));
-    el.style.display = show ? '' : 'none';
+  document.querySelectorAll('#teamsContainer .tg-row').forEach(el => {
+    const txt = (el.getAttribute('data-team-search') || el.textContent).toLowerCase();
+    const show = !q || txt.includes(q);
+    el.hidden = !show;
     if (show) teamVisible++;
   });
-
-  // Update division headers and content containers
-  document.querySelectorAll('#teamsContainer .division-content').forEach(divContent => {
-    const tiles = divContent.querySelectorAll('.team-tile');
-    const hasVisible = Array.from(tiles).some(t => t.style.display !== 'none');
-    const header = divContent.previousElementSibling;
-    if (header && header.classList.contains('division-header')) {
-      header.style.display = hasVisible ? '' : 'none';
-    }
-    divContent.style.display = hasVisible ? '' : 'none';
+  document.querySelectorAll('#teamsContainer .tg-div').forEach(card => {
+    card.hidden = !card.querySelector('.tg-row:not([hidden])');
+  });
+  document.querySelectorAll('#teamsContainer .tg-conf').forEach(conf => {
+    conf.hidden = !conf.querySelector('.tg-div:not([hidden])');
   });
 
-  // Empty-state for teams
-  ['teamsEmpty'].forEach(id=>{const el=document.getElementById(id);if(el)el.remove();});
-  if (q) {
-    if (teamVisible === 0) {
-      const el = document.createElement('div'); el.id = 'teamsEmpty';
-      el.className = 'text-center py-12 text-slate-500';
-      el.innerHTML = '<div class="text-4xl mb-2">&#128269;</div><div class="text-sm">No teams match "<span class="text-slate-300">'+q+'</span>"</div>';
-      document.getElementById('teamsContainer').appendChild(el);
-    }
+  const old = document.getElementById('teamsEmpty');
+  if (old) old.remove();
+  if (q && teamVisible === 0) {
+    const el = document.createElement('div');
+    el.id = 'teamsEmpty';
+    el.className = 'nv-state';
+    el.textContent = 'No teams match "' + q + '"';
+    document.getElementById('teamsContainer').appendChild(el);
   }
 }
 

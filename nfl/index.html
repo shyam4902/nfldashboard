@@ -9,6 +9,7 @@
 <script src="/nfl/js/tailwind-config.js?v=20261105c"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <link rel="stylesheet" href="/nfl/nfl.css?v=20261105c">
+<link rel="stylesheet" href="/nfl/teams.css?v=20261105e">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="canonical" href="https://matchupboard.com/nfl/">
 <meta property="og:title" content="Matchup Board · NFL scores, matchups and stats">
@@ -84,30 +85,6 @@
      visible here instead of living only in an unread launchd log. Absent file
      or ok status = no banner; nothing is ever invented. -->
 <div id="pipelineStatusBanner" class="hidden"></div>
-
-<!-- ROSTER MODAL -->
-<div id="rosterModal" class="roster-modal-overlay" onclick="if(event.target===this)closeRoster()">
-  <div class="roster-modal">
-    <button class="roster-close" onclick="closeRoster()">&times;</button>
-    <div id="rosterHeader" class="p-1"></div>
-    <div class="roster-modal-content">
-      <div id="rosterTitle" class="text-xl font-black text-white mb-1"></div>
-      <div id="rosterSubtitle" class="text-xs text-slate-500 mb-4"></div>
-      <div id="rosterSummary" class="roster-summary"></div>
-      <div class="flex flex-wrap gap-2 mb-3">
-        <div id="rosterTabOff" class="roster-tab active-off" onclick="showRosterSide('offense',this)">Offense</div>
-        <div id="rosterTabDef" class="roster-tab" onclick="showRosterSide('defense',this)">Defense</div>
-        <div id="rosterTabSt" class="roster-tab" onclick="showRosterSide('special',this)">Special Teams</div>
-      </div>
-      <div id="rosterFilterRow" class="flex gap-2 mb-3 items-center">
-        <span class="text-[10px] text-slate-500 uppercase tracking-wider font-bold">Filter:</span>
-        <button id="rookiesOnlyChip" onclick="toggleRookiesFilter()" class="filter-chip">Rookies only</button>
-      </div>
-      <div id="rosterBody"></div>
-      <div id="rosterChanges" class="mt-6 border-t border-slate-700/50 pt-4"></div>
-    </div>
-  </div>
-</div>
 
 <!-- COMPARE MODAL -->
 <div id="compareModal" class="roster-modal-overlay" onclick="if(event.target===this)closeCompare()">
@@ -310,25 +287,18 @@
     </footer>
   </div>
 
-  <div id="tab-teams" class="hidden">
-    <div class="flex items-center justify-between flex-wrap gap-3 mb-4">
-      <div class="flex items-center gap-3">
-        <h2 class="text-xl font-bold">Teams <span id="teamsFreshness" class="text-[9px] font-normal align-middle"></span></h2>
-      </div>
-      <div class="flex items-center">
-        <button id="compareModeBtn" onclick="toggleCompareMode()" class="flex items-center gap-2 px-3.5 py-1.5 rounded-lg border border-slate-700 bg-slate-800/80 hover:border-amber-500/50 hover:bg-slate-800 text-left transition group">
-          <span class="text-sm">⚖</span>
-          <div class="flex flex-col">
-            <span id="compareBtnLabel" class="text-xs font-bold text-slate-200 group-hover:text-amber-400 transition">Compare Teams</span>
-            <span id="compareBtnSub" class="text-[10px] text-slate-400 font-normal">Compare any two teams or explore matchups</span>
-          </div>
-        </button>
-      </div>
+  <!-- TEAMS grid and TEAM page (nfl/js/roster.js, styles in nfl/teams.css):
+       the /nba/ team-page grammar. Each grid row opens #team/<ABBR>. -->
+  <div id="tab-teams" class="hidden nv">
+    <div class="tg-head">
+      <h2 class="tg-title">Teams <span id="teamsFreshness" class="text-[9px] font-normal align-middle"></span></h2>
+      <a id="compareModeBtn" href="#compare" class="tg-cmp" title="Compare any two teams side by side">Compare teams</a>
     </div>
     <div id="teamsOverviewPanel">
       <div id="teamsContainer"></div>
     </div>
   </div>
+  <div id="tab-team" class="hidden nv"><div id="nflTeam"></div></div>
   <!-- LEAGUE: actual results only. Standings are built from completed
        regular-season finals in schedule.json; statistics come from the free
        Sleeper weekly stats API. Both are published as tracked artifacts by
@@ -377,12 +347,12 @@
 
 <script src="/nfl/js/core.js?v=20261105c"></script>
 <script src="/nfl/js/home.js?v=20261105c"></script>
-<script src="/nfl/js/render.js?v=20261105c"></script>
-<script src="/nfl/js/roster.js?v=20261105c"></script>
+<script src="/nfl/js/render.js?v=20261105e"></script>
+<script src="/nfl/js/roster.js?v=20261105e"></script>
 <script src="/nfl/js/matchup.js?v=20261105c"></script>
 <script src="/nfl/js/league.js?v=20261105c"></script>
-<script src="/nfl/js/views.js?v=20261105c"></script>
-<script src="/nfl/js/routing.js?v=20261105c"></script>
+<script src="/nfl/js/views.js?v=20261105e"></script>
+<script src="/nfl/js/routing.js?v=20261105e"></script>
 <script src="/nfl/js/schedule.js?v=20261105c"></script>
 <script src="/nfl/js/extensions.js?v=20261105c"></script>
 <script src="/nfl/js/boot.js?v=20261105c"></script>
