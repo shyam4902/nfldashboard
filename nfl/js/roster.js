@@ -357,6 +357,34 @@ function nflTeamMovesHTML(team) {
   return '<div class="card tm-sched">' + col('Acquired', gains, 'from_team', '←') + col('Lost', losses, 'to_team', '→') + '</div>' + picks;
 }
 
+// Snaps tab: who is on the field, from nfl_snaps_2026.json. Each row is one
+// player: a bar per game (his % of the unit's snaps), last-3-games share, the
+// season share, and an arrow when his role moved 8+ points. Players under 10%
+// over the last three games and 25% on the season are left out.
+function nflTeamSnapsHTML(team, look) {
+  const t = LEAGUE_SNAPS && LEAGUE_SNAPS.teams && LEAGUE_SNAPS.teams[team.abbr];
+  if (!t) return '';
+  const bar = nflLib.readableOn(look.fill, '#14161a', 3);
+  const keep = p => p.last3 >= 10 || p.season >= 25;
+  const arrow = p => {
+    const tr = nflLib.snapTrend(p);
+    return tr.dir === 'flat' ? '' : '<i class="sn-tr ' + tr.dir + '" title="' + (tr.delta > 0 ? '+' : '') + tr.delta + ' points vs season">' + (tr.dir === 'up' ? '▲' : '▼') + Math.abs(tr.delta) + '</i>';
+  };
+  const row = p => '<div class="sn-row"><span class="tm-mn"><b>' + homeEsc(p.name) + '</b><small>' + homeEsc(p.pos) + ' · ' + homeEsc(p.snaps) + ' snaps</small></span>' +
+    '<span class="sn-bars" aria-hidden="true">' + p.weekly.map((v, i) => '<i style="height:' + Math.max(v, 2) + '%" title="Week ' + t.weeks[i] + ': ' + v + '%"></i>').join('') + '</span>' +
+    '<span class="sn-v"><b>' + p.last3 + '%</b><small>' + p.season + '% season</small></span>' + arrow(p) + '</div>';
+  const col = (title, unit) => {
+    const list = t.players.filter(p => p.unit === unit && keep(p));
+    return '<div class="tm-col"><div class="ld-h"><h2>' + title + '</h2><span>last 3 games</span></div>' + (list.length ? list.map(row).join('') : '<div class="nv-state">No snaps recorded.</div>') + '</div>';
+  };
+  const movers = t.players.filter(p => nflLib.snapTrend(p).dir !== 'flat' && (p.last3 >= 20 || p.season >= 20))
+    .sort((a, b) => Math.abs(nflLib.snapTrend(b).delta) - Math.abs(nflLib.snapTrend(a).delta)).slice(0, 6);
+  const moverChip = p => '<span class="sn-m ' + nflLib.snapTrend(p).dir + '"><b>' + homeEsc(p.name) + '</b> ' + homeEsc(p.pos) + ' ' + p.season + '% → ' + p.last3 + '%</span>';
+  return (movers.length ? '<section class="card sn-movers"><div class="ld-h"><h2>Role changes</h2><span>season → last 3 games</span></div><div class="sn-mlist">' + movers.map(moverChip).join('') + '</div></section>' : '') +
+    '<div class="card tm-sched sn" style="--c:' + bar + '">' + col('Offense', 'off') + col('Defense', 'def') + '</div>' +
+    '<p class="nv-note">Snap counts: nflverse (Pro Football Reference box scores), regular season through week ' + homeEsc(LEAGUE_SNAPS.through_week) + '. A missed game counts as 0% in the season share. Bars are each game in order, weeks ' + homeEsc(t.weeks.join(', ')) + '.</p>';
+}
+
 function nflTeamTab(btn) {
   const page = btn.closest('.tm');
   if (!page) return;
@@ -371,7 +399,7 @@ function nflTeamTab(btn) {
 
 async function showNflTeam(arg, panelArg) {
   const token = ++nflViewToken;
-  const panel = ['schedule', 'roster', 'moves'].includes(panelArg) ? panelArg : 'schedule';
+  const panel = ['schedule', 'roster', 'snaps', 'moves'].includes(panelArg) ? panelArg : 'schedule';
   const clean = String(arg || '').replace(/[^A-Za-z]/g, '').toUpperCase();
   NFL_VIEW_HASH.team = clean ? '#team/' + clean + (panel === 'schedule' ? '' : '/' + panel) : '#teams';
   showTab('team');
@@ -404,11 +432,13 @@ async function showNflTeam(arg, panelArg) {
   document.title = team.name + ' · Matchup Board';
   const tab = (key, label) => '<button type="button" role="tab" class="nv-tab" data-panel="' + key + '" aria-selected="' + (key === panel) + '" onclick="nflTeamTab(this)">' + label + '</button>';
   const view = (key, html) => '<section data-view="' + key + '"' + (key === panel ? '' : ' hidden') + '>' + html + '</section>';
+  const snaps = nflTeamSnapsHTML(team, look);
   host.innerHTML = '<div class="tm" data-abbr="' + homeEsc(team.abbr) + '">' +
     '<a class="tm-back" href="#teams">← All teams</a>' +
     nflTeamHeroHTML(team, standing, splits, look) + nflTeamStatsHTML(team, look) +
-    '<div class="nv-tabs tm-tabs" role="tablist">' + tab('schedule', 'Schedule') + tab('roster', 'Roster') + tab('moves', 'Moves') + '</div>' +
+    '<div class="nv-tabs tm-tabs" role="tablist">' + tab('schedule', 'Schedule') + tab('roster', 'Roster') + (snaps ? tab('snaps', 'Snaps') : '') + tab('moves', 'Moves') + '</div>' +
     view('schedule', nflTeamScheduleHTML(team, games)) +
     view('roster', nflTeamRosterHTML(team, espn, look)) +
+    (snaps ? view('snaps', snaps) : '') +
     view('moves', nflTeamMovesHTML(team)) + '</div>';
 }

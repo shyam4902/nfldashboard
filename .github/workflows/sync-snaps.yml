@@ -1,0 +1,42 @@
+name: Sync snap counts
+
+# nflverse refreshes snap_counts a day or two after each week's games, so a
+# daily run in season picks it up. Quiet days rewrite nothing and commit nothing.
+on:
+  schedule:
+    - cron: '23 14 * 9,10,11,12,1,2 *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+# Same lock as the score sync, so the two never push over each other.
+concurrency:
+  group: sync-scores
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - run: node --test scripts/snap_counts.test.js
+      - run: node scripts/build_snap_counts.js
+      - run: node scripts/validate-data.js
+
+      - name: Commit and push if snap counts changed
+        run: |
+          if git diff --quiet -- data/shared/nfl_snaps_2026.json; then
+            echo "No snap count changes."
+            exit 0
+          fi
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/shared/nfl_snaps_2026.json
+          git commit -m "data: sync snap counts (automated)"
+          git pull --rebase --quiet
+          git push

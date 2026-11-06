@@ -346,3 +346,27 @@ test('sortRoster orders by position group, then jersey', () => {
   ]);
   assert.deepEqual(rows.map((r) => r.name), ['QB', 'WR1', 'WR2', 'CB', 'K1', 'X']);
 });
+
+test('snapStarters fills exact positions first, then broad labels, by last-3 share', async () => {
+  const { snapStarters, snapTrend } = await import('./nfl-lib.js');
+  const team = { players: [
+    { name: 'Gen DB', pos: 'DB', unit: 'def', last3: 99, season: 99 },
+    { name: 'Corner A', pos: 'CB', unit: 'def', last3: 80, season: 90 },
+    { name: 'Corner B', pos: 'CB', unit: 'def', last3: 85, season: 60 },
+    { name: 'Safety', pos: 'S', unit: 'def', last3: 70, season: 70 },
+    { name: 'Off WR', pos: 'WR', unit: 'off', last3: 100, season: 100 },
+  ] };
+  const slots = [{ slot: 'CB', pos: ['CB'] }, { slot: 'S', pos: ['S'] }, { slot: 'S', pos: ['S'] }, { slot: 'CB', pos: ['CB'] }, { slot: 'LB', pos: ['LB'] }];
+  const names = snapStarters(team, slots, 'def').map(p => p && p.name);
+  assert.deepStrictEqual(names, ['Corner B', 'Safety', 'Gen DB', 'Corner A', null]);
+  assert.deepStrictEqual(snapStarters(null, slots, 'def'), [null, null, null, null, null]);
+  const ol = { players: [
+    { name: 'T1', pos: 'T', unit: 'off', last3: 100 }, { name: 'C1', pos: 'C', unit: 'off', last3: 100 },
+    { name: 'C2', pos: 'C', unit: 'off', last3: 100 }, { name: 'OL1', pos: 'OL', unit: 'off', last3: 100 },
+    { name: 'OL2', pos: 'OL', unit: 'off', last3: 65 }, { name: 'OL3', pos: 'OL', unit: 'off', last3: 35 },
+  ] };
+  const line = [{ slot: 'LT', pos: ['OT'] }, { slot: 'LG', pos: ['G', 'OG'] }, { slot: 'C', pos: ['C'] }, { slot: 'RG', pos: ['G', 'OG'] }, { slot: 'RT', pos: ['OT'] }];
+  assert.deepStrictEqual(snapStarters(ol, line, 'off').map(p => p.name), ['T1', 'C2', 'C1', 'OL2', 'OL1']);
+  assert.strictEqual(snapTrend({ last3: 70, season: 50 }).dir, 'up');
+  assert.strictEqual(snapTrend({ last3: 50, season: 55 }).dir, 'flat');
+});

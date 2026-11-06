@@ -171,19 +171,32 @@ function pickStarter(team, posCands, used) {
 // CB) in the team's colour, filled for the offense and outlined for the
 // defense; the name and "position · Madden OVR" sit under it. An empty slot
 // means the roster snapshot has no player for it.
-function formationPlayerHtml(p, isOffense, slot, look) {
+// The snap-count team for a roster team name, or null when the artifact is
+// missing or has no row for it.
+function snapTeamFor(teamName) {
+  const t = typeof nflTeamByName === 'function' ? nflTeamByName(teamName) : null;
+  return (t && LEAGUE_SNAPS && LEAGUE_SNAPS.teams && LEAGUE_SNAPS.teams[t.abbr]) || null;
+}
+
+// One starter on the Formation Lab field. The disc carries the slot (LT, WR,
+// CB) in the team's colour, filled for the offense and outlined for the
+// defense. Under the name: the share of snaps he played over the team's last
+// three games when snap counts are loaded, else the Madden overall.
+function formationPlayerHtml(p, isOffense, slot, look, teamName) {
   const side = isOffense ? 'fp-o' : 'fp-x';
   const tint = look ? ` style="--c:${look.fill};--ci:${isOffense ? look.on : look.ink}"` : '';
   if (!p) {
-    return `<div class="formation-player empty" title="No ${attrEsc(slot)} in the roster snapshot"><span class="fp-circle ${side}">${attrEsc(slot)}</span><span class="fp-name">—</span><span class="fp-meta">no player</span></div>`;
+    return `<div class="formation-player empty" title="No ${attrEsc(slot)} found"><span class="fp-circle ${side}">${attrEsc(slot)}</span><span class="fp-name">—</span><span class="fp-meta">no player</span></div>`;
   }
   const escName = attrEsc(p.name);
-  const escTeam = attrEsc(teamNameOf(p));
+  const escTeam = attrEsc(teamName || teamNameOf(p));
   const pos = String(p.pos || '');
-  const ovr = p.ovr || '—';
-  const meta = (pos && pos !== slot ? attrEsc(pos) + ' · ' : '') + attrEsc(ovr);
+  const snap = p.last3 != null;
+  const value = snap ? p.last3 + '%' : (p.ovr || '—');
+  const meta = (pos && pos !== slot ? attrEsc(pos) + ' · ' : '') + attrEsc(value);
+  const label = snap ? `${p.name} · ${pos} · ${p.last3}% of snaps, last 3 games (${p.season}% season)` : `${p.name} · ${pos} · OVR ${value}`;
   const openPlayer = `openPlayerModal('${escName.replace(/'/g, "\\'")}','${escTeam.replace(/'/g, "\\'")}')`;
-  return `<div class="formation-player" tabindex="0" role="button" aria-label="${escName} · ${attrEsc(pos)} · OVR ${attrEsc(ovr)}" onclick="${openPlayer}" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();${openPlayer}}" title="${escName} · ${attrEsc(pos)} · OVR ${attrEsc(ovr)}">
+  return `<div class="formation-player" tabindex="0" role="button" aria-label="${attrEsc(label)}" onclick="${openPlayer}" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();${openPlayer}}" title="${attrEsc(label)}">
     <span class="fp-circle ${side}"${tint}>${attrEsc(slot || pos)}</span>
     <span class="fp-name">${escName}</span>
     <span class="fp-meta">${meta}</span>
@@ -194,24 +207,25 @@ function formationFieldHtml(team, look, isOffense) {
   const used = {};
   const rows = [];
   const row = (picks) => rows.push(`<div class="mu-fr" style="--n:${picks.length}">${picks.join('')}</div>`);
+  const snaps = snapTeamFor(team);
+  const chip = (p, slot) => formationPlayerHtml(p, isOffense, slot, look, team);
   if (isOffense) {
     const skill = MATCHUP_OFFENSE[MATCHUP_STATE.personnel] || MATCHUP_OFFENSE['12'];
-    const skillPicks = skill.map(s => pickStarter(team, s.pos, used));
-    const olPicks = MATCHUP_OL_SLOTS.map(s => pickStarter(team, s.pos, used));
-    const qb = pickStarter(team, ['QB'], used);
-    const rb = pickStarter(team, ['RB'], used);
-    row(skillPicks.map((p, i) => formationPlayerHtml(p, true, skill[i].slot, look)));
-    row(olPicks.map((p, i) => formationPlayerHtml(p, true, MATCHUP_OL_SLOTS[i].slot, look)));
-    row([formationPlayerHtml(qb, true, 'QB', look), formationPlayerHtml(rb, true, 'RB', look)]);
+    const slots = [...skill, ...MATCHUP_OL_SLOTS, { slot: 'QB', pos: ['QB'] }, { slot: 'RB', pos: ['RB'] }];
+    const picks = snaps ? nflLib.snapStarters(snaps, slots, 'off') : slots.map(s => pickStarter(team, s.pos, used));
+    const n = skill.length, ol = MATCHUP_OL_SLOTS.length;
+    row(picks.slice(0, n).map((p, i) => chip(p, slots[i].slot)));
+    row(picks.slice(n, n + ol).map((p, i) => chip(p, slots[n + i].slot)));
+    row([chip(picks[n + ol], 'QB'), chip(picks[n + ol + 1], 'RB')]);
   } else {
     const def = MATCHUP_DEFENSE[MATCHUP_STATE.front] || MATCHUP_DEFENSE['43'];
-    const defPicks = def.map(s => pickStarter(team, s.pos, used));
+    const defPicks = snaps ? nflLib.snapStarters(snaps, def, 'def') : def.map(s => pickStarter(team, s.pos, used));
     const back = [], lbs = [], dls = [];
     defPicks.forEach((p, i) => {
       const slot = def[i].slot;
-      if (slot === 'CB' || slot === 'S') back.push(formationPlayerHtml(p, false, slot, look));
-      else if (slot === 'LB') lbs.push(formationPlayerHtml(p, false, slot, look));
-      else dls.push(formationPlayerHtml(p, false, slot, look));
+      if (slot === 'CB' || slot === 'S') back.push(chip(p, slot));
+      else if (slot === 'LB') lbs.push(chip(p, slot));
+      else dls.push(chip(p, slot));
     });
     row(back);
     row(lbs);
@@ -781,11 +795,11 @@ function renderFormationLabPanel(tA, tB) {
             </select>
           </label>
         </div>
-        <p>Click any starter chip to inspect profile & ratings. The number under each name is the player's Madden overall rating.</p>
+        <p>${LEAGUE_SNAPS ? `Starters are the players with the most snaps over each team's last three games. The number under each name is that share. Click a player for his profile.` : `Click any starter chip to inspect profile & ratings. The number under each name is the player's Madden overall rating.`}</p>
       </div>
       <div class="mu-two">${field(tA, true)}${field(tB, false)}</div>
       <div class="mu-note bare">
-        <span>Illustrative alignments built from the current roster snapshot — representative personnel and fronts, not a verified game-day lineup or confirmed assignments. Roster snapshot data is not a complete weekly injury report.</span>
+        <span>${LEAGUE_SNAPS ? `Snap counts: nflverse (Pro Football Reference box scores), through week ${attrEsc(LEAGUE_SNAPS.through_week)}. Slots show who has been playing, not a confirmed game-day lineup or injury report; left and right sides are not tracked.` : `Illustrative alignments built from the current roster snapshot — representative personnel and fronts, not a verified game-day lineup or confirmed assignments. Roster snapshot data is not a complete weekly injury report.`}</span>
       </div>
     </div>
   `;

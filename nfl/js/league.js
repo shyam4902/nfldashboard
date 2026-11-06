@@ -16,6 +16,7 @@
 // never as a zero.
 let LEAGUE_STANDINGS = null;
 let LEAGUE_STATS = null;
+let LEAGUE_SNAPS = null; // nfl_snaps_2026.json, optional: formation + team Snaps tab
 const LEAGUE_MISSING = {};
 let currentLeagueSubTab = 'standings';
 let leagueStatsCategory = 'passing';
@@ -28,8 +29,8 @@ let lgNfl = null;
 async function leagueLibLoad(){
   if (!lgLib || !lgNfl) {
     [lgLib, lgNfl] = await Promise.all([
-      import('/nfl/league-lib.js?v=20261106b'),
-      import('/nfl/nfl-lib.js?v=20261106b'),
+      import('/nfl/league-lib.js?v=20261106c'),
+      import('/nfl/nfl-lib.js?v=20261106c'),
     ]);
   }
   return lgLib;
@@ -57,6 +58,9 @@ async function loadLeagueArtifacts(){
   if (!LEAGUE_STATS && !LEAGUE_MISSING.stats) {
     LEAGUE_STATS = await fetchLeagueArtifact(
       ['/data/shared/nfl_stats_2026.json', '/nfl_stats_2026.json'], 'stats');
+  }
+  if (!LEAGUE_SNAPS && !LEAGUE_MISSING.snaps) {
+    LEAGUE_SNAPS = await fetchLeagueArtifact(['/data/shared/nfl_snaps_2026.json'], 'snaps');
   }
 }
 

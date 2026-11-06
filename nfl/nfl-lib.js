@@ -6,7 +6,7 @@
 // same way league.js borrows parseLeaders from /nba/nba.js. Missing keys and
 // junk entries produce empty results or nulls, never invented numbers.
 
-import { barShares, smallImg, parseLeaders, contrastRatio, textOn, readableOn, ordinal } from '../nba/nba.js?v=20261106b';
+import { barShares, smallImg, parseLeaders, contrastRatio, textOn, readableOn, ordinal } from '../nba/nba.js?v=20261106c';
 
 export { barShares, smallImg, parseLeaders, contrastRatio, textOn, readableOn, ordinal };
 
@@ -625,4 +625,60 @@ export function sortRoster(rows) {
   };
   return arr(rows).slice().sort((a, b) => rank(a?.pos) - rank(b?.pos) || jersey(a) - jersey(b) ||
     str(a?.name).localeCompare(str(b?.name)));
+}
+
+/* ── Snap counts (data/shared/nfl_snaps_2026.json) ──────────────────────── */
+
+// The formation's slot positions (roster spellings) to the position labels in
+// nflverse snap counts. The first label is the exact match; the rest are
+// fallbacks for players PFR files under a broader label (OL, DL, DB).
+const SNAP_POS = {
+  OT: ['T', 'OL'], G: ['G', 'OL', 'C'], OG: ['G', 'OL', 'C'], C: ['C', 'OL'],
+  QB: ['QB'], RB: ['RB', 'HB', 'FB'], WR: ['WR'], TE: ['TE'],
+  EDGE: ['DE', 'OLB', 'DL'], DE: ['DE', 'OLB', 'DL'], DT: ['DT', 'NT', 'DL'],
+  LB: ['LB', 'ILB', 'MLB', 'OLB'], CB: ['CB', 'DB'], S: ['S', 'SS', 'FS', 'DB'],
+};
+
+// Slots that share a unit group: the group takes its N most-played players
+// first, then seats them, so a part-timer with an exact label never beats a
+// full-timer PFR filed as OL or DB.
+const SNAP_GROUP = { OT: 'OL', G: 'OL', OG: 'OL', C: 'OL', EDGE: 'DL', DE: 'DL', DT: 'DL', CB: 'DB', S: 'DB' };
+
+// One player per slot, the ones on the field most over the team's last three
+// games. slots = [{ slot, pos: [roster positions] }]. Within a group, exact
+// labels are seated first, then the fallbacks (tackle spots before guard
+// spots, since OL is most often a tackle), then whoever is left. An unfilled
+// slot is null.
+export function snapStarters(team, slots, unit) {
+  const list = arr(slots);
+  const ranked = arr(team && team.players).filter(p => p && p.unit === unit)
+    .sort((a, b) => (num(b.last3) || 0) - (num(a.last3) || 0) || (num(b.season) || 0) - (num(a.season) || 0));
+  const labelsOf = s => arr(s && s.pos).map(p => SNAP_POS[str(p).toUpperCase()] || [str(p).toUpperCase()]);
+  const exactOf = s => new Set(labelsOf(s).map(l => l[0]));
+  const fallOf = s => new Set(labelsOf(s).flatMap(l => l.slice(1)));
+  const groupOf = s => SNAP_GROUP[str(arr(s && s.pos)[0]).toUpperCase()] || str(arr(s && s.pos)[0]).toUpperCase();
+  const picks = list.map(() => null);
+  const used = new Set();
+  const order = [...new Set(list.map(groupOf))].sort((a, b) => (a === 'DL' ? -1 : b === 'DL' ? 1 : 0));
+  for (const g of order) {
+    const idx = list.map((s, i) => i).filter(i => groupOf(list[i]) === g);
+    const ok = new Set(idx.flatMap(i => [...exactOf(list[i]), ...fallOf(list[i])]));
+    const pool = ranked.filter(p => !used.has(p) && ok.has(str(p.pos).toUpperCase())).slice(0, idx.length);
+    const take = (i, test) => {
+      const p = pool.find(x => !used.has(x) && test(str(x.pos).toUpperCase()));
+      if (p) { used.add(p); picks[i] = p; }
+    };
+    idx.forEach(i => take(i, pos => exactOf(list[i]).has(pos)));
+    idx.filter(i => !picks[i]).sort((a, b) => fallOf(list[a]).size - fallOf(list[b]).size)
+      .forEach(i => take(i, pos => fallOf(list[i]).has(pos)));
+    idx.filter(i => !picks[i]).forEach(i => take(i, () => true));
+  }
+  return picks;
+}
+
+// Change in role: last-3 share minus season share, in points. Under 8 points
+// either way reads as steady.
+export function snapTrend(p) {
+  const d = (num(p && p.last3) || 0) - (num(p && p.season) || 0);
+  return { delta: d, dir: d >= 8 ? 'up' : d <= -8 ? 'down' : 'flat' };
 }
