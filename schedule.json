@@ -1807,7 +1807,7 @@
       "tv": "",
       "winner": null,
       "away_score": 19,
-      "home_score": 8,
+      "home_score": 11,
       "week": 9,
       "status": "in_progress"
     },
@@ -3672,5 +3672,5 @@
       "week": 18
     }
   ],
-  "scores_synced_at": "2026-11-08T21:01:52.499Z"
+  "scores_synced_at": "2026-11-08T21:05:14.286Z"
 }
