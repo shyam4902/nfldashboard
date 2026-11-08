@@ -1721,11 +1721,11 @@
       "city": "",
       "kickoff_utc": "2026-11-08T14:30:00Z",
       "tv": "",
-      "winner": null,
-      "away_score": 31,
+      "winner": "Cincinnati Bengals",
+      "away_score": 34,
       "home_score": 17,
       "week": 9,
-      "status": "in_progress"
+      "status": "final"
     },
     {
       "game_id": "2026-11-08-DEN-CAR",
@@ -1736,9 +1736,10 @@
       "kickoff_utc": "2026-11-08T18:00:00Z",
       "tv": "",
       "winner": null,
-      "away_score": null,
-      "home_score": null,
-      "week": 9
+      "away_score": 26,
+      "home_score": 21,
+      "week": 9,
+      "status": "in_progress"
     },
     {
       "game_id": "2026-11-08-DAL-IND",
@@ -1749,9 +1750,10 @@
       "kickoff_utc": "2026-11-08T18:00:00Z",
       "tv": "",
       "winner": null,
-      "away_score": null,
-      "home_score": null,
-      "week": 9
+      "away_score": 20,
+      "home_score": 17,
+      "week": 9,
+      "status": "in_progress"
     },
     {
       "game_id": "2026-11-08-NYJ-KC",
@@ -1762,9 +1764,10 @@
       "kickoff_utc": "2026-11-08T18:00:00Z",
       "tv": "",
       "winner": null,
-      "away_score": null,
-      "home_score": null,
-      "week": 9
+      "away_score": 12,
+      "home_score": 35,
+      "week": 9,
+      "status": "in_progress"
     },
     {
       "game_id": "2026-11-08-DET-MIA",
@@ -1774,10 +1777,11 @@
       "city": "",
       "kickoff_utc": "2026-11-08T18:00:00Z",
       "tv": "",
-      "winner": null,
-      "away_score": null,
-      "home_score": null,
-      "week": 9
+      "winner": "Detroit Lions",
+      "away_score": 19,
+      "home_score": 9,
+      "week": 9,
+      "status": "final"
     },
     {
       "game_id": "2026-11-08-CLE-NO",
@@ -1788,9 +1792,10 @@
       "kickoff_utc": "2026-11-08T18:00:00Z",
       "tv": "",
       "winner": null,
-      "away_score": null,
-      "home_score": null,
-      "week": 9
+      "away_score": 13,
+      "home_score": 16,
+      "week": 9,
+      "status": "in_progress"
     },
     {
       "game_id": "2026-11-08-NYG-PHI",
@@ -1801,9 +1806,10 @@
       "kickoff_utc": "2026-11-08T18:00:00Z",
       "tv": "",
       "winner": null,
-      "away_score": null,
-      "home_score": null,
-      "week": 9
+      "away_score": 19,
+      "home_score": 8,
+      "week": 9,
+      "status": "in_progress"
     },
     {
       "game_id": "2026-11-08-LA-WAS",
@@ -1814,9 +1820,10 @@
       "kickoff_utc": "2026-11-08T18:00:00Z",
       "tv": "",
       "winner": null,
-      "away_score": null,
-      "home_score": null,
-      "week": 9
+      "away_score": 20,
+      "home_score": 13,
+      "week": 9,
+      "status": "in_progress"
     },
     {
       "game_id": "2026-11-08-HOU-LAC",
@@ -3665,5 +3672,5 @@
       "week": 18
     }
   ],
-  "scores_synced_at": "2026-11-08T16:59:21.619Z"
+  "scores_synced_at": "2026-11-08T21:01:52.499Z"
 }
