@@ -1722,9 +1722,10 @@
       "kickoff_utc": "2026-11-08T14:30:00Z",
       "tv": "",
       "winner": null,
-      "away_score": null,
-      "home_score": null,
-      "week": 9
+      "away_score": 31,
+      "home_score": 17,
+      "week": 9,
+      "status": "in_progress"
     },
     {
       "game_id": "2026-11-08-DEN-CAR",
@@ -3664,5 +3665,5 @@
       "week": 18
     }
   ],
-  "scores_synced_at": "2026-11-06T06:22:17.136Z"
+  "scores_synced_at": "2026-11-08T16:59:21.619Z"
 }
