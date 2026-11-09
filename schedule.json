@@ -1889,10 +1889,11 @@
       "city": "",
       "kickoff_utc": "2026-11-09T01:20:00Z",
       "tv": "",
-      "winner": null,
-      "away_score": null,
-      "home_score": null,
-      "week": 9
+      "winner": "Chicago Bears",
+      "away_score": 24,
+      "home_score": 27,
+      "week": 9,
+      "status": "final"
     },
     {
       "game_id": "2026-11-09-BUF-MIN",
@@ -3676,5 +3677,5 @@
       "week": 18
     }
   ],
-  "scores_synced_at": "2026-11-09T00:48:10.893Z"
+  "scores_synced_at": "2026-11-09T06:08:55.985Z"
 }
