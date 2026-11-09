@@ -1861,11 +1861,11 @@
       "city": "",
       "kickoff_utc": "2026-11-08T21:25:00Z",
       "tv": "",
-      "winner": null,
+      "winner": "Green Bay Packers",
       "away_score": 45,
       "home_score": 27,
       "week": 9,
-      "status": "in_progress"
+      "status": "final"
     },
     {
       "game_id": "2026-11-08-ARI-SEA",
@@ -3676,5 +3676,5 @@
       "week": 18
     }
   ],
-  "scores_synced_at": "2026-11-09T00:42:41.392Z"
+  "scores_synced_at": "2026-11-09T00:48:10.893Z"
 }
