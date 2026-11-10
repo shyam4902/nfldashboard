@@ -1903,11 +1903,11 @@
       "city": "",
       "kickoff_utc": "2026-11-10T01:15:00Z",
       "tv": "",
-      "winner": null,
-      "away_score": 3,
-      "home_score": 0,
+      "winner": "Buffalo Bills",
+      "away_score": 23,
+      "home_score": 6,
       "week": 9,
-      "status": "in_progress"
+      "status": "final"
     },
     {
       "game_id": "2026-11-12-WAS-NYG",
@@ -3678,5 +3678,5 @@
       "week": 18
     }
   ],
-  "scores_synced_at": "2026-11-10T01:57:55.690Z"
+  "scores_synced_at": "2026-11-10T09:37:01.112Z"
 }
