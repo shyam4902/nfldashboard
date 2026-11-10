@@ -1,8 +1,8 @@
 {
   "season": 2026,
-  "week": 9,
+  "week": 10,
   "total_weeks": 18,
-  "generated": "2026-11-09",
+  "generated": "2026-11-10",
   "source": "nflverse games.csv (matchups, kickoffs, stadiums); Week 1 enriched with TV/city",
   "games": [
     {
@@ -1904,9 +1904,10 @@
       "kickoff_utc": "2026-11-10T01:15:00Z",
       "tv": "",
       "winner": null,
-      "away_score": null,
-      "home_score": null,
-      "week": 9
+      "away_score": 3,
+      "home_score": 0,
+      "week": 9,
+      "status": "in_progress"
     },
     {
       "game_id": "2026-11-12-WAS-NYG",
@@ -3677,5 +3678,5 @@
       "week": 18
     }
   ],
-  "scores_synced_at": "2026-11-09T06:08:55.985Z"
+  "scores_synced_at": "2026-11-10T01:57:55.690Z"
 }
