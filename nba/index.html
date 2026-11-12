@@ -250,6 +250,8 @@ a:focus-visible, button:focus-visible, select:focus-visible, input:focus-visible
 }
 .nba-tabs a:hover { color: var(--text-main); background: var(--bg-card-hover); }
 .nba-tabs a[aria-current='page'] { color: var(--tab-active-text); background: var(--tab-active-bg); }
+/* Five sections fit a 390px phone without the row scrolling. */
+@media (max-width: 520px) { .nba-tabs { gap: 2px; } .nba-tabs a { padding: 10px 9px; } }
 
 main { padding: 20px 0 48px; }
 .card {
@@ -1521,6 +1523,17 @@ body.gm-wide .wrap { max-width: 1300px; }
 .ld-t td .sw { display: inline-block; width: 4px; height: 16px; margin-right: 8px; vertical-align: -3px; background: var(--c); }
 .ld-t th.sticky, .ld-t td.sticky { position: sticky; left: 0; z-index: 1; background: var(--bg-card); }
 .ld-t tr:last-child td { border-bottom: 0; }
+.st-t th[data-sort] { cursor: pointer; user-select: none; }
+.st-t th[data-sort]:hover { color: var(--text-main); }
+.st-t th[aria-sort] { color: var(--text-main); }
+.st-t th[aria-sort='descending']::after { content: ' ↓'; }
+.st-t th[aria-sort='ascending']::after { content: ' ↑'; }
+.st-t td.b { font-weight: 700; }
+.st-card .ld-ch { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.st-pick select { max-width: 100%; padding: 7px 10px; font: 600 var(--t1)/1.2 var(--font-sans); color: var(--text-main); background: var(--bg-inset); border: 1px solid var(--border-muted); border-radius: 8px; }
+.st-rec { font: 600 var(--t2)/1 var(--font-sans); color: var(--text-muted); }
+.st-link { font: 600 var(--t1)/1 var(--font-sans); color: var(--text-muted); }
+.st-link:hover { color: var(--text-main); }
 .ld-plot { margin: 0; }
 .ld-plot svg { display: block; width: 100%; height: auto; overflow: visible; }
 .ld-plot text { font: 600 13px var(--font-sans); fill: var(--text-muted); }
@@ -1578,6 +1591,7 @@ body.gm-wide .wrap { max-width: 1300px; }
       <a href="#scores" data-nav="scores">Scores</a>
       <a href="#standings" data-nav="standings">Standings</a>
       <a href="#leaders" data-nav="leaders">Leaders</a>
+      <a href="#stats" data-nav="stats">Stats</a>
       <a href="#compare" data-nav="compare">Compare</a>
     </nav>
   </div>
@@ -1613,6 +1627,7 @@ import {
   parseTeamSchedule,
   parseTeams,
   parseTeamStats,
+  parseTeamPlayerStats,
   periodStart,
   pickCompareGame,
   readableOn,
@@ -1621,7 +1636,7 @@ import {
   smallImg,
   teamFill,
   textOn,
-} from './nba.js?v=20261105r';
+} from './nba.js?v=20261111a';
 
 const API = 'https://site.api.espn.com/apis/site/v2/sports/basketball/nba';
 const STANDINGS_API = 'https://site.api.espn.com/apis/v2/sports/basketball/nba/standings';
@@ -4301,9 +4316,11 @@ async function showTeam(id) {
     '<div class="tabs-row" role="tablist">' +
     '<button class="tab" type="button" role="tab" data-panel="schedule" aria-selected="true">Schedule</button>' +
     '<button class="tab" type="button" role="tab" data-panel="roster" aria-selected="false">Roster</button>' +
+    '<button class="tab" type="button" role="tab" data-panel="stats" aria-selected="false">Stats</button>' +
     '</div>' +
     '<section data-view="schedule">' + scheduleList + '</section>' +
-    '<section data-view="roster" hidden>' + rosterList + '</section></div>';
+    '<section data-view="roster" hidden>' + rosterList + '</section>' +
+    '<section data-view="stats" hidden><div class="state"><span class="pulse"></span>Loading…</div></section></div>';
 
   const tabs = app.querySelectorAll('.tabs-row .tab');
   tabs.forEach((tab) => tab.addEventListener('click', () => {
@@ -4311,7 +4328,173 @@ async function showTeam(id) {
     app.querySelectorAll('section[data-view]').forEach((panel) => {
       panel.hidden = panel.getAttribute('data-view') !== tab.getAttribute('data-panel');
     });
+    if (tab.getAttribute('data-panel') === 'stats') fillTeamStats(app.querySelector('section[data-view="stats"]'), id, look, token);
   }));
+}
+
+/* ── Stats (#stats, #stats/<teamId>) ───────────────────────────────────────
+   #stats is the league table from the standings already loaded elsewhere;
+   #stats/<id> is every player's season line from ESPN's team athlete
+   statistics, the table ESPN shows on a team's Stats page. Tables sort on a
+   header click and scroll sideways inside their card on a phone. */
+const STATS_MODE_KEY = 'mb.nba.stats.mode';
+const playerStatsCache = new Map();
+
+function getTeamPlayerStats(id) {
+  const key = String(id);
+  if (!playerStatsCache.has(key)) {
+    playerStatsCache.set(key, fetchJSON('https://site.web.api.espn.com/apis/site/v2/sports/basketball/nba/teams/' + encodeURIComponent(key) + '/athletes/statistics')
+      .then(parseTeamPlayerStats)
+      .catch((err) => { playerStatsCache.delete(key); throw err; }));
+  }
+  return playerStatsCache.get(key);
+}
+
+// A cell with its sort value. null sorts last both ways and shows a dash.
+function sCell(value, text, cls) {
+  return '<td' + (cls ? ' class="' + cls + '"' : '') + ' data-v="' + (value == null ? '' : esc(value)) + '">' + (value == null ? '—' : esc(text == null ? value : text)) + '</td>';
+}
+
+function makeSortable(table) {
+  table.querySelectorAll('thead th[data-sort]').forEach((th) => th.addEventListener('click', () => {
+    const idx = Array.prototype.indexOf.call(th.parentNode.children, th);
+    const desc = th.getAttribute('aria-sort') !== 'descending';
+    table.querySelectorAll('thead th').forEach((h) => h.removeAttribute('aria-sort'));
+    th.setAttribute('aria-sort', desc ? 'descending' : 'ascending');
+    const body = table.tBodies[0];
+    const text = th.getAttribute('data-sort') === 'text';
+    const val = (row) => row.cells[idx].getAttribute('data-v');
+    Array.from(body.rows).sort((a, b) => {
+      const x = val(a), y = val(b);
+      if (x === '' || y === '') return x === y ? 0 : x === '' ? 1 : -1;
+      const c = text ? x.localeCompare(y) : Number(x) - Number(y);
+      return desc ? -c : c;
+    }).forEach((row) => body.appendChild(row));
+  }));
+}
+
+const PCT1 = (v) => v.toFixed(1);
+const FIX1 = (v) => v.toFixed(1);
+const INT = (v) => String(Math.round(v));
+
+// One team's player table. mode is 'per' (per game) or 'tot' (season totals).
+function playerStatsTableHTML(data, look, mode) {
+  const per = mode !== 'tot';
+  const fmt = per ? FIX1 : INT;
+  const ma = (m, a) => (m == null || a == null ? null : per ? m.toFixed(1) + '-' + a.toFixed(1) : Math.round(m) + '-' + Math.round(a));
+  const head = [['Player', 'text', 'l sticky'], ['POS', 'text', 'l'], ['GP'], ['GS'], ['MIN'], ['PTS'], ['REB'], ['AST'], ['STL'], ['BLK'], ['TO'],
+    ['FG'], ['FG%'], ['3P'], ['3P%'], ['FT'], ['FT%'], ['OREB'], ['DREB'], ['PF']];
+  const rows = data.players.map((p) => {
+    const l = per ? p.perGame : p.totals;
+    return '<tr style="--c:' + look.fill + '"><td class="nm l sticky" data-v="' + esc(p.name) + '"><span class="sw"></span><a href="#player/' + esc(p.id) + '">' + esc(p.name) + '</a></td>' +
+      sCell(p.pos || null, null, 'dim l') + sCell(p.gp, null) + sCell(p.gs, null) + sCell(l.min, l.min == null ? null : fmt(l.min)) +
+      sCell(l.pts, l.pts == null ? null : fmt(l.pts), 'b') + sCell(l.reb, l.reb == null ? null : fmt(l.reb)) + sCell(l.ast, l.ast == null ? null : fmt(l.ast)) +
+      sCell(l.stl, l.stl == null ? null : fmt(l.stl)) + sCell(l.blk, l.blk == null ? null : fmt(l.blk)) + sCell(l.to, l.to == null ? null : fmt(l.to)) +
+      sCell(l.fgm, ma(l.fgm, l.fga), 'dim') + sCell(p.fgPct, p.fgPct == null ? null : PCT1(p.fgPct)) +
+      sCell(l.tpm, ma(l.tpm, l.tpa), 'dim') + sCell(p.tpPct, p.tpPct == null ? null : PCT1(p.tpPct)) +
+      sCell(l.ftm, ma(l.ftm, l.fta), 'dim') + sCell(p.ftPct, p.ftPct == null ? null : PCT1(p.ftPct)) +
+      sCell(l.oreb, l.oreb == null ? null : fmt(l.oreb)) + sCell(l.dreb, l.dreb == null ? null : fmt(l.dreb)) + sCell(l.pf, l.pf == null ? null : fmt(l.pf)) + '</tr>';
+  }).join('');
+  return '<div class="ld-scroll"><table class="ld-t st-t"><caption class="sr-only">' + esc(data.team.name) + ' player stats, ' + (per ? 'per game' : 'season totals') + '</caption><thead><tr>' +
+    head.map(([label, kind, cls]) => '<th' + (cls ? ' class="' + cls + '"' : '') + ' data-sort="' + (kind || 'num') + '"' + (label === 'PTS' ? ' aria-sort="descending"' : '') + ' scope="col">' + esc(label) + '</th>').join('') +
+    '</tr></thead><tbody>' + (rows || '<tr><td class="l" colspan="20">No player stats yet this season.</td></tr>') + '</tbody></table></div>';
+}
+
+// The Per game / Totals switch plus the table, wired. Used by #stats/<id> and
+// the team page's Stats tab.
+function playerStatsBlockHTML(data, look, mode) {
+  return '<section class="card st-card"><div class="ld-ch"><h2>Player stats</h2>' +
+    '<div class="seg st-mode" role="group" aria-label="Per game or totals">' +
+    [['per', 'Per game'], ['tot', 'Totals']].map(([k, t]) => '<button type="button" data-v="' + k + '" aria-pressed="' + (k === mode) + '">' + t + '</button>').join('') +
+    '</div></div><div class="st-body">' + playerStatsTableHTML(data, look, mode) + '</div>' +
+    '<p class="ld-note">' + esc(data.season ? data.season + ' regular season' : 'Regular season') + ' · ESPN. Click a column to sort; percentages are blank with no attempts.</p></section>';
+}
+
+function wirePlayerStats(root, data, look) {
+  const table = () => root.querySelector('.st-t');
+  makeSortable(table());
+  const seg = root.querySelector('.st-mode');
+  seg.addEventListener('click', (event) => {
+    const button = event.target.closest('button[data-v]');
+    if (!button) return;
+    const mode = button.getAttribute('data-v');
+    savePref(STATS_MODE_KEY, mode);
+    seg.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(b === button)));
+    root.querySelector('.st-body').innerHTML = playerStatsTableHTML(data, look, mode);
+    makeSortable(table());
+  });
+}
+
+async function fillTeamStats(host, id, look, token) {
+  if (!host || host.getAttribute('data-filled')) return;
+  host.setAttribute('data-filled', '1');
+  try {
+    const data = await getTeamPlayerStats(id);
+    if (token !== requestId) return;
+    host.innerHTML = playerStatsBlockHTML(data, look, readPref(STATS_MODE_KEY, ['per', 'tot'], 'per'));
+    wirePlayerStats(host, data, look);
+  } catch (err) {
+    host.removeAttribute('data-filled');
+    host.innerHTML = '<div class="state">Player stats did not load. Open the tab again to retry.</div>';
+  }
+}
+
+function leagueStatsTableHTML(rows, colors) {
+  const head = [['Team', 'text', 'l sticky'], ['Conf', 'text', 'l'], ['W'], ['L'], ['PCT'], ['PPG'], ['OPP'], ['DIFF'], ['Home', 'text'], ['Road', 'text'], ['L10', 'text'], ['Strk', 'text']];
+  const body = rows.map((r) => {
+    const look = teamLook(colors, r.abbr, r.teamId, r.logo);
+    const diff = r.ppg != null && r.oppPpg != null ? r.ppg - r.oppPpg : null;
+    return '<tr style="--c:' + look.fill + '"><td class="nm l sticky" data-v="' + esc(r.name) + '"><span class="sw"></span><a href="#stats/' + esc(r.teamId) + '">' + esc(r.name) + '</a></td>' +
+      sCell(r.conf, null, 'dim l') + sCell(r.wins, null) + sCell(r.losses, null) + sCell(r.pct, r.pct == null ? null : r.pct.toFixed(3).replace(/^0/, '')) +
+      sCell(r.ppg, r.ppg == null ? null : r.ppg.toFixed(1), 'b') + sCell(r.oppPpg, r.oppPpg == null ? null : r.oppPpg.toFixed(1)) +
+      sCell(diff, diff == null ? null : (diff > 0 ? '+' : '') + diff.toFixed(1)) +
+      sCell(r.home || null) + sCell(r.road || null) + sCell(r.last10 || null) + sCell(r.streak || null) + '</tr>';
+  }).join('');
+  return '<div class="ld-scroll"><table class="ld-t st-t"><caption class="sr-only">NBA team stats</caption><thead><tr>' +
+    head.map(([label, kind, cls]) => '<th' + (cls ? ' class="' + cls + '"' : '') + ' data-sort="' + (kind || 'num') + '"' + (label === 'PCT' ? ' aria-sort="descending"' : '') + ' scope="col">' + esc(label) + '</th>').join('') +
+    '</tr></thead><tbody>' + body + '</tbody></table></div>';
+}
+
+function statsTeamPickHTML(rows, current) {
+  const sorted = rows.slice().sort((a, b) => a.name.localeCompare(b.name));
+  return '<label class="st-pick"><span class="sr-only">Team</span><select onchange="location.hash = this.value ? \'#stats/\' + this.value : \'#stats\'">' +
+    '<option value="">All teams</option>' +
+    sorted.map((r) => '<option value="' + esc(r.teamId) + '"' + (r.teamId === String(current) ? ' selected' : '') + '>' + esc(r.name) + '</option>').join('') +
+    '</select></label>';
+}
+
+async function showStats(teamId) {
+  stopPolling();
+  const token = ++requestId;
+  app.innerHTML = loadingHTML();
+  let colors;
+  let standings;
+  let data = null;
+  try {
+    [colors, standings, data] = await Promise.all([getTeamColors(), getStandings(), teamId ? getTeamPlayerStats(teamId) : null]);
+  } catch (err) {
+    if (token === requestId) showError(() => showStats(teamId));
+    return;
+  }
+  if (token !== requestId) return;
+  const rows = [...standings.East, ...standings.West];
+  if (!teamId) {
+    setTitle('NBA Stats');
+    const sorted = rows.slice().sort((a, b) => (b.pct ?? -1) - (a.pct ?? -1));
+    app.innerHTML = '<div class="ld-bar"><h1>Team stats</h1>' + statsTeamPickHTML(rows, '') + '</div>' +
+      '<section class="card st-card"><div class="ld-ch"><h2>All 30 teams</h2><span>Pick a team for every player\'s line</span></div>' +
+      leagueStatsTableHTML(sorted, colors) + '<p class="ld-note">ESPN standings. Click a column to sort.</p></section>';
+    makeSortable(app.querySelector('.st-t'));
+    return;
+  }
+  const row = rows.find((r) => r.teamId === String(teamId));
+  const look = teamLook(colors, data.team.abbr || (row && row.abbr), teamId, row && row.logo);
+  setTitle((data.team.name || 'Team') + ' Stats');
+  const record = row && row.wins != null ? row.wins + '-' + row.losses : '';
+  app.innerHTML = '<div class="ld-bar"><h1>' + esc(data.team.name || 'Team') + (record ? ' <span class="st-rec">' + esc(record) + '</span>' : '') + '</h1>' +
+    statsTeamPickHTML(rows, teamId) + '<a class="st-link" href="#team/' + esc(teamId) + '">Team page →</a></div>' +
+    playerStatsBlockHTML(data, look, readPref(STATS_MODE_KEY, ['per', 'tot'], 'per'));
+  wirePlayerStats(app.querySelector('.st-card'), data, look);
 }
 
 /* ── Shared charts and play-by-play facts (px-*) ──────────────────────────
@@ -4596,15 +4779,16 @@ function router() {
   const route = parseHash();
   markNav(route.view);
   // The scores view is three columns and needs more room than the other views.
-  const onScores = !['standings', 'game', 'team', 'compare', 'leaders', 'players', 'player'].includes(route.view);
+  const onScores = !['standings', 'game', 'team', 'compare', 'leaders', 'stats', 'players', 'player'].includes(route.view);
   document.body.classList.toggle('sc-wide', onScores);
-  document.body.classList.toggle('gm-wide', ['game', 'team', 'compare', 'leaders', 'players', 'player'].includes(route.view));
+  document.body.classList.toggle('gm-wide', ['game', 'team', 'compare', 'leaders', 'stats', 'players', 'player'].includes(route.view));
 
   if (route.view === 'standings') showStandings(route.args[0]);
   else if (route.view === 'game' && route.arg) showGame(route.arg);
   else if (route.view === 'team' && route.arg) showTeam(route.arg);
   else if (route.view === 'compare') showCompare(route.args[0], route.args[1]);
   else if (route.view === 'leaders') showLeaders();
+  else if (route.view === 'stats') showStats(route.arg);
   else if (route.view === 'players') showPlayers(route.args[0], route.args[1]);
   else if (route.view === 'player' && route.arg) showPlayer(route.arg);
   else showScores(route.view === 'scores' ? route.arg : '');

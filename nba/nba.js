@@ -1795,3 +1795,43 @@ export function slateNext(games) {
   };
   return list.filter((g) => g.state === 'pre').sort((a, b) => time(a) - time(b))[0] || null;
 }
+
+/* ── Team player stats (teams/<id>/athletes/statistics) ─────────────────── */
+
+// Every player's season line for one team, the table ESPN shows on a team's
+// Stats page. Per-game values carry the `avg` names; totals the plain ones.
+// A shooting % with no attempts is null, not 0.
+export function parseTeamPlayerStats(json) {
+  const leaders = arr(arr(json?.results)[0]?.leaders);
+  const players = leaders.map((row) => {
+    const a = row?.athlete || {};
+    const s = {};
+    for (const cat of arr(row?.statistics)) for (const st of arr(cat?.stats)) s[st.name] = num(st.value);
+    const pct = (made, att, key) => (s[att] ? s[key] : null);
+    return {
+      id: str(a.id), name: str(a.displayName), short: str(a.shortName),
+      pos: str(a.position?.abbreviation), headshot: str(a.headshot?.href),
+      gp: s.gamesPlayed, gs: s.gamesStarted,
+      perGame: {
+        min: s.avgMinutes, pts: s.avgPoints, reb: s.avgRebounds, oreb: s.avgOffensiveRebounds, dreb: s.avgDefensiveRebounds,
+        ast: s.avgAssists, stl: s.avgSteals, blk: s.avgBlocks, to: s.avgTurnovers, pf: s.avgFouls,
+        fgm: s.avgFieldGoalsMade, fga: s.avgFieldGoalsAttempted, tpm: s.avgThreePointFieldGoalsMade, tpa: s.avgThreePointFieldGoalsAttempted,
+        ftm: s.avgFreeThrowsMade, fta: s.avgFreeThrowsAttempted,
+      },
+      totals: {
+        min: s.minutes, pts: s.points, reb: s.totalRebounds ?? s.rebounds, oreb: s.offensiveRebounds, dreb: s.defensiveRebounds,
+        ast: s.assists, stl: s.steals, blk: s.blocks, to: s.turnovers, pf: s.avgFouls != null && s.gamesPlayed != null ? Math.round(s.avgFouls * s.gamesPlayed) : null,
+        fgm: s.fieldGoalsMade, fga: s.fieldGoalsAttempted, tpm: s.threePointFieldGoalsMade, tpa: s.threePointFieldGoalsAttempted,
+        ftm: s.freeThrowsMade, fta: s.freeThrowsAttempted,
+      },
+      fgPct: pct('fieldGoalsMade', 'fieldGoalsAttempted', 'fieldGoalPct'),
+      tpPct: pct('threePointFieldGoalsMade', 'threePointFieldGoalsAttempted', 'threePointFieldGoalPct'),
+      ftPct: pct('freeThrowsMade', 'freeThrowsAttempted', 'freeThrowPct'),
+    };
+  }).filter((p) => p.id && p.name);
+  return {
+    season: str(json?.season?.displayName),
+    team: { id: str(json?.team?.id), abbr: str(json?.team?.abbreviation), name: str(json?.team?.displayName) },
+    players,
+  };
+}

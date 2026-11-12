@@ -1195,3 +1195,21 @@ test('restInfo on the 76ers schedule fixture', () => {
   assert.equal(restInfo(schedule, '20261020'), null);
   assert.equal(schedule.games.some((game) => game.postponed), false);
 });
+
+test('parseTeamPlayerStats: per-game and totals lines, null % with no attempts', async () => {
+  const { parseTeamPlayerStats } = await import('./nba.js');
+  const json = JSON.parse(readFileSync(new URL('./fixtures/team-13-athlete-stats.json', import.meta.url), 'utf8'));
+  const t = parseTeamPlayerStats(json);
+  assert.equal(t.team.abbr, 'LAL');
+  assert.equal(t.season, '2026-27');
+  assert.equal(t.players.length, 3);
+  const luka = t.players[0];
+  assert.equal(luka.name, 'Luka Doncic');
+  assert.equal(luka.gp, 10);
+  assert.ok(Math.abs(luka.perGame.pts - 39.3) < 0.01);
+  assert.equal(luka.totals.pts, 393);
+  assert.ok(luka.fgPct > 49 && luka.fgPct < 50);
+  const kessler = t.players[1];
+  assert.equal(kessler.tpPct, null);
+  assert.deepEqual(parseTeamPlayerStats({}).players, []);
+});
