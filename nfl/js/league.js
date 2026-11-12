@@ -29,8 +29,8 @@ let lgNfl = null;
 async function leagueLibLoad(){
   if (!lgLib || !lgNfl) {
     [lgLib, lgNfl] = await Promise.all([
-      import('/nfl/league-lib.js?v=20261106c'),
-      import('/nfl/nfl-lib.js?v=20261106c'),
+      import('/nfl/league-lib.js?v=20261111b'),
+      import('/nfl/nfl-lib.js?v=20261111b'),
     ]);
   }
   return lgLib;

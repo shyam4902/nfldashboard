@@ -161,3 +161,29 @@
   .nv .sn-row { grid-template-columns: minmax(0, 1fr) auto 56px 30px; gap: 6px; padding: 6px 2px; }
   .nv .sn-bars i { width: 4px; }
 }
+
+/* Stats tab */
+.nv .ps-card { margin-bottom: var(--s3); padding: 14px 16px 8px; }
+.nv .ps-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.nv .ps-t { width: 100%; border-collapse: collapse; }
+.nv .ps-t th, .nv .ps-t td { padding: 7px 8px; text-align: right; white-space: nowrap; border-bottom: 1px solid var(--border-muted); }
+.nv .ps-t thead th { font: 700 10px/1 var(--font-sans); letter-spacing: 0.05em; text-transform: uppercase; color: var(--text-muted); cursor: pointer; user-select: none; }
+.nv .ps-t thead th:hover, .nv .ps-t thead th[aria-sort] { color: var(--text-main); }
+.nv .ps-t th[aria-sort='descending']::after { content: ' ↓'; }
+.nv .ps-t th[aria-sort='ascending']::after { content: ' ↑'; }
+.nv .ps-t tbody td { font: 500 12px/1.3 var(--font-mono); font-variant-numeric: tabular-nums; color: var(--text-main); }
+.nv .ps-t tbody tr:last-child td { border-bottom: 0; }
+.nv .ps-t .ps-n { position: sticky; left: 0; z-index: 1; text-align: left; background: var(--bg-card); }
+.nv .ps-t td.ps-n { font: 600 13px/1.3 var(--font-sans); }
+.nv .ps-t td.ps-n a:hover { text-decoration: underline; }
+.nv .ps-t .ps-p { text-align: left; color: var(--text-muted); }
+
+/* Injury report */
+.nv .inj { margin-bottom: var(--s3); padding: 14px 16px 10px; }
+.nv .inj-l { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 0 20px; }
+.nv .inj-r { display: grid; grid-template-columns: minmax(0, 1fr) auto auto auto; align-items: center; gap: 8px; padding: 6px 0; border-bottom: 1px solid var(--border-muted); font: 500 13px/1.2 var(--font-sans); }
+.nv .inj-r a { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 600; color: var(--text-main); }
+.nv .inj-p, .nv .inj-d { font-size: 12px; color: var(--text-muted); }
+.nv .inj-s { padding: 2px 6px; border-radius: 4px; font: 700 11px/1.2 var(--font-sans); }
+.nv .inj-s.out { color: #fca5a5; background: rgba(239, 68, 68, 0.14); }
+.nv .inj-s.q { color: #fcd34d; background: rgba(245, 158, 11, 0.14); }

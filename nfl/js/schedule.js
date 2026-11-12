@@ -615,6 +615,9 @@ function openMatchup(gameId){
   MATCHUP_STATE.teamA = game.away_team;
   MATCHUP_STATE.teamB = game.home_team;
   MATCHUP_STATE.gameId = game.game_id;
+  // A finished game opens on its box score; any other game on the preview.
+  MATCHUP_STATE.subtab = nflGameFinal(game) ? 'box' : (MATCHUP_STATE.subtab === 'box' ? 'preview' : MATCHUP_STATE.subtab);
+  document.querySelectorAll('.matchup-subtab-pill').forEach(btn => btn.classList.toggle('active', btn.id === 'subtab-' + MATCHUP_STATE.subtab));
   const selA = document.getElementById('matchupTeamA');
   const selB = document.getElementById('matchupTeamB');
   if (selA) selA.value = game.away_team;

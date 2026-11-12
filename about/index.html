@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>About and privacy · Matchup Board</title>
+<meta name="description" content="What Matchup Board is, where its numbers come from, and what it does and does not collect.">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="theme-color" content="#0d0d0f">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&display=swap');
+:root { --bg: #0d0d0f; --card: #161618; --line: #26262a; --text: #ececee; --muted: #a1a1aa; --gold: #e2b84a; }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--text); font: 400 16px/1.6 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+.wrap { max-width: 720px; margin: 0 auto; padding: 28px 20px 64px; }
+.top { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 28px; }
+.brand { font: 700 22px/1 'Source Serif 4', Georgia, serif; color: var(--text); text-decoration: none; }
+.brand b { color: var(--gold); font-weight: 700; }
+.top nav a { margin-left: 14px; font-weight: 600; font-size: 14px; color: var(--muted); text-decoration: none; }
+.top nav a:hover { color: var(--text); }
+h1 { margin: 0 0 8px; font: 700 34px/1.15 'Source Serif 4', Georgia, serif; }
+h2 { margin: 32px 0 8px; font: 700 21px/1.25 'Source Serif 4', Georgia, serif; }
+p, li { color: #d4d4d8; }
+ul { padding-left: 20px; }
+li { margin: 6px 0; }
+a { color: var(--text); }
+.lede { font-size: 18px; color: var(--muted); }
+.card { margin-top: 24px; padding: 4px 20px 16px; background: var(--card); border: 1px solid var(--line); border-radius: 14px; }
+.small { margin-top: 36px; font-size: 13px; color: var(--muted); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <a class="brand" href="/"><b>Matchup</b> Board</a>
+    <nav><a href="/nfl/">NFL</a><a href="/nba/">NBA</a></nav>
+  </div>
+
+  <h1>About and privacy</h1>
+  <p class="lede">Matchup Board is a free NFL and NBA site for scores, matchups, standings and stats. There are no accounts, no ads and no tracking cookies.</p>
+
+  <div class="card">
+    <h2>Where the numbers come from</h2>
+    <ul>
+      <li><b>ESPN's public data feeds.</b> NBA scores, box scores, standings, leaders, rosters, injuries and player stats; NFL live scores, box scores, rosters, injuries and player stats. Your browser asks ESPN directly.</li>
+      <li><b>nflverse.</b> NFL schedules, betting lines, play-by-play efficiency and snap counts, which Pro Football Reference box scores feed.</li>
+      <li><b>Sleeper.</b> Weekly NFL player stats for the league leaders.</li>
+      <li><b>Win %.</b> This comes from the betting market's moneylines with the bookmaker's margin taken out. It is the market's view, not a prediction of ours.</li>
+    </ul>
+    <p>Every panel names its source. When a number is missing, the site leaves the space blank rather than estimating it.</p>
+  </div>
+
+  <div class="card">
+    <h2>Privacy</h2>
+    <ul>
+      <li><b>No accounts and no sign-in.</b> The site never asks for your name, email or anything else.</li>
+      <li><b>Analytics.</b> Cloudflare Web Analytics counts page views. It sets no cookies, does not follow you to other sites, and does not use your IP address to identify you.</li>
+      <li><b>Saved preferences.</b> Choices like a favorite team or a table view are saved in your own browser's local storage. They never leave your device, and clearing your site data removes them.</li>
+      <li><b>Third parties.</b> To show stats, your browser loads data from ESPN, team logos from ESPN's image server, fonts from Google Fonts and roster data from our Supabase database. Each of those services sees an ordinary web request from your browser.</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2>Fine print</h2>
+    <p>Matchup Board is an independent fan project. It has no connection to the NFL, the NBA, ESPN or any team, and team names and logos belong to their owners. Odds and win percentages are for information only, not betting advice.</p>
+  </div>
+
+  <p class="small">Last updated November 11, 2026.</p>
+</div>
+</body>
+</html>

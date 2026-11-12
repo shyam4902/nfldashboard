@@ -309,8 +309,8 @@ test('parseEspnRoster flattens both ESPN roster shapes', () => {
     { position: 'defense', items: [{ id: '11', displayName: 'Chris Jones', jersey: '95', position: { abbreviation: 'DT' } }, { id: '', fullName: 'No Id' }] },
   ] };
   assert.deepEqual(parseEspnRoster(grouped), [
-    { id: '10', name: 'Patrick Mahomes', jersey: '15', pos: 'QB', headshot: 'h10' },
-    { id: '11', name: 'Chris Jones', jersey: '95', pos: 'DT', headshot: '' },
+    { id: '10', name: 'Patrick Mahomes', jersey: '15', pos: 'QB', headshot: 'h10', injury: null },
+    { id: '11', name: 'Chris Jones', jersey: '95', pos: 'DT', headshot: '', injury: null },
   ]);
   const flat = { team: { athletes: [{ id: '12', fullName: 'Travis Kelce', jersey: '87', position: { abbreviation: 'TE' } }] } };
   assert.deepEqual(parseEspnRoster(flat).map((p) => p.id), ['12']);
@@ -369,4 +369,47 @@ test('snapStarters fills exact positions first, then broad labels, by last-3 sha
   assert.deepStrictEqual(snapStarters(ol, line, 'off').map(p => p.name), ['T1', 'C2', 'C1', 'OL2', 'OL1']);
   assert.strictEqual(snapTrend({ last3: 70, season: 50 }).dir, 'up');
   assert.strictEqual(snapTrend({ last3: 50, season: 55 }).dir, 'flat');
+});
+
+test('parseNflTeamPlayerStats groups players and flattens stats', async () => {
+  const { parseNflTeamPlayerStats } = await import('./nfl-lib.js');
+  const { readFileSync } = await import('node:fs');
+  const json = JSON.parse(readFileSync(new URL('./fixtures/team-kc-athlete-stats.json', import.meta.url), 'utf8'));
+  const t = parseNflTeamPlayerStats(json);
+  assert.equal(t.team.abbr, 'KC');
+  assert.ok(t.groups.passing.length >= 1);
+  const qb = t.groups.passing[0];
+  assert.equal(qb.name, 'Patrick Mahomes');
+  assert.ok(qb.s.passingYards > 0 && qb.s.gamesPlayed > 0);
+  assert.ok(t.groups.defensive[0].s.totalTackles > 0);
+  assert.deepEqual(parseNflTeamPlayerStats(null).groups, {});
+});
+
+test('parseNflSummary and findEspnEvent read a finished game', async () => {
+  const { parseNflSummary, findEspnEvent } = await import('./nfl-lib.js');
+  const { readFileSync } = await import('node:fs');
+  const g = parseNflSummary(JSON.parse(readFileSync(new URL('./fixtures/summary-401873033.json', import.meta.url), 'utf8')));
+  assert.equal(g.state, 'post');
+  assert.equal(g.teams.away.abbr, 'KC');
+  assert.equal(g.teams.home.score, 28);
+  assert.deepEqual(g.teams.away.lines, [7, 10, 7, 0]);
+  assert.equal(g.teamStats.filter(r => r.label === 'Interceptions thrown').length, 1);
+  assert.ok(g.teamStats.find(r => r.label === 'Total Yards').home);
+  const pass = g.players.away.find(x => x.key === 'passing');
+  assert.equal(pass.rows[0].name, 'Patrick Mahomes');
+  assert.equal(pass.rows[0].stats[0], '30/41');
+  assert.ok(g.scoring.length > 3 && g.scoring[0].text);
+  const sb = { events: [{ id: '9', competitions: [{ competitors: [{ homeAway: 'home', team: { abbreviation: 'LAR' } }, { homeAway: 'away', team: { abbreviation: 'WSH' } }] }] }] };
+  assert.equal(findEspnEvent(sb, 'WAS', 'LAR'), '9');
+  assert.equal(findEspnEvent(sb, 'KC', 'LAR'), '');
+});
+
+test('parseEspnRoster keeps the current injury listing', async () => {
+  const { parseEspnRoster } = await import('./nfl-lib.js');
+  const rows = parseEspnRoster({ athletes: [{ items: [
+    { id: '1', fullName: 'Hurt Guy', position: { abbreviation: 'CB' }, injuries: [{ status: 'Out', date: '2026-11-11T19:06Z' }] },
+    { id: '2', fullName: 'Fine Guy', position: { abbreviation: 'WR' } },
+  ] }] });
+  assert.deepEqual(rows[0].injury, { status: 'Out', date: '2026-11-11T19:06Z' });
+  assert.equal(rows[1].injury, null);
 });

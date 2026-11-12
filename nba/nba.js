@@ -1060,6 +1060,7 @@ export function parseRoster(json) {
       height: str(athlete.displayHeight),
       age: num(athlete.age),
       headshot: str(athlete.headshot?.href),
+      injury: (() => { const i = arr(athlete.injuries)[0]; const status = str(i?.status); return status ? { status, date: str(i.date) } : null; })(),
     };
     if (player.id || player.name) players.push(player);
   }

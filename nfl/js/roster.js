@@ -385,6 +385,90 @@ function nflTeamSnapsHTML(team, look) {
     '<p class="nv-note">Snap counts: nflverse (Pro Football Reference box scores), regular season through week ' + homeEsc(LEAGUE_SNAPS.through_week) + '. A missed game counts as 0% in the season share. Bars are each game in order, weeks ' + homeEsc(t.weeks.join(', ')) + '.</p>';
 }
 
+// Injury report from the team's ESPN roster: each listed player's status and
+// when it was posted. Out and injured reserve read red, the rest amber.
+function nflInjuryCardHTML(espn) {
+  const hurt = (espn || []).filter(p => p.injury);
+  if (!espn || !espn.length) return '';
+  const day = iso => { const d = new Date(iso); return Number.isNaN(d.getTime()) ? '' : d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }); };
+  const sev = st => (/out|reserve|suspend|pup/i.test(st) ? 'out' : 'q');
+  return '<section class="card inj"><div class="ld-h"><h2>Injury report</h2><span>' + (hurt.length ? hurt.length + ' listed' : 'No one listed') + ' · ESPN</span></div>' +
+    (hurt.length ? '<div class="inj-l">' + hurt.map(p => '<div class="inj-r"><a href="#player/' + homeEsc(p.id) + '">' + homeEsc(p.name) + '</a><span class="inj-p">' + homeEsc(p.pos) + '</span>' +
+      '<span class="inj-s ' + sev(p.injury.status) + '">' + homeEsc(p.injury.status) + '</span><span class="inj-d">' + homeEsc(day(p.injury.date)) + '</span></div>').join('') + '</div>' : '') + '</section>';
+}
+
+// Stats tab: every player's season line by group, from ESPN's team athlete
+// statistics (the table ESPN shows on a team's Stats page). Loaded the first
+// time the tab opens. Tables sort on a header click and scroll inside their
+// card on a phone.
+const nflTeamStatsCache = {};
+const NFL_STAT_GROUPS = [
+  ['passing', 'Passing', [['GP', 'gamesPlayed'], ['CMP', 'completions'], ['ATT', 'passingAttempts'], ['CMP%', 'completionPct', 1], ['YDS', 'passingYards'], ['Y/A', 'yardsPerPassAttempt', 1], ['TD', 'passingTouchdowns'], ['INT', 'interceptions'], ['SCK', 'sacks'], ['RTG', 'QBRating', 1], ['QBR', 'adjQBR', 1]]],
+  ['rushing', 'Rushing', [['GP', 'gamesPlayed'], ['CAR', 'rushingAttempts'], ['YDS', 'rushingYards'], ['AVG', 'yardsPerRushAttempt', 1], ['TD', 'rushingTouchdowns'], ['LNG', 'longRushing'], ['Y/G', 'rushingYardsPerGame', 1], ['FUM', 'rushingFumbles']]],
+  ['receiving', 'Receiving', [['GP', 'gamesPlayed'], ['REC', 'receptions'], ['TGT', 'receivingTargets'], ['YDS', 'receivingYards'], ['AVG', 'yardsPerReception', 1], ['TD', 'receivingTouchdowns'], ['LNG', 'longReception'], ['YAC', 'receivingYardsAfterCatch'], ['Y/G', 'receivingYardsPerGame', 1]]],
+  ['defensive', 'Defense', [['GP', 'gamesPlayed'], ['TOT', 'totalTackles'], ['SOLO', 'soloTackles'], ['AST', 'assistTackles'], ['SACK', 'sacks', 1], ['TFL', 'tacklesForLoss'], ['PD', 'passesDefended'], ['INT', 'interceptions'], ['FF', 'fumblesForced']]],
+  ['kicking', 'Kicking', [['GP', 'gamesPlayed'], ['FGM', 'fieldGoalsMade'], ['FGA', 'fieldGoalAttempts'], ['FG%', 'fieldGoalPct', 1], ['LNG', 'longFieldGoalMade'], ['XPM', 'extraPointsMade'], ['XPA', 'extraPointAttempts'], ['PTS', 'totalKickingPoints']]],
+];
+
+function nflSortable(table) {
+  table.querySelectorAll('thead th[data-sort]').forEach(th => th.addEventListener('click', () => {
+    const idx = Array.prototype.indexOf.call(th.parentNode.children, th);
+    const desc = th.getAttribute('aria-sort') !== 'descending';
+    table.querySelectorAll('thead th').forEach(h => h.removeAttribute('aria-sort'));
+    th.setAttribute('aria-sort', desc ? 'descending' : 'ascending');
+    const text = th.getAttribute('data-sort') === 'text';
+    const body = table.tBodies[0];
+    Array.from(body.rows).sort((a, b) => {
+      const x = a.cells[idx].getAttribute('data-v'), y = b.cells[idx].getAttribute('data-v');
+      if (x === '' || y === '') return x === y ? 0 : x === '' ? 1 : -1;
+      const c = text ? x.localeCompare(y) : Number(x) - Number(y);
+      return desc ? -c : c;
+    }).forEach(r => body.appendChild(r));
+  }));
+}
+
+function nflTeamStatsGroupsHTML(data, look) {
+  const cards = NFL_STAT_GROUPS.map(([key, title, cols]) => {
+    const rows = (data.groups[key] || []).filter(p => p.s.gamesPlayed);
+    if (!rows.length) return '';
+    const sortKey = cols[2] ? cols[2][1] : cols[1][1];
+    const body = rows.map(p => '<tr><td class="ps-n" data-v="' + homeEsc(p.name) + '"><i class="tm-sw" style="background:' + look.fill + '"></i>' +
+      '<a href="#player/' + homeEsc(p.id) + '">' + homeEsc(p.name) + '</a></td><td class="ps-p" data-v="' + homeEsc(p.pos) + '">' + homeEsc(p.pos || '—') + '</td>' +
+      cols.map(([, k, dec]) => {
+        const v = p.s[k];
+        return '<td data-v="' + (v == null ? '' : v) + '">' + (v == null ? '—' : dec ? Number(v).toFixed(1) : Math.round(v)) + '</td>';
+      }).join('') + '</tr>').join('');
+    return '<section class="card ps-card"><div class="ld-h"><h2>' + title + '</h2><span>' + rows.length + ' players</span></div>' +
+      '<div class="ps-scroll"><table class="ps-t"><caption class="sr-only">' + homeEsc(data.team.name) + ' ' + title.toLowerCase() + ' stats</caption><thead><tr>' +
+      '<th class="ps-n" data-sort="text" scope="col">Player</th><th class="ps-p" data-sort="text" scope="col">Pos</th>' +
+      cols.map(([label, k]) => '<th data-sort="num" scope="col"' + (k === sortKey ? ' aria-sort="descending"' : '') + '>' + label + '</th>').join('') +
+      '</tr></thead><tbody>' + body + '</tbody></table></div></section>';
+  }).join('');
+  return (cards || nflState('No player stats yet this season.')) +
+    '<p class="nv-note">' + homeEsc(data.season || '') + ' regular season · ESPN. Click a column to sort.</p>';
+}
+
+async function nflFillTeamStats(host, team, look) {
+  if (!host || host.getAttribute('data-filled')) return;
+  host.setAttribute('data-filled', '1');
+  host.innerHTML = nflState('Loading player stats…');
+  try {
+    let data = nflTeamStatsCache[team.abbr];
+    if (!data) {
+      const slug = (typeof NFL_ABBR_ESPN_MAP !== 'undefined' && NFL_ABBR_ESPN_MAP[team.abbr]) || team.abbr.toLowerCase();
+      const json = await nflFetchJson('https://site.web.api.espn.com/apis/site/v2/sports/football/nfl/teams/' + encodeURIComponent(slug) + '/athletes/statistics');
+      data = nflLib.parseNflTeamPlayerStats(json);
+      nflTeamStatsCache[team.abbr] = data;
+    }
+    if (!host.isConnected) return;
+    host.innerHTML = nflTeamStatsGroupsHTML(data, look);
+    host.querySelectorAll('.ps-t').forEach(nflSortable);
+  } catch (err) {
+    host.removeAttribute('data-filled');
+    host.innerHTML = nflState('Player stats did not load. Open the tab again to retry.');
+  }
+}
+
 function nflTeamTab(btn) {
   const page = btn.closest('.tm');
   if (!page) return;
@@ -393,13 +477,17 @@ function nflTeamTab(btn) {
   page.querySelectorAll('.tm-tabs .nv-tab').forEach(t => t.setAttribute('aria-selected', String(t === btn)));
   page.querySelectorAll('section[data-view]').forEach(p => { p.hidden = p.getAttribute('data-view') !== panel; });
   const abbr = page.getAttribute('data-abbr');
+  if (panel === 'stats') {
+    const team = nflTeamByAbbr(abbr);
+    if (team) nflFillTeamStats(page.querySelector('section[data-view="stats"]'), team, nflLib.teamLook(team));
+  }
   NFL_VIEW_HASH.team = '#team/' + abbr + (panel === 'schedule' ? '' : '/' + panel);
   if (location.hash !== NFL_VIEW_HASH.team) history.replaceState(null, '', NFL_VIEW_HASH.team);
 }
 
 async function showNflTeam(arg, panelArg) {
   const token = ++nflViewToken;
-  const panel = ['schedule', 'roster', 'snaps', 'moves'].includes(panelArg) ? panelArg : 'schedule';
+  const panel = ['schedule', 'roster', 'stats', 'snaps', 'moves'].includes(panelArg) ? panelArg : 'schedule';
   const clean = String(arg || '').replace(/[^A-Za-z]/g, '').toUpperCase();
   NFL_VIEW_HASH.team = clean ? '#team/' + clean + (panel === 'schedule' ? '' : '/' + panel) : '#teams';
   showTab('team');
@@ -435,10 +523,12 @@ async function showNflTeam(arg, panelArg) {
   const snaps = nflTeamSnapsHTML(team, look);
   host.innerHTML = '<div class="tm" data-abbr="' + homeEsc(team.abbr) + '">' +
     '<a class="tm-back" href="#teams">← All teams</a>' +
-    nflTeamHeroHTML(team, standing, splits, look) + nflTeamStatsHTML(team, look) +
-    '<div class="nv-tabs tm-tabs" role="tablist">' + tab('schedule', 'Schedule') + tab('roster', 'Roster') + (snaps ? tab('snaps', 'Snaps') : '') + tab('moves', 'Moves') + '</div>' +
+    nflTeamHeroHTML(team, standing, splits, look) + nflTeamStatsHTML(team, look) + nflInjuryCardHTML(espn) +
+    '<div class="nv-tabs tm-tabs" role="tablist">' + tab('schedule', 'Schedule') + tab('roster', 'Roster') + tab('stats', 'Stats') + (snaps ? tab('snaps', 'Snaps') : '') + tab('moves', 'Moves') + '</div>' +
     view('schedule', nflTeamScheduleHTML(team, games)) +
     view('roster', nflTeamRosterHTML(team, espn, look)) +
+    view('stats', '') +
     (snaps ? view('snaps', snaps) : '') +
     view('moves', nflTeamMovesHTML(team)) + '</div>';
+  if (panel === 'stats') nflFillTeamStats(host.querySelector('section[data-view="stats"]'), team, look);
 }

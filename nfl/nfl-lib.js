@@ -6,7 +6,7 @@
 // same way league.js borrows parseLeaders from /nba/nba.js. Missing keys and
 // junk entries produce empty results or nulls, never invented numbers.
 
-import { barShares, smallImg, parseLeaders, contrastRatio, textOn, readableOn, ordinal } from '../nba/nba.js?v=20261106c';
+import { barShares, smallImg, parseLeaders, contrastRatio, textOn, readableOn, ordinal } from '../nba/nba.js?v=20261111b';
 
 export { barShares, smallImg, parseLeaders, contrastRatio, textOn, readableOn, ordinal };
 
@@ -582,9 +582,18 @@ export function parseEspnRoster(json) {
       jersey: str(a.jersey),
       pos: str(a.position?.abbreviation),
       headshot: str(a.headshot?.href),
+      injury: injuryOf(a),
     });
   }
   return out;
+}
+
+// The player's current listing on ESPN's roster (Out, Questionable, Injured
+// Reserve, ...) and when it was posted, or null when he is not listed.
+export function injuryOf(a) {
+  const i = arr(a && a.injuries)[0];
+  const status = str(i && i.status);
+  return status ? { status, date: str(i.date) } : null;
 }
 
 // Supabase roster rows carry no ESPN id. Each row is matched to the ESPN team
@@ -681,4 +690,95 @@ export function snapStarters(team, slots, unit) {
 export function snapTrend(p) {
   const d = (num(p && p.last3) || 0) - (num(p && p.season) || 0);
   return { delta: d, dir: d >= 8 ? 'up' : d <= -8 ? 'down' : 'flat' };
+}
+
+/* ── Team player stats (ESPN teams/<id>/athletes/statistics) ────────────── */
+
+// One team's season stats by group (passing, rushing, receiving, defensive,
+// kicking, ...). Each player row is { id, name, pos, s } where s maps every
+// ESPN stat name in that group to its number. Unknown groups pass through.
+export function parseNflTeamPlayerStats(json) {
+  const groups = {};
+  for (const r of arr(json && json.results)) {
+    const key = str(r && r.name);
+    if (!key) continue;
+    groups[key] = arr(r.leaders).map(l => {
+      const a = (l && l.athlete) || {};
+      const s = {};
+      for (const c of arr(l && l.statistics)) for (const st of arr(c && c.stats)) {
+        if (!(st.name in s)) s[st.name] = num(st.value);
+      }
+      return { id: str(a.id), name: str(a.displayName), pos: str(a.position && a.position.abbreviation), s };
+    }).filter(p => p.id && p.name);
+  }
+  const t = (json && json.team) || {};
+  return {
+    season: str(json && json.season && json.season.displayName),
+    team: { id: str(t.id), abbr: localAbbr(t.abbreviation), name: str(t.displayName) },
+    groups,
+  };
+}
+
+/* ── Game page (ESPN scoreboard + summary) ──────────────────────────────── */
+
+// The ESPN event id for one game on a scoreboard, matched by both teams'
+// codes in the site's spelling. '' when the scoreboard has no such game.
+export function findEspnEvent(scoreboard, awayAbbr, homeAbbr) {
+  for (const e of arr(scoreboard && scoreboard.events)) {
+    const comp = arr(e && e.competitions)[0];
+    const side = k => arr(comp && comp.competitors).find(c => c && c.homeAway === k);
+    const a = side('away'), h = side('home');
+    if (a && h && localAbbr(a.team && a.team.abbreviation) === localAbbr(awayAbbr) && localAbbr(h.team && h.team.abbreviation) === localAbbr(homeAbbr)) return str(e.id);
+  }
+  return '';
+}
+
+const BOX_GROUPS = { passing: 'Passing', rushing: 'Rushing', receiving: 'Receiving', defensive: 'Defense', interceptions: 'Interceptions', kicking: 'Kicking', punting: 'Punting' };
+
+// One game's summary: state, score by period, team stats side by side, each
+// team's box score by group, and the scoring plays in order.
+export function parseNflSummary(json) {
+  const comp = arr(json && json.header && json.header.competitions)[0] || {};
+  const status = (comp.status && comp.status.type) || {};
+  const teams = {};
+  for (const c of arr(comp.competitors)) {
+    if (c.homeAway !== 'home' && c.homeAway !== 'away') continue;
+    teams[c.homeAway] = {
+      abbr: localAbbr(c.team && c.team.abbreviation), name: str(c.team && c.team.displayName),
+      score: num(c.score), lines: arr(c.linescores).map(l => num(l.displayValue ?? l.value)),
+    };
+  }
+  const boxTeams = arr(json && json.boxscore && json.boxscore.teams);
+  const sideOf = t => (teams.away && localAbbr(t && t.team && t.team.abbreviation) === teams.away.abbr ? 'away' : 'home');
+  const statMap = { away: new Map(), home: new Map() };
+  const labels = [];
+  for (const t of boxTeams) {
+    const side = sideOf(t);
+    for (const st of arr(t.statistics)) {
+      const label = str(st.label);
+      if (!label || statMap[side].has(label)) continue;
+      statMap[side].set(label, str(st.displayValue));
+      if (!labels.includes(label)) labels.push(label);
+    }
+  }
+  const players = { away: [], home: [] };
+  for (const p of arr(json && json.boxscore && json.boxscore.players)) {
+    const side = sideOf(p);
+    for (const st of arr(p.statistics)) {
+      if (!BOX_GROUPS[st.name]) continue;
+      const rows = arr(st.athletes).map(a => ({ id: str(a.athlete && a.athlete.id), name: str(a.athlete && a.athlete.displayName), stats: arr(a.stats).map(str) })).filter(r => r.name);
+      if (rows.length) players[side].push({ key: st.name, title: BOX_GROUPS[st.name], labels: arr(st.labels).map(str), rows });
+    }
+  }
+  return {
+    state: str(status.state), detail: str(status.shortDetail || status.detail), completed: !!status.completed,
+    teams,
+    teamStats: labels.map(label => ({ label, away: statMap.away.get(label) ?? '', home: statMap.home.get(label) ?? '' })),
+    players,
+    scoring: arr(json && json.scoringPlays).map(sp => ({
+      q: num(sp.period && sp.period.number), clock: str(sp.clock && sp.clock.displayValue),
+      abbr: localAbbr(sp.team && sp.team.abbreviation), type: str(sp.type && sp.type.abbreviation),
+      text: str(sp.text), away: num(sp.awayScore), home: num(sp.homeScore),
+    })),
+  };
 }

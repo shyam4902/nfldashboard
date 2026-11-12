@@ -3,6 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+<meta name="theme-color" content="#0d0d0f">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Matchups">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>Matchup Board · NFL and NBA scores, matchups and stats</title>
 <meta name="description" content="Matchup Board: tonight's NBA games and this week's NFL slate with live scores, spreads, standings and stat leaders, plus a full page for each league.">
 <script>
@@ -186,6 +192,13 @@ main { padding: var(--s5) 0 var(--s7); }
 }
 .gc { display: block; min-width: 0; border-radius: var(--r2); }
 .gc:focus-visible { outline: none; }
+.gc.fav .gc-body { outline: 2px solid var(--border-strong); outline-offset: 3px; }
+.gc-fav { font: 700 var(--t0)/1 var(--font-sans); letter-spacing: 0.04em; color: var(--text-main); white-space: nowrap; }
+.fav-pick { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin: 0 0 10px; }
+.fav-pick label { display: inline-flex; align-items: center; gap: 8px; font: 600 var(--t0)/1 var(--font-sans); letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-muted); }
+.fav-pick select { max-width: 200px; padding: 6px 8px; font: 600 var(--t1)/1.2 var(--font-sans); text-transform: none; letter-spacing: 0; color: var(--text-main); background: var(--bg-inset); border: 1px solid var(--border-muted); border-radius: var(--r1); }
+.fav-pick a { font: 600 var(--t1)/1 var(--font-sans); color: var(--text-muted); }
+.fav-pick a:hover { color: var(--text-main); }
 .gc-fl { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 9px; min-height: 14px; white-space: nowrap; }
 .gc-st {
   flex: none; display: flex; align-items: center; gap: 6px;
@@ -395,7 +408,7 @@ a.lr:hover .who b { text-decoration: underline; text-underline-offset: 3px; }
     </div>
   </section>
 
-  <p class="foot">NBA scores, odds, records and leaders come from ESPN. The NFL slate and standings come from the same files the NFL page reads; live NFL scores come from ESPN. NFL spreads, totals and win % are the nflverse lines the NFL page shows (ESPN fills a game nflverse lacks), and win % is the moneyline with the bookmaker's margin taken out. Live games refresh every 30 seconds.</p>
+  <p class="foot">NBA scores, odds, records and leaders come from ESPN. The NFL slate and standings come from the same files the NFL page reads; live NFL scores come from ESPN. NFL spreads, totals and win % are the nflverse lines the NFL page shows (ESPN fills a game nflverse lacks), and win % is the moneyline with the bookmaker's margin taken out. Live games refresh every 30 seconds. <a href="/about/">About and privacy</a>.</p>
 </main>
 
 <script type="module">
@@ -608,9 +621,9 @@ function marketHTML(game, market, looks) {
   return bits.length || wp ? '<div class="mk">' + (bits.length ? '<div class="mk-r">' + bits.join('') + '</div>' : '') + wp + '</div>' : '';
 }
 
-function cardHTML(game, { href, looks, right, when, slate, market }) {
-  return '<a class="gc" href="' + esc(href) + '" aria-label="' + esc(game.away.name + ' at ' + game.home.name) + '">' +
-    '<div class="gc-fl">' + statusHTML(game, when) + (right ? '<span class="gc-odds">' + right + '</span>' : '') + '</div>' +
+function cardHTML(game, { href, looks, right, when, slate, market, fav }) {
+  return '<a class="gc' + (fav ? ' fav' : '') + '" href="' + esc(href) + '" aria-label="' + esc(game.away.name + ' at ' + game.home.name) + '">' +
+    '<div class="gc-fl">' + statusHTML(game, when) + (fav ? '<span class="gc-fav">★ Your team</span>' : '') + (right ? '<span class="gc-odds">' + right + '</span>' : '') + '</div>' +
     '<div class="gc-body">' + bandHTML(game.away, looks.away, game, slate) + bandHTML(game.home, looks.home, game, slate) +
     (market ? marketHTML(game, market, looks) : '') + '</div></a>';
 }
@@ -672,6 +685,40 @@ async function nbaBoard(now) {
 
 const nbaPoll = poller(() => renderNbaGames(block('nbaGames')));
 
+/* ── Favorite team, one per sport, saved in this browser ─────────────────
+   The pick sits in each league's door. Its game moves to the front of that
+   league's list with a "Your team" tag, and the door links to its team page. */
+const FAV_KEY = { nba: 'mb.fav.nba', nfl: 'mb.fav.nfl' };
+function favGet(sport) {
+  try { return localStorage.getItem(FAV_KEY[sport]) || ''; } catch (err) { return ''; }
+}
+function favSet(sport, abbr) {
+  try { abbr ? localStorage.setItem(FAV_KEY[sport], abbr) : localStorage.removeItem(FAV_KEY[sport]); } catch (err) { /* blocked storage: the pick lasts this page view */ }
+}
+const isFav = (game, abbr) => !!abbr && (game.away.abbr === abbr || game.home.abbr === abbr);
+const favFirst = (games, abbr) => (abbr ? games.filter((g) => isFav(g, abbr)).concat(games.filter((g) => !isFav(g, abbr))) : games);
+
+function favPick(sport, teams, href, rerender) {
+  const door = document.getElementById(sport + 'Door');
+  if (!door || door.querySelector('.fav-pick') || !teams.length) return;
+  const cur = favGet(sport);
+  const wrap = document.createElement('div');
+  wrap.className = 'fav-pick';
+  const paint = (abbr) => {
+    const team = teams.find((t) => t.abbr === abbr);
+    wrap.innerHTML = '<label><span>Your team</span><select aria-label="Your ' + sport.toUpperCase() + ' team"><option value="">Pick one</option>' +
+      teams.map((t) => '<option value="' + esc(t.abbr) + '"' + (t.abbr === abbr ? ' selected' : '') + '>' + esc(t.name) + '</option>').join('') + '</select></label>' +
+      (team ? '<a href="' + esc(href(team)) + '">Team page →</a>' : '');
+    wrap.querySelector('select').addEventListener('change', (event) => {
+      favSet(sport, event.target.value);
+      paint(event.target.value);
+      rerender();
+    });
+  };
+  paint(cur);
+  door.querySelector('.door-links').before(wrap);
+}
+
 async function renderNbaGames(b) {
   const now = new Date();
   const [{ day, today, games }, colors] = await Promise.all([nbaBoard(now), nbaColors]);
@@ -689,12 +736,15 @@ async function renderNbaGames(b) {
     ? esc((games.length === 1 ? '1 game ' : games.length + ' games ') + when) + ' <span class="dim">· ' + esc(line) + '</span>'
     : '<span class="dim">No games ' + esc(when) + '</span>',
   nextHTML(slateNext(games), '/nba/#game/' + (slateNext(games)?.id || ''), tipOff));
+  favPick('nba', Object.values(colors.byAbbr).sort((x, y) => x.name.localeCompare(y.name)), (t) => '/nba/#team/' + t.id, () => renderNbaGames(block('nbaGames')));
   if (!games.length) {
     setBody(b.body, '<div class="none">No NBA games ' + esc(when) + '.</div>');
     nbaPoll(false);
     return;
   }
-  setBody(b.body, '<div class="games">' + games.map((game) => cardHTML(game, {
+  const fav = favGet('nba');
+  setBody(b.body, '<div class="games">' + favFirst(games, fav).map((game) => cardHTML(game, {
+    fav: isFav(game, fav),
     href: '/nba/#game/' + game.id,
     looks: { away: nbaLook(colors, game.away.abbr, game.away.id, game.away.logo), home: nbaLook(colors, game.home.abbr, game.home.id, game.home.logo) },
     right: nbaOddsHTML(game),
@@ -729,10 +779,13 @@ async function renderNflGames(b, refresh) {
     const next = slateNext(games);
     setDoor('nflDoor', 'Week ' + esc(week) + (games.length ? ' <span class="dim">· ' + esc(counts.total) + ' games · ' + esc(line) + '</span>' : ''),
       next ? nextHTML(next, '/nfl/#matchup/' + next.id, etKickoff) : '');
+    const fav = favGet('nfl');
+    favPick('nfl', Object.values(index.byAbbr).filter((t) => t.name).sort((x, y) => x.name.localeCompare(y.name)), (t) => '/nfl/#team/' + t.abbr, () => renderNflGames(block('nflGames'), false));
     setBody(b.body, games.length
-      ? '<div class="games">' + games.map((game) => {
+      ? '<div class="games">' + favFirst(games, fav).map((game) => {
         const looks = { away: nflLook(game.away, game.away.abbr), home: nflLook(game.home, game.home.abbr) };
         return cardHTML(game, {
+          fav: isFav(game, fav),
           href: '/nfl/#matchup/' + game.id,
           looks,
           right: game.tv ? esc(game.tv) : '',

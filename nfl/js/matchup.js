@@ -852,6 +852,76 @@ function renderPreviewInsights(tA, tB, curGame, L) {
   `;
 }
 
+/* ── Box Score (games that have kicked off) ─────────────────────────────────
+   ESPN's scoreboard for the game's Eastern date gives the event id; its
+   summary gives the score by quarter, team stats, each side's box score and
+   the scoring plays. Finished games are cached for the page's life; a live
+   game is fetched fresh each time the tab opens. */
+const BOX_CACHE = {};
+let BOX_TOKEN = 0;
+
+function nflGameFinal(g) {
+  return !!g && (g.status === 'final' || g.winner != null || (g.home_score != null && g.away_score != null && Date.parse(g.kickoff_utc) < Date.now() - 5 * 3600000));
+}
+function nflGameStarted(g) {
+  return !!g && (nflGameFinal(g) || (Date.parse(g.kickoff_utc) || Infinity) <= Date.now());
+}
+
+async function nflGameSummary(game) {
+  if (BOX_CACHE[game.game_id]) return BOX_CACHE[game.game_id];
+  const away = nflTeamByName(game.away_team), home = nflTeamByName(game.home_team);
+  if (!away || !home) throw new Error('team not found');
+  const day = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/New_York' }).format(new Date(game.kickoff_utc)).replace(/-/g, '');
+  const base = 'https://site.api.espn.com/apis/site/v2/sports/football/nfl';
+  const board = await nflFetchJson(base + '/scoreboard?dates=' + day);
+  const id = nflLib.findEspnEvent(board, away.abbr, home.abbr);
+  if (!id) throw new Error('game not on ESPN scoreboard');
+  const g = nflLib.parseNflSummary(await nflFetchJson(base + '/summary?event=' + encodeURIComponent(id)));
+  if (g.completed) BOX_CACHE[game.game_id] = g;
+  return g;
+}
+
+function boxScoreHTML(g, L, tA, tB) {
+  const side = k => (g.teams[k] && g.teams[k].abbr === L[tA].abbr ? L[tA] : L[tB]);
+  const sw = k => '<i class="bx-sw" style="background:' + side(k).fill + '"></i>';
+  const periods = Math.max((g.teams.away || {}).lines?.length || 0, (g.teams.home || {}).lines?.length || 0);
+  const pLabel = i => (i < 4 ? String(i + 1) : i === 4 ? 'OT' : 'OT' + (i - 3));
+  const lineRow = k => {
+    const t = g.teams[k] || {};
+    return '<tr><td class="bx-tm">' + sw(k) + attrEsc(t.abbr || '') + '</td>' + Array.from({ length: periods }, (_, i) => '<td>' + (t.lines && t.lines[i] != null ? t.lines[i] : '') + '</td>').join('') + '<td class="bx-tot">' + (t.score ?? '') + '</td></tr>';
+  };
+  const lines = '<section class="mu-card"><div class="mu-ch"><h3>' + attrEsc((g.teams.away || {}).abbr) + ' <span class="vs">at</span> ' + attrEsc((g.teams.home || {}).abbr) + '</h3><span class="mu-kick">' + attrEsc(g.detail) + '</span></div>' +
+    '<table class="bx-ls"><thead><tr><th></th>' + Array.from({ length: periods }, (_, i) => '<th>' + pLabel(i) + '</th>').join('') + '<th>T</th></tr></thead><tbody>' + lineRow('away') + lineRow('home') + '</tbody></table></section>';
+  const scoring = g.scoring.length ? '<section class="mu-card"><div class="mu-ch"><h3>Scoring plays</h3><span class="mu-kick">' + g.scoring.length + '</span></div><ol class="bx-sp">' +
+    g.scoring.map(p => '<li><span class="bx-q">' + attrEsc(pLabel((p.q || 1) - 1)) + ' ' + attrEsc(p.clock) + '</span><span class="bx-tx">' + attrEsc(p.abbr) + ' · ' + attrEsc(p.text) + '</span><span class="bx-sc">' + attrEsc(p.away) + '-' + attrEsc(p.home) + '</span></li>').join('') + '</ol></section>' : '';
+  const teamStats = g.teamStats.length ? '<section class="mu-card"><div class="mu-ch"><h3>Team stats</h3><span class="mu-kick">' + attrEsc((g.teams.away || {}).abbr) + ' · ' + attrEsc((g.teams.home || {}).abbr) + '</span></div><table class="bx-ts"><tbody>' +
+    g.teamStats.map(r => '<tr><td>' + attrEsc(r.away) + '</td><th scope="row">' + attrEsc(r.label) + '</th><td>' + attrEsc(r.home) + '</td></tr>').join('') + '</tbody></table></section>' : '';
+  const groupTable = (k, grp) => '<div class="bx-col"><div class="bx-gh">' + sw(k) + attrEsc((g.teams[k] || {}).abbr) + '</div><div class="bx-scroll"><table class="bx-pt"><thead><tr><th class="bx-pn">' + attrEsc(grp.title) + '</th>' +
+    grp.labels.map(l => '<th>' + attrEsc(l) + '</th>').join('') + '</tr></thead><tbody>' +
+    grp.rows.map(r => '<tr><td class="bx-pn">' + (r.id ? '<a href="#player/' + attrEsc(r.id) + '">' + attrEsc(r.name) + '</a>' : attrEsc(r.name)) + '</td>' + r.stats.map(v => '<td>' + attrEsc(v) + '</td>').join('') + '</tr>').join('') + '</tbody></table></div></div>';
+  const keys = [];
+  for (const k of ['away', 'home']) for (const grp of g.players[k]) if (!keys.includes(grp.key)) keys.push(grp.key);
+  const box = keys.length ? '<section class="mu-card"><div class="mu-ch"><h3>Box score</h3></div>' + keys.map(key => {
+    const a = g.players.away.find(x => x.key === key), h = g.players.home.find(x => x.key === key);
+    return '<div class="bx-grp">' + (a ? groupTable('away', a) : '<div></div>') + (h ? groupTable('home', h) : '<div></div>') + '</div>';
+  }).join('') + '</section>' : '';
+  return '<div class="mu bx">' + lines + '<div class="mu-two">' + teamStats + scoring + '</div>' + box +
+    '<div class="mu-note bare"><span>Box score: ESPN game summary.' + (g.state === 'in' ? ' Live: open the tab again for the latest numbers.' : '') + '</span></div></div>';
+}
+
+async function renderBoxScoreInto(main, game, tA, tB) {
+  const token = ++BOX_TOKEN;
+  main.innerHTML = '<div class="mu"><div class="mu-card"><div class="mu-note bare"><span>Loading the box score…</span></div></div></div>';
+  try {
+    const g = await nflGameSummary(game);
+    if (token !== BOX_TOKEN || MATCHUP_STATE.subtab !== 'box') return;
+    main.innerHTML = boxScoreHTML(g, muLooks(tA, tB), tA, tB);
+  } catch (err) {
+    if (token !== BOX_TOKEN) return;
+    main.innerHTML = '<div class="mu"><div class="mu-card"><div class="mu-note bare"><span>The box score did not load from ESPN. Pick the tab again to retry.</span></div></div></div>';
+  }
+}
+
 function renderMatchupPanels() {
   const main = document.getElementById('matchupMainContent');
   if (!main) return;
@@ -879,7 +949,12 @@ function renderMatchupPanels() {
     }
   }
 
-  if (sub === 'preview') {
+  const boxBtn = document.getElementById('subtab-box');
+  const started = nflGameStarted(curGame);
+  if (boxBtn) boxBtn.hidden = !started;
+  if (sub === 'box' && started) {
+    renderBoxScoreInto(main, curGame, tA, tB);
+  } else if (sub === 'preview' || sub === 'box') {
     main.innerHTML = renderPreviewSubtab(tA, tB, curGame);
   } else if (sub === 'overview') {
     main.innerHTML = `<div class="mu">${renderAtAGlanceTable(tA, tB)}${renderKeyAdvantagesPanel(tA, tB)}</div>`;

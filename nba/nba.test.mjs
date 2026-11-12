@@ -1213,3 +1213,10 @@ test('parseTeamPlayerStats: per-game and totals lines, null % with no attempts',
   assert.equal(kessler.tpPct, null);
   assert.deepEqual(parseTeamPlayerStats({}).players, []);
 });
+
+test('parseRoster keeps the current injury listing', async () => {
+  const { parseRoster } = await import('./nba.js');
+  const rows = parseRoster({ athletes: [{ id: '1', fullName: 'A', injuries: [{ status: 'Day-To-Day', date: '2026-11-10T00:00Z' }] }, { id: '2', fullName: 'B' }] });
+  assert.equal(rows[0].injury.status, 'Day-To-Day');
+  assert.equal(rows[1].injury, null);
+});
