@@ -1,10 +1,19 @@
 # NFL Dashboard state
 
-- Updated: 2026-10-30
+- Updated: 2026-11-14
 - Live: https://matchupboard.com/ (also nfldashboard.pages.dev)
 - Repo: https://github.com/shyam4902/nfldashboard
 - App: `/` two-sport home page (`index.html`), NFL at `nfl/index.html`, NBA at `nba/`; tracked JSON assets at the root and Supabase roster/transaction data
 - Start here: `docs/sessions/2026-10-23-to-30-matchup-board.md` (decisions, what shipped, how it works, open items)
+
+## Full-width NBA scores, one-row header, NFL Home and Schedule port, 2026-11-14
+
+- `/nba/` scores: the 1480px cap is gone, so the standings rail, games and Inspector fill the screen (rail 280px and Inspector 370px from 1500px). Frames wider than 430px (a container query on `.ins-frame`) lay each team out as one row: logo, abbr, record, PTS/REB/AST leaders, score. Two tiles per row at 1600px, one wide tile at 1280px, the stacked bands on phones. The leader caption moves to the frame's header line.
+- Header: `/nba/` is one row (brand, NFL | NBA, section tabs, a 460px search with an icon); below 1024px the tabs take a second row and all five fit at 390px. `/nfl/` puts the section tabs beside NFL | NBA and grows the search to 460px. The `2026 Season` chip and the NFL theme picker are gone; `initTheme()` always applies the default, so an old saved theme resets.
+- NFL audit against `/nba/`: Matchup, Teams, team page, League, Compare and player pages were already ported. Home and Schedule were not. Both now use `nflGameTile()` (`nfl/js/schedule.js`, styles `.gt-*` in `nfl/nfl.css`): kickoff, TV and the line above two team-colour bands with logo, abbr, name, record (from `schedule.json` finals; matched the standings file for all 32 teams on 11-14) and win % with ML, or the score once played. The featured game on Home and the Schedule carousel use the Matchup page's scorebug (`renderMatchupHeroBanner`), so both pages now await `nflLibLoad()` and the standings file. Home dropped the carousel's Edge ad slide (now a one-line link) and the Storylines block; the week strip stays (tests select `#h2aHero` and `.h2a-strip`); the Marquee is the next six games. The Teams grid lost its 1040px cap. NFL asset version `20261114d`.
+- Still old: the Player Compare modal. It shows a prop count and a hardcoded rivals list, no stats; it needs an NFL `#players/<a>/<b>` page like `/nba/`, not a reskin.
+- `schedule.json` has TV networks for week 1 only (no script writes `tv`), so weeks 2-18 show no network. ESPN's scoreboard, which `sync_scores.js` already calls, carries `competitions[].broadcasts`.
+- `props-smoke.mjs` and the Python suites were not run: no Playwright browsers on this Mac. Checked by screenshot at 1600, 1280, 900 and 390px.
 
 ## NBA rest chips, 2026-11-05 (branch `feature/nba-rest`)
 
