@@ -12,12 +12,12 @@
 <title>Matchup Board · NFL scores, matchups and stats</title>
 <meta name="description" content="Matchup Board: NFL scores, matchups and team stats in one clean layout.">
 <script src="https://cdn.tailwindcss.com"></script>
-<script src="/nfl/js/tailwind-config.js?v=20261111b"></script>
+<script src="/nfl/js/tailwind-config.js?v=20261114a"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<link rel="stylesheet" href="/nfl/nfl.css?v=20261111b">
-<link rel="stylesheet" href="/nfl/matchup.css?v=20261111b">
-<link rel="stylesheet" href="/nfl/teams.css?v=20261111b">
-<link rel="stylesheet" href="/nfl/league.css?v=20261111b">
+<link rel="stylesheet" href="/nfl/nfl.css?v=20261114a">
+<link rel="stylesheet" href="/nfl/matchup.css?v=20261114a">
+<link rel="stylesheet" href="/nfl/teams.css?v=20261114a">
+<link rel="stylesheet" href="/nfl/league.css?v=20261114a">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="canonical" href="https://matchupboard.com/nfl/">
 <meta property="og:title" content="Matchup Board · NFL scores, matchups and stats">
@@ -35,7 +35,7 @@
 <header class="app-header sticky top-0 z-50">
   <div class="hdr-row max-w-[1600px] mx-auto px-4 py-2.5 flex items-center justify-between gap-3">
     <!-- Brand / Title -->
-    <div class="hdr-left flex items-center gap-2.5 shrink-0">
+    <div class="hdr-left flex items-center gap-3 min-w-0">
       <div class="hdr-brand flex items-center whitespace-nowrap">
         <span class="hdr-brand-mark">Matchup</span><span class="hdr-brand-year">Board</span>
       </div>
@@ -43,22 +43,20 @@
         <a href="/nfl/" class="tab-btn shrink-0" aria-current="page">NFL</a>
         <a href="/nba/" class="tab-btn shrink-0">NBA</a>
       </nav>
-      <span class="hdr-season hidden 2xl:inline-block">2026 Season</span>
-    </div>
-
-    <!-- Controls & Nav -->
-    <div class="hdr-right flex items-center gap-2 lg:gap-2.5 justify-end min-w-0">
-      <div class="hdr-find relative hidden sm:block w-28 md:w-36 lg:w-44 xl:w-52 shrink-0">
-        <input id="searchBox" type="text" placeholder="Search... (⌘K)" class="hdr-search search-glow pl-2.5 pr-8" oninput="filterDashboard(this.value)">
-        <button onclick="openCommandPalette()" class="hdr-kbd absolute right-1.5 top-1.5" title="Open command palette (Cmd+K / Ctrl+K)">⌘K</button>
-      </div>
-
       <nav class="hdr-nav flex gap-1 items-center overflow-x-auto no-scrollbar py-0.5" aria-label="Sections">
         <button onclick="showTab('home')" class="tab-btn active shrink-0" data-tab="home">Home</button>
         <button onclick="showTab('schedule')" class="tab-btn shrink-0" data-tab="schedule">Schedule</button>
         <button onclick="showTab('teams')" class="tab-btn shrink-0" data-tab="teams">Teams</button>
         <button onclick="showTab('league')" class="tab-btn shrink-0" data-tab="league">League</button>
       </nav>
+    </div>
+
+    <!-- Controls & Nav -->
+    <div class="hdr-right flex flex-1 items-center gap-2 lg:gap-2.5 justify-end min-w-0">
+      <div class="hdr-find relative hidden sm:block">
+        <input id="searchBox" type="text" placeholder="Filter teams" class="hdr-search search-glow" oninput="filterDashboard(this.value)">
+        <button onclick="openCommandPalette()" class="hdr-kbd absolute right-2 top-1/2 -translate-y-1/2" title="Open command palette (Cmd+K / Ctrl+K)">⌘K</button>
+      </div>
 
       <!-- Utility actions -->
       <div class="hdr-utils flex items-center gap-1.5 pl-1.5 hdr-divider shrink-0">
@@ -354,16 +352,16 @@
 <!-- Back to Top Button -->
 <button id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" class="fixed bottom-6 right-6 z-50 w-11 h-11 rounded-full bg-blue-600/80 hover:bg-blue-600 text-white shadow-lg backdrop-blur border border-blue-400/30 flex items-center justify-center transition-all duration-300 opacity-0 translate-y-4 pointer-events-none" style="font-size:18px">&#x2191;</button>
 
-<script src="/nfl/js/core.js?v=20261111b"></script>
-<script src="/nfl/js/home.js?v=20261111b"></script>
-<script src="/nfl/js/render.js?v=20261111b"></script>
-<script src="/nfl/js/roster.js?v=20261111b"></script>
-<script src="/nfl/js/matchup.js?v=20261111b"></script>
-<script src="/nfl/js/league.js?v=20261111b"></script>
-<script src="/nfl/js/views.js?v=20261111b"></script>
-<script src="/nfl/js/routing.js?v=20261111b"></script>
-<script src="/nfl/js/schedule.js?v=20261111b"></script>
-<script src="/nfl/js/extensions.js?v=20261111b"></script>
-<script src="/nfl/js/boot.js?v=20261111b"></script>
+<script src="/nfl/js/core.js?v=20261114a"></script>
+<script src="/nfl/js/home.js?v=20261114a"></script>
+<script src="/nfl/js/render.js?v=20261114a"></script>
+<script src="/nfl/js/roster.js?v=20261114a"></script>
+<script src="/nfl/js/matchup.js?v=20261114a"></script>
+<script src="/nfl/js/league.js?v=20261114a"></script>
+<script src="/nfl/js/views.js?v=20261114a"></script>
+<script src="/nfl/js/routing.js?v=20261114a"></script>
+<script src="/nfl/js/schedule.js?v=20261114a"></script>
+<script src="/nfl/js/extensions.js?v=20261114a"></script>
+<script src="/nfl/js/boot.js?v=20261114a"></script>
 </body>
 </html>

@@ -221,13 +221,16 @@ a:focus-visible, button:focus-visible, select:focus-visible, input:focus-visible
   backdrop-filter: blur(14px);
   border-bottom: 1px solid var(--border-card);
 }
+/* One row on desktop (owner, 2026-11-14): brand, NFL | NBA, section tabs,
+   then a wide search on the right. Below 1024px the tabs drop to a second
+   row that scrolls sideways if it runs out of room. */
 .nba-header .bar {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 10px;
+  gap: 8px 16px;
   min-height: 60px;
 }
+.nba-header .brand { flex: none; }
 .brand { display: flex; align-items: baseline; gap: 6px; min-width: 0; }
 .brand-mark { font: 700 24px/1 var(--font-serif); letter-spacing: -0.01em; color: var(--accent-brand); }
 .brand-name { font: 700 24px/1 var(--font-serif); letter-spacing: -0.01em; color: var(--text-main); }
@@ -246,10 +249,10 @@ a:focus-visible, button:focus-visible, select:focus-visible, input:focus-visible
   background: var(--bg-card-hover);
   border-color: var(--border-strong);
 }
-.nba-tabs { display: flex; gap: 6px; padding-bottom: 8px; overflow-x: auto; }
+.nba-tabs { order: 3; display: flex; gap: 2px; min-width: 0; overflow-x: auto; scrollbar-width: none; }
 .nba-tabs a {
   font: 600 var(--t1)/1 var(--font-sans);
-  padding: 10px 16px;
+  padding: 10px 14px;
   border-radius: 6px;
   color: var(--text-muted);
   white-space: nowrap;
@@ -257,7 +260,11 @@ a:focus-visible, button:focus-visible, select:focus-visible, input:focus-visible
 .nba-tabs a:hover { color: var(--text-main); background: var(--bg-card-hover); }
 .nba-tabs a[aria-current='page'] { color: var(--tab-active-text); background: var(--tab-active-bg); }
 /* Five sections fit a 390px phone without the row scrolling. */
-@media (max-width: 520px) { .nba-tabs { gap: 2px; } .nba-tabs a { padding: 10px 9px; } }
+@media (max-width: 1023px) {
+  .nba-header .bar { flex-wrap: wrap; padding-top: 8px; }
+  .nba-tabs { order: 5; flex: 1 0 100%; margin: 0 -6px; padding-bottom: 6px; }
+}
+@media (max-width: 520px) { .nba-tabs a { padding: 10px 8px; } }
 
 main { padding: 20px 0 48px; }
 .site-foot { padding-bottom: 32px; font: 500 var(--t0)/1.6 var(--font-sans); color: var(--text-muted); }
@@ -454,16 +461,18 @@ tbody tr:last-child td { border-bottom: 0; }
 .box td.player-col a:hover, .standings td.team a:hover { color: var(--accent-ui); }
 
 /* ── Search, leaders, standings diffs, date picker ──────────────────────── */
-.nba-search { position: relative; display: flex; align-items: center; gap: 4px; flex: 1; min-width: 0; max-width: 240px; }
+.nba-search { order: 4; position: relative; display: flex; align-items: center; gap: 4px; flex: 1 1 260px; min-width: 0; max-width: 460px; margin-left: auto; }
 .search-input {
+  box-sizing: border-box;
   width: 100%;
   min-width: 0;
-  font: 500 12px/1 var(--font-sans);
+  height: 40px;
+  font: 500 var(--t1)/1 var(--font-sans);
   color: var(--text-main);
-  background: var(--bg-elevated);
+  background: var(--bg-elevated) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23868a91' stroke-width='2.2' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='m20 20-3.5-3.5'/%3E%3C/svg%3E") no-repeat 12px 50% / 16px;
   border: 1px solid var(--border-card);
-  border-radius: 6px;
-  padding: 8px 10px;
+  border-radius: 8px;
+  padding: 0 12px 0 36px;
 }
 .search-input:focus { border-color: var(--border-strong); }
 .search-toggle {
@@ -536,7 +545,8 @@ tbody tr:last-child td { border-bottom: 0; }
 @media (max-width: 560px) {
   .nba-header .search-input { display: none; }
   .search-toggle { display: inline-flex; }
-  .nba-search { flex: 0 0 auto; max-width: none; }
+  .nba-search { flex: 0 0 auto; max-width: none; margin-left: 0; }
+  .nba-header .sport-switch { margin-left: auto; }
   .nba-search.open {
     position: absolute;
     top: 100%;
@@ -1616,17 +1626,15 @@ body.gm-wide .wrap { max-width: 1300px; }
     <a class="brand" href="#scores">
       <span class="brand-mark">Matchup</span><span class="brand-name">Board</span>
     </a>
-    <div class="nba-search" id="nbaSearch">
-      <button class="search-toggle" type="button" id="searchToggle" aria-label="Search NBA players" aria-expanded="false">⌕</button>
-      <input class="search-input" id="searchInput" type="search" placeholder="Search players" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="searchResults" aria-autocomplete="list" aria-label="Search NBA players">
-      <ul class="search-results" id="searchResults" role="listbox" aria-label="Player search results" hidden></ul>
-    </div>
     <nav class="sport-switch" aria-label="Sport">
       <a href="/nfl/">NFL</a>
       <a href="/nba/" aria-current="page">NBA</a>
     </nav>
-  </div>
-  <div class="wrap">
+    <div class="nba-search" id="nbaSearch">
+      <button class="search-toggle" type="button" id="searchToggle" aria-label="Search NBA players" aria-expanded="false">⌕</button>
+      <input class="search-input" id="searchInput" type="search" placeholder="Search NBA players" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="searchResults" aria-autocomplete="list" aria-label="Search NBA players">
+      <ul class="search-results" id="searchResults" role="listbox" aria-label="Player search results" hidden></ul>
+    </div>
     <nav class="nba-tabs" aria-label="NBA sections">
       <a href="#scores" data-nav="scores">Scores</a>
       <a href="#standings" data-nav="standings">Standings</a>
