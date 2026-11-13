@@ -11,9 +11,10 @@ function changeTheme(theme) {
   if (sel) sel.value = theme;
 }
 
+// Owner rule (2026-11-02): one black-and-gold theme across the site. The
+// picker is gone, so a theme saved by an older visit resets to the default.
 function initTheme() {
-  const saved = localStorage.getItem('nfl_dashboard_theme') || 'default';
-  changeTheme(saved);
+  changeTheme('default');
 }
 
 // ── 3. UNIVERSAL PLAYER PROFILE MODAL ──

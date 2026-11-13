@@ -119,100 +119,26 @@ function homeEsc(s){
   return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
-function marqueeGameHtml(g){
-  g.market = gameMarketLines(g);
-  const prob = marketWinProb(g.market);
-  const aProb = prob === null ? null : 1 - prob;
-  const hProb = prob;
-  const aPct = aProb === null ? 50 : Math.round(aProb * 100);
-  const hPct = hProb === null ? 50 : Math.round(hProb * 100);
-  const aFav = aPct >= hPct;
-  const aAbbr = homeEsc(teamAbbrFor(g.away_team) || g.away_team);
-  const hAbbr = homeEsc(teamAbbrFor(g.home_team) || g.home_team);
-  const aColor = DATA.teamColors[g.away_team] || '#d9a441';
-  const hColor = DATA.teamColors[g.home_team] || '#7cc49b';
-  const aLogo = getNflTeamLogo(g.away_team);
-  const hLogo = getNflTeamLogo(g.home_team);
+function marqueeGameHtml(g){ return nflGameTile(g, 'home-sch-card'); }
 
-  const d = new Date(g.kickoff_utc);
-  const timeFmt = isNaN(d.getTime()) ? 'Kickoff TBD' : d.toLocaleString([], { weekday:'short', month:'short', day:'numeric', hour:'numeric', minute:'2-digit' });
-  const network = g.tv ? (g.tv.includes(',') ? g.tv.split(',')[0].trim().toUpperCase() : g.tv.toUpperCase()) : 'TV';
-
-  const m = g.market;
-  const aSpreadStr = m && m.spread !== null ? ((m.spread > 0 ? '+' : '') + m.spread) : '—';
-  const hSpreadStr = m && m.spread !== null ? ((-m.spread > 0 ? '+' : '') + (-m.spread)) : '—';
-  const totalStr = m && m.total != null ? String(m.total) : '—';
-
-  let footLines = `${aFav ? aAbbr : hAbbr} ${aFav ? aSpreadStr : hSpreadStr}`;
-  if (totalStr !== '—') footLines += ` · O/U ${totalStr}`;
-
-  return `<article class="home-sch-card" tabindex="0" role="button" aria-label="View analysis for ${homeEsc(g.away_team)} at ${homeEsc(g.home_team)}" data-game="${homeEsc(g.game_id)}" onclick="openMatchup('${homeEsc(g.game_id)}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openMatchup('${homeEsc(g.game_id)}');}">
-    <div class="sch-head">
-      <div class="sch-card-time truncate"><span>${homeEsc(timeFmt)}</span></div>
-      <span class="sch-card-network shrink-0">${homeEsc(network)}</span>
-    </div>
-    <div class="sch-body">
-      <div class="sch-team-block">
-        <div class="sch-team-info">
-          <img src="${aLogo}" alt="" class="sch-team-logo" loading="lazy">
-          <div class="sch-team-names"><span class="sch-team-abbr">${aAbbr}</span><span class="sch-team-name">${homeEsc(g.away_team)}</span></div>
-        </div>
-        <div class="sch-team-odds">
-          <span class="sch-team-spread">${homeEsc(aSpreadStr)}</span>
-          <span class="sch-team-prob ${aFav ? '' : 'underdog'}">${prob === null ? '—' : aPct + '%'}</span>
-        </div>
-      </div>
-      <div class="sch-team-block">
-        <div class="sch-team-info">
-          <img src="${hLogo}" alt="" class="sch-team-logo" loading="lazy">
-          <div class="sch-team-names"><span class="sch-team-abbr">${hAbbr}</span><span class="sch-team-name">${homeEsc(g.home_team)}</span></div>
-        </div>
-        <div class="sch-team-odds">
-          <span class="sch-team-spread">${homeEsc(hSpreadStr)}</span>
-          <span class="sch-team-prob ${aFav ? 'underdog' : ''}">${prob === null ? '—' : hPct + '%'}</span>
-        </div>
-      </div>
-      <div class="sch-prob-bar">
-        <div style="width:${aPct}%;background:${aColor}"></div>
-        <div style="width:${hPct}%;background:${hColor}"></div>
-      </div>
-      <div class="sch-foot">
-        <span>${homeEsc(footLines)}</span>
-        <span class="sch-foot-r">
-          <button type="button" class="sch-cmp" data-away="${homeEsc(g.away_team)}" data-home="${homeEsc(g.home_team)}" onclick="openNflCompareTeams(this.dataset.away, this.dataset.home, event)" onkeydown="event.stopPropagation()" title="Compare ${homeEsc(g.away_team)} and ${homeEsc(g.home_team)}">Compare</button>
-          <span class="sch-cta">View matchup →</span>
-        </span>
-      </div>
-    </div>
-  </article>`;
-}
-
+// Home: the next six games of the week (finished ones fill in once fewer
+// than six are left), in the same tiles as the Schedule page.
 function marqueeHtml(){
   if (!SCHEDULE_DATA || !SCHEDULE_DATA.games || !SCHEDULE_DATA.games.length) return null;
   const marqueeWeek = SCHEDULE_DATA.week || 1;
   const sorted = SCHEDULE_DATA.games
     .filter(g => (g.week || 1) === marqueeWeek)
     .sort((a, b) => String(a.kickoff_utc || '').localeCompare(String(b.kickoff_utc || '')));
-  const pick = (g) => {
-    const d = new Date(g.kickoff_utc);
-    return isNaN(d.getTime()) ? '' : d.toLocaleString([], { weekday:'short' });
-  };
-  let picks = sorted.filter(g => ['Wed', 'Thu', 'Mon'].includes(pick(g)));
-  if (picks.length < 3) picks = sorted.slice(0, 3);
-  picks = picks.slice(0, 3);
-  return `<div class="studio-card h-full flex flex-col justify-between">
-    <div>
-      <div class="studio-card-hd">
-        <div class="studio-title"><span>📅</span> Week ${marqueeWeek} Marquee <span class="studio-title-note">live lines</span></div>
-        <a href="javascript:showTab('schedule')" class="studio-link">full schedule →</a>
-      </div>
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-2.5">${picks.map(marqueeGameHtml).join('')}</div>
+  const ahead = sorted.filter(g => !gameIsOver(g));
+  const picks = ahead.concat(sorted.filter(g => gameIsOver(g)).reverse()).slice(0, 6);
+  return `<section class="hm-week">
+    <div class="hm-week-hd">
+      <h2>Week ${marqueeWeek}</h2>
+      <span>${ahead.length ? ahead.length + ' of ' + sorted.length + ' games to play' : 'All ' + sorted.length + ' games final'}</span>
+      <a href="javascript:showTab('schedule')">All ${sorted.length} games →</a>
     </div>
-    <div class="studio-foot">
-      <span>Odds source: nflverse / sportsbooks</span>
-      <span class="text-slate-300">${sorted.length} Games Scheduled</span>
-    </div>
-  </div>`;
+    <div class="sch-game-grid">${picks.map(marqueeGameHtml).join('')}</div>
+  </section>`;
 }
 
 // Part 3: human-first landing. Ranks the most-confident plays by combining

@@ -163,14 +163,6 @@ with sync_playwright() as p:
     page.wait_for_timeout(500)
     page.screenshot(path=f"{SCREENSHOT_DIR}/12_teams_overview.png")
 
-    # 2. Test All 5 Themes
-    print("Testing Distinct Themes...")
-    for theme in ['stadium', 'espn', 'retro', 'analyst', 'default']:
-        page.select_option("#themeSelector", theme)
-        page.wait_for_timeout(400)
-        page.screenshot(path=f"{SCREENSHOT_DIR}/02_theme_{theme}.png")
-    successes.append("All 5 themes switched and visually captured")
-
     # 3. Test Deep Head-to-Head Player Comparison Modal
     print("Testing Deep Player Comparison Modal...")
     page.evaluate("async () => { await openPlayerCompareModal('Josh Allen', 'Lamar Jackson'); }")

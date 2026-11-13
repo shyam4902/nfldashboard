@@ -322,10 +322,6 @@ html, body {
   box-shadow: 0 0 0 2px rgba(217, 164, 65, 0.45);
 }
 
-#teamsOverviewPanel {
-  max-width: 1040px;
-  margin: 0 auto;
-}
 
 /* ── THEMES ── */
 
@@ -1357,3 +1353,98 @@ body.theme-analyst .teams-subtab.active {
 #tab-teams > div:first-child h2, #tab-league > div:first-child h2, #tab-matchup h1 { font: 700 var(--t5)/1.1 var(--font-serif); letter-spacing: -0.015em; }
 #tab-teams .glass, #tab-league .glass { background: var(--bg-card); border: 1px solid var(--border-card); border-radius: var(--r3); box-shadow: var(--e1); }
 #tab-league .teams-subtab.active, #tab-teams .teams-subtab.active { background: var(--tab-active-bg); color: var(--tab-active-text); border-color: transparent; }
+
+/* ── Game tiles (Schedule, Home): the /nba/ scores frame ─────────────────
+   Owner, 2026-11-14: the old Schedule and Home cards move to the NBA grammar.
+   Header line above the frame, two team-colour bands, links underneath. */
+.gt.sch-card, .gt.home-sch-card { display: block; min-width: 0; padding: 0; background: none; border: 0; border-radius: 10px; overflow: visible; box-shadow: none; transform: none; outline: none; }
+.gt-hd { display: flex; align-items: center; gap: 10px; min-height: 14px; margin-bottom: 8px; white-space: nowrap; }
+.gt-st { display: flex; align-items: center; gap: 6px; min-width: 0; overflow: hidden; text-overflow: ellipsis; font: 700 var(--t0)/1 var(--font-sans); letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-muted); }
+.gt-st.live { color: var(--text-main); }
+.gt-st .dot { width: 6px; height: 6px; flex: none; border-radius: 999px; background: currentColor; }
+.gt-cap { margin-right: auto; font: 600 11px/1 var(--font-sans); letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-faint); }
+.gt-ln { flex: none; font: 600 var(--t1)/1 var(--font-sans); color: var(--text-muted); }
+.gt-ln b { font-weight: 800; color: var(--text-main); }
+.gt-body { display: grid; gap: 1px; overflow: hidden; border-radius: 8px; background: #000; transition: transform 0.2s ease; }
+.gt-band { display: grid; grid-template-columns: 32px minmax(0, 1fr) auto minmax(3.4em, auto); align-items: center; column-gap: 12px; padding: 10px 14px; }
+.gt-band.lost { filter: saturate(0.35) brightness(0.62); }
+.gt-logo { display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 999px; background: rgba(255, 255, 255, 0.92); }
+.gt-logo img { width: 24px; height: 24px; object-fit: contain; }
+.gt-id { display: flex; align-items: baseline; gap: 9px; min-width: 0; }
+.gt-ab { flex: none; font: 700 var(--t4)/1 var(--font-serif); letter-spacing: -0.01em; }
+.gt-nm { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font: 600 13px/1.2 var(--font-sans); opacity: 0.9; }
+.gt-rc { font: 600 var(--t1)/1 var(--font-sans); white-space: nowrap; }
+.gt-r { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; text-align: right; }
+.gt-sc { font: 800 var(--t5)/0.9 var(--font-serif); letter-spacing: -0.02em; }
+.gt-pct { font: 800 var(--t4)/1 var(--font-serif); }
+.gt-pct small { font-size: 0.6em; }
+.gt-ml { font: 600 11px/1 var(--font-sans); opacity: 0.85; white-space: nowrap; }
+.gt-ft { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-top: 9px; }
+.gt-ft .sch-cmp { padding: 6px 10px; font-size: 12px; }
+.gt-ft .sch-cta { font: 700 12px/1 var(--font-sans); color: var(--text-muted); }
+.gt:hover .gt-body { outline: 1px solid var(--border-strong); outline-offset: 3px; }
+.gt:hover .sch-cta { color: var(--accent-ui, #d9a441); }
+.gt:focus-visible .gt-body { outline: 2px solid var(--accent-ui, #d9a441); outline-offset: 3px; }
+.sch-game-grid { grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr)); gap: 22px 18px; }
+.sch-window-hd { border-bottom-color: var(--border-muted, #262a31); }
+.sch-window-title h3 { font: 700 var(--t3)/1.1 var(--font-serif); letter-spacing: -0.01em; text-transform: none; }
+.sch-window-meta { font: 600 11px/1 var(--font-sans); letter-spacing: 0.06em; color: var(--text-faint); }
+@media (max-width: 480px) {
+  .gt-band { column-gap: 10px; padding: 10px 12px; }
+  .gt-nm, .gt-cap { display: none; }
+  .gt-st { margin-right: auto; }
+  .hm-week-hd h2 { font-size: var(--t4); }
+}
+
+/* ── NFL Home (nfl/js/home.js) ───────────────────────────────────────────
+   Featured game is the Matchup page's team-colour scorebug; under it the
+   week's score strip. Owner, 2026-11-14: the carousel and the Storylines
+   block are gone (the second slide was an ad, the block repeated the venue). */
+.hm.h2a-wrap { overflow: hidden; background: var(--bg-card); border: 1px solid var(--border-card); border-radius: 12px; }
+.hm .h2a-hero { padding: 18px 18px 16px; border-bottom: 1px solid var(--border-card); }
+.hm-kick { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; margin-bottom: 12px; font: 700 var(--t0)/1.2 var(--font-sans); letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); }
+.hm-src { font-weight: 500; letter-spacing: 0; text-transform: none; color: var(--text-faint); }
+.hm .nv .gm-bug { margin-bottom: 0; }
+.hm-act { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+.hm-btn { padding: 10px 16px; border: 1px solid var(--border-strong); border-radius: 8px; background: transparent; font: 700 var(--t1)/1 var(--font-sans); color: var(--text-main); cursor: pointer; }
+.hm-btn:hover { background: var(--bg-card-hover); }
+.hm-btn-gold { background: var(--tab-active-bg); border-color: transparent; color: var(--tab-active-text); }
+.hm-btn-gold:hover { background: var(--tab-active-bg); filter: brightness(1.08); }
+.hm-empty { padding: 40px; text-align: center; font: 500 var(--t1)/1.4 var(--font-sans); color: var(--text-faint); }
+.h2a-strip { display: flex; align-items: stretch; background: var(--bg-card); }
+.h2a-strip-lead { display: flex; flex-direction: column; justify-content: center; flex: none; padding: 0 18px; border-right: 1px solid var(--border-card); }
+.h2a-strip-games { flex: 1; min-width: 0; overflow-x: auto; scrollbar-width: thin; }
+.h2a-strip-inner { display: flex; width: 100%; min-width: 820px; }
+.h2a-game { flex: 1 0 118px; min-width: 0; padding: 12px 14px; border-right: 1px solid var(--border-card); cursor: pointer; }
+.h2a-game:hover { background: var(--bg-card-hover); }
+.h2a-game-time { margin-bottom: 7px; font: 700 11px/1 var(--font-sans); letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-faint); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.h2a-team-row { display: flex; justify-content: space-between; align-items: center; gap: 6px; }
+.h2a-team-row + .h2a-team-row { margin-top: 5px; }
+.h2a-team-name { display: flex; align-items: center; gap: 7px; min-width: 0; }
+.hm-edge { display: flex; align-items: baseline; gap: 12px; margin-top: 12px; padding: 13px 16px; border: 1px solid var(--border-card); border-radius: 10px; background: var(--bg-card); font: 500 var(--t1)/1.3 var(--font-sans); color: var(--text-muted); }
+.hm-edge b { font-weight: 800; color: var(--text-main); }
+.hm-edge i { margin-left: auto; font-style: normal; color: var(--text-faint); }
+.hm-edge:hover { border-color: var(--border-strong); }
+@media (max-width: 640px) {
+  .hm .h2a-hero { padding: 14px 12px; }
+  .hm-edge { flex-wrap: wrap; row-gap: 4px; }
+}
+.hm-week { margin-top: 28px; }
+.hm-week-hd { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 14px; margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid var(--border-card); }
+.hm-week-hd h2 { margin: 0; font: 700 var(--t5)/1 var(--font-serif); letter-spacing: -0.01em; color: var(--text-main); }
+.hm-week-hd span { font: 500 var(--t1)/1 var(--font-sans); color: var(--text-faint); }
+.hm-week-hd a { margin-left: auto; font: 700 var(--t1)/1 var(--font-sans); color: var(--tab-active-bg); }
+
+/* Schedule controls and hero in the shared grammar (2026-11-14). */
+.sch-marquee { background: var(--bg-card); border: 1px solid var(--border-card); border-radius: 12px; }
+.sch-marquee .sch-glow { display: none; }
+.sch-marquee-pad { padding: 18px 18px 8px; }
+.sch-marquee .nv .gm-bug { margin-bottom: 0; }
+.sch-marq-nav { padding: 6px 18px 14px; }
+.sch-marq-label { font: 600 11px/1 var(--font-sans); letter-spacing: 0.04em; text-transform: uppercase; color: var(--text-faint); }
+.sch-main-title { font: 700 var(--t5)/1.05 var(--font-serif); letter-spacing: -0.01em; }
+.sch-main-title .sch-badge { display: none; }
+.sch-sub { font: 500 var(--t1)/1.4 var(--font-sans); color: var(--text-faint); }
+.sch-wk-pill { font: 700 12px/1 var(--font-sans); }
+.sch-f-chip { font: 600 12px/1 var(--font-sans); }
+@media (max-width: 480px) { .sch-main-title { font-size: var(--t4); } }
