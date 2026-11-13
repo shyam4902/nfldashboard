@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1156" height="644" viewBox="0 0 1156 644" font-family="'DejaVu Sans Mono', 'Menlo', 'Consolas', 'Liberation Mono', 'Courier New', monospace" font-size="14px">
+  <defs>
+    <marker id="r9a500f37-arrow-5c5c7c" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#5c5c7c"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="1156" height="644" fill="#111111"/>
+  <path d="M48 40 H550 a8 8 0 0 1 8 8 V231 a8 8 0 0 1 -8 8 H48 a8 8 0 0 1 -8 -8 V48 a8 8 0 0 1 8 -8 Z" fill="#142814" stroke="#486544"/>
+  <text x="54" y="68.4" fill="#d9d9d9" text-anchor="start">NBA scores</text>
+  <text x="54" y="87.4" fill="#8b8b8b" text-anchor="start">ddac8f0 · nba/index.html</text>
+  <path d="M62 102 H536 a8 8 0 0 1 8 8 V141 a8 8 0 0 1 -8 8 H62 a8 8 0 0 1 -8 -8 V110 a8 8 0 0 1 8 -8 Z" fill="#191728" stroke="#4f5367"/>
+  <text x="299" y="130.4" fill="#d9d9d9" text-anchor="middle">No 1480px cap: rail + games + Inspector fill the screen</text>
+  <path d="M62 159 H427 a8 8 0 0 1 8 8 V217 a8 8 0 0 1 -8 8 H62 a8 8 0 0 1 -8 -8 V167 a8 8 0 0 1 8 -8 Z" fill="#191728" stroke="#4f5367"/>
+  <text x="244.5" y="187.4" fill="#d9d9d9" text-anchor="middle">Wide frames: one row per team</text>
+  <text x="244.5" y="206.4" fill="#d9d9d9" text-anchor="middle">logo · abbr · record · PTS/REB/AST · score</text>
+  <path d="M622 49.5 H1108 a8 8 0 0 1 8 8 V221.5 a8 8 0 0 1 -8 8 H622 a8 8 0 0 1 -8 -8 V57.5 a8 8 0 0 1 8 -8 Z" fill="#142814" stroke="#486544"/>
+  <text x="628" y="77.9" fill="#d9d9d9" text-anchor="start">Header</text>
+  <text x="628" y="96.9" fill="#8b8b8b" text-anchor="start">5e5935a · nba/index.html, nfl/*</text>
+  <path d="M636 111.5 H1094 a8 8 0 0 1 8 8 V150.5 a8 8 0 0 1 -8 8 H636 a8 8 0 0 1 -8 -8 V119.5 a8 8 0 0 1 8 -8 Z" fill="#191728" stroke="#4f5367"/>
+  <text x="865" y="139.9" fill="#d9d9d9" text-anchor="middle">/nba/: brand · NFL|NBA · tabs · 460px search, one row</text>
+  <path d="M636 168.5 H984 a8 8 0 0 1 8 8 V207.5 a8 8 0 0 1 -8 8 H636 a8 8 0 0 1 -8 -8 V176.5 a8 8 0 0 1 8 -8 Z" fill="#191728" stroke="#4f5367"/>
+  <text x="810" y="196.9" fill="#d9d9d9" text-anchor="middle">/nfl/: tabs beside NFL|NBA, 460px search</text>
+  <path d="M106.5 295 H491.5 a8 8 0 0 1 8 8 V524 a8 8 0 0 1 -8 8 H106.5 a8 8 0 0 1 -8 -8 V303 a8 8 0 0 1 8 -8 Z" fill="#142814" stroke="#486544"/>
+  <text x="112.5" y="323.4" fill="#d9d9d9" text-anchor="start">NFL port</text>
+  <text x="112.5" y="342.4" fill="#8b8b8b" text-anchor="start">ba0b4e8 · nfl/js, nfl.css</text>
+  <path d="M120.5 357 H477.5 a8 8 0 0 1 8 8 V396 a8 8 0 0 1 -8 8 H120.5 a8 8 0 0 1 -8 -8 V365 a8 8 0 0 1 8 -8 Z" fill="#191728" stroke="#4f5367"/>
+  <text x="299" y="385.4" fill="#d9d9d9" text-anchor="middle">nflGameTile: one tile for Schedule + Home</text>
+  <path d="M120.5 414 H401.5 a8 8 0 0 1 8 8 V453 a8 8 0 0 1 -8 8 H120.5 a8 8 0 0 1 -8 -8 V422 a8 8 0 0 1 8 -8 Z" fill="#191728" stroke="#4f5367"/>
+  <text x="261" y="442.4" fill="#d9d9d9" text-anchor="middle">Featured game = Matchup scorebug</text>
+  <path d="M120.5 471 H477.5 a8 8 0 0 1 8 8 V510 a8 8 0 0 1 -8 8 H120.5 a8 8 0 0 1 -8 -8 V479 a8 8 0 0 1 8 -8 Z" fill="#191728" stroke="#4f5367"/>
+  <text x="299" y="499.4" fill="#d9d9d9" text-anchor="middle">Theme picker gone · Teams grid full width</text>
+  <path d="M563.5 314 H981.5 a8 8 0 0 1 8 8 V505 a8 8 0 0 1 -8 8 H563.5 a8 8 0 0 1 -8 -8 V322 a8 8 0 0 1 8 -8 Z" fill="#460000" stroke="#8f3a3a"/>
+  <text x="569.5" y="342.4" fill="#d9d9d9" text-anchor="start">Not done</text>
+  <text x="569.5" y="361.4" fill="#8b8b8b" text-anchor="start">flagged</text>
+  <path d="M577.5 376 H967.5 a8 8 0 0 1 8 8 V415 a8 8 0 0 1 -8 8 H577.5 a8 8 0 0 1 -8 -8 V384 a8 8 0 0 1 8 -8 Z" fill="#191728" stroke="#4f5367"/>
+  <text x="772.5" y="404.4" fill="#d9d9d9" text-anchor="middle">Player Compare modal: needs a real stats page</text>
+  <path d="M577.5 433 H867.5 a8 8 0 0 1 8 8 V491 a8 8 0 0 1 -8 8 H577.5 a8 8 0 0 1 -8 -8 V441 a8 8 0 0 1 8 -8 Z" fill="#191728" stroke="#4f5367"/>
+  <text x="722.5" y="461.4" fill="#d9d9d9" text-anchor="middle">schedule.json: TV for week 1 only</text>
+  <text x="722.5" y="480.4" fill="#d9d9d9" text-anchor="middle">('network fix')</text>
+  <g font-size="12px">
+  <text x="450" y="600.2" fill="#d9d9d9" text-anchor="start">STATE.md updated · eb7f5d9</text>
+  </g>
+  <line x1="558" y1="139.5" x2="614" y2="139.5" stroke="#5c5c7c" stroke-width="1.6" marker-end="url(#r9a500f37-arrow-5c5c7c)"/>
+  <line x1="679.09" y1="229.5" x2="499.5" y2="316.44" stroke="#5c5c7c" stroke-width="1.6" marker-end="url(#r9a500f37-arrow-5c5c7c)"/>
+  <line x1="499.5" y1="413.5" x2="555.5" y2="413.5" stroke="#5c5c7c" stroke-width="1.6" marker-end="url(#r9a500f37-arrow-5c5c7c)"/>
+</svg>

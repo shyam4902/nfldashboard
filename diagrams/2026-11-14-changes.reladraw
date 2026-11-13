@@ -1,0 +1,27 @@
+// What changed, 2026-11-14. Five local commits on main, not pushed.
+style done  fill: theme-primary-subtle  border: theme-primary
+style left  fill: theme-secondary-subtle  border: theme-secondary
+style dim   text: (color: theme-muted)
+
+node nba "NBA scores / [dim]ddac8f0 · nba/index.html[/dim]"  style: done
+node nba.a "No 1480px cap: rail + games + Inspector fill the screen"
+node nba.b "Wide frames: one row per team / logo · abbr · record · PTS/REB/AST · score"
+
+node hdr "Header / [dim]5e5935a · nba/index.html, nfl/*[/dim]"  style: done  right of nba
+node hdr.a "/nba/: brand · NFL|NBA · tabs · 460px search, one row"
+node hdr.b "/nfl/: tabs beside NFL|NBA, 460px search"
+
+node nfl "NFL port / [dim]ba0b4e8 · nfl/js, nfl.css[/dim]"  style: done  below nba
+node nfl.a "nflGameTile: one tile for Schedule + Home"
+node nfl.b "Featured game = Matchup scorebug"
+node nfl.c "Theme picker gone · Teams grid full width"
+
+node todo "Not done / [dim]flagged[/dim]"  style: left  right of nfl  level with nfl
+node todo.a "Player Compare modal: needs a real stats page"
+node todo.b "schedule.json: TV for week 1 only / ('network fix')"
+
+node state "STATE.md updated · eb7f5d9"  shape: none  below nfl and todo
+
+edge nba -> hdr
+edge hdr -> nfl
+edge nfl -> todo
