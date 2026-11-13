@@ -1917,10 +1917,11 @@
       "city": "",
       "kickoff_utc": "2026-11-13T01:15:00Z",
       "tv": "",
-      "winner": null,
-      "away_score": null,
-      "home_score": null,
-      "week": 10
+      "winner": "Washington Commanders",
+      "away_score": 24,
+      "home_score": 21,
+      "week": 10,
+      "status": "final"
     },
     {
       "game_id": "2026-11-15-NE-DET",
@@ -3678,5 +3679,5 @@
       "week": 18
     }
   ],
-  "scores_synced_at": "2026-11-10T23:08:26.083Z"
+  "scores_synced_at": "2026-11-13T06:29:31.323Z"
 }
