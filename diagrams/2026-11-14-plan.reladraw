@@ -1,0 +1,25 @@
+// Matchup Board fixes, 2026-11-14. Four steps, one commit each, ask before every push.
+style fable  fill: theme-primary-subtle  border: theme-primary
+style opus   fill: theme-secondary-subtle  border: theme-secondary
+style dim    text: (color: theme-muted)
+
+node s1 "1 · NBA scores, desktop / [dim]nba/index.html · Fable[/dim]"  style: fable
+node s1.a "Drop the 1480px cap so rail + canvas + Inspector use full width"
+node s1.b "Tiles: wider and shorter, 2 per row / team, record, PTS/REB/AST leaders, spread, O/U kept"
+
+node s2 "2 · Header, one condensed row / [dim]/, /nfl/, /nba/ · Fable[/dim]"  style: fable  right of s1
+node s2.a "Brand · NFL|NBA · section tabs · wide search · utilities"
+node s2.b "Phone: two rows, tabs scroll, search still opens"
+
+node s3 "3 · NFL views still on the old design / [dim]nfl/* · Opus[/dim]"  style: opus  below s1
+node s3.a "Audit Home, Schedule, Teams, League, Compare, Edge / and sub-tabs against /nba/"
+node s3.b "Port the old ones to the shared tokens and grammar"
+
+node s4 "4 · 'network fix' / [dim]flag only[/dim]"  style: opus  right of s3  level with s3
+node s4.a "schedule.json has TV networks for week 1 only / weeks 2-18 render 'TV TBD'"
+
+node verify "Each step: screenshots at 1600px and 390px, commit, ask before push"  shape: none  below s3 and s4
+
+edge s1 -> s2
+edge s2 -> s3  "after Fable steps"
+edge s3 -> s4

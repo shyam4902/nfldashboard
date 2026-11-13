@@ -592,7 +592,9 @@ tbody tr:last-child td { border-bottom: 0; }
 /* ── Scores: Inspector (ins-*) ──────────────────────────────────────────────
    Three columns on desktop (standings rail, dotted canvas of frames, panel for
    the selected game), canvas plus panel on tablets, frames only on phones. */
-body.sc-wide .wrap { max-width: 1480px; }
+/* Owner, 2026-11-14: scores use the whole screen, no centred column with dead
+   space either side. */
+body.sc-wide .wrap { max-width: none; padding: 0 24px; }
 .ins-shell { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; align-items: start; }
 .ins-rail, .ins-panel { display: none; }
 @media (min-width: 721px) {
@@ -602,6 +604,9 @@ body.sc-wide .wrap { max-width: 1480px; }
 @media (min-width: 1100px) {
   .ins-shell { grid-template-columns: 250px minmax(0, 1fr) 340px; gap: 18px; }
   .ins-rail { display: block; }
+}
+@media (min-width: 1500px) {
+  .ins-shell { grid-template-columns: 280px minmax(0, 1fr) 370px; gap: 20px; }
 }
 .ins-rail, .ins-panel {
   position: sticky;
@@ -657,7 +662,7 @@ body.sc-wide .wrap { max-width: 1480px; }
   border: 1px solid var(--border-card);
   border-radius: 10px;
 }
-.ins-slate { display: grid; grid-template-columns: repeat(auto-fill, minmax(232px, 1fr)); gap: 20px 14px; align-items: start; }
+.ins-slate { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 430px), 1fr)); gap: 22px 18px; align-items: start; }
 .ins-frame {
   position: relative;
   z-index: 1;
@@ -667,6 +672,7 @@ body.sc-wide .wrap { max-width: 1480px; }
   outline: none;
   border-radius: 8px;
   transition: z-index 0s linear 0.28s;
+  container-type: inline-size;
 }
 .ins-frame:focus-visible .ins-fbody { outline: 2px solid var(--accent-ui); outline-offset: 3px; }
 .ins-fl { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 9px; white-space: nowrap; min-height: 12px; }
@@ -684,6 +690,7 @@ body.sc-wide .wrap { max-width: 1480px; }
 }
 .ins-st.live { color: var(--text-main); }
 .ins-st .dot { width: 6px; height: 6px; border-radius: 999px; background: currentColor; animation: pulse 1.1s ease-in-out infinite; flex-shrink: 0; }
+.ins-cap { display: none; margin-right: auto; font: 600 var(--t0)/1 var(--font-sans); letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-faint); }
 .ins-odds { min-width: 0; overflow: hidden; text-overflow: ellipsis; font: 600 var(--t1)/1 var(--font-sans); color: var(--text-muted); }
 .ins-odds b { font-weight: 800; color: var(--text-main); }
 .ins-fwrap {
@@ -749,6 +756,20 @@ body.sc-wide .wrap { max-width: 1480px; }
 .ins-frame { cursor: pointer; }
 .ins-frame.sel .ins-fbody { outline: 1.5px solid var(--accent-ui); outline-offset: 3px; }
 .ins-frame:not(.sel):hover .ins-fbody { outline: 1px solid var(--border-strong); outline-offset: 3px; }
+
+/* Wide frames (two to a row on desktop): each team is one row, so a game is
+   two short bands instead of two tall ones. Columns line up across both bands:
+   logo, abbr, record, the three leaders, score. The leader caption moves up to
+   the frame's header line. */
+@container (min-width: 430px) {
+  .ins-band { grid-template-columns: 32px 3.2em 3.6em minmax(0, 1fr) minmax(2.2em, auto); align-items: center; column-gap: 12px; padding: 10px 16px 10px 14px; }
+  .ins-bh { display: contents; }
+  .ins-band .sc { grid-column: 5; grid-row: 1; text-align: right; font-size: var(--t5); }
+  .ins-band .rc { white-space: nowrap; }
+  .ins-ld { grid-column: 4; grid-row: 1; padding: 0 0 0 14px; border-top: 0; border-left: 1px solid color-mix(in srgb, currentColor 24%, transparent); gap: 2px 14px; }
+  .ins-ld .cap { display: none; }
+  .ins-cap { display: inline; }
+}
 
 /* Detail drawer. Height animates 0fr to 1fr, so the content is never measured
    in JS. Wide screens lay it over what is below the frame (absolute, no reflow),
@@ -1860,7 +1881,7 @@ function insBandHTML(side, game, colors) {
     : '<span class="ins-logo ins-logo-none"></span>';
   const score = state === 'pre' || side.score == null ? '' : esc(side.score);
   const lead = side.leaders;
-  // Cards are three to a row, so leaders show the surname; the full "J. Embiid" is the hover title.
+  // Cards are narrow, so leaders show the surname; the full "J. Embiid" is the hover title.
   const surname = (short) => String(short || '').replace(/^(?:[A-Z]\.)+\s*/, '');
   const cells = lead
     ? LEADER_ROWS.filter(([, key]) => lead[key]).map(([label, key]) =>
@@ -1931,10 +1952,12 @@ function insDetailHTML(game, standings, colors) {
 function gameCardHTML(game, colors, selected, standings) {
   const live = game.state === 'in';
   const status = game.state === 'pre' ? tipOff(game.startISO) || 'Scheduled' : (game.statusText || 'Final');
+  const kind = (game.away.leaders && game.away.leaders.kind) || (game.home.leaders && game.home.leaders.kind) || '';
   return '<div class="ins-frame' + (selected ? ' sel' : '') + '" role="group" tabindex="0" data-rest-scope data-game="' + esc(game.id) + '"' +
     (selected ? ' aria-current="true"' : '') +
     ' aria-label="' + esc(game.away.name + ' at ' + game.home.name) + '">' +
     '<div class="ins-fl"><span class="ins-st' + (live ? ' live' : '') + '">' + (live ? '<i class="dot"></i>' : '') + esc(status) + '</span>' +
+    (kind ? '<span class="ins-cap">Leaders · ' + esc(leaderCaption(kind, game).toLowerCase()) + '</span>' : '') +
     oddsHeadHTML(game) + '</div>' +
     '<div class="ins-fwrap"><div class="ins-fbody">' + insBandHTML(game.away, game, colors) + insBandHTML(game.home, game, colors) + '</div>' +
     
