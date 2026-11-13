@@ -413,3 +413,73 @@ test('parseEspnRoster keeps the current injury listing', async () => {
   assert.deepEqual(rows[0].injury, { status: 'Out', date: '2026-11-11T19:06Z' });
   assert.equal(rows[1].injury, null);
 });
+
+// Two tiny gamelogs in the common/v3 shape: a QB (passing + rushing) and a WR
+// (receiving + rushing + fumbles), one regular-season game each with totals.
+function gamelog(labels, names, categories, games, totals) {
+  const events = {};
+  games.forEach((g, i) => { events['e' + i] = { week: g.week, gameDate: g.date, atVs: '@', opponent: { abbreviation: g.opp }, gameResult: 'W', score: '24-17' }; });
+  return {
+    labels, names, categories, events,
+    seasonTypes: [{ displayName: '2026 Regular Season', categories: [{ events: games.map((g, i) => ({ eventId: 'e' + i, stats: g.stats })) }],
+      summary: { stats: [{ type: 'total', stats: totals }] } }],
+  };
+}
+const QB_LOG = gamelog(
+  ['YDS', 'TD', 'INT', 'SACK', 'CAR', 'YDS'],
+  ['passingYards', 'passingTouchdowns', 'interceptions', 'sacks', 'rushingAttempts', 'rushingYards'],
+  [{ name: 'passing', displayName: 'Passing', count: 4 }, { name: 'rushing', displayName: 'Rushing', count: 2 }],
+  [{ week: 1, date: '2026-09-07T17:00Z', opp: 'WSH', stats: ['250', '2', '1', '3', '5', '30'] },
+   { week: 2, date: '2026-09-14T17:00Z', opp: 'KC', stats: ['300', '3', '0', '1', '4', '12'] }],
+  ['550', '5', '1', '4', '9', '42']);
+const WR_LOG = gamelog(
+  ['REC', 'YDS', 'CAR', 'YDS', 'FUM', 'LST'],
+  ['receptions', 'receivingYards', 'rushingAttempts', 'rushingYards', 'fumbles', 'fumblesLost'],
+  [{ name: 'receiving', displayName: 'Receiving', count: 2 }, { name: 'rushing', displayName: 'Rushing', count: 2 }, { name: 'fumbles', displayName: 'Fumbles', count: 2 }],
+  [{ week: 1, date: '2026-09-07T17:00Z', opp: 'DAL', stats: ['8', '1,104', '2', '50', '1', '0'] }],
+  ['8', '1,104', '2', '50', '1', '0']);
+
+test('comparePlayerTotals lines up season totals by stat group and marks the better side', async () => {
+  const { parseNflGameLog, comparePlayerTotals } = await import('./nfl-lib.js');
+  const qb = { log: parseNflGameLog(QB_LOG), pos: 'QB' };
+  const wr = { log: parseNflGameLog(WR_LOG), pos: 'WR' };
+  const groups = comparePlayerTotals(qb, wr);
+  assert.deepEqual(groups.map(g => g.label), ['Passing', 'Rushing', 'Receiving', 'Fumbles']);
+  const passing = groups[0].rows;
+  assert.deepEqual(passing.find(r => r.key === 'passingYards'), { key: 'passingYards', label: 'YDS', a: '550', b: null, lead: '', share: { a: 0, b: 0 } });
+  const rush = groups[1].rows;
+  assert.equal(rush.find(r => r.key === 'rushingYards').lead, 'b');      // 50 beats 42
+  assert.equal(rush.find(r => r.key === 'rushingYards').share.b, 1);
+  assert.equal(rush.find(r => r.key === 'rushingAttempts').lead, 'a');   // 9 beats 2
+  assert.equal(groups[2].rows.find(r => r.key === 'receivingYards').b, '1,104');
+  // Lower wins for giveaways, both QB picks and a second QB's sacks.
+  const qb2 = { log: parseNflGameLog({ ...QB_LOG, seasonTypes: [{ ...QB_LOG.seasonTypes[0], summary: { stats: [{ type: 'total', stats: ['500', '5', '3', '2', '9', '42'] }] } }] }), pos: 'QB' };
+  const pass2 = comparePlayerTotals(qb, qb2)[0].rows;
+  assert.equal(pass2.find(r => r.key === 'interceptions').lead, 'a');
+  assert.equal(pass2.find(r => r.key === 'sacks').lead, 'b');
+  assert.equal(pass2.find(r => r.key === 'passingTouchdowns').lead, '');  // tie: nobody marked
+  assert.deepEqual(comparePlayerTotals({ log: null }, { log: null }), []);
+  const dash = { log: parseNflGameLog({ ...WR_LOG, seasonTypes: [{ ...WR_LOG.seasonTypes[0], summary: { stats: [{ type: 'total', stats: ['8', '1,104', '2', '50', '-', '-'] }] } }] }), pos: 'WR' };
+  assert.equal(comparePlayerTotals(dash, { log: null }).find(g => g.name === 'fumbles'), undefined);
+});
+
+test('recentGames keeps the newest regular-season games and the player\'s own stat group', async () => {
+  const { parseNflGameLog, recentGames } = await import('./nfl-lib.js');
+  const r = recentGames(parseNflGameLog(QB_LOG), 'QB', 1);
+  assert.equal(r.label, 'Passing');
+  assert.deepEqual(r.cols.map(c => c.label), ['YDS', 'TD', 'INT', 'SACK']);
+  assert.equal(r.games.length, 1);
+  assert.equal(r.games[0].opponentAbbr, 'KC');                 // week 2 is newest
+  assert.equal(r.games[0].stats[r.cols[0].i], '300');
+  assert.equal(recentGames(parseNflGameLog(WR_LOG), 'WR').label, 'Receiving');
+  assert.equal(recentGames(null, 'QB'), null);
+});
+
+test('seasonYear reads the regular season year; defenders lead with tackles', async () => {
+  const { parseNflGameLog, seasonYear, orderGroups } = await import('./nfl-lib.js');
+  assert.equal(seasonYear(parseNflGameLog(QB_LOG)), 2026);
+  assert.equal(seasonYear(parseNflGameLog({ ...QB_LOG, seasonTypes: [{ ...QB_LOG.seasonTypes[0], displayName: '2025 Regular Season' }] })), 2025);
+  assert.equal(seasonYear(null), null);
+  const groups = [{ name: 'tackles' }, { name: 'fumbles' }, { name: 'interceptions' }];
+  assert.deepEqual(orderGroups(groups.slice().reverse(), 'DE').map(g => g.name), ['tackles', 'interceptions', 'fumbles']);
+});

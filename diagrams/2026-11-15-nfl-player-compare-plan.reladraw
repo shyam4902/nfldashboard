@@ -1,0 +1,17 @@
+// Plan: replace the NFL Player Compare modal with a #players/<a>/<b> view.
+style new  fill: theme-primary-subtle  border: theme-primary
+style gone fill: none  border: theme-muted  text: (color: theme-muted)
+
+node entry   "Header button / Command palette / Player page Compare / Player modal Compare"
+node route   "routing.js / #players/<idA>/<idB>"  below entry  style: new
+node view    "views.js showNflPlayers / pickers, heroes, compare table, recent games"  below route  style: new
+node espn    "ESPN common/v3 / athlete + gamelog"  right of view (gap: wide)
+node lib     "nfl-lib.js / comparePlayerTotals, recentGames / + tests"  below view  style: new
+node css     "nfl.css .nv pc-* / --t* scale, --font-serif"  left of view (gap: wide)
+node modal   "#playerCompareModal + Quick Rivals / prop-count cards (removed)"  right of entry (gap: wide)  style: gone
+
+edge entry -> route
+edge route -> view
+edge espn -> view "two players"
+edge view -> lib
+edge css -> view

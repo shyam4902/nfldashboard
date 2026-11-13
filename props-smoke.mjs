@@ -100,7 +100,7 @@ const edgeBtn = await page.locator('a[href*="edgeplay-analytics.pages.dev"]').co
 console.log('--- edge analytics links present:', edgeBtn);
 
 const matchupNavBtn = await page.locator('button[data-tab="matchup"]').count().catch(() => -1);
-const playerCompareLabel = (await page.locator('button[onclick="openPlayerCompareModal()"] span').last().textContent().catch(() => '')).trim();
+const playerCompareLabel = (await page.locator('a.hdr-btn[href="#players"] span').last().textContent().catch(() => '')).trim();
 const homeMappings = await page.evaluate(() => {
   const expectedWeek = typeof currentScheduleWeek === 'number' ? currentScheduleWeek : 1;
   const actions = Array.from(document.querySelectorAll('#tab-home [onclick]'));

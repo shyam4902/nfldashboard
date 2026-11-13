@@ -1318,6 +1318,76 @@ body.theme-analyst .teams-subtab.active {
   .nv .nv-search { max-width: none; }
 }
 
+/* ── Player compare, #players/<a>/<b> (nfl/js/views.js), 2026-11-15 ─────────
+   Same grammar as /nba/#players: two search pickers, team-tinted heroes, a
+   centre-out tape of season totals, then each player's newest games. Numbers
+   are serif like the Matchup scorebug. */
+.nv .pl-cmp { display: block; width: fit-content; margin-top: 8px; font: 700 var(--t0)/1.2 var(--font-sans); color: inherit; opacity: 0.9; text-decoration: underline; text-underline-offset: 3px; }
+.nv .pc-pick { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items: end; gap: 8px; max-width: 860px; margin-bottom: 12px; }
+.nv .pc-field { display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+.nv .pc-field .nv-search { max-width: none; margin-bottom: 0; }
+.nv .pc-lbl { font: 700 10px/1 var(--font-sans); letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-faint); }
+.nv .pc-pick .nv-swap:disabled { opacity: 0.4; cursor: default; }
+.nv .pc-bug { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); margin-bottom: 12px; border: 1px solid var(--border-card); border-radius: 12px; overflow: hidden; background: var(--bg-card); }
+.nv .pc-side { display: flex; flex-direction: column; justify-content: space-between; gap: 14px; min-width: 0; padding: 20px 22px 16px; text-decoration: none; }
+.nv .pc-side:hover .pc-nm { text-decoration: underline; text-underline-offset: 4px; }
+.nv .pc-top { display: flex; justify-content: space-between; align-items: flex-end; gap: 12px; min-width: 0; }
+.nv .pc-side.b .pc-top { flex-direction: row-reverse; text-align: right; }
+.nv .pc-who { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.nv .pc-nm { font: 900 clamp(var(--t3), 3.2vw, var(--t6))/1.02 'Archivo', var(--font-sans); letter-spacing: -0.02em; text-transform: uppercase; overflow-wrap: anywhere; }
+.nv .pc-facts { font: 600 var(--t0)/1.4 var(--font-mono); opacity: 0.9; }
+.nv .pc-shot { flex: none; margin: -8px -8px -16px 0; }
+.nv .pc-side.b .pc-shot { margin: -8px 0 -16px -8px; }
+.nv .pc-shot img { display: block; width: 120px; height: 88px; object-fit: contain; object-position: 50% 100%; }
+.nv .pc-tiles { display: flex; flex-wrap: wrap; gap: 6px; }
+.nv .pc-side.b .pc-tiles { justify-content: flex-end; }
+.nv .pc-tiles span { display: inline-flex; align-items: baseline; gap: 7px; padding: 6px 9px; border-radius: 6px; background: var(--chip); }
+.nv .pc-tiles i { font: 700 9px/1 var(--font-sans); font-style: normal; letter-spacing: 0.08em; text-transform: uppercase; opacity: 0.85; }
+.nv .pc-tiles b { font: 700 var(--t2)/1 var(--font-serif); font-variant-numeric: tabular-nums lining-nums; }
+.nv .pc-vs { display: flex; align-items: center; padding: 0 14px; font: 800 var(--t0)/1 var(--font-sans); letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-faint); }
+.nv .pc-stale { margin: -4px 0 12px; font-size: var(--t0); color: var(--text-muted); }
+.nv .pc-card { min-width: 0; margin-bottom: 12px; padding: 14px 16px 12px; }
+.nv .pc-th { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items: baseline; gap: 10px; margin-bottom: 4px; }
+.nv .pc-th .b { grid-column: 3; text-align: right; }
+.nv .pc-who-ab { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font: 900 var(--t1)/1 'Archivo', var(--font-sans); text-transform: uppercase; }
+.nv .pc-grp { margin-top: 12px; padding-bottom: 4px; text-align: center; font: 700 10px/1 var(--font-sans); letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); }
+.nv .pc-tr { display: grid; grid-template-columns: 80px minmax(0, 1fr) 64px minmax(0, 1fr) 80px; align-items: center; column-gap: 10px; padding: 5px 0; border-top: 1px solid var(--border-muted); }
+.nv .pc-v { font: 600 var(--t2)/1.1 var(--font-serif); font-variant-numeric: tabular-nums lining-nums; color: var(--text-faint); }
+.nv .pc-v.b { text-align: right; }
+.nv .pc-v.lead { font-weight: 700; color: var(--text-main); }
+.nv .pc-k { text-align: center; font: 700 10px/1.2 var(--font-sans); letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-muted); }
+.nv .pc-bar { display: flex; height: 10px; border-radius: 2px; background: var(--bg-inset); overflow: hidden; }
+.nv .pc-bar.a { justify-content: flex-end; }
+.nv .pc-bar i { display: block; height: 100%; border-radius: 2px; opacity: 0.5; }
+.nv .pc-bar.lead i { opacity: 1; }
+.nv .pc-recent { border-top: 3px solid var(--c); }
+.nv .pc-log td { font: 500 var(--t0)/1.3 var(--font-serif); font-variant-numeric: tabular-nums lining-nums; }
+.nv .pc-log td.opp, .nv .pc-log td.res { font-family: var(--font-mono); font-size: 11px; }
+@media (min-width: 1100px) {
+  .nv .pc-wrap { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: 0 16px; align-items: start; }
+}
+@media (max-width: 720px) {
+  .nv .pc-pick { grid-template-columns: minmax(0, 1fr) auto; }
+  .nv .pc-pick .pc-field:last-child { grid-column: 1 / -1; }
+  .nv .pc-pick .nv-swap { order: 0; }
+  .nv .pc-bug { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  .nv .pc-vs { display: none; }
+  .nv .pc-side { padding: 14px 12px 12px; gap: 10px; }
+  .nv .pc-top, .nv .pc-side.b .pc-top { flex-direction: column-reverse; align-items: flex-start; }
+  .nv .pc-side.b .pc-top { align-items: flex-end; }
+  .nv .pc-shot, .nv .pc-side.b .pc-shot { margin: 0; }
+  .nv .pc-shot img { width: 84px; height: 62px; }
+  .nv .pc-nm { font-size: var(--t2); }
+  .nv .pc-facts { font-size: 10px; }
+  .nv .pc-tiles span { padding: 5px 7px; gap: 5px; }
+  .nv .pc-tiles b { font-size: var(--t0); }
+  .nv .pc-card { padding: 12px; }
+  .nv .pc-th h2 { grid-column: 1 / -1; grid-row: 1; text-align: center; }
+  .nv .pc-tr { grid-template-columns: 58px minmax(0, 1fr) 46px minmax(0, 1fr) 58px; column-gap: 6px; }
+  .nv .pc-v { font-size: var(--t1); }
+  .nv .pc-k { font-size: 9px; }
+}
+
 /* ── Matchup view, 2026-11-05: same grammar as /nba/ and #compare. ─────────────
    Controls, scorebug, sub-tab pills and sidebar. The seven sub-tab panels
    have their own file, nfl/matchup.css. */

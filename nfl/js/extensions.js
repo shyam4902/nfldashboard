@@ -1,5 +1,5 @@
 // ═══════════════════════════════════════════════════════════
-// EXTENSIONS: THEMES, DUAL RADAR, PLAYER MODAL, COMPARE,
+// EXTENSIONS: THEMES, DUAL RADAR, PLAYER MODAL,
 // COMMAND PALETTE
 // ═══════════════════════════════════════════════════════════
 
@@ -79,7 +79,7 @@ async function openPlayerModal(name, teamHint = '') {
       </div>
       <div class="flex items-center gap-2">
 
-        <button onclick="openPlayerCompareModal('${name.replace(/'/g,"\\'")}')" class="text-xs px-2.5 py-1.5 rounded-lg bg-indigo-600/20 text-indigo-300 border border-indigo-500/40 hover:bg-indigo-500/30 transition flex items-center gap-1">
+        <button onclick="openNflPlayerByName('${name.replace(/'/g,"\\'")}','${String(team || '').replace(/'/g,"\\'")}',true)" class="text-xs px-2.5 py-1.5 rounded-lg bg-indigo-600/20 text-indigo-300 border border-indigo-500/40 hover:bg-indigo-500/30 transition flex items-center gap-1">
           <span>⚖</span> Compare
         </button>
       </div>
@@ -234,208 +234,6 @@ function closePlayerModal() {
   document.getElementById('playerModal')?.classList.remove('active');
 }
 
-// ── 4. DEEP HEAD-TO-HEAD PLAYER COMPARISON ──
-let comparePlayer1 = null;
-let comparePlayer2 = null;
-
-async function openPlayerCompareModal(initialP1 = '', initialP2 = '') {
-  const modal = document.getElementById('playerCompareModal');
-  if (!modal) return;
-  
-  if (!PROPS_BOARD) await loadPropsBoard();
-
-  if (initialP1) comparePlayer1 = initialP1;
-  if (initialP2) comparePlayer2 = initialP2;
-  if (!comparePlayer1 && DATA.players && DATA.players.length > 0) comparePlayer1 = "Josh Allen";
-  if (!comparePlayer2 && DATA.players && DATA.players.length > 0) comparePlayer2 = "Lamar Jackson";
-
-  renderPlayerCompare();
-  modal.classList.add('active');
-}
-
-function closePlayerCompareModal() {
-  document.getElementById('playerCompareModal')?.classList.remove('active');
-}
-
-function setCompareQuick(p1, p2) {
-  if (p1) comparePlayer1 = p1;
-  if (p2) comparePlayer2 = p2;
-  renderPlayerCompare();
-}
-
-function renderPlayerCompare() {
-  const container = document.getElementById('playerCompareContent');
-  if (!container) return;
-
-  const d1 = findPlayerData(comparePlayer1);
-  const d2 = findPlayerData(comparePlayer2);
-
-  const allNames = Array.from(new Set(
-    (DATA.players || []).map(p => p.name)
-  )).filter(Boolean).sort();
-
-  const p1 = d1.pRecord || {};
-  const p2 = d2.pRecord || {};
-
-  const pos1 = p1.pos || 'QB';
-  const pos2 = p2.pos || 'QB';
-
-  const ovr1 = p1.ovr !== null && p1.ovr !== undefined ? p1.ovr : 75;
-  const ovr2 = p2.ovr !== null && p2.ovr !== undefined ? p2.ovr : 75;
-
-  const team1 = p1.team_id ? (DATA.teams?.find(t=>t.id===p1.team_id)?.name || p1.team_id) : 'NFL';
-  const team2 = p2.team_id ? (DATA.teams?.find(t=>t.id===p2.team_id)?.name || p2.team_id) : 'NFL';
-
-
-  const rivals = {
-    'QB': ['Josh Allen', 'Lamar Jackson', 'Patrick Mahomes', 'Joe Burrow', 'Jalen Hurts', 'C.J. Stroud', 'Jayden Daniels', 'Jordan Love', 'Brock Purdy', 'Justin Herbert'],
-    'RB': ['Christian McCaffrey', 'Bijan Robinson', 'Saquon Barkley', 'Breece Hall', 'Jahmyr Gibbs', 'Jonathan Taylor', 'Derrick Henry', 'Kyren Williams', 'De\'Von Achane', 'Josh Jacobs'],
-    'WR': ['Justin Jefferson', 'CeeDee Lamb', 'Ja\'Marr Chase', 'Amon-Ra St. Brown', 'Tyreek Hill', 'A.J. Brown', 'Garrett Wilson', 'Marvin Harrison Jr.', 'Puka Nacua', 'Malik Nabers'],
-    'TE': ['Sam LaPorta', 'Travis Kelce', 'Trey McBride', 'Mark Andrews', 'Brock Bowers', 'George Kittle', 'Dalton Kincaid', 'Kyle Pitts'],
-    'DEF': ['Micah Parsons', 'Myles Garrett', 'T.J. Watt', 'Nick Bosa', 'Maxx Crosby', 'Fred Warner', 'Roquan Smith', 'Sauce Gardner', 'Patrick Surtain II', 'Kyle Hamilton']
-  };
-
-  const posRivals = rivals[pos1] || rivals['QB'];
-
-  let html = `
-    <!-- Top Search & Quick Selector -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-      <div class="glass rounded-xl p-3 border-l-4 border-cyan-400">
-        <div class="flex items-center justify-between mb-1">
-          <label class="text-[10px] uppercase font-bold text-cyan-300">Player 1 (Cyan)</label>
-          <span class="text-[10px] text-slate-400 font-mono">${pos1} · ${team1}</span>
-        </div>
-        <input list="pCompareList1" value="${comparePlayer1 || ''}" onchange="comparePlayer1=this.value;renderPlayerCompare()" placeholder="Search Player 1..." class="bg-slate-800 border border-slate-600 rounded-lg px-3 py-1.5 text-xs w-full text-white focus:outline-none focus:border-cyan-500">
-        <datalist id="pCompareList1">
-          ${allNames.map(n => `<option value="${n.replace(/"/g, '&quot;')}">`).join('')}
-        </datalist>
-      </div>
-
-      <div class="glass rounded-xl p-3 border-l-4 border-amber-400">
-        <div class="flex items-center justify-between mb-1">
-          <label class="text-[10px] uppercase font-bold text-amber-300">Player 2 (Amber)</label>
-          <span class="text-[10px] text-slate-400 font-mono">${pos2} · ${team2}</span>
-        </div>
-        <input list="pCompareList2" value="${comparePlayer2 || ''}" onchange="comparePlayer2=this.value;renderPlayerCompare()" placeholder="Search Player 2..." class="bg-slate-800 border border-slate-600 rounded-lg px-3 py-1.5 text-xs w-full text-white focus:outline-none focus:border-amber-500">
-        <datalist id="pCompareList2">
-          ${allNames.map(n => `<option value="${n.replace(/"/g, '&quot;')}">`).join('')}
-        </datalist>
-      </div>
-    </div>
-
-    <!-- Quick Swap Rivalry Bar -->
-    <div class="flex items-center gap-1.5 mb-5 overflow-x-auto pb-1 text-xs">
-      <span class="text-[10px] font-bold uppercase text-slate-400 whitespace-nowrap">Quick Rivals:</span>
-      ${posRivals.slice(0, 8).map(r => `
-        <button onclick="setCompareQuick(null, '${r.replace(/'/g, "\\'")}')" class="px-2 py-0.5 rounded bg-slate-800/80 hover:bg-slate-700 text-slate-300 border border-slate-700 text-[11px] whitespace-nowrap transition">
-          vs ${r}
-        </button>
-      `).join('')}
-    </div>
-
-    <!-- Player Hero Summary -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-5">
-      <!-- Player 1 Hero Card -->
-      <div class="glass rounded-xl p-4 flex flex-col justify-between border border-cyan-500/30">
-        <div>
-          <div class="flex items-start justify-between mb-3">
-            <div>
-              <div class="text-[10px] uppercase font-black tracking-wider text-cyan-400">Player 1</div>
-              <h3 class="text-xl font-black text-white">${d1.name}</h3>
-              <div class="text-xs text-slate-400 mt-0.5">${pos1} · ${team1} · ${p1.age ? p1.age+' yrs' : 'Age N/A'}</div>
-            </div>
-
-          </div>
-          <div class="space-y-1.5 text-xs">
-            <div class="flex justify-between py-1 border-b border-slate-800/60"><span class="text-slate-400">Priced Prop Plays</span><strong class="text-slate-300">${d1.playerProps?.length || 0}</strong></div>
-          </div>
-        </div>
-        <button onclick="openPlayerModal('${d1.name.replace(/'/g, "\\'")}')" class="mt-3 text-xs w-full py-1.5 rounded-lg bg-cyan-600/20 text-cyan-300 border border-cyan-500/40 hover:bg-cyan-500/30 transition font-semibold">
-          View Full Dossier
-        </button>
-      </div>
-
-      <!-- Player 2 Hero Card -->
-      <div class="glass rounded-xl p-4 flex flex-col justify-between border border-amber-500/30">
-        <div>
-          <div class="flex items-start justify-between mb-3">
-            <div>
-              <div class="text-[10px] uppercase font-black tracking-wider text-amber-400">Player 2</div>
-              <h3 class="text-xl font-black text-white">${d2.name}</h3>
-              <div class="text-xs text-slate-400 mt-0.5">${pos2} · ${team2} · ${p2.age ? p2.age+' yrs' : 'Age N/A'}</div>
-            </div>
-
-          </div>
-          <div class="space-y-1.5 text-xs">
-            <div class="flex justify-between py-1 border-b border-slate-800/60"><span class="text-slate-400">Priced Prop Plays</span><strong class="text-slate-300">${d2.playerProps?.length || 0}</strong></div>
-          </div>
-        </div>
-        <button onclick="openPlayerModal('${d2.name.replace(/'/g, "\\'")}')" class="mt-3 text-xs w-full py-1.5 rounded-lg bg-amber-600/20 text-amber-300 border border-amber-500/40 hover:bg-amber-500/30 transition font-semibold">
-          View Full Dossier
-        </button>
-      </div>
-    </div>
-  `;
-
-
-
-  const p1Props = d1.playerProps || [];
-  const p2Props = d2.playerProps || [];
-
-  if (p1Props.length > 0 || p2Props.length > 0) {
-    html += `
-      <div class="glass rounded-xl p-4">
-        <div class="text-xs font-bold uppercase tracking-wider text-emerald-400 mb-3 flex items-center gap-2">
-          <span>💰</span> Active Prop Markets & Sportsbook Valuation
-        </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
-          <div>
-            <div class="font-bold text-cyan-400 mb-2">${d1.name} Prop Markets (${p1Props.length})</div>
-            ${p1Props.length ? `
-              <div class="space-y-1.5">
-                ${p1Props.slice(0, 5).map(pr => `
-                  <div class="p-2 rounded bg-slate-800/50 border border-slate-700/40 flex items-center justify-between">
-                    <div>
-                      <span class="font-semibold text-slate-200">${propsMarketLabels[pr.market] || pr.market}</span>
-                      <div class="text-[10px] text-slate-400">${pr.venue} · ${pr.odds || '–'}</div>
-                    </div>
-                    <div class="text-right">
-                      <span class="font-bold text-white">${pr.line} (${pr.side.toUpperCase()})</span>
-                      <div class="text-[10px] ${pr.ev_pct>0?'text-emerald-400 font-bold':'text-slate-500'}">${pr.ev_pct?'+'+pr.ev_pct.toFixed(1)+'% EV':'–'}</div>
-                    </div>
-                  </div>
-                `).join('')}
-              </div>
-            ` : '<p class="text-slate-500 text-xs">No active props priced</p>'}
-          </div>
-
-          <div>
-            <div class="font-bold text-amber-400 mb-2">${d2.name} Prop Markets (${p2Props.length})</div>
-            ${p2Props.length ? `
-              <div class="space-y-1.5">
-                ${p2Props.slice(0, 5).map(pr => `
-                  <div class="p-2 rounded bg-slate-800/50 border border-slate-700/40 flex items-center justify-between">
-                    <div>
-                      <span class="font-semibold text-slate-200">${propsMarketLabels[pr.market] || pr.market}</span>
-                      <div class="text-[10px] text-slate-400">${pr.venue} · ${pr.odds || '–'}</div>
-                    </div>
-                    <div class="text-right">
-                      <span class="font-bold text-white">${pr.line} (${pr.side.toUpperCase()})</span>
-                      <div class="text-[10px] ${pr.ev_pct>0?'text-emerald-400 font-bold':'text-slate-500'}">${pr.ev_pct?'+'+pr.ev_pct.toFixed(1)+'% EV':'–'}</div>
-                    </div>
-                  </div>
-                `).join('')}
-              </div>
-            ` : '<p class="text-slate-500 text-xs">No active props priced</p>'}
-          </div>
-        </div>
-      </div>
-    `;
-  }
-
-  container.innerHTML = html;
-}
-
 // ── 5. GLOBAL COMMAND PALETTE ──
 let cmdPaletteActiveIndex = 0;
 let cmdPaletteItems = [];
@@ -467,7 +265,7 @@ function handleCommandSearch(q) {
     { label: 'Teams & Rosters', type: 'Tab', icon: '🛡', action: () => { showTab('teams'); closeCommandPalette(); } },
     { label: 'League Standings (actual)', type: 'Tab', icon: '🏈', action: () => { showTab('league'); showLeague('standings'); closeCommandPalette(); } },
     { label: 'Season Player Stats (actual)', type: 'Tab', icon: '📈', action: () => { showTab('league'); showLeague('stats'); closeCommandPalette(); } },
-    { label: 'Player Compare', type: 'Feature', icon: '⚖️', action: () => { openPlayerCompareModal(); closeCommandPalette(); } },
+    { label: 'Player Compare', type: 'Feature', icon: '⚖️', action: () => { closeCommandPalette(); location.hash = '#players'; } },
     { label: 'Edge Analytics (Props & Value)', type: 'Tab', icon: '💰', action: () => { window.open('https://edgeplay-analytics.pages.dev/props','_blank'); closeCommandPalette(); } },
     { label: 'Win Totals (Edge Analytics)', type: 'Tab', icon: '🏆', action: () => { window.open('https://edgeplay-analytics.pages.dev/win-totals','_blank'); closeCommandPalette(); } },
     { label: 'Matchup Center (Pro Preview & Next Gen Stats)', type: 'Tab', icon: '⚔️', action: () => { showTab('matchup'); closeCommandPalette(); } },

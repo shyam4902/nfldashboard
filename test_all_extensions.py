@@ -163,39 +163,22 @@ with sync_playwright() as p:
     page.wait_for_timeout(500)
     page.screenshot(path=f"{SCREENSHOT_DIR}/12_teams_overview.png")
 
-    # 3. Test Deep Head-to-Head Player Comparison Modal
-    print("Testing Deep Player Comparison Modal...")
-    page.evaluate("async () => { await openPlayerCompareModal('Josh Allen', 'Lamar Jackson'); }")
-    page.wait_for_selector("#playerCompareContent svg", timeout=5000)
-    page.wait_for_timeout(1000)
-    page.screenshot(path=f"{SCREENSHOT_DIR}/08_player_comparison_deep.png")
-    comp_content = page.inner_text("#playerCompareContent")
-    has_radar = page.locator("#playerCompareContent svg").count() > 0
-    has_stat_table = "Direct Stat-by-Stat Delta Comparison" in comp_content or "DIRECT STAT-BY-STAT" in comp_content.upper()
-    has_rivals = "Quick Rivals" in comp_content or "QUICK RIVALS" in comp_content.upper()
-    if "Josh Allen" in comp_content and "Lamar Jackson" in comp_content and has_radar and has_stat_table and has_rivals:
-        successes.append("Deep Player Comparison rendered side-by-side hero cards, dual SVG radar chart, stat delta table with advantage indicators, and rival pills")
+    # 3. Player compare view (#players/<a>/<b>, replaced the modal 2026-11-15).
+    # The pickers and empty state need no network; the ESPN-backed body is
+    # covered by nfl/nfl-lib.test.mjs (comparePlayerTotals, recentGames).
+    print("Testing Player Compare view...")
+    page.locator('a.hdr-btn[href="#players"]').click()
+    page.wait_for_selector("#nvPcAInput", timeout=5000)
+    comp_content = page.inner_text("#nflPlayers")
+    if (page.locator("#tab-players").is_visible() and page.locator("#nvPcBInput").count() == 1
+            and "two NFL players" in comp_content and page.locator("#playerCompareModal").count() == 0
+            and "Quick Rivals" not in page.content()):
+        successes.append("Player Compare opens the #players view with two ESPN search pickers; the old modal and rival lists are gone")
     else:
-        failures.append(f"Player comparison modal missing key deep metrics or radar (radar={has_radar}, table={has_stat_table}, rivals={has_rivals})")
-
-    # Regression: compare search datalists must contain ALL player names, not
-    # just the first 200 alphabetically (bug: only A-D names populated).
-    p1_values = page.locator("#pCompareList1 option").evaluate_all("els => els.map(e => e.value)")
-    p2_values = page.locator("#pCompareList2 option").evaluate_all("els => els.map(e => e.value)")
-    if (len(p1_values) > 200 and len(p2_values) > 200
-            and "Justin Jefferson" in p1_values and "Patrick Mahomes" in p1_values
-            and "Justin Jefferson" in p2_values):
-        successes.append("Compare search datalists include all player names (no A-name truncation)")
-    else:
-        failures.append(f"Compare search datalist truncated (p1 opts={len(p1_values)}, p2 opts={len(p2_values)})")
-
-    # Test clicking a quick rival in compare modal
-    page.locator("button", has_text="vs Patrick Mahomes").first.click()
-    page.wait_for_timeout(600)
-    page.screenshot(path=f"{SCREENSHOT_DIR}/08_player_comparison_mahomes.png")
-
-    page.locator("#playerCompareModal .roster-close").click()
-    page.wait_for_timeout(500)
+        failures.append("Player Compare header link did not open the #players view")
+    page.screenshot(path=f"{SCREENSHOT_DIR}/08_player_compare_view.png")
+    page.evaluate("showTab('home')")
+    page.wait_for_timeout(300)
 
     # 4. Test Universal Player Modal
     print("Testing Universal Player Modal...")

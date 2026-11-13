@@ -235,7 +235,7 @@ const GROUP_ORDER = {
   qb: ['passing', 'rushing'],
   rb: ['rushing', 'receiving'],
   rec: ['receiving', 'rushing'],
-  def: ['defensive', 'defensiveInterceptions', 'interceptions'],
+  def: ['defensive', 'tackles', 'defensiveInterceptions', 'interceptions'],
   k: ['kicking'],
   p: ['punting'],
 };
@@ -275,6 +275,84 @@ export function heroStats(overview, pos) {
   }
   if (picked.length) return picked;
   return columns.map((c, i) => ({ label: c.label, value: season[i] })).filter((_, i) => has(i)).slice(0, 6);
+}
+
+/* ── Player compare (#players/<a>/<b>) ──────────────────────────────────── */
+
+// The regular season from a parsed game log, else its newest season type.
+export function regularSeason(log) {
+  const seasons = arr(log?.seasons);
+  return seasons.find((s) => /regular season/i.test(s.name)) || seasons[0] || null;
+}
+
+// The year a game log's regular season belongs to ("2025 Regular Season"),
+// or null. ESPN falls back to a player's last season with games, so two logs
+// can be from different years.
+export function seasonYear(log) {
+  const m = /^(\d{4})/.exec(str(regularSeason(log)?.name));
+  return m ? Number(m[1]) : null;
+}
+
+// Giveaways: fewer is better. Keyed by group so a defender's interceptions
+// still count up.
+const LOWER_BETTER = new Set(['passing.interceptions', 'passing.sacks', 'fumbles.fumbles', 'fumbles.fumblesLost',
+  'rushing.fumbles', 'rushing.fumblesLost', 'receiving.fumbles', 'receiving.fumblesLost']);
+
+// Two players' regular-season totals side by side, one block per stat group:
+// player A's groups in A's position order, then any group only B has. Rows
+// match on ESPN's stat name; a row neither player has is dropped. `lead` is
+// the better side when both values are numbers and differ, else ''; `share`
+// is the centre-out bar length for each side (barShares).
+export function comparePlayerTotals(sideA, sideB) {
+  const sides = [sideA, sideB].map((side) => {
+    const log = side?.log;
+    const season = regularSeason(log);
+    return { log, pos: side?.pos, totals: season?.totals || null };
+  });
+  const valueOf = (side, groupName, statName) => {
+    if (!side.totals) return null;
+    const g = arr(side.log?.groups).find((x) => x.name === groupName);
+    if (!g) return null;
+    for (let i = g.start; i < g.start + g.count; i++) {
+      if (side.log.columns[i]?.name === statName) return side.totals[i] ?? null;
+    }
+    return null;
+  };
+  const groups = [];
+  for (const side of sides) {
+    if (!side.totals) continue;
+    for (const g of orderGroups(side.log.groups, side.pos)) {
+      let block = groups.find((x) => x.name === g.name);
+      if (!block) groups.push(block = { name: g.name, label: g.label, cols: [] });
+      for (let i = g.start; i < g.start + g.count; i++) {
+        const col = side.log.columns[i];
+        if (col?.name && !block.cols.some((c) => c.name === col.name)) block.cols.push(col);
+      }
+    }
+  }
+  return groups.map((g) => {
+    const rows = g.cols.map((col) => {
+      const a = valueOf(sides[0], g.name, col.name);
+      const b = valueOf(sides[1], g.name, col.name);
+      const na = num(a);
+      const nb = num(b);
+      const lower = LOWER_BETTER.has(g.name + '.' + col.name);
+      const lead = na != null && nb != null && na !== nb ? ((lower ? na < nb : na > nb) ? 'a' : 'b') : '';
+      return { key: col.name, label: col.label, a, b, lead, share: barShares(na, nb, lower) };
+    }).filter((r) => [r.a, r.b].some((v) => v != null && !/^[-—]$/.test(v)));   // ESPN sends '-' for none
+    return { name: g.name, label: g.label, rows };
+  }).filter((g) => g.rows.length);
+}
+
+// The newest regular-season games with only the player's own stat group, so a
+// QB shows passing and a corner shows defense. `cols[].i` indexes game.stats.
+export function recentGames(log, pos, count = 5) {
+  const season = regularSeason(log);
+  if (!season) return null;
+  const g = orderGroups(log.groups, pos)[0];
+  if (!g) return null;
+  const cols = Array.from({ length: g.count }, (_, k) => ({ label: log.columns[g.start + k].label, i: g.start + k }));
+  return { label: g.label, cols, games: season.games.slice(0, count) };
 }
 
 /* ── Team compare ───────────────────────────────────────────────────────── */

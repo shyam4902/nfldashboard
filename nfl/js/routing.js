@@ -7,7 +7,7 @@ function showTab(tab){
     else{el.classList.add('hidden');el.style.animation='';}
   });
   document.querySelectorAll('.tab-btn').forEach(btn=>{btn.classList.remove('active');});
-  const navTab = { matchup: 'schedule', compare: 'teams', team: 'teams', player: 'league' }[tab] || tab;
+  const navTab = { matchup: 'schedule', compare: 'teams', team: 'teams', player: 'league', players: 'league' }[tab] || tab;
   const activeTab = document.querySelector(`[data-tab="${navTab}"]`);
   if (activeTab) {
     activeTab.classList.add('active');
@@ -35,7 +35,7 @@ function showTab(tab){
 // ═══════════════════════════════════════════════════════════
 // URL HASH ROUTING - shareable tabs, working back button
 // ═══════════════════════════════════════════════════════════
-const ROUTABLE_TABS = ['home', 'schedule', 'teams', 'team', 'league', 'matchup', 'compare', 'player'];
+const ROUTABLE_TABS = ['home', 'schedule', 'teams', 'team', 'league', 'matchup', 'compare', 'player', 'players'];
 let suppressHashRoute = false;
 
 // Mirror the current tab into the address bar. Matchup carries its game id
@@ -55,6 +55,7 @@ async function applyHash() {
   const [tab, arg, arg2] = (location.hash || '').replace(/^#/, '').split('/');
   if (tab === 'compare') return showNflCompare(arg, arg2);
   if (tab === 'player') return showNflPlayer(arg);
+  if (tab === 'players') return showNflPlayers(arg, arg2);
   if (tab === 'team') return showNflTeam(arg, arg2);
   if (tab === 'matchup' && arg) {
     await loadSchedule();                // deep link needs the game list first

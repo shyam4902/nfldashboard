@@ -1,5 +1,6 @@
 // ═══════════════════════════════════════════════════════════
-// TEAM COMPARE (#compare/<A>/<B>) and PLAYER PAGE (#player/<espnId>)
+// TEAM COMPARE (#compare/<A>/<B>), PLAYER PAGE (#player/<espnId>) and
+// PLAYER COMPARE (#players/<idA>/<idB>)
 // ═══════════════════════════════════════════════════════════
 // Same grammar as /nba/: dark chrome, team colour on the hero blocks, bars
 // and chips, gold only on tabs. The rest of the NFL page keeps its theme.
@@ -13,7 +14,7 @@
 // block out or says it could not load; nothing is filled in.
 const NFL_WEB = 'https://site.web.api.espn.com/apis/common/v3/sports/football/nfl';
 const NFL_SEARCH_API = 'https://site.web.api.espn.com/apis/common/v3/search';
-const NFL_VIEW_HASH = { compare: '#compare', player: '#player' };
+const NFL_VIEW_HASH = { compare: '#compare', player: '#player', players: '#players' };
 let nflLib = null;
 let nflViewToken = 0;
 
@@ -22,7 +23,7 @@ function nflViewHash(tab){
 }
 
 async function nflLibLoad(){
-  nflLib = nflLib || await import('/nfl/nfl-lib.js?v=20261111b');
+  nflLib = nflLib || await import('/nfl/nfl-lib.js?v=20261115a');
   return nflLib;
 }
 
@@ -283,7 +284,7 @@ async function nflSearchRun(prefix, query){
     nflSearchPaint(prefix, players.length ? players.map(p => {
       const team = nflTeamByAbbr(p.teamAbbr);
       const shot = p.headshot ? '<img src="' + homeEsc(nflLib.smallImg(p.headshot, 56, 42)) + '" alt="" width="28" height="28" loading="lazy" decoding="async" onerror="this.remove()">' : '';
-      return '<a class="nv-opt" role="option" href="#player/' + homeEsc(p.id) + '" style="--c:' + homeEsc((team && team.primary_color) || '#3b4261') + '">' +
+      return '<a class="nv-opt" role="option" href="' + homeEsc(st.href ? st.href(p.id) : '#player/' + p.id) + '" style="--c:' + homeEsc((team && team.primary_color) || '#3b4261') + '">' +
         '<span class="hs">' + shot + '</span><span class="nm">' + homeEsc(p.name) + '</span><span class="tm">' + homeEsc(p.teamAbbr || 'FA') + '</span></a>';
     }).join('') : '<div class="nv-msg">No NFL players match "' + homeEsc(q) + '".</div>');
   } catch (err) {
@@ -292,11 +293,14 @@ async function nflSearchRun(prefix, query){
   }
 }
 
-function wireNflSearch(prefix){
+// `href` maps a picked ESPN id to the hash to open; the default is #player/<id>.
+// `quiet` skips the opening search for a box prefilled with a chosen name.
+function wireNflSearch(prefix, href, quiet){
   const input = document.getElementById(prefix + 'Input');
   const wrap = document.getElementById(prefix + 'Wrap');
   if (!input || !wrap) return;
   const st = nflSearchState[prefix] || (nflSearchState[prefix] = {});
+  st.href = href || null;
   input.addEventListener('input', () => {
     clearTimeout(st.timer);
     st.timer = setTimeout(() => nflSearchRun(prefix, input.value), 250);
@@ -315,7 +319,7 @@ function wireNflSearch(prefix){
       if (pick) location.hash = pick.getAttribute('href');
     }
   });
-  if (input.value.trim().length >= 2) nflSearchRun(prefix, input.value);
+  if (!quiet && input.value.trim().length >= 2) nflSearchRun(prefix, input.value);
 }
 
 // One outside-click handler for every search box, so re-renders add nothing.
@@ -341,8 +345,13 @@ function renderNflSearchInto(id, prefix){
 // results instead of guessing.
 async function openNflPlayerFromEl(el, ev){
   if (ev) { ev.stopPropagation(); ev.preventDefault(); }
-  const name = el.getAttribute('data-name') || '';
-  const team = nflTeamByName(el.getAttribute('data-team') || '');
+  return openNflPlayerByName(el.getAttribute('data-name') || '', el.getAttribute('data-team') || '');
+}
+
+// `compare` opens #players/<id> with the player as A instead of #player/<id>.
+async function openNflPlayerByName(name, teamName, compare){
+  const team = nflTeamByName(teamName || '');
+  if (typeof closePlayerModal === 'function') closePlayerModal();
   if (typeof closeRoster === 'function') closeRoster();
   const token = ++nflViewToken;
   NFL_VIEW_HASH.player = '#player';
@@ -358,14 +367,14 @@ async function openNflPlayerFromEl(el, ev){
   } catch (err) { match = null; }
   if (token !== nflViewToken) return;
   if (match) {
-    const target = '#player/' + match.id;
-    if (location.hash === target) showNflPlayer(match.id);   // no hashchange fires for the same hash
+    const target = (compare ? '#players/' : '#player/') + match.id;
+    if (location.hash === target) applyHash();   // no hashchange fires for the same hash
     else location.hash = target;
     return;
   }
   host.innerHTML = nflSearchHTML('nvPlayerSearch', name) +
     nflState('ESPN search has no single NFL match for ' + name + (team ? ' (' + team.abbr + ')' : '') + '. Pick from the results above.');
-  wireNflSearch('nvPlayerSearch');
+  wireNflSearch('nvPlayerSearch', compare ? id => '#players/' + id : null);
 }
 
 function nflPlayerHeroHTML(athlete, look, tiles){
@@ -385,6 +394,7 @@ function nflPlayerHeroHTML(athlete, look, tiles){
       : (athlete.team.name ? '<span class="pl-team">' + homeEsc(athlete.team.name) + '</span>' : '')) +
     (facts ? '<div class="pl-facts">' + facts + '</div>' : '') +
     (athlete.status && athlete.status !== 'Active' ? '<div class="pl-facts">' + homeEsc(athlete.status) + '</div>' : '') +
+    '<a class="pl-cmp" href="#players/' + homeEsc(athlete.id) + '">Compare with another player →</a>' +
     '</div>' + shot + '</div>' +
     (tileHTML ? '<div class="pl-tiles" aria-label="Regular season">' + tileHTML + '</div>' : '') + '</div>';
 }
@@ -499,4 +509,138 @@ async function showNflPlayer(id){
     (sections || nflState('ESPN has no 2026 statistics for this player yet.')) +
     (missing.length ? '<p class="nv-note">The ' + missing.join(' and ') + ' did not load from ESPN.</p>' : '');
   wireNflSearch('nvPlayerSearch');
+}
+
+/* ── Player compare (#players/<idA>/<idB>) ─────────────────────────────── */
+
+// Two ESPN players side by side: athlete + game log for each, regular-season
+// totals matched stat by stat (nflLib.comparePlayerTotals), and each player's
+// newest games in their own stat group. Nothing is filled in for a player
+// ESPN has no numbers for; the row shows a dash and nobody is marked.
+function nflPlayersHash(a, b){
+  return '#players' + (a ? '/' + a : '') + (a && b ? '/' + b : '');
+}
+
+function nflPlayersPickHTML(nameA, nameB, canSwap){
+  const field = (prefix, label, value) => '<div class="pc-field"><span class="pc-lbl">' + label + '</span>' + nflSearchHTML(prefix, value) + '</div>';
+  return '<div class="pc-pick">' + field('nvPcA', 'Player A', nameA) +
+    '<button type="button" class="nv-swap" onclick="nflPlayersSwap()" title="Swap players" aria-label="Swap players"' + (canSwap ? '' : ' disabled') + '>⇄</button>' +
+    field('nvPcB', 'Player B', nameB) + '</div>';
+}
+
+function nflPlayersSwap(){
+  const [, a, b] = (location.hash || '').replace(/^#/, '').split('/');
+  if (a && b) location.hash = nflPlayersHash(b, a);
+}
+
+async function nflPlayerEntry(id){
+  const base = NFL_WEB + '/athletes/' + id;
+  const [athlete, log] = await Promise.allSettled([nflFetchJson(base), nflFetchJson(base + '/gamelog')]);
+  const parsed = athlete.status === 'fulfilled' ? nflLib.parseNflAthlete(athlete.value) : null;
+  if (!parsed || !parsed.name) throw new Error('athlete ' + id);
+  return { id, athlete: parsed, log: log.status === 'fulfilled' ? nflLib.parseNflGameLog(log.value) : null, logFailed: log.status !== 'fulfilled' };
+}
+
+function nflSurname(name){
+  const parts = String(name || '').split(' ');
+  return parts.length > 1 ? parts.slice(1).join(' ') : parts[0];
+}
+
+function nflPcSideHTML(entry, look, which){
+  const a = entry.athlete;
+  const season = nflLib.regularSeason(entry.log);
+  const tiles = (season ? [{ label: 'GP', value: String(season.games.length) }] : []).concat(
+    season && season.totals ? nflLib.heroStats({ columns: entry.log.columns, season: season.totals }, a.pos).slice(0, 4) : []);
+  const chip = nflLib.contrastRatio(look.fill, '#ffffff') >= nflLib.contrastRatio(look.fill, '#000000') ? 'rgba(0,0,0,0.24)' : 'rgba(255,255,255,0.4)';
+  const shot = a.headshot
+    ? '<span class="pc-shot"><img src="' + homeEsc(nflLib.smallImg(a.headshot, 240, 175)) + '" alt="" width="120" height="88" decoding="async" onerror="this.remove()"></span>'
+    : '';
+  const facts = [a.team.abbr || 'FA', a.pos, a.jersey ? '#' + a.jersey : '', a.age == null ? '' : a.age + ' yrs', a.experience].filter(Boolean).join(' · ');
+  return '<a class="pc-side ' + which + '" href="#player/' + homeEsc(entry.id) + '" style="background:' + look.fill + ';color:' + look.ink + ';--chip:' + chip + '" title="Open ' + homeEsc(a.name) + '">' +
+    '<span class="pc-top"><span class="pc-who"><span class="pc-nm">' + homeEsc(a.name) + '</span><span class="pc-facts">' + homeEsc(facts) + '</span>' +
+    (a.status && a.status !== 'Active' ? '<span class="pc-facts">' + homeEsc(a.status) + '</span>' : '') + '</span>' + shot + '</span>' +
+    (tiles.length ? '<span class="pc-tiles">' + tiles.map(t => '<span><i>' + homeEsc(t.label) + '</i><b>' + homeEsc(t.value) + '</b></span>').join('') + '</span>' : '') + '</a>';
+}
+
+function nflPcTableHTML(groups, left, right, looks){
+  if (!groups.length) return '';
+  const name = (entry, look) => '<span class="pc-who-ab" style="color:' + nflLib.readableOn(look.fill, '#14161a') + '">' + homeEsc(nflSurname(entry.athlete.name)) + '</span>';
+  const val = (v, which, lead) => '<b class="pc-v ' + which + (lead === which ? ' lead' : '') + '">' + homeEsc(v == null ? '—' : v) + '</b>';
+  const bar = (which, amount, fill, lead) => '<span class="pc-bar ' + which + (lead === which ? ' lead' : '') + '"><i style="width:' + Math.round(amount * 100) + '%;background:' + fill + '"></i></span>';
+  const body = groups.map(g => (g.label ? '<div class="pc-grp">' + homeEsc(g.label) + '</div>' : '') + g.rows.map(r =>
+    '<div class="pc-tr">' + val(r.a, 'a', r.lead) + bar('a', r.share.a, looks[0].fill, r.lead) + '<span class="pc-k">' + homeEsc(r.label) + '</span>' +
+    bar('b', r.share.b, looks[1].fill, r.lead) + val(r.b, 'b', r.lead) + '</div>').join('')).join('');
+  const season = nflLib.regularSeason(left.log) || nflLib.regularSeason(right.log);
+  return '<section class="card pc-card" aria-label="Season totals compared">' +
+    '<div class="pc-th"><span class="a">' + name(left, looks[0]) + '</span><h2>' + homeEsc(season ? season.name : 'Regular season') + ' totals</h2><span class="b">' + name(right, looks[1]) + '</span></div>' +
+    body + '<p class="nv-note">ESPN game logs, regular season. The brighter value and full bar mark the better total; fewer interceptions, sacks and fumbles is better. A dash means ESPN has no number for that player.</p></section>';
+}
+
+function nflPcRecentHTML(entry, look){
+  const r = nflLib.recentGames(entry.log, entry.athlete.pos, 5);
+  if (!r || !r.games.length) return '';
+  const head = '<tr><th class="sticky-col">Wk</th><th class="l">Opp</th><th class="l">Result</th>' + r.cols.map(c => '<th>' + homeEsc(c.label) + '</th>').join('') + '</tr>';
+  const body = r.games.map(g => {
+    const opp = nflTeamByAbbr(g.opponentAbbr);
+    const sw = '<i class="tm-sw" style="background:' + homeEsc((opp && opp.primary_color) || '#3b4261') + '"></i>';
+    const res = /^[WLT]$/.test(g.result) ? '<span class="tm-wl ' + g.result + '">' + g.result + '</span>' : '';
+    return '<tr><td class="sticky-col">' + homeEsc(g.week == null ? '' : g.week) + '</td><td class="opp">' + sw + homeEsc((g.atVs ? g.atVs + ' ' : '') + g.opponentAbbr) + '</td>' +
+      '<td class="res">' + res + homeEsc(g.score) + '</td>' + r.cols.map(c => '<td>' + homeEsc(g.stats[c.i] == null ? '—' : g.stats[c.i]) + '</td>').join('') + '</tr>';
+  }).join('');
+  return '<section class="card pc-card pc-recent" style="--c:' + look.fill + '"><div class="ld-h"><h2>' + homeEsc(nflSurname(entry.athlete.name)) + ' · last ' + r.games.length + '</h2><span>' + homeEsc(r.label || 'Games') + '</span></div>' +
+    '<div class="nv-table"><table class="nv-log pc-log"><caption class="sr-only">' + homeEsc(entry.athlete.name) + ' recent games</caption><thead>' + head + '</thead><tbody>' + body + '</tbody></table></div></section>';
+}
+
+async function showNflPlayers(argA, argB){
+  const token = ++nflViewToken;
+  const a = String(argA || '').replace(/[^0-9]/g, '');
+  const b = String(argB || '').replace(/[^0-9]/g, '');
+  NFL_VIEW_HASH.players = nflPlayersHash(a, b);
+  showTab('players');
+  const host = document.getElementById('nflPlayers');
+  if (!host) return;
+  const paint = (nameA, nameB, rest) => {
+    host.innerHTML = nflPlayersPickHTML(nameA, nameB, a && b) + rest;
+    wireNflSearch('nvPcA', id => nflPlayersHash(id, b), true);
+    wireNflSearch('nvPcB', id => nflPlayersHash(a || id, a ? id : ''), true);
+  };
+  document.title = 'Player compare · Matchup Board';
+  if (!a || !b) {
+    paint('', '', nflState(a ? 'Pick the second player to compare.' : 'Search ESPN for two NFL players to compare their 2026 seasons.'));
+    // The first pick fills A and the second fills B, so a name lands on A's box.
+    if (a) nflLibLoad().then(() => nflPlayerEntry(a)).then(e => {
+      const input = document.getElementById('nvPcAInput');
+      if (token === nflViewToken && input && !input.value) input.value = e.athlete.name;
+    }).catch(() => {});
+    return;
+  }
+  paint('', '', nflState('Loading both players…'));
+  let left, right;
+  try {
+    await nflLibLoad();
+    [left, right] = await Promise.all([nflPlayerEntry(a), nflPlayerEntry(b)]);
+  } catch (err) {
+    if (token === nflViewToken) paint('', '', nflState('A player did not load from ESPN. Try again, or pick another player.'));
+    return;
+  }
+  if (token !== nflViewToken) return;
+
+  // Compare one season: the newer of the two logs. A player whose last games
+  // are from an earlier year gets no numbers here, and a note says so.
+  const year = Math.max(nflLib.seasonYear(left.log) || 0, nflLib.seasonYear(right.log) || 0);
+  const stale = [left, right].filter(e => e.log && nflLib.seasonYear(e.log) !== year && year);
+  const staleNote = stale.map(e => 'ESPN has no ' + year + ' regular-season games for ' + e.athlete.name +
+    (nflLib.seasonYear(e.log) ? '; the last logged season is ' + nflLib.seasonYear(e.log) : '') + '.').join(' ');
+  stale.forEach(e => { e.log = null; });
+  const looks = nflLib.separateLooks(nflLib.teamLook(nflTeamByAbbr(left.athlete.team.abbr)), nflLib.teamLook(nflTeamByAbbr(right.athlete.team.abbr)));
+  const groups = nflLib.comparePlayerTotals({ log: left.log, pos: left.athlete.pos }, { log: right.log, pos: right.athlete.pos });
+  const recent = nflPcRecentHTML(left, looks[0]) + nflPcRecentHTML(right, looks[1]);
+  const missing = [left, right].filter(e => e.logFailed).map(e => e.athlete.name);
+  document.title = nflSurname(left.athlete.name) + ' vs ' + nflSurname(right.athlete.name) + ' · Matchup Board';
+  paint(left.athlete.name, right.athlete.name,
+    '<div class="pc-bug">' + nflPcSideHTML(left, looks[0], 'a') + '<span class="pc-vs">vs</span>' + nflPcSideHTML(right, looks[1], 'b') + '</div>' +
+    (staleNote ? '<p class="nv-note pc-stale">' + homeEsc(staleNote) + '</p>' : '') +
+    '<div class="pc-wrap"><div>' + (nflPcTableHTML(groups, left, right, looks) || nflState('ESPN has no 2026 regular-season totals for either player yet.')) + '</div>' +
+    (recent ? '<div>' + recent + '</div>' : '') + '</div>' +
+    (missing.length ? '<p class="nv-note">The game log did not load from ESPN for ' + homeEsc(missing.join(' and ')) + '.</p>' : ''));
 }
