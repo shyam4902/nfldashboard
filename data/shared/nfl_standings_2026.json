@@ -1,7 +1,7 @@
 {
   "artifact": "nfl_standings",
   "season": 2026,
-  "generated_at": "2026-11-13T12:20:06Z",
+  "generated_at": "2026-11-14T12:20:05Z",
   "through_week": 10,
   "completed_games": 137,
   "completed_weeks": [
