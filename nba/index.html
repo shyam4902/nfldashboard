@@ -672,7 +672,7 @@ body.sc-wide .wrap { max-width: none; padding: 0 24px; }
   border: 1px solid var(--border-card);
   border-radius: 10px;
 }
-.ins-slate { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 430px), 1fr)); gap: 22px 18px; align-items: start; }
+.ins-slate { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 265px), 1fr)); gap: 20px 16px; align-items: start; }
 .ins-frame {
   position: relative;
   z-index: 1;
@@ -682,7 +682,6 @@ body.sc-wide .wrap { max-width: none; padding: 0 24px; }
   outline: none;
   border-radius: 8px;
   transition: z-index 0s linear 0.28s;
-  container-type: inline-size;
 }
 .ins-frame:focus-visible .ins-fbody { outline: 2px solid var(--accent-ui); outline-offset: 3px; }
 .ins-fl { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 9px; white-space: nowrap; min-height: 12px; }
@@ -700,7 +699,7 @@ body.sc-wide .wrap { max-width: none; padding: 0 24px; }
 }
 .ins-st.live { color: var(--text-main); }
 .ins-st .dot { width: 6px; height: 6px; border-radius: 999px; background: currentColor; animation: pulse 1.1s ease-in-out infinite; flex-shrink: 0; }
-.ins-cap { display: none; margin-right: auto; font: 600 var(--t0)/1 var(--font-sans); letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-faint); }
+.ins-cap { flex: none; margin-right: auto; font: 600 var(--t0)/1 var(--font-sans); letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-faint); }
 .ins-odds { min-width: 0; overflow: hidden; text-overflow: ellipsis; font: 600 var(--t1)/1 var(--font-sans); color: var(--text-muted); }
 .ins-odds b { font-weight: 800; color: var(--text-main); }
 .ins-fwrap {
@@ -719,8 +718,8 @@ body.sc-wide .wrap { max-width: none; padding: 0 24px; }
 .ins-band {
   position: relative;
   display: grid;
-  gap: 9px;
-  padding: 12px 14px 11px;
+  gap: 8px;
+  padding: 10px 14px 10px;
   overflow: hidden;
   transition: filter 0.25s ease-out;
 }
@@ -733,7 +732,9 @@ body.sc-wide .wrap { max-width: none; padding: 0 24px; }
   transform: translateX(-100%);
   transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
 }
-.ins-bh { display: grid; grid-template-columns: auto auto minmax(0, 1fr) auto; align-items: center; gap: 9px; }
+.ins-bh { display: grid; grid-template-columns: auto auto auto auto minmax(0, 1fr); align-items: center; gap: 9px; }
+/* Owner, 2026-11-15: the score sits next to the team, not pushed to the edge. */
+.ins-band .sc { margin-left: 6px; }
 .ins-band .ab { font: 700 var(--t4)/1 var(--font-serif); letter-spacing: -0.01em; }
 .ins-band .rc { min-width: 0; font: 600 var(--t1)/1 var(--font-sans); opacity: 1; }
 .ins-band .sc { font: 800 var(--t6)/0.9 var(--font-serif); letter-spacing: -0.02em; }
@@ -743,11 +744,11 @@ body.sc-wide .wrap { max-width: none; padding: 0 24px; }
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 3px 8px;
-  padding-top: 8px;
+  padding-top: 7px;
   border-top: 1px solid rgba(255, 255, 255, 0.2);
   border-top: 1px solid color-mix(in srgb, currentColor 24%, transparent);
 }
-.ins-ld .cap { grid-column: 1 / -1; font: 700 var(--t0)/1 var(--font-sans); letter-spacing: 0.08em; text-transform: uppercase; opacity: 1; }
+.ins-ld .cap { display: none; grid-column: 1 / -1; font: 700 var(--t0)/1 var(--font-sans); letter-spacing: 0.08em; text-transform: uppercase; opacity: 1; }
 .ins-ld .c { min-width: 0; display: grid; grid-template-columns: auto minmax(0, 1fr); column-gap: 5px; align-items: baseline; }
 .ins-ld .lk { font: 700 var(--t0)/1 var(--font-sans); letter-spacing: 0.06em; opacity: 1; }
 .ins-ld .c b { font: 700 var(--t3)/1 var(--font-serif); }
@@ -766,20 +767,6 @@ body.sc-wide .wrap { max-width: none; padding: 0 24px; }
 .ins-frame { cursor: pointer; }
 .ins-frame.sel .ins-fbody { outline: 1.5px solid var(--accent-ui); outline-offset: 3px; }
 .ins-frame:not(.sel):hover .ins-fbody { outline: 1px solid var(--border-strong); outline-offset: 3px; }
-
-/* Wide frames (two to a row on desktop): each team is one row, so a game is
-   two short bands instead of two tall ones. Columns line up across both bands:
-   logo, abbr, record, the three leaders, score. The leader caption moves up to
-   the frame's header line. */
-@container (min-width: 430px) {
-  .ins-band { grid-template-columns: 32px 3.2em 3.6em minmax(0, 1fr) minmax(2.2em, auto); align-items: center; column-gap: 12px; padding: 10px 16px 10px 14px; }
-  .ins-bh { display: contents; }
-  .ins-band .sc { grid-column: 5; grid-row: 1; text-align: right; font-size: var(--t5); }
-  .ins-band .rc { white-space: nowrap; }
-  .ins-ld { grid-column: 4; grid-row: 1; padding: 0 0 0 14px; border-top: 0; border-left: 1px solid color-mix(in srgb, currentColor 24%, transparent); gap: 2px 14px; }
-  .ins-ld .cap { display: none; }
-  .ins-cap { display: inline; }
-}
 
 /* Detail drawer. Height animates 0fr to 1fr, so the content is never measured
    in JS. Wide screens lay it over what is below the frame (absolute, no reflow),
@@ -977,7 +964,9 @@ body.sc-wide .wrap { max-width: none; padding: 0 24px; }
   .ins-canvas { padding: 16px 14px 20px; }
   .ins-slate { grid-template-columns: minmax(0, 1fr); gap: 22px; }
   .ins-frame.sel .ins-fbody, .ins-frame:not(.sel):hover .ins-fbody { outline: 0; }
-  .ins-band { padding: 13px 14px 12px; }
+  .ins-band { padding: 11px 14px 10px; }
+  .ins-cap { display: none; }
+  .ins-ld .cap { display: block; }
   .ins-band .ab { font-size: var(--t4); }
   .ins-band .sc { font-size: var(--t6); }
   .ins-ld .c b { font-size: var(--t3); }
@@ -1965,7 +1954,7 @@ function gameCardHTML(game, colors, selected, standings) {
     (selected ? ' aria-current="true"' : '') +
     ' aria-label="' + esc(game.away.name + ' at ' + game.home.name) + '">' +
     '<div class="ins-fl"><span class="ins-st' + (live ? ' live' : '') + '">' + (live ? '<i class="dot"></i>' : '') + esc(status) + '</span>' +
-    (kind ? '<span class="ins-cap">Leaders · ' + esc(leaderCaption(kind, game).toLowerCase()) + '</span>' : '') +
+    (kind ? '<span class="ins-cap">' + esc(leaderCaption(kind, game)) + '</span>' : '') +
     oddsHeadHTML(game) + '</div>' +
     '<div class="ins-fwrap"><div class="ins-fbody">' + insBandHTML(game.away, game, colors) + insBandHTML(game.home, game, colors) + '</div>' +
     
