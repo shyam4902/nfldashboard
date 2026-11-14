@@ -774,7 +774,9 @@ body.sc-wide .wrap { max-width: none; padding: 0 24px; }
 @container (min-width: 430px) {
   /* Both bands share one set of columns (subgrid), so the abbr column is as
      wide as the longer of the two teams and the scores line up. */
-  .ins-fbody { grid-template-columns: auto auto minmax(2.4em, auto) minmax(0, 1fr); gap: 1px 16px; }
+  /* Stats take the share of the tile they had in the close-up Shyam picked (a
+     397px close-up, 2026-11-15); the rest widens the gap after the score. */
+  .ins-fbody { grid-template-columns: auto auto minmax(2.4em, 1fr) minmax(0, 56%); gap: 1px 16px; }
   .ins-band { grid-column: 1 / -1; grid-template-columns: 32px 4.3em minmax(2.4em, auto) minmax(0, 1fr); grid-template-columns: subgrid; grid-template-rows: auto auto; align-items: center; column-gap: 16px; row-gap: 3px; padding: 10px 16px 10px 14px; }
   /* Record sits small under the abbr, not in a column of its own. */
   .ins-band .ins-logo { grid-column: 1; grid-row: 1 / span 2; }
