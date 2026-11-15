@@ -1931,11 +1931,11 @@
       "city": "",
       "kickoff_utc": "2026-11-15T14:30:00Z",
       "tv": "",
-      "winner": null,
-      "away_score": 3,
-      "home_score": 28,
+      "winner": "Detroit Lions",
+      "away_score": 10,
+      "home_score": 35,
       "week": 10,
-      "status": "in_progress"
+      "status": "final"
     },
     {
       "game_id": "2026-11-15-KC-ATL",
@@ -1945,10 +1945,11 @@
       "city": "",
       "kickoff_utc": "2026-11-15T18:00:00Z",
       "tv": "",
-      "winner": null,
-      "away_score": null,
-      "home_score": null,
-      "week": 10
+      "winner": "Kansas City Chiefs",
+      "away_score": 35,
+      "home_score": 13,
+      "week": 10,
+      "status": "final"
     },
     {
       "game_id": "2026-11-15-HOU-CLE",
@@ -1958,10 +1959,11 @@
       "city": "",
       "kickoff_utc": "2026-11-15T18:00:00Z",
       "tv": "",
-      "winner": null,
-      "away_score": null,
-      "home_score": null,
-      "week": 10
+      "winner": "Cleveland Browns",
+      "away_score": 24,
+      "home_score": 27,
+      "week": 10,
+      "status": "final"
     },
     {
       "game_id": "2026-11-15-MIN-GB",
@@ -1971,10 +1973,11 @@
       "city": "",
       "kickoff_utc": "2026-11-15T18:00:00Z",
       "tv": "",
-      "winner": null,
-      "away_score": null,
-      "home_score": null,
-      "week": 10
+      "winner": "Minnesota Vikings",
+      "away_score": 30,
+      "home_score": 10,
+      "week": 10,
+      "status": "final"
     },
     {
       "game_id": "2026-11-15-MIA-IND",
@@ -1984,10 +1987,11 @@
       "city": "",
       "kickoff_utc": "2026-11-15T18:00:00Z",
       "tv": "",
-      "winner": null,
-      "away_score": null,
-      "home_score": null,
-      "week": 10
+      "winner": "Indianapolis Colts",
+      "away_score": 22,
+      "home_score": 24,
+      "week": 10,
+      "status": "final"
     },
     {
       "game_id": "2026-11-15-CAR-NO",
@@ -1997,10 +2001,11 @@
       "city": "",
       "kickoff_utc": "2026-11-15T18:00:00Z",
       "tv": "",
-      "winner": null,
-      "away_score": null,
-      "home_score": null,
-      "week": 10
+      "winner": "Carolina Panthers",
+      "away_score": 20,
+      "home_score": 17,
+      "week": 10,
+      "status": "final"
     },
     {
       "game_id": "2026-11-15-BUF-NYJ",
@@ -2010,10 +2015,11 @@
       "city": "",
       "kickoff_utc": "2026-11-15T18:00:00Z",
       "tv": "",
-      "winner": null,
-      "away_score": null,
-      "home_score": null,
-      "week": 10
+      "winner": "Buffalo Bills",
+      "away_score": 31,
+      "home_score": 12,
+      "week": 10,
+      "status": "final"
     },
     {
       "game_id": "2026-11-15-JAX-TEN",
@@ -2023,10 +2029,11 @@
       "city": "",
       "kickoff_utc": "2026-11-15T18:00:00Z",
       "tv": "",
-      "winner": null,
-      "away_score": null,
-      "home_score": null,
-      "week": 10
+      "winner": "Jacksonville Jaguars",
+      "away_score": 40,
+      "home_score": 23,
+      "week": 10,
+      "status": "final"
     },
     {
       "game_id": "2026-11-15-LA-ARI",
@@ -2037,9 +2044,10 @@
       "kickoff_utc": "2026-11-15T21:05:00Z",
       "tv": "",
       "winner": null,
-      "away_score": null,
-      "home_score": null,
-      "week": 10
+      "away_score": 3,
+      "home_score": 6,
+      "week": 10,
+      "status": "in_progress"
     },
     {
       "game_id": "2026-11-15-SEA-LV",
@@ -2050,9 +2058,10 @@
       "kickoff_utc": "2026-11-15T21:05:00Z",
       "tv": "",
       "winner": null,
-      "away_score": null,
-      "home_score": null,
-      "week": 10
+      "away_score": 7,
+      "home_score": 7,
+      "week": 10,
+      "status": "in_progress"
     },
     {
       "game_id": "2026-11-15-SF-DAL",
@@ -2063,9 +2072,10 @@
       "kickoff_utc": "2026-11-15T21:25:00Z",
       "tv": "",
       "winner": null,
-      "away_score": null,
-      "home_score": null,
-      "week": 10
+      "away_score": 0,
+      "home_score": 3,
+      "week": 10,
+      "status": "in_progress"
     },
     {
       "game_id": "2026-11-15-PIT-CIN",
@@ -3680,5 +3690,5 @@
       "week": 18
     }
   ],
-  "scores_synced_at": "2026-11-15T16:56:47.721Z"
+  "scores_synced_at": "2026-11-15T21:38:55.262Z"
 }
