@@ -1932,9 +1932,10 @@
       "kickoff_utc": "2026-11-15T14:30:00Z",
       "tv": "",
       "winner": null,
-      "away_score": null,
-      "home_score": null,
-      "week": 10
+      "away_score": 3,
+      "home_score": 28,
+      "week": 10,
+      "status": "in_progress"
     },
     {
       "game_id": "2026-11-15-KC-ATL",
@@ -3679,5 +3680,5 @@
       "week": 18
     }
   ],
-  "scores_synced_at": "2026-11-13T06:29:31.323Z"
+  "scores_synced_at": "2026-11-15T16:56:47.721Z"
 }
