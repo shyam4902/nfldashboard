@@ -2,7 +2,7 @@
   "season": 2026,
   "week": 10,
   "total_weeks": 18,
-  "generated": "2026-11-15",
+  "generated": "2026-11-16",
   "source": "nflverse games.csv (matchups, kickoffs, stadiums); Week 1 enriched with TV/city",
   "games": [
     {
@@ -2043,11 +2043,11 @@
       "city": "",
       "kickoff_utc": "2026-11-15T21:05:00Z",
       "tv": "",
-      "winner": null,
-      "away_score": 3,
+      "winner": "Los Angeles Rams",
+      "away_score": 34,
       "home_score": 6,
       "week": 10,
-      "status": "in_progress"
+      "status": "final"
     },
     {
       "game_id": "2026-11-15-SEA-LV",
@@ -2057,11 +2057,11 @@
       "city": "",
       "kickoff_utc": "2026-11-15T21:05:00Z",
       "tv": "",
-      "winner": null,
-      "away_score": 7,
-      "home_score": 7,
+      "winner": "Seattle Seahawks",
+      "away_score": 21,
+      "home_score": 13,
       "week": 10,
-      "status": "in_progress"
+      "status": "final"
     },
     {
       "game_id": "2026-11-15-SF-DAL",
@@ -2071,11 +2071,11 @@
       "city": "",
       "kickoff_utc": "2026-11-15T21:25:00Z",
       "tv": "",
-      "winner": null,
-      "away_score": 0,
-      "home_score": 3,
+      "winner": "San Francisco 49ers",
+      "away_score": 46,
+      "home_score": 40,
       "week": 10,
-      "status": "in_progress"
+      "status": "final"
     },
     {
       "game_id": "2026-11-15-PIT-CIN",
@@ -2086,9 +2086,10 @@
       "kickoff_utc": "2026-11-16T01:20:00Z",
       "tv": "",
       "winner": null,
-      "away_score": null,
-      "home_score": null,
-      "week": 10
+      "away_score": 0,
+      "home_score": 0,
+      "week": 10,
+      "status": "in_progress"
     },
     {
       "game_id": "2026-11-16-LAC-BAL",
@@ -3690,5 +3691,5 @@
       "week": 18
     }
   ],
-  "scores_synced_at": "2026-11-15T21:41:26.125Z"
+  "scores_synced_at": "2026-11-16T01:26:37.185Z"
 }
