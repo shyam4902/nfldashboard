@@ -2085,11 +2085,11 @@
       "city": "",
       "kickoff_utc": "2026-11-16T01:20:00Z",
       "tv": "",
-      "winner": null,
-      "away_score": 0,
-      "home_score": 3,
+      "winner": "Cincinnati Bengals",
+      "away_score": 18,
+      "home_score": 38,
       "week": 10,
-      "status": "in_progress"
+      "status": "final"
     },
     {
       "game_id": "2026-11-16-LAC-BAL",
@@ -3691,5 +3691,5 @@
       "week": 18
     }
   ],
-  "scores_synced_at": "2026-11-16T01:49:31.790Z"
+  "scores_synced_at": "2026-11-16T06:14:43.490Z"
 }
