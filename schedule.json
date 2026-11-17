@@ -2099,11 +2099,11 @@
       "city": "",
       "kickoff_utc": "2026-11-17T01:15:00Z",
       "tv": "",
-      "winner": null,
+      "winner": "Los Angeles Chargers",
       "away_score": 23,
-      "home_score": 13,
+      "home_score": 20,
       "week": 10,
-      "status": "in_progress"
+      "status": "final"
     },
     {
       "game_id": "2026-11-19-IND-HOU",
@@ -3692,5 +3692,5 @@
       "week": 18
     }
   ],
-  "scores_synced_at": "2026-11-17T03:40:20.879Z"
+  "scores_synced_at": "2026-11-17T13:04:13.266Z"
 }
