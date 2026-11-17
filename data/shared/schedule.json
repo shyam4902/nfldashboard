@@ -2353,19 +2353,6 @@
       "week": 12
     },
     {
-      "game_id": "2026-11-29-LV-CLE",
-      "away_team": "Las Vegas Raiders",
-      "home_team": "Cleveland Browns",
-      "venue": "Huntington Bank Field",
-      "city": "",
-      "kickoff_utc": "2026-11-29T18:00:00Z",
-      "tv": "",
-      "winner": null,
-      "away_score": null,
-      "home_score": null,
-      "week": 12
-    },
-    {
       "game_id": "2026-11-29-BAL-HOU",
       "away_team": "Baltimore Ravens",
       "home_team": "Houston Texans",
@@ -2383,6 +2370,19 @@
       "away_team": "New York Giants",
       "home_team": "Indianapolis Colts",
       "venue": "Lucas Oil Stadium",
+      "city": "",
+      "kickoff_utc": "2026-11-29T18:00:00Z",
+      "tv": "",
+      "winner": null,
+      "away_score": null,
+      "home_score": null,
+      "week": 12
+    },
+    {
+      "game_id": "2026-11-29-TEN-JAX",
+      "away_team": "Tennessee Titans",
+      "home_team": "Jacksonville Jaguars",
+      "venue": "EverBank Stadium",
       "city": "",
       "kickoff_utc": "2026-11-29T18:00:00Z",
       "tv": "",
@@ -2418,10 +2418,10 @@
       "week": 12
     },
     {
-      "game_id": "2026-11-29-TEN-JAX",
-      "away_team": "Tennessee Titans",
-      "home_team": "Jacksonville Jaguars",
-      "venue": "EverBank Stadium",
+      "game_id": "2026-11-29-NE-LAC",
+      "away_team": "New England Patriots",
+      "home_team": "Los Angeles Chargers",
+      "venue": "SoFi Stadium",
       "city": "",
       "kickoff_utc": "2026-11-29T21:05:00Z",
       "tv": "",
@@ -2457,10 +2457,10 @@
       "week": 12
     },
     {
-      "game_id": "2026-11-29-NE-LAC",
-      "away_team": "New England Patriots",
-      "home_team": "Los Angeles Chargers",
-      "venue": "SoFi Stadium",
+      "game_id": "2026-11-29-LV-CLE",
+      "away_team": "Las Vegas Raiders",
+      "home_team": "Cleveland Browns",
+      "venue": "Huntington Bank Field",
       "city": "",
       "kickoff_utc": "2026-11-30T01:20:00Z",
       "tv": "",
