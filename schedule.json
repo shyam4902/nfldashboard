@@ -2,7 +2,7 @@
   "season": 2026,
   "week": 11,
   "total_weeks": 18,
-  "generated": "2026-11-19",
+  "generated": "2026-11-20",
   "source": "nflverse games.csv (matchups, kickoffs, stadiums); Week 1 enriched with TV/city",
   "games": [
     {
@@ -2114,9 +2114,10 @@
       "kickoff_utc": "2026-11-20T01:15:00Z",
       "tv": "",
       "winner": null,
-      "away_score": null,
-      "home_score": null,
-      "week": 11
+      "away_score": 3,
+      "home_score": 17,
+      "week": 11,
+      "status": "in_progress"
     },
     {
       "game_id": "2026-11-22-MIA-BUF",
@@ -3692,5 +3693,5 @@
       "week": 18
     }
   ],
-  "scores_synced_at": "2026-11-17T13:04:13.266Z"
+  "scores_synced_at": "2026-11-20T02:58:01.822Z"
 }
