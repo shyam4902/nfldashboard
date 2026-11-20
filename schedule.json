@@ -2113,11 +2113,11 @@
       "city": "",
       "kickoff_utc": "2026-11-20T01:15:00Z",
       "tv": "",
-      "winner": null,
+      "winner": "Houston Texans",
       "away_score": 3,
-      "home_score": 17,
+      "home_score": 26,
       "week": 11,
-      "status": "in_progress"
+      "status": "final"
     },
     {
       "game_id": "2026-11-22-MIA-BUF",
@@ -3693,5 +3693,5 @@
       "week": 18
     }
   ],
-  "scores_synced_at": "2026-11-20T02:58:01.822Z"
+  "scores_synced_at": "2026-11-20T11:17:53.625Z"
 }
