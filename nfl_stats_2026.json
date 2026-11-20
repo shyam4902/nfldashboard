@@ -1,7 +1,7 @@
 {
   "artifact": "nfl_stats",
   "season": 2026,
-  "generated_at": "2026-11-19T12:20:05Z",
+  "generated_at": "2026-11-20T12:20:06Z",
   "source": "Sleeper weekly stats API (api.sleeper.app/v1/stats/nfl/regular) — free, no key; names and team from the Sleeper player catalogue",
   "source_of_points": "schedule.json completed regular-season results",
   "season_kind": "actual",
@@ -10753,6 +10753,20 @@
       "differential": 125
     },
     {
+      "team": "Houston Texans",
+      "abbr": "HOU",
+      "division": "AFC South",
+      "games": 9,
+      "pass_yards": 2469,
+      "rush_yards": 785,
+      "total_yards": 3254,
+      "offensive_tds": 25,
+      "points_for": 259,
+      "points_against": 222,
+      "yards_allowed": 3088,
+      "differential": 37
+    },
+    {
       "team": "Detroit Lions",
       "abbr": "DET",
       "division": "NFC North",
@@ -10823,20 +10837,6 @@
       "differential": 81
     },
     {
-      "team": "Houston Texans",
-      "abbr": "HOU",
-      "division": "AFC South",
-      "games": 9,
-      "pass_yards": 2469,
-      "rush_yards": 785,
-      "total_yards": 3254,
-      "offensive_tds": 25,
-      "points_for": 233,
-      "points_against": 219,
-      "yards_allowed": 3088,
-      "differential": 14
-    },
-    {
       "team": "Green Bay Packers",
       "abbr": "GB",
       "division": "NFC North",
@@ -10893,6 +10893,20 @@
       "differential": -17
     },
     {
+      "team": "Indianapolis Colts",
+      "abbr": "IND",
+      "division": "AFC South",
+      "games": 10,
+      "pass_yards": 1838,
+      "rush_yards": 1209,
+      "total_yards": 3047,
+      "offensive_tds": 20,
+      "points_for": 211,
+      "points_against": 297,
+      "yards_allowed": 3549,
+      "differential": -86
+    },
+    {
       "team": "Baltimore Ravens",
       "abbr": "BAL",
       "division": "AFC North",
@@ -10905,20 +10919,6 @@
       "points_against": 259,
       "yards_allowed": 3254,
       "differential": -50
-    },
-    {
-      "team": "Indianapolis Colts",
-      "abbr": "IND",
-      "division": "AFC South",
-      "games": 10,
-      "pass_yards": 1838,
-      "rush_yards": 1209,
-      "total_yards": 3047,
-      "offensive_tds": 20,
-      "points_for": 208,
-      "points_against": 271,
-      "yards_allowed": 3549,
-      "differential": -63
     },
     {
       "team": "New York Giants",
