@@ -2128,9 +2128,10 @@
       "kickoff_utc": "2026-11-22T18:00:00Z",
       "tv": "",
       "winner": null,
-      "away_score": null,
-      "home_score": null,
-      "week": 11
+      "away_score": 0,
+      "home_score": 3,
+      "week": 11,
+      "status": "in_progress"
     },
     {
       "game_id": "2026-11-22-BAL-CAR",
@@ -2141,9 +2142,10 @@
       "kickoff_utc": "2026-11-22T18:00:00Z",
       "tv": "",
       "winner": null,
-      "away_score": null,
-      "home_score": null,
-      "week": 11
+      "away_score": 9,
+      "home_score": 0,
+      "week": 11,
+      "status": "in_progress"
     },
     {
       "game_id": "2026-11-22-NO-CHI",
@@ -2154,9 +2156,10 @@
       "kickoff_utc": "2026-11-22T18:00:00Z",
       "tv": "",
       "winner": null,
-      "away_score": null,
-      "home_score": null,
-      "week": 11
+      "away_score": 0,
+      "home_score": 3,
+      "week": 11,
+      "status": "in_progress"
     },
     {
       "game_id": "2026-11-22-TEN-DAL",
@@ -2167,9 +2170,10 @@
       "kickoff_utc": "2026-11-22T18:00:00Z",
       "tv": "",
       "winner": null,
-      "away_score": null,
-      "home_score": null,
-      "week": 11
+      "away_score": 0,
+      "home_score": 6,
+      "week": 11,
+      "status": "in_progress"
     },
     {
       "game_id": "2026-11-22-TB-DET",
@@ -2180,9 +2184,10 @@
       "kickoff_utc": "2026-11-22T18:00:00Z",
       "tv": "",
       "winner": null,
-      "away_score": null,
-      "home_score": null,
-      "week": 11
+      "away_score": 0,
+      "home_score": 0,
+      "week": 11,
+      "status": "in_progress"
     },
     {
       "game_id": "2026-11-22-ARI-KC",
@@ -2193,22 +2198,24 @@
       "kickoff_utc": "2026-11-22T18:00:00Z",
       "tv": "",
       "winner": null,
-      "away_score": null,
-      "home_score": null,
-      "week": 11
+      "away_score": 0,
+      "home_score": 7,
+      "week": 11,
+      "status": "in_progress"
     },
     {
-      "game_id": "2026-11-22-JAX-NYG",
-      "away_team": "Jacksonville Jaguars",
-      "home_team": "New York Giants",
-      "venue": "MetLife Stadium",
+      "game_id": "2026-11-22-PIT-PHI",
+      "away_team": "Pittsburgh Steelers",
+      "home_team": "Philadelphia Eagles",
+      "venue": "Lincoln Financial Field",
       "city": "",
       "kickoff_utc": "2026-11-22T18:00:00Z",
       "tv": "",
       "winner": null,
-      "away_score": null,
-      "home_score": null,
-      "week": 11
+      "away_score": 0,
+      "home_score": 3,
+      "week": 11,
+      "status": "in_progress"
     },
     {
       "game_id": "2026-11-22-NYJ-LAC",
@@ -2237,10 +2244,10 @@
       "week": 11
     },
     {
-      "game_id": "2026-11-22-PIT-PHI",
-      "away_team": "Pittsburgh Steelers",
-      "home_team": "Philadelphia Eagles",
-      "venue": "Lincoln Financial Field",
+      "game_id": "2026-11-22-JAX-NYG",
+      "away_team": "Jacksonville Jaguars",
+      "home_team": "New York Giants",
+      "venue": "MetLife Stadium",
       "city": "",
       "kickoff_utc": "2026-11-22T21:25:00Z",
       "tv": "",
@@ -3693,5 +3700,5 @@
       "week": 18
     }
   ],
-  "scores_synced_at": "2026-11-20T11:17:53.625Z"
+  "scores_synced_at": "2026-11-22T18:24:30.854Z"
 }
