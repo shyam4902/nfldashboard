@@ -2127,11 +2127,11 @@
       "city": "",
       "kickoff_utc": "2026-11-22T18:00:00Z",
       "tv": "",
-      "winner": null,
-      "away_score": 0,
-      "home_score": 3,
+      "winner": "Buffalo Bills",
+      "away_score": 9,
+      "home_score": 26,
       "week": 11,
-      "status": "in_progress"
+      "status": "final"
     },
     {
       "game_id": "2026-11-22-BAL-CAR",
@@ -2141,11 +2141,11 @@
       "city": "",
       "kickoff_utc": "2026-11-22T18:00:00Z",
       "tv": "",
-      "winner": null,
-      "away_score": 9,
-      "home_score": 0,
+      "winner": "Carolina Panthers",
+      "away_score": 33,
+      "home_score": 35,
       "week": 11,
-      "status": "in_progress"
+      "status": "final"
     },
     {
       "game_id": "2026-11-22-NO-CHI",
@@ -2155,11 +2155,11 @@
       "city": "",
       "kickoff_utc": "2026-11-22T18:00:00Z",
       "tv": "",
-      "winner": null,
-      "away_score": 0,
-      "home_score": 3,
+      "winner": "Chicago Bears",
+      "away_score": 13,
+      "home_score": 21,
       "week": 11,
-      "status": "in_progress"
+      "status": "final"
     },
     {
       "game_id": "2026-11-22-TEN-DAL",
@@ -2169,11 +2169,11 @@
       "city": "",
       "kickoff_utc": "2026-11-22T18:00:00Z",
       "tv": "",
-      "winner": null,
-      "away_score": 0,
-      "home_score": 6,
+      "winner": "Dallas Cowboys",
+      "away_score": 30,
+      "home_score": 51,
       "week": 11,
-      "status": "in_progress"
+      "status": "final"
     },
     {
       "game_id": "2026-11-22-TB-DET",
@@ -2183,11 +2183,11 @@
       "city": "",
       "kickoff_utc": "2026-11-22T18:00:00Z",
       "tv": "",
-      "winner": null,
-      "away_score": 0,
-      "home_score": 0,
+      "winner": "Detroit Lions",
+      "away_score": 21,
+      "home_score": 31,
       "week": 11,
-      "status": "in_progress"
+      "status": "final"
     },
     {
       "game_id": "2026-11-22-ARI-KC",
@@ -2197,11 +2197,11 @@
       "city": "",
       "kickoff_utc": "2026-11-22T18:00:00Z",
       "tv": "",
-      "winner": null,
-      "away_score": 0,
-      "home_score": 7,
+      "winner": "Kansas City Chiefs",
+      "away_score": 7,
+      "home_score": 34,
       "week": 11,
-      "status": "in_progress"
+      "status": "final"
     },
     {
       "game_id": "2026-11-22-PIT-PHI",
@@ -2211,11 +2211,11 @@
       "city": "",
       "kickoff_utc": "2026-11-22T18:00:00Z",
       "tv": "",
-      "winner": null,
-      "away_score": 0,
-      "home_score": 3,
+      "winner": "Philadelphia Eagles",
+      "away_score": 16,
+      "home_score": 19,
       "week": 11,
-      "status": "in_progress"
+      "status": "final"
     },
     {
       "game_id": "2026-11-22-NYJ-LAC",
@@ -2226,9 +2226,10 @@
       "kickoff_utc": "2026-11-22T21:05:00Z",
       "tv": "",
       "winner": null,
-      "away_score": null,
-      "home_score": null,
-      "week": 11
+      "away_score": 17,
+      "home_score": 10,
+      "week": 11,
+      "status": "in_progress"
     },
     {
       "game_id": "2026-11-22-LV-DEN",
@@ -2239,9 +2240,10 @@
       "kickoff_utc": "2026-11-22T21:25:00Z",
       "tv": "",
       "winner": null,
-      "away_score": null,
-      "home_score": null,
-      "week": 11
+      "away_score": 0,
+      "home_score": 17,
+      "week": 11,
+      "status": "in_progress"
     },
     {
       "game_id": "2026-11-22-JAX-NYG",
@@ -2252,9 +2254,10 @@
       "kickoff_utc": "2026-11-22T21:25:00Z",
       "tv": "",
       "winner": null,
-      "away_score": null,
-      "home_score": null,
-      "week": 11
+      "away_score": 3,
+      "home_score": 10,
+      "week": 11,
+      "status": "in_progress"
     },
     {
       "game_id": "2026-11-22-MIN-SF",
@@ -3700,5 +3703,5 @@
       "week": 18
     }
   ],
-  "scores_synced_at": "2026-11-22T18:24:30.854Z"
+  "scores_synced_at": "2026-11-22T22:25:39.167Z"
 }
