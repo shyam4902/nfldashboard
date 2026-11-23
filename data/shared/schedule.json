@@ -2239,11 +2239,11 @@
       "city": "",
       "kickoff_utc": "2026-11-22T21:25:00Z",
       "tv": "",
-      "winner": null,
-      "away_score": 17,
-      "home_score": 31,
+      "winner": "Denver Broncos",
+      "away_score": 24,
+      "home_score": 38,
       "week": 11,
-      "status": "in_progress"
+      "status": "final"
     },
     {
       "game_id": "2026-11-22-JAX-NYG",
@@ -2253,11 +2253,11 @@
       "city": "",
       "kickoff_utc": "2026-11-22T21:25:00Z",
       "tv": "",
-      "winner": null,
-      "away_score": 9,
-      "home_score": 20,
+      "winner": "New York Giants",
+      "away_score": 18,
+      "home_score": 23,
       "week": 11,
-      "status": "in_progress"
+      "status": "final"
     },
     {
       "game_id": "2026-11-22-MIN-SF",
@@ -2268,9 +2268,10 @@
       "kickoff_utc": "2026-11-23T01:20:00Z",
       "tv": "",
       "winner": null,
-      "away_score": null,
-      "home_score": null,
-      "week": 11
+      "away_score": 10,
+      "home_score": 28,
+      "week": 11,
+      "status": "in_progress"
     },
     {
       "game_id": "2026-11-23-CIN-WAS",
@@ -3703,5 +3704,5 @@
       "week": 18
     }
   ],
-  "scores_synced_at": "2026-11-23T00:09:40.689Z"
+  "scores_synced_at": "2026-11-23T03:03:08.580Z"
 }
