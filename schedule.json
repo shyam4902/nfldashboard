@@ -2,7 +2,7 @@
   "season": 2026,
   "week": 11,
   "total_weeks": 18,
-  "generated": "2026-11-22",
+  "generated": "2026-11-23",
   "source": "nflverse games.csv (matchups, kickoffs, stadiums); Week 1 enriched with TV/city",
   "games": [
     {
@@ -2225,11 +2225,11 @@
       "city": "",
       "kickoff_utc": "2026-11-22T21:05:00Z",
       "tv": "",
-      "winner": null,
-      "away_score": 17,
-      "home_score": 10,
+      "winner": "New York Jets",
+      "away_score": 27,
+      "home_score": 24,
       "week": 11,
-      "status": "in_progress"
+      "status": "final"
     },
     {
       "game_id": "2026-11-22-LV-DEN",
@@ -2240,8 +2240,8 @@
       "kickoff_utc": "2026-11-22T21:25:00Z",
       "tv": "",
       "winner": null,
-      "away_score": 0,
-      "home_score": 17,
+      "away_score": 17,
+      "home_score": 31,
       "week": 11,
       "status": "in_progress"
     },
@@ -2254,8 +2254,8 @@
       "kickoff_utc": "2026-11-22T21:25:00Z",
       "tv": "",
       "winner": null,
-      "away_score": 3,
-      "home_score": 10,
+      "away_score": 9,
+      "home_score": 20,
       "week": 11,
       "status": "in_progress"
     },
@@ -3703,5 +3703,5 @@
       "week": 18
     }
   ],
-  "scores_synced_at": "2026-11-22T22:25:39.167Z"
+  "scores_synced_at": "2026-11-23T00:09:40.689Z"
 }
