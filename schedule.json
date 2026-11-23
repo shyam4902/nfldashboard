@@ -2267,11 +2267,11 @@
       "city": "",
       "kickoff_utc": "2026-11-23T01:20:00Z",
       "tv": "",
-      "winner": null,
+      "winner": "San Francisco 49ers",
       "away_score": 10,
-      "home_score": 28,
+      "home_score": 35,
       "week": 11,
-      "status": "in_progress"
+      "status": "final"
     },
     {
       "game_id": "2026-11-23-CIN-WAS",
@@ -3704,5 +3704,5 @@
       "week": 18
     }
   ],
-  "scores_synced_at": "2026-11-23T03:03:08.580Z"
+  "scores_synced_at": "2026-11-23T07:24:13.629Z"
 }
