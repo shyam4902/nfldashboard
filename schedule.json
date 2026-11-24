@@ -1,8 +1,8 @@
 {
   "season": 2026,
-  "week": 11,
+  "week": 12,
   "total_weeks": 18,
-  "generated": "2026-11-23",
+  "generated": "2026-11-24",
   "source": "nflverse games.csv (matchups, kickoffs, stadiums); Week 1 enriched with TV/city",
   "games": [
     {
@@ -2281,10 +2281,11 @@
       "city": "",
       "kickoff_utc": "2026-11-24T01:15:00Z",
       "tv": "",
-      "winner": null,
-      "away_score": null,
-      "home_score": null,
-      "week": 11
+      "winner": "Washington Commanders",
+      "away_score": 20,
+      "home_score": 22,
+      "week": 11,
+      "status": "final"
     },
     {
       "game_id": "2026-11-25-GB-LA",
@@ -3704,5 +3705,5 @@
       "week": 18
     }
   ],
-  "scores_synced_at": "2026-11-23T07:24:13.629Z"
+  "scores_synced_at": "2026-11-24T05:52:45.305Z"
 }
