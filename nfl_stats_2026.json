@@ -1,7 +1,7 @@
 {
   "artifact": "nfl_stats",
   "season": 2026,
-  "generated_at": "2026-11-24T12:20:05Z",
+  "generated_at": "2026-11-26T12:20:05Z",
   "source": "Sleeper weekly stats API (api.sleeper.app/v1/stats/nfl/regular) — free, no key; names and team from the Sleeper player catalogue",
   "source_of_points": "schedule.json completed regular-season results",
   "season_kind": "actual",
@@ -11680,6 +11680,20 @@
       "differential": -52
     },
     {
+      "team": "Los Angeles Rams",
+      "abbr": "LAR",
+      "division": "NFC West",
+      "games": 10,
+      "pass_yards": 2636,
+      "rush_yards": 1330,
+      "total_yards": 3966,
+      "offensive_tds": 31,
+      "points_for": 274,
+      "points_against": 200,
+      "yards_allowed": 2845,
+      "differential": 74
+    },
+    {
       "team": "Kansas City Chiefs",
       "abbr": "KC",
       "division": "AFC West",
@@ -11736,20 +11750,6 @@
       "differential": -15
     },
     {
-      "team": "Los Angeles Rams",
-      "abbr": "LAR",
-      "division": "NFC West",
-      "games": 10,
-      "pass_yards": 2636,
-      "rush_yards": 1330,
-      "total_yards": 3966,
-      "offensive_tds": 31,
-      "points_for": 248,
-      "points_against": 187,
-      "yards_allowed": 2845,
-      "differential": 61
-    },
-    {
       "team": "Baltimore Ravens",
       "abbr": "BAL",
       "division": "AFC North",
@@ -11764,6 +11764,20 @@
       "differential": -52
     },
     {
+      "team": "Green Bay Packers",
+      "abbr": "GB",
+      "division": "NFC North",
+      "games": 10,
+      "pass_yards": 2841,
+      "rush_yards": 670,
+      "total_yards": 3511,
+      "offensive_tds": 26,
+      "points_for": 239,
+      "points_against": 247,
+      "yards_allowed": 3218,
+      "differential": -8
+    },
+    {
       "team": "Denver Broncos",
       "abbr": "DEN",
       "division": "AFC West",
@@ -11776,20 +11790,6 @@
       "points_against": 210,
       "yards_allowed": 3565,
       "differential": 26
-    },
-    {
-      "team": "Green Bay Packers",
-      "abbr": "GB",
-      "division": "NFC North",
-      "games": 10,
-      "pass_yards": 2841,
-      "rush_yards": 670,
-      "total_yards": 3511,
-      "offensive_tds": 26,
-      "points_for": 226,
-      "points_against": 221,
-      "yards_allowed": 3218,
-      "differential": 5
     },
     {
       "team": "New York Giants",
