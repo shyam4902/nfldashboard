@@ -2,7 +2,7 @@
   "season": 2026,
   "week": 12,
   "total_weeks": 18,
-  "generated": "2026-11-25",
+  "generated": "2026-11-26",
   "source": "nflverse games.csv (matchups, kickoffs, stadiums); Week 1 enriched with TV/city",
   "games": [
     {
@@ -2295,10 +2295,11 @@
       "city": "",
       "kickoff_utc": "2026-11-26T01:00:00Z",
       "tv": "",
-      "winner": null,
-      "away_score": null,
-      "home_score": null,
-      "week": 12
+      "winner": "Los Angeles Rams",
+      "away_score": 13,
+      "home_score": 26,
+      "week": 12,
+      "status": "final"
     },
     {
       "game_id": "2026-11-26-CHI-DET",
@@ -3705,5 +3706,5 @@
       "week": 18
     }
   ],
-  "scores_synced_at": "2026-11-24T05:52:45.305Z"
+  "scores_synced_at": "2026-11-26T04:53:27.308Z"
 }
