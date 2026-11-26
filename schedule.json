@@ -2309,10 +2309,11 @@
       "city": "",
       "kickoff_utc": "2026-11-26T18:00:00Z",
       "tv": "",
-      "winner": null,
-      "away_score": null,
-      "home_score": null,
-      "week": 12
+      "winner": "Chicago Bears",
+      "away_score": 39,
+      "home_score": 35,
+      "week": 12,
+      "status": "final"
     },
     {
       "game_id": "2026-11-26-PHI-DAL",
@@ -2323,9 +2324,10 @@
       "kickoff_utc": "2026-11-26T21:30:00Z",
       "tv": "",
       "winner": null,
-      "away_score": null,
-      "home_score": null,
-      "week": 12
+      "away_score": 10,
+      "home_score": 28,
+      "week": 12,
+      "status": "in_progress"
     },
     {
       "game_id": "2026-11-26-KC-BUF",
@@ -3706,5 +3708,5 @@
       "week": 18
     }
   ],
-  "scores_synced_at": "2026-11-26T04:53:27.308Z"
+  "scores_synced_at": "2026-11-26T23:41:15.656Z"
 }
