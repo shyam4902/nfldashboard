@@ -2,7 +2,7 @@
   "season": 2026,
   "week": 12,
   "total_weeks": 18,
-  "generated": "2026-11-26",
+  "generated": "2026-11-27",
   "source": "nflverse games.csv (matchups, kickoffs, stadiums); Week 1 enriched with TV/city",
   "games": [
     {
@@ -2323,11 +2323,11 @@
       "city": "",
       "kickoff_utc": "2026-11-26T21:30:00Z",
       "tv": "",
-      "winner": null,
-      "away_score": 10,
-      "home_score": 28,
+      "winner": "Philadelphia Eagles",
+      "away_score": 39,
+      "home_score": 38,
       "week": 12,
-      "status": "in_progress"
+      "status": "final"
     },
     {
       "game_id": "2026-11-26-KC-BUF",
@@ -2337,10 +2337,11 @@
       "city": "",
       "kickoff_utc": "2026-11-27T01:20:00Z",
       "tv": "",
-      "winner": null,
-      "away_score": null,
-      "home_score": null,
-      "week": 12
+      "winner": "Buffalo Bills",
+      "away_score": 10,
+      "home_score": 13,
+      "week": 12,
+      "status": "final"
     },
     {
       "game_id": "2026-11-27-DEN-PIT",
@@ -3708,5 +3709,5 @@
       "week": 18
     }
   ],
-  "scores_synced_at": "2026-11-26T23:41:15.656Z"
+  "scores_synced_at": "2026-11-27T08:03:45.039Z"
 }
