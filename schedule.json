@@ -2,7 +2,7 @@
   "season": 2026,
   "week": 12,
   "total_weeks": 18,
-  "generated": "2026-11-27",
+  "generated": "2026-11-28",
   "source": "nflverse games.csv (matchups, kickoffs, stadiums); Week 1 enriched with TV/city",
   "games": [
     {
@@ -2351,10 +2351,11 @@
       "city": "",
       "kickoff_utc": "2026-11-27T20:00:00Z",
       "tv": "",
-      "winner": null,
-      "away_score": null,
-      "home_score": null,
-      "week": 12
+      "winner": "Pittsburgh Steelers",
+      "away_score": 5,
+      "home_score": 27,
+      "week": 12,
+      "status": "final"
     },
     {
       "game_id": "2026-11-29-NO-CIN",
@@ -3709,5 +3710,5 @@
       "week": 18
     }
   ],
-  "scores_synced_at": "2026-11-27T08:03:45.039Z"
+  "scores_synced_at": "2026-11-28T01:22:55.394Z"
 }
